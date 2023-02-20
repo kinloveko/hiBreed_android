@@ -108,6 +108,7 @@ public class addToCart_adapter extends RecyclerView.Adapter<addToCart_adapter.Vi
                 Intent i = new Intent(context, view_breeder_shop.class);
                 i.putExtra("breeder",add.getProd_seller());
                 context.startActivity(i);
+                //hehe
             }
         });
         v.check.setOnClickListener(new View.OnClickListener() {
