@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/dropshadow_two"
+
+    android:layout_marginBottom="10dp"
+    android:elevation="3dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginEnd="2dp"
+    android:layout_marginStart="2dp"
+    android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/reply_image_user"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+
+        android:scaleType="centerCrop"
+        android:src="@drawable/noimage"
+        app:civ_border_color="@color/brownish"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/descLayout"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp"
+        android:layout_toEndOf="@id/reply_image_user"
+        android:background="@drawable/dropshadow_eleven">
+
+        <TextView
+            android:id="@+id/senderName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0.5dp"
+            android:fontFamily="@font/poppinsmedium"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Sender name"
+            android:textColor="@color/material_blue_grey_95"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/role"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/senderName"
+            android:layout_marginTop="-4dp"
+            android:text="Veterinarian"
+            android:textSize="10sp"
+            tools:ignore="HardcodedText,SmallSp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@id/senderName"
+            android:src="@drawable/icon_verified" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/replyEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/role"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/transparent"
+            android:editable="false"
+            android:hint="Add a comment . . ."
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/details_reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/descLayout"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/reply_image_user"
+        android:text="Just now"
+        tools:ignore="HardcodedText" />
+</RelativeLayout>

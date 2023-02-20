@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.hi_breed">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.Reciever" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <application
+        android:name=".classesFile.MyApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/icon_logoo"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@drawable/kawaii"
+        android:screenOrientation="portrait"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.HiBreed"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+        <activity
+            android:name=".product.product_my_product_edit"
+            android:exported="false" />
+        <activity
+            android:name=".product.product_my_product"
+            android:exported="false" />
+        <activity
+            android:name=".product.product_details"
+            android:exported="false" />
+        <activity
+            android:name=".product.product_add_activity"
+            android:exported="false" />
+        <activity
+            android:name=".message.message_conversation_activity"
+            android:exported="false" />
+        <activity
+            android:name=".message.message_activity"
+            android:exported="false" />
+        <activity
+            android:name=".search.search_clicked"
+            android:exported="false" />
+        <activity
+            android:name=".search.search_dashboard_home"
+            android:exported="false" />
+        <activity
+            android:name=".ask_a_professional.edit_post_ask_prof"
+            android:exported="false" />
+        <activity
+            android:name=".userFile.cart.add_to_cart"
+            android:exported="false" />
+        <activity
+            android:name=".ask_a_professional.ask_question_details"
+            android:exported="false" />
+        <activity
+            android:name=".ask_a_professional.ask_question"
+            android:exported="false" />
+        <activity
+            android:name=".ask_a_professional.ask_a_professional"
+            android:exported="false" />
+        <activity
+            android:name=".shooter.edit_service"
+            android:exported="false" />
+        <activity
+            android:name=".shooter.shooter_display_details"
+            android:exported="false" />
+        <activity
+            android:name=".shooter.shooter_service"
+            android:exported="false" />
+        <activity
+            android:name=".shop.view_breeder_shop"
+            android:exported="false" />
+        <activity
+            android:name=".Pet.edit_pet_for_date"
+            android:exported="false" />
+        <activity
+            android:name=".Pet.edit_pet_for_sale"
+            android:exported="false" />
+        <activity
+            android:name=".Pet.pet_my_pets_panel"
+            android:exported="false" />
+        <activity
+            android:name=".Pet.pet_date_swipe"
+            android:exported="false" />
+        <activity
+            android:name=".marketplace.m_market_place_container"
+            android:exported="false" />
+        <activity
+            android:name=".Pet.pet_for_sale_details"
+            android:exported="false" />
+        <activity
+            android:name=".shooter.shooter_panel"
+            android:exported="false" />
+        <activity
+            android:name=".Pet.pet_add_for_dating"
+            android:exported="false" />
+        <activity
+            android:name=".shop.user_breeder_shop_panel"
+            android:exported="false" />
+        <activity
+            android:name=".loginAndRegistration.container_fragment_registration_users"
+            android:exported="false" />
+        <activity
+            android:name=".userFile.profile.user_profile_account_security_info"
+            android:exported="false" />
+        <activity
+            android:name=".userFile.profile.user_profile_account_contact"
+            android:exported="false" />
+        <activity
+            android:name=".userFile.profile.user_profile_account_setting"
+            android:exported="false" />
+        <activity
+            android:name=".Pet.pet_add_for_selling"
+            android:exported="false" />
+        <activity
+            android:name=".shop.shop_edit_profile"
+            android:exported="false" />
+        <activity
+            android:name=".shop.shop_view_profile"
+            android:exported="false" />
+        <activity
+            android:name=".userFile.profile.user_profile_account_edit"
+            android:exported="false" />
+        <activity
+            android:name=".phoneAccess.phone_UncropperActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screenLoading.screen_WelcomeToHiBreed"
+            android:exported="false" />
+        <activity
+            android:name=".userFile.dashboard.user_dashboard"
+            android:exported="false" />
+        <activity
+            android:name=".loginAndRegistration.Login"
+            android:exported="false" />
+        <activity
+            android:name=".screenLoading.screen_splashScreen_MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".classesFile.MessagingService"
+            android:exported="false"
+            android:permission="com.google.android.cd2m.permission.Send">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.Recieve" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+
+</manifest>

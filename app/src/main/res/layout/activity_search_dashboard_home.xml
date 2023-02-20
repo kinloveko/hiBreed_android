@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".search.search_dashboard_home">
+
+    <ImageView
+        android:id="@+id/backArrowImage"
+        android:layout_width="30dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="5dp"
+        android:src="@drawable/icon_arrowback"
+        tools:ignore="ContentDescription,NestedWeights"
+        tools:layout_editor_absoluteX="339dp"
+        tools:layout_editor_absoluteY="122dp" />
+
+    <LinearLayout
+        android:id="@+id/searchLayout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toStartOf="@id/card"
+        android:layout_toEndOf="@id/backArrowImage"
+        android:background="@drawable/dropshadow_eleven"
+        android:orientation="horizontal">
+
+
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/stlye_border_relative"
+            android:backgroundTint="@color/float_transparent"
+            android:hint="Search here . . ."
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/brownish"
+        app:cardCornerRadius="300dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:background="@color/brownish"
+            android:src="@drawable/icon_search_white" />
+    </androidx.cardview.widget.CardView>
+<ScrollView
+    android:layout_below="@id/card"
+    android:layout_marginTop="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</ScrollView>
+
+</RelativeLayout>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/semiBlack"
+    tools:context=".Pet.pet_date_swipe">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_gravity="top"
+        android:background="@drawable/gradation_black_three"
+        android:translationZ="90dp" />
+    <LinearLayout
+        android:translationZ="90dp"
+        android:id="@+id/backLayoutPet"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/shop_edit_backArrowImage"
+            android:layout_width="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/icon_arrowback_white"
+            />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/poppinsmedium"
+        android:text="Date Finder"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:translationZ="90dp"
+        tools:ignore="HardcodedText" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:translationZ="90dp"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="15dp"
+        android:backgroundTint="@color/brownish"
+        app:cardCornerRadius="300dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/brownish"
+            android:src="@drawable/message_icon" />
+    </androidx.cardview.widget.CardView>
+
+    <com.lorentzos.flingswipe.SwipeFlingAdapterView
+        android:id="@+id/frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/semiBlack"
+        app:rotation_degrees="15.5" />
+
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/noOneTextView_pet_sale_card"
+        android:fontFamily="@font/poppinsmedium"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:text="The card is empty for pet dating at this moment. Try again later."
+        tools:ignore="HardcodedText" />
+
+</RelativeLayout>

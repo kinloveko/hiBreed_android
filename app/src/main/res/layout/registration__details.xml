@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".loginAndRegistration.fragment_registration_details">
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:background="@drawable/transparent"
+        tools:context=".loginAndRegistration.fragment_registration_details"
+        android:layout_height="match_parent"
+        tools:ignore="ExtraText">
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:fontFamily="@font/poppinsbold"
+            android:text="Registration"
+            android:textAlignment="center"
+            android:textColor="@color/material_blue_grey_90"
+            android:textSize="35sp"
+            tools:ignore="HardcodedText,MissingConstraints,SpUsage" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/what_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image1"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/transparent"
+            android:fontFamily="@font/poppinsmedium"
+            android:text="What are this roles do? Click here"
+            android:textAllCaps="false"
+            android:textColor="#706C6C"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText,RtlSymmetry" />
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView8"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/poppinsmedium"
+            android:text="Tip: You can choose all of the roles if you are specialized in all of them."
+            android:textAlignment="center"
+            android:textColor="@color/material_blue_grey_90"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:id="@+id/image1"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_below="@id/text1"
+            android:src="@drawable/icon_kawaii_three" />
+
+        <LinearLayout
+            android:id="@+id/linear1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/what_button"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/ownerID_checkBox"
+                style="@style/CustomChipChoice"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="190dp"
+                android:layout_height="60dp"
+                android:text="Pet Owner"
+                android:textAlignment="center"
+                app:chipStrokeColor="@color/material_blue_grey_90"
+                app:chipStrokeWidth="2dp"
+                tools:ignore="HardcodedText" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/breederID_checkBox"
+                android:layout_width="190dp"
+                android:layout_height="60dp"
+                android:text="Pet Breeder"
+                android:textAlignment="center"
+                style="@style/CustomChipChoice"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                app:chipStrokeColor="@color/material_blue_grey_90"
+                app:chipStrokeWidth="2dp"
+                tools:ignore="HardcodedText" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/shooterID_checkBox"
+                android:layout_width="190dp"
+                android:layout_height="60dp"
+                android:text="Pet Shooter"
+                android:textAlignment="center"
+                style="@style/CustomChipChoice"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                app:chipStrokeColor="@color/material_blue_grey_90"
+                app:chipStrokeWidth="2dp"
+                tools:ignore="HardcodedText" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/vetID_checkBox"
+                android:layout_width="190dp"
+                android:layout_height="60dp"
+                android:text="Veterinarian"
+                android:textAlignment="center"
+                style="@style/CustomChipChoice"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                app:chipStrokeColor="@color/material_blue_grey_90"
+                app:chipStrokeWidth="2dp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linear1"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/dropshadow_two"
+            android:backgroundTint="@color/brown"
+            android:fontFamily="@font/poppinsemibold"
+            android:text="Next"
+            android:textColor="@color/white"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/LoginActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nextButton"
+
+            android:layout_marginBottom="20dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/poppinsbold"
+            android:onClick="gotoLogin"
+            android:text="Already have an account? Click here"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#706C6C"
+            tools:ignore="HardcodedText,UsingOnClickInXml" />
+    </RelativeLayout>
+
+</FrameLayout>

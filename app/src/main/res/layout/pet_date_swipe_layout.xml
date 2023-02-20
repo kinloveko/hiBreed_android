@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#3A3B3C"
+    android:backgroundTint="#3A3B3C"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="false"
+    app:cardBackgroundColor="@android:color/white">
+
+
+
+    <ImageView
+        android:layout_gravity="center"
+        android:id="@+id/item_image"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/gradation_black">
+    <LinearLayout
+        android:layout_marginBottom="-5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:paddingStart="16dp"
+            android:paddingEnd="5dp"
+            android:id="@+id/item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:shadowColor="@color/semiBlack"
+            android:fontFamily="@font/poppinsbold"
+            android:shadowDy="1"
+            android:shadowDx="-4"
+            android:shadowRadius="5"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            tools:ignore="HardcodedText" />
+        <TextView
+            android:id="@+id/items_gender"
+            android:shadowColor="@color/semiBlack"
+            android:fontFamily="@font/poppinsregular"
+            android:shadowRadius="2"
+            android:paddingStart="5dp"
+            android:textStyle="bold"
+            android:paddingEnd="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+        <TextView
+            android:shadowDy="1"
+            android:shadowDx="-2"
+            android:shadowRadius="2"
+            android:shadowColor="@color/semiBlack"
+            android:fontFamily="@font/poppinsmedium"
+            android:layout_marginStart="2dp"
+            android:paddingStart="17dp"
+            android:paddingEnd="16dp"
+            android:id="@+id/item_breed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"/>
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:src="@drawable/icon_location_pet"
+        android:layout_marginStart="10dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"/>
+    <TextView
+        android:id="@+id/items_address"
+        android:shadowColor="@color/semiBlack"
+        android:fontFamily="@font/poppinsregular"
+        android:shadowRadius="2"
+        android:paddingBottom="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+</LinearLayout>
+
+
+        <FrameLayout
+            android:id="@+id/frame"
+            android:background="@drawable/gradation_black_two"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:translationZ="3dp"
+            >
+
+                <RelativeLayout
+                    android:id="@+id/return_relative"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+
+                    android:background="@drawable/stlye_border_button_return"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp">
+
+
+                    <ImageView android:layout_height="35dp"
+                        android:layout_width="35dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/icon_return"/>
+
+
+                </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/dislike_relative"
+                android:background="@drawable/stlye_border_button_not_like"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp">
+
+                <ImageView android:layout_height="40dp"
+                    android:layout_width="45dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/icon_not_like_red"/>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/super_like_relative"
+                android:background="@drawable/stlye_border_button_super_like"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_width="50dp"
+                android:layout_marginBottom="10dp"
+                android:layout_height="50dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="35dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/icon_star_tinder" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/like_relative"
+                android:background="@drawable/stlye_border_button_like"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp">
+
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="40dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/icon_heart_blue" />
+
+            </RelativeLayout>
+        </LinearLayout>
+            </FrameLayout>
+
+
+        </LinearLayout>
+
+
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".userFile.profile.user_profile_account_contact">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/backLayout"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.2"
+            android:background="@color/float_transparent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+            <ImageView
+                android:id="@+id/backArrowImage"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:src="@drawable/icon_arrowback"
+                tools:ignore="ContentDescription,NestedWeights"
+                tools:layout_editor_absoluteX="339dp"
+                tools:layout_editor_absoluteY="122dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/profileTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/poppinsemibold"
+            android:gravity="center"
+            android:text="Contact Information"
+            android:textSize="20sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.333"
+            tools:ignore="HardcodedText"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ImageView
+            android:id="@+id/vector_sec"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@+id/profileTextView"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/vector_email" />
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vector_sec"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:fontFamily="@font/poppinsregular"
+            android:text="You can manage your contacts and emails here. Always maintain the most recent information available so that you can easily open and restore your account if it is lost or hacked."
+            android:textAlignment="center"
+            android:textColor="@color/material_blue_grey_80"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+
+        <TextView
+            android:id="@+id/editButton_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="3dp"
+            android:background="@drawable/dropshadow_two"
+            android:backgroundTint="@color/safe_grey"
+            android:fontFamily="@font/poppinsmedium"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="Edit info"
+            android:layout_below="@id/text1"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:drawableEndCompat="@drawable/prof_editicon_two"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText,MissingConstraints" />
+        <TextView
+            android:id="@+id/undoEditButton_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="3dp"
+            android:background="@drawable/dropshadow_two"
+            android:backgroundTint="@color/brown"
+            android:fontFamily="@font/poppinsmedium"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/text1"
+            android:paddingEnd="10dp"
+            android:text="Done edit"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:drawableEndCompat="@drawable/prof_editicon_two"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText,MissingConstraints,RtlSymmetry" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/text1"
+            android:layout_marginTop="60dp"
+
+            android:background="@drawable/dropshadow_seven"
+            android:backgroundTint="@color/fbWhite"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/contact_email_layout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/backLayout"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp">
+
+                <ImageView
+                    android:id="@+id/image1"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/icon_mail" />
+
+                <TextView
+                    android:id="@+id/pet_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_toEndOf="@id/image1"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Email Address"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+
+                <TextView
+                    android:id="@+id/email_input"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_toStartOf="@id/imageViewArrow1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:maxLines="1"
+                    android:text="Email"
+                    android:textAlignment="textEnd"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/imageViewArrow1"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/profile_arrowright" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+
+                android:id="@+id/contact_mobile_layout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/contact_email_layout"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp">
+
+                <ImageView
+                    android:id="@+id/image4"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/icon_tele" />
+
+                <TextView
+                    android:id="@+id/pet_text5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_toEndOf="@id/image4"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Contact number"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+
+                <TextView
+                    android:id="@+id/contact_input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_toStartOf="@id/imageViewArrow5"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:maxLines="1"
+                    android:text="Number"
+                    android:textAlignment="textEnd"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/imageViewArrow5"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/profile_arrowright" />
+
+
+            </RelativeLayout>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</RelativeLayout>

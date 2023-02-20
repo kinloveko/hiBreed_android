@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+   android:background="@color/white"
+    tools:context=".userFile.home.user_home_fragment"
+  >
+
+
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:id="@+id/profileLayoutID"
+            android:background="@color/fbWhite"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/white"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_marginStart="15dp"
+                    android:id="@+id/logoName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:gravity="center"
+                    android:text="hiBreed"
+                    android:textColor="@color/material_blue_grey_80"
+                    android:textSize="30sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:ignore="HardcodedText,MissingConstraints,RtlSymmetry" />
+
+                <androidx.cardview.widget.CardView
+
+                    android:id="@+id/searchcarddView"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="300dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/addPetView"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="MissingConstraints">
+
+                    <ImageView
+                        android:id="@+id/billingImage2"
+                        android:layout_width="35dp"
+                        android:layout_height="42dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Profile"
+                        android:src="@drawable/icon_search_glass"
+                        app:civ_border_color="@color/mustard"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        tools:ignore="HardcodedText" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/addPetView"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="300dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/cardView"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="MissingConstraints">
+
+                    <ImageView
+                        android:id="@+id/messageImage2"
+                        android:layout_width="35dp"
+                        android:layout_height="42dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Message"
+                        android:src="@drawable/icon_add"
+                        app:civ_border_color="@color/mustard"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        tools:ignore="HardcodedText" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="10dp"
+
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="300dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="MissingConstraints">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="47dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Profile"
+                        android:translationZ="3dp"
+                        app:civ_border_color="@color/mustard"
+                        app:civ_border_width="2dp"
+                        app:civ_circle_background_color="@color/black"
+                        tools:ignore="HardcodedText" />
+
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ScrollView
+                android:scrollbars="none"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+              >
+             <LinearLayout
+                 android:orientation="vertical"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content">
+                 <TextView
+                     android:layout_width="match_parent"
+                     android:layout_height="1dp"
+                     android:layout_marginEnd="5dp"
+                     android:background="@drawable/style_border"/>
+                 <androidx.cardview.widget.CardView
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content">
+                     <LinearLayout
+
+                         android:layout_marginTop="3dp"
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content">
+
+                         <com.denzcoskun.imageslider.ImageSlider
+                             android:id="@+id/imageSlider"
+                             android:layout_width="match_parent"
+                             android:layout_height="150dp"
+                             android:elevation="3dp"
+                             app:iss_auto_cycle="true"
+                             app:iss_delay="3000"
+                             app:iss_period="3000"
+                             />
+
+                     </LinearLayout>
+
+                 </androidx.cardview.widget.CardView>
+
+                 <LinearLayout
+                     android:orientation="horizontal"
+                     android:gravity="center"
+
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content">
+                     <HorizontalScrollView
+                         android:scrollbars="none"
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content">
+                         <LinearLayout
+                             android:orientation="horizontal"
+                             android:layout_width="wrap_content"
+                             android:layout_height="match_parent">
+                             <androidx.cardview.widget.CardView
+                                 android:id="@+id/petSaleCardView9"
+                                 android:layout_width="150dp"
+                                 android:layout_height="97dp"
+                                 android:layout_marginTop="10dp"
+                                 android:layout_marginEnd="5dp"
+                                 android:layout_marginBottom="10dp"
+                                 android:elevation="10dp"
+                                 app:cardCornerRadius="20dp"
+                                 android:translationZ="3dp"
+                                 android:layout_marginStart="10dp"
+                                 app:layout_constraintVertical_bias="0.0">
+
+
+                                 <ImageView
+                                     android:id="@+id/petsaleImage"
+                                     android:layout_width="50dp"
+                                     android:layout_height="60dp"
+                                     android:layout_gravity="center"
+                                     android:layout_marginBottom="18dp"
+                                     android:layout_marginTop="10dp"
+                                     android:contentDescription="Profile"
+                                     android:src="@drawable/icon_marketplace"
+                                     app:layout_constraintHorizontal_bias="0.684"
+                                     app:layout_constraintStart_toEndOf="@+id/textView15"
+                                     app:layout_constraintTop_toTopOf="parent"
+                                     tools:ignore="HardcodedText" />
+
+                                 <TextView
+                                     android:id="@+id/textView25"
+                                     android:layout_width="wrap_content"
+                                     android:layout_height="wrap_content"
+                                     android:layout_gravity="center"
+                                     android:layout_marginTop="25dp"
+                                     android:fontFamily="@font/poppinsemibold"
+
+                                     android:text="Marketplace"
+                                     android:textColor="@color/material_blue_grey_80"
+                                     android:textSize="12sp"
+                                     tools:ignore="HardcodedText" />
+
+                             </androidx.cardview.widget.CardView>
+                             <androidx.cardview.widget.CardView
+                                 android:id="@+id/findDateCardView9"
+                                 android:layout_width="150dp"
+                                 android:layout_height="97dp"
+                                 android:layout_marginTop="10dp"
+                                 android:layout_marginEnd="5dp"
+                                 android:layout_marginBottom="10dp"
+                                 android:elevation="10dp"
+                                 android:translationZ="3dp"
+                                 app:cardCornerRadius="20dp"
+                                 app:layout_constraintBottom_toBottomOf="parent"
+                                 app:layout_constraintEnd_toEndOf="parent"
+                                 app:layout_constraintHorizontal_bias="1.0"
+                                 android:layout_marginStart="10dp"
+                                 app:layout_constraintStart_toStartOf="parent"
+                                 app:layout_constraintTop_toTopOf="parent"
+                                 app:layout_constraintVertical_bias="0.0">
+
+
+                                 <ImageView
+                                     android:id="@+id/findDateImage"
+                                     android:layout_width="55dp"
+                                     android:layout_height="60dp"
+                                     android:layout_gravity="center"
+                                     android:layout_marginBottom="18dp"
+                                     android:layout_marginTop="10dp"
+                                     android:contentDescription="Profile"
+                                     android:src="@drawable/icon_find_date"
+                                     app:layout_constraintHorizontal_bias="0.684"
+                                     app:layout_constraintStart_toEndOf="@+id/textView15"
+                                     app:layout_constraintTop_toTopOf="parent"
+                                     tools:ignore="HardcodedText" />
+
+                                 <TextView
+                                     android:id="@+id/textView18"
+                                     android:layout_width="wrap_content"
+                                     android:layout_height="wrap_content"
+                                     android:layout_gravity="center"
+                                     android:layout_marginTop="25dp"
+                                     android:fontFamily="@font/poppinsemibold"
+                                     android:layout_marginStart="10dp"
+                                     android:layout_marginEnd="10dp"
+                                     android:text="Date finder"
+                                     android:textColor="@color/material_blue_grey_80"
+                                     android:textSize="12sp"
+                                     tools:ignore="HardcodedText" />
+
+                             </androidx.cardview.widget.CardView>
+                             <androidx.cardview.widget.CardView
+                                 android:id="@+id/myServicesCardView9"
+                                 android:layout_width="150dp"
+                                 android:layout_height="97dp"
+                                 android:layout_marginTop="10dp"
+                                 android:layout_marginEnd="20dp"
+                                 android:layout_marginBottom="10dp"
+                                 android:elevation="10dp"
+                                 app:cardCornerRadius="20dp"
+                                 android:translationZ="3dp"
+                                 android:layout_marginStart="10dp"
+                                 app:layout_constraintVertical_bias="0.0">
+
+
+                                 <ImageView
+                                     android:id="@+id/shoppingcartImage"
+                                     android:layout_width="55dp"
+                                     android:layout_height="50dp"
+                                     android:layout_gravity="center"
+                                     android:layout_marginBottom="18dp"
+                                     android:layout_marginTop="10dp"
+                                     android:contentDescription="Profile"
+                                     android:src="@drawable/bag"
+                                     app:layout_constraintHorizontal_bias="0.684"
+                                     app:layout_constraintStart_toEndOf="@+id/textView15"
+                                     app:layout_constraintTop_toTopOf="parent"
+                                     tools:ignore="HardcodedText" />
+
+                                 <TextView
+                                     android:id="@+id/textView17"
+                                     android:layout_width="wrap_content"
+                                     android:layout_height="wrap_content"
+                                     android:layout_gravity="center"
+                                     android:layout_marginTop="25dp"
+                                     android:fontFamily="@font/poppinsemibold"
+                                     android:text="Ask a professional"
+                                     android:textColor="@color/material_blue_grey_80"
+                                     android:textSize="12sp"
+                                     tools:ignore="HardcodedText" />
+
+                             </androidx.cardview.widget.CardView>
+                         </LinearLayout>
+                     </HorizontalScrollView>
+
+                 </LinearLayout>
+
+                 <LinearLayout
+                     android:orientation="vertical"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content">
+
+
+
+                     <LinearLayout
+                         android:id="@+id/forYou_layout"
+                         android:orientation="vertical"
+                         android:background="@color/fbWhite"
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content">
+                         <TextView
+                             android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:text="Breed you may like"
+                             android:layout_marginStart="10dp"
+                             android:layout_marginTop="10dp"
+                             android:textSize="15sp"
+                             android:textStyle="bold"
+                             android:layout_marginBottom="10dp"
+                             tools:ignore="HardcodedText" />
+                         <androidx.recyclerview.widget.RecyclerView
+                             android:id="@+id/for_you_recycler"
+                             android:layout_marginBottom="30dp"
+                             android:elevation="3dp"
+
+                             android:scrollbars="none"
+                             android:orientation="horizontal"
+                             android:layout_width="match_parent"
+                             android:layout_height="match_parent"/>
+
+                     </LinearLayout>
+
+                 </LinearLayout>
+             </LinearLayout>
+
+
+
+            </ScrollView>
+
+      </LinearLayout>
+
+</FrameLayout>
