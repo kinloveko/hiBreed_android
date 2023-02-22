@@ -61,23 +61,6 @@
 
             </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/allCheckBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:background="@color/float_transparent"
-                android:text="All"
-                android:gravity="center"
-                android:layout_marginTop="10dp"
-
-                android:textColor="@color/material_blue_grey_80"
-                android:textSize="20sp"
-                android:textStyle="bold"
-
-                tools:ignore="HardcodedText" />
         </RelativeLayout>
 
         <ScrollView

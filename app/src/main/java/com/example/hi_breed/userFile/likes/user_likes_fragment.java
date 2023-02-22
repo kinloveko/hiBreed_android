@@ -31,6 +31,7 @@ public class user_likes_fragment extends Fragment {
     BottomNavigationView BreederBottomNavigation;
     likes_adapter adapter;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

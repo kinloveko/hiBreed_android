@@ -272,7 +272,6 @@ public class fragment_registration_email_password extends Fragment {
                                             if(task.isSuccessful()){
 
 
-
                                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                                 AuthCredential authCredential = EmailAuthProvider
                                                         .getCredential(email,password);
@@ -303,7 +302,6 @@ public class fragment_registration_email_password extends Fragment {
                                                                     Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
                                                                     return;
                                                                 }
-
                                                                 uploadToStorageShooter(user);
                                                                 Map<String,Object> data = new HashMap<>();
                                                                 data.put("last_transaction",lastTransaction);

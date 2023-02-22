@@ -80,6 +80,7 @@ public class likes_adapter extends RecyclerView.Adapter<likes_adapter.ViewHolder
                                     v.name.setText(s.getString("pet_name"));
                                     v.price.setText(s.getString("pet_price"));
                                     v.category.setText(s.getString("pet_breed"));
+                                    if(list!=null)
                                    Picasso.get().load(list.get(0))
                                             .placeholder(R.drawable.noimage)
                                             .into(v.image);

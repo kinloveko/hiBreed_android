@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
+
     android:elevation="3dp"
     android:backgroundTint="@color/white"
-    android:layout_height="140dp">
-
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
     <LinearLayout
         android:id="@+id/shopLinear"
         android:layout_width="match_parent"
@@ -35,13 +35,7 @@
             android:text="Shop name"
             android:textColor="@color/material_blue_grey_80"
             tools:ignore="HardcodedText" />
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="1dp"
 
-            android:src="@drawable/profile_arrowright" />
     </LinearLayout>
 
     <RelativeLayout
@@ -54,7 +48,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_height="75dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
 
@@ -98,29 +92,28 @@
             android:textSize="16sp"
             tools:ignore="HardcodedText" />
 
-        <ImageView
+        <TextView
             android:id="@+id/pesoSign"
             android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_below="@id/breed"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="-1dp"
-            android:layout_toEndOf="@id/cardView"
-            android:src="@drawable/icon_peso"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pet_name"
+            android:layout_marginTop="-7dp"
+            android:layout_toStartOf="@id/itemValue"
+            android:gravity="center"
+            android:text="₱"
+            android:textSize="17sp"
             tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/itemValue"
             android:layout_width="wrap_content"
             android:layout_height="27dp"
-            android:layout_below="@id/breed"
-            android:layout_marginTop="1dp"
-            android:layout_toEndOf="@id/pesoSign"
-            android:background="@drawable/dropshadow_button_zero"
-            android:backgroundTint="@color/lightWhite"
+            android:layout_below="@id/pet_name"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="-10dp"
+            android:layout_marginTop="-8dp"
             android:ellipsize="end"
-            android:fontFamily="@font/poppinsmedium"
-
+            android:fontFamily="@font/poppinsregular"
             android:gravity="center"
             android:maxLines="1"
             android:paddingStart="10sp"
@@ -130,23 +123,7 @@
             android:textSize="18sp"
             tools:ignore="HardcodedText" />
 
-        <ImageView
-            android:id="@+id/check"
-            android:layout_width="40dp"
-            android:layout_height="35dp"
-            android:layout_centerInParent="true"
-            android:layout_marginEnd="15dp"
-            android:layout_toStartOf="@id/delete"
-            android:src="@drawable/icon_check_box" />
 
-        <ImageView
-            android:id="@+id/delete"
-            android:layout_width="35dp"
-            android:layout_height="25dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerInParent="true"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/icon_deleted" />
     </RelativeLayout>
 
 

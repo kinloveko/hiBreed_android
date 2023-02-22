@@ -15,7 +15,7 @@
         </shape>
     </item>
     <item
-        android:drawable="@drawable/icon_check_box"
+        android:drawable="@drawable/icon_check"
         android:gravity="center"
         android:height="32dp"
         android:width="32dp"/>

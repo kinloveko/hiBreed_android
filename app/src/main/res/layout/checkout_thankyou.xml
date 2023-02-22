@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".checkout_thankyou">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="200dp"
+        android:src="@drawable/icon_order_placed" />
+    <TextView
+        android:id="@+id/text"
+        android:layout_centerInParent="true"
+        android:textAlignment="center"
+        android:fontFamily="@font/poppinsmedium"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="-20dp"
+        android:textSize="18sp"
+        android:textColor="@color/material_blue_grey_95"
+        android:text="Your order has been placed and is awaiting confirmation from the seller."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/market"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/dropshadow_button_ten"
+        android:fontFamily="@font/poppinsemibold"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="Continue shopping"
+        android:textColor="@color/white"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/dashboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/market"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/dropshadow_eleven"
+        android:fontFamily="@font/poppinsemibold"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="Go to dashboard"
+        android:textColor="@color/material_blue_grey_95"
+        tools:ignore="HardcodedText" />
+</RelativeLayout>

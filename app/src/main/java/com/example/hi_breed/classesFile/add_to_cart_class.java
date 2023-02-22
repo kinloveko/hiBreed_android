@@ -1,8 +1,12 @@
 package com.example.hi_breed.classesFile;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.Timestamp;
 
-public class add_to_cart_class {
+import java.io.Serializable;
+public class add_to_cart_class implements Serializable, Parcelable {
     String id;
     String prod_id;
     String prod_category;
@@ -27,6 +31,27 @@ public class add_to_cart_class {
     }
 
 
+    protected add_to_cart_class(Parcel in) {
+        id = in.readString();
+        prod_id = in.readString();
+        prod_category = in.readString();
+        prod_price = in.readString();
+        addBy = in.readString();
+        prod_seller = in.readString();
+        timestamp = in.readParcelable(Timestamp.class.getClassLoader());
+    }
+
+    public static final Creator<add_to_cart_class> CREATOR = new Creator<add_to_cart_class>() {
+        @Override
+        public add_to_cart_class createFromParcel(Parcel in) {
+            return new add_to_cart_class(in);
+        }
+
+        @Override
+        public add_to_cart_class[] newArray(int size) {
+            return new add_to_cart_class[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -56,4 +81,19 @@ public class add_to_cart_class {
         return timestamp;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(prod_id);
+        dest.writeString(prod_category);
+        dest.writeString(prod_price);
+        dest.writeString(addBy);
+        dest.writeString(prod_seller);
+        dest.writeParcelable(timestamp, flags);
+    }
 }
