@@ -25,10 +25,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".checkout_thankyou"
+            android:name=".set_appointment"
             android:exported="false" />
         <activity
-            android:name=".checkout_activity"
+            android:name=".checkout.checkout_thankyou"
+            android:exported="false" />
+        <activity
+            android:name=".checkout.checkout_activity"
             android:exported="false" />
         <activity
             android:name=".product.product_my_product_edit"

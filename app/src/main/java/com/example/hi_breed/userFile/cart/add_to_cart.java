@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.checkout_activity;
+import com.example.hi_breed.checkout.checkout_activity;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.addToCart_adapter;
 import com.example.hi_breed.classesFile.add_to_cart_class;

@@ -1,4 +1,4 @@
-package com.example.hi_breed;
+package com.example.hi_breed.checkout;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.checkout_adapter;
@@ -48,7 +49,7 @@ public class checkout_activity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.checkout_panel);
+        setContentView(R.layout.checkout_details);
 
 
         Window window = getWindow();
@@ -118,6 +119,9 @@ public class checkout_activity extends BaseActivity {
                     }
                 });
 
+
+/*          disabling it for future features
+
         // Set click listener for gcashLayout
         gcashLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +145,7 @@ public class checkout_activity extends BaseActivity {
                     circleGcash.setTag(false);
                 }
             }
-        });
+        });*/
 
 // Set click listener for codLayout
         codLayout.setOnClickListener(new View.OnClickListener() {
@@ -199,7 +203,6 @@ public class checkout_activity extends BaseActivity {
                 else{
                     gotoAnotherActivity();
                 }
-
             }
         });
     }

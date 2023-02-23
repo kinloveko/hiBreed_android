@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.bumptech.glide.Glide;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
@@ -28,6 +27,7 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.likes_class;
 import com.example.hi_breed.classesFile.service_class;
+import com.example.hi_breed.set_appointment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -42,8 +42,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class shooter_display_details extends BaseActivity {
     ImageView heart_like,share_to_messenger;
    LinearLayout backLayout;
@@ -51,7 +49,6 @@ public class shooter_display_details extends BaseActivity {
    TextView details_shooter_name;
     TextView         details_service_type;
     TextView details_shooter_price;
-    CircleImageView details_shopProfile_details;
     TextView details_pet_description;
     TextView details_service_address;
     TextView        details_service_availability;
@@ -86,7 +83,6 @@ public class shooter_display_details extends BaseActivity {
         details_shooter_name = findViewById(R.id.details_shooter_name);
         details_service_type = findViewById(R.id.details_service_type);
         details_shooter_price = findViewById(R.id.details_shooter_price);
-        details_shopProfile_details = findViewById(R.id.details_shopProfile_details);
         details_pet_description = findViewById(R.id.details_pet_description);
         details_service_address = findViewById(R.id.details_service_address);
         details_service_availability = findViewById(R.id.details_service_availability);
@@ -147,23 +143,6 @@ public class shooter_display_details extends BaseActivity {
                     });
 
 
-            FirebaseFirestore.getInstance().collection("User").document(service.getShooter_id())
-                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
-                                DocumentSnapshot snapshot = task.getResult();
-                                if(snapshot != null){
-
-                                    Glide.with( shooter_display_details.this)
-                                            .load(snapshot.getString("image"))
-                                            .placeholder(R.drawable.noimage)
-                                            .error(R.drawable.screen_alert_image_error_border)
-                                            .into(details_shopProfile_details);
-                                }
-                            }
-                        }
-                    });
 
             //slide
             if(service.getPhotos() !=null) {
@@ -175,7 +154,7 @@ public class shooter_display_details extends BaseActivity {
             }
             details_service_address.setText(service.getAddress());
 
-            FirebaseFirestore.getInstance().collection("User").document(service.getShooter_id())
+            FirebaseFirestore.getInstance().collection("Shop").document(service.getShooter_id())
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @SuppressLint("SetTextI18n")
                         @Override
@@ -183,13 +162,12 @@ public class shooter_display_details extends BaseActivity {
                             if(task.isSuccessful()){
                                 DocumentSnapshot snapshot = task.getResult();
 
-                                details_shooter_name.setText(snapshot.getString("firstName")+" "+snapshot.getString("middleName")
-                                        +" "+snapshot.getString("lastName"));
+                                details_service_type.setText(snapshot.getString("shopName"));
                             }
                         }
                     });
 
-            details_service_type.setText(service.getServiceType());
+            details_shooter_name.setText(service.getServiceType());
             details_shooter_price.setText(service.getService_fee());
             details_service_availability.setText(service.getAvailability());
             details_pet_description.setText(service.getService_description());
@@ -223,6 +201,12 @@ public class shooter_display_details extends BaseActivity {
                     heart_like.setImageResource(R.drawable.icon_heart_likes);
                     heart_like.setTag(false);
                 }
+            }
+        });
+        details_button_hireNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                   startActivity(new Intent(shooter_display_details.this, set_appointment.class));
             }
         });
     }

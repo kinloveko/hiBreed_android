@@ -1,4 +1,4 @@
-package com.example.hi_breed;
+package com.example.hi_breed.checkout;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.marketplace.m_market_place_container;
 import com.example.hi_breed.userFile.dashboard.user_dashboard;

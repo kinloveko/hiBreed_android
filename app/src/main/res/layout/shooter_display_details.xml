@@ -103,46 +103,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/details_shop_profile_cardView"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="10dp"
-                        app:cardCornerRadius="300dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="MissingConstraints">
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/details_shopProfile_details"
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:layout_gravity="center"
-                            android:backgroundTint="@color/black"
-                            android:contentDescription="Profile"
-                            android:src="@drawable/noimage"
-                            android:translationZ="3dp"
-                            app:civ_border_color="@color/mustard"
-                            app:civ_border_width="2dp"
-                            tools:ignore="HardcodedText" />
-                    </androidx.cardview.widget.CardView>
 
                     <TextView
                         android:id="@+id/details_shooter_name"
-                        android:layout_width="250dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
                         android:layout_marginTop="20dp"
                         android:layout_toEndOf="@+id/details_shop_profile_cardView"
+                        android:ellipsize="end"
                         android:fontFamily="@font/poppinsmedium"
                         android:text="Shooter name"
                         android:textColor="@color/material_blue_grey_90"
-                        android:textSize="20sp"
-                        android:ellipsize="end"
-                        android:textStyle="bold"
+                        android:textSize="17sp"
                         android:translationZ="3dp"
                         tools:ignore="HardcodedText" />
 
@@ -152,13 +126,11 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/details_shooter_name"
                         android:layout_marginStart="15dp"
-                        android:layout_marginTop="-5dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_marginBottom="15dp"
                         android:layout_toEndOf="@+id/details_shop_profile_cardView"
                         android:ellipsize="end"
                         android:text="Dog Shooter"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
                     <ImageView

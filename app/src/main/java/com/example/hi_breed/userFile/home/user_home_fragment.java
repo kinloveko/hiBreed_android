@@ -191,7 +191,7 @@ public class user_home_fragment extends Fragment {
         findDateCardView9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(role.contains("Pet Owner")){
+                if(role.contains("Pet Owner") || role.contains("Veterinarian")){
                     FirebaseFirestore.getInstance().collection("Pet")
                                     .whereEqualTo("pet_breeder",firebaseUser.getUid()).whereEqualTo("displayFor","forDating")
                                             .get()
