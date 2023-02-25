@@ -1,5 +1,7 @@
 package com.example.hi_breed.classesFile;
 
+import com.google.firebase.Timestamp;
+
 import java.util.List;
 
 public class UserClass {
@@ -16,10 +18,11 @@ public class UserClass {
     String gender;
     String idNo;
     String status;
+    Timestamp timestamp;
     public UserClass(){
 
     }
-   public UserClass(String idNo,String first, String middle, String last, String gender, String birth, String address, String zip, String image, String backgroundImage,String status){
+   public UserClass(String idNo, String first, String middle, String last, String gender, String birth, String address, String zip, String image, String backgroundImage, Timestamp timestamp, String status){
        this.idNo=idNo;
         this.firstName = first;
        this.lastName = last;
@@ -31,6 +34,11 @@ public class UserClass {
        this.birth = birth;
        this.gender = gender;
        this.status = status;
+       this.timestamp = timestamp;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
     public String getStatus() {

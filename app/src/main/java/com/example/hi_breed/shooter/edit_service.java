@@ -97,6 +97,7 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
 
       private ImageView petNameclearButton,saveNameButton;
 
+                   @SuppressLint("SetTextI18n")
                    @Override
                    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -378,7 +379,8 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
             id = service.getId();
             shooterID = service.getShooter_id();
             serviceDescEdit.setText(service.getService_description());
-            availabilityTextView.setText(service.getAvailability());
+            availabilityTextView.setText("From"+service.getAvailability().get(0)+"-"+service.getAvailability().get(0));
+
             servicePriceTextView.setText(service.getService_fee());
             if(service.getPhotos()!=null){
                 for (int i = 0; i<service.getPhotos().size();i++){

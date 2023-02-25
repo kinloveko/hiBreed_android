@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -280,7 +281,7 @@ public class fragment_registration_email_password extends Fragment {
 
                                                 Uri image = Uri.parse("android.resource://"+ getActivity().getPackageName()+"/"+R.drawable.noimage);
                                                 Uri imageCover= Uri.parse("android.resource://"+ getActivity().getPackageName()+"/"+R.drawable.nobackground);
-                                                UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(),"pending");
+                                                UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"pending");
                                                 EmailPassClass security = new EmailPassClass(email,password,"");
                                                 DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
                                                 documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -40,6 +40,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class shooter_display_details extends BaseActivity {
@@ -59,7 +60,7 @@ public class shooter_display_details extends BaseActivity {
     String sched="";
 
 
-    @SuppressLint("ObsoleteSdkInt")
+    @SuppressLint({"ObsoleteSdkInt", "SetTextI18n"})
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,14 +170,12 @@ public class shooter_display_details extends BaseActivity {
 
             details_shooter_name.setText(service.getServiceType());
             details_shooter_price.setText(service.getService_fee());
-            details_service_availability.setText(service.getAvailability());
+            details_service_availability.setText("From "+service.getAvailability().get(0)+"-"+service.getAvailability().get(1));
             details_pet_description.setText(service.getService_description());
             if(service.getSchedule().size() !=0){
 
                 for(int i = 0; i < service.getSchedule().size();i++){
-                    if(i == 2){
-                        sched += service.getSchedule().get(i)+"\n";
-                    }
+
                     sched += service.getSchedule().get(i)+" ";
                 }
                 details_service_schedule.setText(sched);
@@ -206,7 +205,9 @@ public class shooter_display_details extends BaseActivity {
         details_button_hireNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                   startActivity(new Intent(shooter_display_details.this, set_appointment.class));
+                Intent intent = new Intent(shooter_display_details.this, set_appointment.class);
+                intent.putExtra("model", (Serializable) service);
+                   startActivity(intent);
             }
         });
     }

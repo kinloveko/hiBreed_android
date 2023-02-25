@@ -63,6 +63,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -288,7 +289,10 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void checkInput() {
         String description = serviceDescEdit.getText().toString();
+
+
         String avail = availabilityTextView.getText().toString();
+        List<String> avails = Arrays.asList(froms,tos);
         String name = petNameEdit.getText().toString();
 
 
@@ -360,7 +364,7 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
         String id = UUID.randomUUID().toString();
 
         if(roles.contains("Veterinarian")){
-            service_class service = new service_class(id,description,schedule,avail,address,price,null,user.getUid(),name,"Service", Timestamp.now(),true);
+            service_class service = new service_class(id,description,schedule,avails,address,price,null,user.getUid(),name,"Service", Timestamp.now(),true);
             FirebaseFirestore.getInstance().collection("User").document(user.getUid())
                     .collection("Services")
                     .document(id)
@@ -394,7 +398,7 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
 
 
         }else{
-            service_class service = new service_class(id,description,schedule,avail,address,price,null,user.getUid(),"Shooter","Service", Timestamp.now(),true);
+            service_class service = new service_class(id,description,schedule,avails,address,price,null,user.getUid(),"Shooter","Service", Timestamp.now(),true);
             FirebaseFirestore.getInstance().collection("User").document(user.getUid())
                     .collection("Services")
                     .document(id)
@@ -404,7 +408,7 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
                             if(task.isSuccessful()){
                                 FirebaseFirestore.getInstance().collection("Shop")
                                         .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .collection("Service")
+                                        .collection("Services")
                                         .document(id)
                                         .set(service,SetOptions.merge())
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -486,6 +490,8 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
                                         if(task.isSuccessful()){
                                             FirebaseFirestore.getInstance().collection("Shop")
                                                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .collection("Service")
+                                                    .document(id)
                                                     .update("photos",photos,"timestamp",FieldValue.serverTimestamp())
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
@@ -702,6 +708,8 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
     String toHoursHolder = "";
     String toPmAMHolder = "";
     String toMinutesHolder = "";
+    String froms;
+    String tos;
     @SuppressLint("SetTextI18n")
     private void setTimeTo(AlertDialog alertDialog, String hoursHolder, String minutesHolder, String pmAMHolder) {
 
@@ -780,7 +788,9 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
                 }
                 alertDialog.dismiss();
                 availabilityTextView.setTextSize(10);
-                availabilityTextView.setText("From "+ convertDate(Integer.parseInt(finalHoursHolder)) +" : "+ convertDate(Integer.parseInt(finalMinutesHolder)) +" "+ finalPmAMHolder +"-"
+                froms = convertDate(Integer.parseInt(finalHoursHolder)) +":"+ convertDate(Integer.parseInt(finalMinutesHolder))+" "+finalPmAMHolder;
+                tos =convertDate(Integer.parseInt(toHoursHolder))+":"+convertDate(Integer.parseInt(toMinutesHolder))+" "+toPmAMHolder;
+                availabilityTextView.setText("From "+ convertDate(Integer.parseInt(finalHoursHolder)) +":"+ convertDate(Integer.parseInt(finalMinutesHolder)) +" "+ finalPmAMHolder +"-"
                 +convertDate(Integer.parseInt(toHoursHolder))+" : "+convertDate(Integer.parseInt(toMinutesHolder))+" "+toPmAMHolder);
                 dialog.dismiss();
             }
