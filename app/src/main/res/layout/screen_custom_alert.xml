@@ -102,7 +102,7 @@
                 android:layout_centerInParent="true"
                 android:background="@drawable/shape_loading"
                 android:backgroundTint="@color/main_green_stroke_color"
-                android:src="@drawable/icon_check_box"/>
+                android:src="@drawable/icon_check"/>
             <TextView
                 android:id="@+id/screen_custom_clearText"
                 android:layout_width="wrap_content"

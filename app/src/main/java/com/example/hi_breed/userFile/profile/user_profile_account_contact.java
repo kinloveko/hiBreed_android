@@ -26,12 +26,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.classesFile.EmailPassClass;
 import com.example.hi_breed.classesFile.BaseActivity;
+import com.example.hi_breed.classesFile.EmailPassClass;
 import com.example.hi_breed.loginAndRegistration.Login;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -54,9 +55,10 @@ import java.util.regex.Pattern;
 
 import pl.droidsonroids.gif.GifImageView;
 
-public class user_profile_account_contact extends BaseActivity {
-    String clickName;
+public class
+user_profile_account_contact extends BaseActivity {
 
+    String clickName;
     String before_email;
     String before_contact;
     String get_password;
@@ -68,6 +70,7 @@ public class user_profile_account_contact extends BaseActivity {
     FirebaseUser user;
     LinearLayout backLayout;
     CountDownTimer cTimer = null;
+    String phoneNumber;
     final Pattern phonePattern = Pattern.compile("^(09)\\d{9}");
     final Pattern p = Pattern.compile("^" +
             "(?=.*[@#$%^&!+=])" +     // at least 1 special character
@@ -75,6 +78,7 @@ public class user_profile_account_contact extends BaseActivity {
             ".{5,}" +                // at least 5 characters
             "$");
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,47 +176,6 @@ public class user_profile_account_contact extends BaseActivity {
 
     }
 
-    private void getUser(DocumentReference documentReference) {
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                  DocumentSnapshot snapshot = task.getResult();
-                    if(snapshot.exists()){
-                        EmailPassClass securityClass = snapshot.toObject(EmailPassClass.class);
-                        if(securityClass!=null){
-                            before_contact = securityClass.getContactNumber();
-                            before_email = securityClass.getEmail();
-
-                            get_password = securityClass.getPass();
-
-
-                            if(securityClass.getEmail().equals("")){
-                                emailInput.setText("Set email address");
-                            }
-                            else{
-                                emailInput.setText(securityClass.getEmail());
-                            }
-                            if(securityClass.getContactNumber().equals("")){
-                                contactInput.setText("Set phone number");
-                            }
-                            else{
-                                contactInput.setText(securityClass.getContactNumber());
-                            }
-                        }
-                    }
-                    else{
-                        FirebaseAuth.getInstance().signOut();
-                        startActivity(new Intent(user_profile_account_contact.this, Login.class));
-                        finish();
-                    }
-                }
-            }
-        });
-
-
-    }
 
     int count = 0;
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
@@ -310,11 +273,11 @@ public class user_profile_account_contact extends BaseActivity {
                         Toast.makeText(user_profile_account_contact.this, "Oops. You made no entry! your password was expected", Toast.LENGTH_SHORT).show();
                     }
                     else if(!(editText.getText().toString().equals(get_password))){
-                            count = 1;
+                        count = 1;
                         Toast.makeText(user_profile_account_contact.this, "Oops. You entered password doesn't matched to this user", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                            alert3.dismiss();
+                        alert3.dismiss();
 
                         AlertDialog.Builder builder3 = new AlertDialog.Builder(user_profile_account_contact.this);
                         View view2 = View.inflate(user_profile_account_contact.this,R.layout.screen_custom_alert,null);
@@ -425,225 +388,225 @@ public class user_profile_account_contact extends BaseActivity {
                                 }
                                 else{
                                     FirebaseAuth.getInstance().fetchSignInMethodsForEmail(editText.getText().toString())
-                                                    .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                                            .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
 
-                                                            boolean isNewUser = Objects.requireNonNull(task.getResult().getSignInMethods()).isEmpty();
-                                                            if(isNewUser){
-                                                                user.updateEmail(editText.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>()
-                                                                {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                                        if(task.isSuccessful()){
-                                                                            count = 1;
-                                                                            emailInput.setText(editText.getText().toString());
+                                                    boolean isNewUser = Objects.requireNonNull(task.getResult().getSignInMethods()).isEmpty();
+                                                    if(isNewUser){
+                                                        user.updateEmail(editText.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>()
+                                                        {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    count = 1;
+                                                                    emailInput.setText(editText.getText().toString());
 
-                                                                            //save old and new email in fire store @security --> security_doc
-                                                                            Map<String, Object> data = new HashMap<>();
-                                                                            data.put("old_email", before_email);
-                                                                            data.put("email", editText.getText().toString());
-                                                                            FirebaseFirestore.getInstance().collection("User")
+                                                                    //save old and new email in fire store @security --> security_doc
+                                                                    Map<String, Object> data = new HashMap<>();
+                                                                    data.put("old_email", before_email);
+                                                                    data.put("email", editText.getText().toString());
+                                                                    FirebaseFirestore.getInstance().collection("User")
+                                                                            .document(user.getUid())
+                                                                            .collection("security")
+                                                                            .document("security_doc")
+                                                                            .set(data, SetOptions.merge());
+                                                                    // check if the user is verified
+
+                                                                    alert4.dismiss();
+                                                                    AlertDialog.Builder builder3 = new AlertDialog.Builder(user_profile_account_contact.this);
+                                                                    View view2 = View.inflate(user_profile_account_contact.this, R.layout.screen_custom_alert, null);
+                                                                    builder3.setCancelable(false);
+                                                                    //title
+                                                                    TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
+                                                                    title2.setText("Verify your new email");
+                                                                    //message
+                                                                    TextView message2 = view2.findViewById(R.id.screen_custom_alert_message);
+                                                                    message2.setText("Click VERIFY to send a verification link to your email that you've provided.");
+                                                                    //loading
+                                                                    TextView loadingText = view2.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                    loadingText.setVisibility(View.GONE);
+                                                                    //top image
+                                                                    AppCompatImageView imageViewCompat2 = view2.findViewById(R.id.appCompatImageView);
+                                                                    imageViewCompat2.setVisibility(View.VISIBLE);
+                                                                    imageViewCompat2.setImageDrawable(getDrawable(R.drawable.dialog_email_borders));
+                                                                    //gif
+                                                                    GifImageView gif = view2.findViewById(R.id.screen_custom_alert_gif);
+                                                                    gif.setVisibility(View.GONE);
+                                                                    //button layout
+                                                                    LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                    buttonLayout.setVisibility(View.VISIBLE);
+                                                                    //button
+                                                                    MaterialButton cancel, okay;
+                                                                    //cancel button
+                                                                    cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                    cancel.setText("Cancel");
+                                                                    //Okay button
+                                                                    okay = view2.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                    okay.setText("Verify");
+                                                                    okay.setBackgroundColor(Color.parseColor("#F6B75A"));
+                                                                    okay.setTextColor(Color.WHITE);
+
+                                                                    //EditText Layout
+                                                                    RelativeLayout editLayout = view2.findViewById(R.id.screen_custom_editText_layout);
+                                                                    editLayout.setVisibility(View.GONE);
+                                                                    //EditText
+
+                                                                    //valid
+                                                                    ImageView valid = view2.findViewById(R.id.screen_custom_valid_icon);
+                                                                    //clear text
+                                                                    TextView clear = view2.findViewById(R.id.screen_custom_clearText);
+                                                                    clear.setVisibility(View.GONE);
+
+                                                                    builder3.setView(view2);
+                                                                    AlertDialog alert3 = builder3.create();
+                                                                    alert3.show();
+                                                                    alert3.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                                                                    cancel.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            alert4.dismiss();
+                                                                            alert3.dismiss();
+
+                                                                            //getting the old email
+                                                                            FirebaseFirestore.getInstance()
+                                                                                    .collection("User")
                                                                                     .document(user.getUid())
                                                                                     .collection("security")
                                                                                     .document("security_doc")
-                                                                                    .set(data, SetOptions.merge());
-                                                                            // check if the user is verified
+                                                                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                                            if(task.isSuccessful()){
 
-                                                                            alert4.dismiss();
-                                                                            AlertDialog.Builder builder3 = new AlertDialog.Builder(user_profile_account_contact.this);
-                                                                            View view2 = View.inflate(user_profile_account_contact.this, R.layout.screen_custom_alert, null);
-                                                                            builder3.setCancelable(false);
-                                                                            //title
-                                                                            TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
-                                                                            title2.setText("Verify your new email");
-                                                                            //message
-                                                                            TextView message2 = view2.findViewById(R.id.screen_custom_alert_message);
-                                                                            message2.setText("Click VERIFY to send a verification link to your email that you've provided.");
-                                                                            //loading
-                                                                            TextView loadingText = view2.findViewById(R.id.screen_custom_alert_loadingText);
-                                                                            loadingText.setVisibility(View.GONE);
-                                                                            //top image
-                                                                            AppCompatImageView imageViewCompat2 = view2.findViewById(R.id.appCompatImageView);
-                                                                            imageViewCompat2.setVisibility(View.VISIBLE);
-                                                                            imageViewCompat2.setImageDrawable(getDrawable(R.drawable.dialog_email_borders));
-                                                                            //gif
-                                                                            GifImageView gif = view2.findViewById(R.id.screen_custom_alert_gif);
-                                                                            gif.setVisibility(View.GONE);
-                                                                            //button layout
-                                                                            LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
-                                                                            buttonLayout.setVisibility(View.VISIBLE);
-                                                                            //button
-                                                                            MaterialButton cancel, okay;
-                                                                            //cancel button
-                                                                            cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
-                                                                            cancel.setText("Cancel");
-                                                                            //Okay button
-                                                                            okay = view2.findViewById(R.id.screen_custom_alert_dialog_btn_done);
-                                                                            okay.setText("Verify");
-                                                                            okay.setBackgroundColor(Color.parseColor("#F6B75A"));
-                                                                            okay.setTextColor(Color.WHITE);
+                                                                                                DocumentSnapshot value = task.getResult();
+                                                                                                String oldEmail = value.getString("old_email");
+                                                                                                Map<String, Object> data = new HashMap<>();
+                                                                                                data.put("email", oldEmail);
+                                                                                                data.put("old_email", "");
 
-                                                                            //EditText Layout
-                                                                            RelativeLayout editLayout = view2.findViewById(R.id.screen_custom_editText_layout);
-                                                                            editLayout.setVisibility(View.GONE);
-                                                                            //EditText
+                                                                                                FirebaseAuth.getInstance().getCurrentUser()
+                                                                                                        .updateEmail(oldEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                            @Override
+                                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                                                //storing in fireStore
+                                                                                                                FirebaseAuth.getInstance().getCurrentUser();
+                                                                                                                FirebaseFirestore
+                                                                                                                        .getInstance()
+                                                                                                                        .collection("User")
+                                                                                                                        .document(user.getUid())
+                                                                                                                        .collection("security")
+                                                                                                                        .document("security_doc")
+                                                                                                                        .set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                            @Override
+                                                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                                                                if (task.isSuccessful()) {
 
-                                                                            //valid
-                                                                            ImageView valid = view2.findViewById(R.id.screen_custom_valid_icon);
-                                                                            //clear text
-                                                                            TextView clear = view2.findViewById(R.id.screen_custom_clearText);
-                                                                            clear.setVisibility(View.GONE);
+                                                                                                                                    getUser(documentReference);
 
-                                                                            builder3.setView(view2);
-                                                                            AlertDialog alert3 = builder3.create();
-                                                                            alert3.show();
-                                                                            alert3.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                                                                            cancel.setOnClickListener(new View.OnClickListener() {
-                                                                                @Override
-                                                                                public void onClick(View v) {
-                                                                                    alert4.dismiss();
-                                                                                    alert3.dismiss();
-
-                                                                                    //getting the old email
-                                                                                    FirebaseFirestore.getInstance()
-                                                                                            .collection("User")
-                                                                                            .document(user.getUid())
-                                                                                            .collection("security")
-                                                                                            .document("security_doc")
-                                                                                            .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                                                @Override
-                                                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                                                    if(task.isSuccessful()){
-
-                                                                                                        DocumentSnapshot value = task.getResult();
-                                                                                                        String oldEmail = value.getString("old_email");
-                                                                                                        Map<String, Object> data = new HashMap<>();
-                                                                                                        data.put("email", oldEmail);
-                                                                                                        data.put("old_email", "");
-
-                                                                                                        FirebaseAuth.getInstance().getCurrentUser()
-                                                                                                                .updateEmail(oldEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                                    @Override
-                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                                                                                        //storing in fireStore
-                                                                                                                        FirebaseAuth.getInstance().getCurrentUser();
-                                                                                                                        FirebaseFirestore
-                                                                                                                                .getInstance()
-                                                                                                                                .collection("User")
-                                                                                                                                .document(user.getUid())
-                                                                                                                                .collection("security")
-                                                                                                                                .document("security_doc")
-                                                                                                                                .set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                                                    @Override
-                                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                                                                                                        if (task.isSuccessful()) {
-
-                                                                                                                                            getUser(documentReference);
-
-                                                                                                                                        }
-                                                                                                                                    }
-                                                                                                                                });
-                                                                                                                        Toast.makeText(user_profile_account_contact.this, "No changes, cancel button clicked.", Toast.LENGTH_LONG).show();
-                                                                                                                    }
-                                                                                                                });
-                                                                                                    }
-
-
-                                                                                                }
-                                                                                            });
-                                                                                }
-                                                                            });
-
-                                                                            okay.setOnClickListener(new View.OnClickListener() {
-                                                                                @Override
-                                                                                public void onClick(View v) {
-                                                                                    loadingText.setVisibility(View.VISIBLE);
-                                                                                    user.sendEmailVerification();
-                                                                                    okay.setVisibility(View.GONE);
-                                                                                    cancel.setVisibility(View.GONE);
-
-
-                                                                                    cTimer = new CountDownTimer(15000, 1000) {
-                                                                                        public void onTick(long millisUntilFinished) {
-                                                                                            loadingText.setText("seconds remaining: " + String.valueOf(millisUntilFinished / 1000));
-
-                                                                                        }
-
-                                                                                        public void onFinish() {
-                                                                                            if (user.isEmailVerified()) {
-                                                                                                count = 1;
-                                                                                                alert4.dismiss();
-                                                                                                FirebaseAuth.getInstance().getCurrentUser().updateEmail(editText.getText().toString());
-                                                                                                Toast.makeText(user_profile_account_contact.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
-
-                                                                                            } else {
-                                                                                                loadingText.setVisibility(View.GONE);
-                                                                                                message2.setText("If you wish to verify again click verify button and cancel if you wish to cancel the changing of your email");
-                                                                                                title2.setText("Re send verification?");
-                                                                                                okay.setVisibility(View.VISIBLE);
-                                                                                                cancel.setVisibility(View.VISIBLE);
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        });
+                                                                                                                Toast.makeText(user_profile_account_contact.this, "No changes, cancel button clicked.", Toast.LENGTH_LONG).show();
+                                                                                                            }
+                                                                                                        });
                                                                                             }
+
+
                                                                                         }
-                                                                                    };
-                                                                                    cTimer.start();
-                                                                                }
-                                                                            });
+                                                                                    });
                                                                         }
-                                                                    }
-                                                                }).addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
+                                                                    });
 
-                                                                        alert4.dismiss();
-                                                                        Toast.makeText(user_profile_account_contact.this, "Please try again, or go Sign out and Sign in again. Then you can continue changing your email", Toast.LENGTH_LONG).show();
-                                                                    }
-                                                                });
+                                                                    okay.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            loadingText.setVisibility(View.VISIBLE);
+                                                                            user.sendEmailVerification();
+                                                                            okay.setVisibility(View.GONE);
+                                                                            cancel.setVisibility(View.GONE);
 
+
+                                                                            cTimer = new CountDownTimer(15000, 1000) {
+                                                                                public void onTick(long millisUntilFinished) {
+                                                                                    loadingText.setText("seconds remaining: " + String.valueOf(millisUntilFinished / 1000));
+
+                                                                                }
+
+                                                                                public void onFinish() {
+                                                                                    if (user.isEmailVerified()) {
+                                                                                        count = 1;
+                                                                                        alert4.dismiss();
+                                                                                        FirebaseAuth.getInstance().getCurrentUser().updateEmail(editText.getText().toString());
+                                                                                        Toast.makeText(user_profile_account_contact.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
+
+                                                                                    } else {
+                                                                                        loadingText.setVisibility(View.GONE);
+                                                                                        message2.setText("If you wish to verify again click verify button and cancel if you wish to cancel the changing of your email");
+                                                                                        title2.setText("Re send verification?");
+                                                                                        okay.setVisibility(View.VISIBLE);
+                                                                                        cancel.setVisibility(View.VISIBLE);
+                                                                                    }
+                                                                                }
+                                                                            };
+                                                                            cTimer.start();
+                                                                        }
+                                                                    });
+                                                                }
                                                             }
-                                                            else{
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+
                                                                 alert4.dismiss();
-                                                                AlertDialog.Builder builder3 = new AlertDialog.Builder(user_profile_account_contact.this);
-                                                                View view2 = View.inflate(user_profile_account_contact.this,R.layout.screen_custom_alert,null);
-                                                                builder3.setCancelable(false);
-                                                                TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
-                                                                TextView loadingText = view2.findViewById(R.id.screen_custom_alert_loadingText);
-                                                                loadingText.setVisibility(View.GONE);
-                                                                AppCompatImageView imageViewCompat2 = view2.findViewById(R.id.appCompatImageView);
-                                                                imageViewCompat2.setVisibility(View.VISIBLE);
-                                                                imageViewCompat2.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_error_border));
-                                                                GifImageView gif = view2.findViewById(R.id.screen_custom_alert_gif);
-                                                                gif.setVisibility(View.GONE);
-                                                                TextView message2 = view2.findViewById(R.id.screen_custom_alert_message);
-                                                                title2.setText("Email address already exist!");
-                                                                message2.setText("Please use another email address.");
-                                                                LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
-                                                                buttonLayout.setVisibility(View.VISIBLE);
-                                                                MaterialButton cancel,okay;
-                                                                cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
-                                                                cancel.setVisibility(View.GONE);
-                                                                okay = view2.findViewById(R.id.screen_custom_alert_dialog_btn_done);
-                                                                okay.setText("Okay");
-                                                                okay.setBackgroundColor(Color.parseColor("#999999"));
-                                                                okay.setTextColor(Color.WHITE);
-                                                                builder3.setView(view2);
-                                                                AlertDialog alert3 = builder3.create();
-                                                                alert3.show();
-                                                                alert3.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                                                okay.setOnClickListener(new View.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(View v) {
-                                                                        alert3.dismiss();
-                                                                        alert4.show();
-                                                                    }
-                                                                });
-
+                                                                Toast.makeText(user_profile_account_contact.this, "Please try again, or go Sign out and Sign in again. Then you can continue changing your email", Toast.LENGTH_LONG).show();
                                                             }
+                                                        });
+
+                                                    }
+                                                    else{
+                                                        alert4.dismiss();
+                                                        AlertDialog.Builder builder3 = new AlertDialog.Builder(user_profile_account_contact.this);
+                                                        View view2 = View.inflate(user_profile_account_contact.this,R.layout.screen_custom_alert,null);
+                                                        builder3.setCancelable(false);
+                                                        TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
+                                                        TextView loadingText = view2.findViewById(R.id.screen_custom_alert_loadingText);
+                                                        loadingText.setVisibility(View.GONE);
+                                                        AppCompatImageView imageViewCompat2 = view2.findViewById(R.id.appCompatImageView);
+                                                        imageViewCompat2.setVisibility(View.VISIBLE);
+                                                        imageViewCompat2.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_error_border));
+                                                        GifImageView gif = view2.findViewById(R.id.screen_custom_alert_gif);
+                                                        gif.setVisibility(View.GONE);
+                                                        TextView message2 = view2.findViewById(R.id.screen_custom_alert_message);
+                                                        title2.setText("Email address already exist!");
+                                                        message2.setText("Please use another email address.");
+                                                        LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                        buttonLayout.setVisibility(View.VISIBLE);
+                                                        MaterialButton cancel,okay;
+                                                        cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                        cancel.setVisibility(View.GONE);
+                                                        okay = view2.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                        okay.setText("Okay");
+                                                        okay.setBackgroundColor(Color.parseColor("#999999"));
+                                                        okay.setTextColor(Color.WHITE);
+                                                        builder3.setView(view2);
+                                                        AlertDialog alert3 = builder3.create();
+                                                        alert3.show();
+                                                        alert3.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                        okay.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                alert3.dismiss();
+                                                                alert4.show();
+                                                            }
+                                                        });
+
+                                                    }
 
 
-                                                        }
-                                                    });
+                                                }
+                                            });
 
                                 }
                                 if(count!=0){
@@ -662,6 +625,7 @@ public class user_profile_account_contact extends BaseActivity {
 
         }
         else if(clickName.equals("contact")){
+
             AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
             View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
             builder3.setCancelable(false);
@@ -751,6 +715,7 @@ public class user_profile_account_contact extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     alert3.dismiss();
+
                 }
             });
             okay.setOnClickListener(new View.OnClickListener() {
@@ -771,26 +736,19 @@ public class user_profile_account_contact extends BaseActivity {
                         Toast.makeText(user_profile_account_contact.this, "Oops. We expecting a different name, but you entered the same value.", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        contactInput.setText(editText.getText().toString());
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("contactNumber",editText.getText().toString());
-                        FirebaseFirestore.getInstance().collection("User")
-                                .document(user.getUid())
-                                .collection("security")
-                                .document("security_doc")
-                                .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        Toast.makeText(user_profile_account_contact.this, "Successfully Set", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                        Toast.makeText(user_profile_account_contact.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
-                        count = 1;
-                    }
-                    if(count != 0){
+
+
+
+                        // Remove leading "0" and replace with "+63"
+                       phoneNumber = editText.getText().toString().trim();
+                        if (phoneNumber.startsWith("0") && phoneNumber.length() == 11) {
+                            phoneNumber = "+63" + phoneNumber.substring(1);
+                        }
+
+
                         alert3.dismiss();
-                    }
-                    else{
+                        Toast.makeText(user_profile_account_contact.this, phoneNumber, Toast.LENGTH_SHORT).show();
+
 
                     }
                 }
@@ -799,12 +757,182 @@ public class user_profile_account_contact extends BaseActivity {
     }
 
 
+    @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
+    private void getOtpFromMessage(String message) {
+
+        AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
+        View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
+        builder3.setCancelable(false);
+        //title
+        TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
+        title2.setText("Enter the OTP");
+        //message
+        TextView message2 = view2.findViewById(R.id.screen_custom_alert_message);
+        message2.setText("Please input the OTP sent in your SMS, valid for 1 minute.");
+        //loading
+        TextView loadingText = view2.findViewById(R.id.screen_custom_alert_loadingText);
+        loadingText.setVisibility(View.GONE);
+        //top image
+        AppCompatImageView imageViewCompat2 = view2.findViewById(R.id.appCompatImageView);
+        imageViewCompat2.setVisibility(View.VISIBLE);
+        imageViewCompat2.setImageDrawable(getDrawable(R.drawable.dialog_phone_borders));
+        //gif
+        GifImageView gif = view2.findViewById(R.id.screen_custom_alert_gif);
+        gif.setVisibility(View.GONE);
+        //button layout
+        LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
+        buttonLayout.setVisibility(View.VISIBLE);
+        //button
+        MaterialButton cancel,okay;
+        //cancel button
+        cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
+        cancel.setText("Cancel");
+        //Okay button
+        okay = view2.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+        okay.setText("Save");
+        okay.setBackgroundColor(Color.parseColor("#F6B75A"));
+        okay.setTextColor(Color.WHITE);
+        //EditText
+        EditText editText = view2.findViewById(R.id.screen_custom_editText);
+        RelativeLayout editLayout = view2.findViewById(R.id.screen_custom_editText_layout);
+        editLayout.setVisibility(View.VISIBLE);
+        editText.setHint("OTP");
+        editText.setError(null);
+        int maxLength = 6;
+        editText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        //valid
+        ImageView valid = view2.findViewById(R.id.screen_custom_valid_icon);
+        //clear text
+        TextView clear = view2.findViewById(R.id.screen_custom_clearText);
+        clear.setVisibility(View.GONE);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()!=0){
+
+                    clear.setVisibility(View.VISIBLE);
+                    clear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            editText.getText().clear();
+                        }
+                    });
+                }
+                else{
+
+                    clear.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        builder3.setView(view2);
+        AlertDialog alert3 = builder3.create();
+        alert3.show();
+        alert3.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(editText.getText().toString().isEmpty()){
+                    Toast.makeText(user_profile_account_contact.this, "Field is empty!", Toast.LENGTH_SHORT).show();
+                    count = 0;
+                }else
+                if (message.equals(editText.getText().toString())){
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("contactNumber",phoneNumber);
+                    contactInput.setText(phoneNumber);
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(user.getUid())
+                            .collection("security")
+                            .document("security_doc")
+                            .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(user_profile_account_contact.this, "Successfully Set", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    Toast.makeText(user_profile_account_contact.this, "OTP success", Toast.LENGTH_SHORT).show();
+                    count =1;
+                }
+                else{
+                    Toast.makeText(user_profile_account_contact.this, "Incorrect OTP", Toast.LENGTH_SHORT).show();
+                    count=0;
+                }
+                if(count != 0){
+                    alert3.dismiss();
+                }
+                else{
+
+                }
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert3.dismiss();
+            }
+        });
+
+
+
+    }
+
+    private void getUser(DocumentReference documentReference) {
+
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot snapshot = task.getResult();
+                    if(snapshot.exists()){
+                        EmailPassClass securityClass = snapshot.toObject(EmailPassClass.class);
+                        if(securityClass!=null){
+                            before_contact = securityClass.getContactNumber();
+                            before_email = securityClass.getEmail();
+
+                            get_password = securityClass.getPass();
+
+
+                            if(securityClass.getEmail().equals("")){
+                                emailInput.setText("Set email address");
+                            }
+                            else{
+                                emailInput.setText(securityClass.getEmail());
+                            }
+                            if(securityClass.getContactNumber() == null || securityClass.getContactNumber().equals("")){
+                                contactInput.setText("Set phone number");
+                            }
+                            else{
+                                contactInput.setText(securityClass.getContactNumber());
+                            }
+                        }
+                    }
+                    else{
+                        FirebaseAuth.getInstance().signOut();
+                        startActivity(new Intent(user_profile_account_contact.this, Login.class));
+                        finish();
+                    }
+                }
+            }
+        });
+    }
+
     private class ClickClass implements View.OnClickListener {
         @SuppressLint("NonConstantResourceId")
         @Override
         public void onClick(View v) {
             int id =  v.getId();
-
             switch (id){
                 case R.id.contact_email_layout:
                     clickName ="email";
@@ -815,7 +943,7 @@ public class user_profile_account_contact extends BaseActivity {
                     allAlertDialog(clickName);
                     break;
             }
-
         }
     }
+
 }

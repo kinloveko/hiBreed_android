@@ -22,13 +22,16 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.example.hi_breed.checkout.checkout_thankyou;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.service_class;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.ParseException;
@@ -39,6 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import pl.droidsonroids.gif.GifImageView;
 
 public class set_appointment extends BaseActivity {
 
@@ -83,10 +88,11 @@ public class set_appointment extends BaseActivity {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onSuccess(DocumentSnapshot s) {
+
                         check_out_name.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
                         checkout_address.setText(s.getString("address"));
                         checkout_zip.setText(s.getString("zipCode"));
-                        checkout_number.setText("09318924806");
+
                     }
                 });
 
@@ -99,11 +105,10 @@ public class set_appointment extends BaseActivity {
             }
         });
 
-
         Intent intent = getIntent();
         service_class service = (service_class) intent.getSerializableExtra("model");
 
-// Step 1: Retrieve the value of the availability field from Firestore
+        // Step 1: Retrieve the value of the availability field from Firestore
         // Step 1: Retrieve the value of the availability field from Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("Services").document(service.getId());
@@ -134,11 +139,14 @@ public class set_appointment extends BaseActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 checkInput(service);
+
             }
         });
     }
 
+    @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void checkInput(service_class service) {
         String date = dateTextView.getText().toString();
         String time = itemSlot.getText().toString();
@@ -151,13 +159,96 @@ public class set_appointment extends BaseActivity {
             Toast.makeText(this, "Please set a time", Toast.LENGTH_SHORT).show();
             return;
         }
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+        builder2.setCancelable(true);
+        View view = View.inflate(this,R.layout.screen_custom_alert,null);
+        //title
+        TextView title = view.findViewById(R.id.screen_custom_alert_title);
+        //loading text
+        TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+        loadingText.setVisibility(View.GONE);
+        //gif
+        GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+        gif.setVisibility(View.GONE);
+        //header image
+        AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+        imageViewCompat.setVisibility(View.VISIBLE);
+        imageViewCompat.setImageDrawable(getDrawable(R.drawable.dialog_pet_borders));
+        //message
+        TextView message = view.findViewById(R.id.screen_custom_alert_message);
+        title.setText("Sending your request");
+        message.setVisibility(View.VISIBLE);
+        message.setText("Please wait a bit. We are checking your appointments info");
+        builder2.setView(view);
+        AlertDialog alert2 = builder2.create();
+        alert2.show();
+        alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         Map<String,Object> trans = new HashMap<>();
+
+
+
+
         trans.put("id","");
+        trans.put("trans_date_created", Timestamp.now());
+        trans.put("trans_payment","on-site");
+        trans.put("total_amount",service.getService_fee());
+        trans.put("trans_type","Service");
+        trans.put("customer_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
+        trans.put("appointment_id","");
 
-/*
         FirebaseFirestore.getInstance().collection("Transaction")
-                .add()*/
+                .add(trans)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        FirebaseFirestore.getInstance().collection("Transaction")
+                                .document(documentReference.getId())
+                                .update("id",documentReference.getId(),
+                                        "trans_date_time", FieldValue.serverTimestamp())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Map<String,Object> map = new HashMap<>();
+                                        map.put("id","");
+                                        map.put("customer_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                        map.put("seller_id",service.getShooter_id()); // id of the one who offers the service
+                                        map.put("transaction_id",documentReference.getId()); //transaction id FK
+                                        map.put("appointment_date",date); // date selected
+                                        map.put("appointment_time",time); // time selected
+                                        map.put("service_price",service.getService_fee()); // Service fee
+                                        map.put("service_id",service.getId()); //Service ID FK
+                                        map.put("appointment_status","pending");
+                                        FirebaseFirestore.getInstance().collection("Appointments")
+                                                .add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                    @Override
+                                                    public void onSuccess(DocumentReference s) {
+                                                        FirebaseFirestore.getInstance().collection("Appointments")
+                                                                .document(s.getId())
+                                                                .update("id",s.getId()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void unused) {
+                                                                        FirebaseFirestore.getInstance().collection("Transaction")
+                                                                                .document(documentReference.getId())
+                                                                                .update("appointment_id",s.getId())
+                                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(Void unused) {
+                                                                                        alert2.dismiss();
+                                                                                        Intent i = new Intent(set_appointment.this, checkout_thankyou.class);
+                                                                                        i.putExtra("from","Service");
+                                                                                        startActivity(i);
+                                                                                        finish();
+                                                                                    }
+                                                                                });
+                                                                    }
+                                                                });
+                                                    }
+                                                });
+                                    }
+                                });
 
+                    }
+                });
     }
 
 
@@ -324,7 +415,6 @@ public class set_appointment extends BaseActivity {
 
     @SuppressLint({"DefaultLocale", "UseCompatLoadingForDrawables", "SetTextI18n"})
     private void getDate(List<String> schedule){
-        Toast.makeText(this, schedule.toString(), Toast.LENGTH_SHORT).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = View.inflate(this, R.layout.product_add_expiration_dialog, null);
         DatePicker datePicker = view.findViewById(R.id.datePickers);

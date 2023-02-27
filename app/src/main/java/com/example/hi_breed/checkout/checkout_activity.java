@@ -210,6 +210,8 @@ public class checkout_activity extends BaseActivity {
     private void gotoAnotherActivity() {
         Intent i = new Intent(this,checkout_thankyou.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+         i.putExtra("from","Checkout");
+        startActivity(i);
         startActivity(i);
         finish();
     }

@@ -137,7 +137,7 @@
             android:layout_centerInParent="true"
             android:layout_marginEnd="15dp"
             android:layout_toStartOf="@id/delete"
-            android:src="@drawable/icon_check_box" />
+            android:src="@drawable/icon_check_boxs" />
 
         <ImageView
             android:id="@+id/delete"

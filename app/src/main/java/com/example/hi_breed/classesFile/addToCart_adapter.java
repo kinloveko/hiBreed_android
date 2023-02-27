@@ -229,7 +229,7 @@ public class addToCart_adapter extends RecyclerView.Adapter<addToCart_adapter.Vi
 
 
                 } else {
-                    v.check.setImageResource(R.drawable.icon_check_box);
+                    v.check.setImageResource(R.drawable.icon_check_boxs);
                     v.check.setTag(false); // set to false instead of true
                     v.onItemCheckedChanged.onItemCheckedChanged(add, false);
                 }
