@@ -205,11 +205,33 @@ public class shooter_display_details extends BaseActivity {
         details_button_hireNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(shooter_display_details.this, set_appointment.class);
-                intent.putExtra("model", (Serializable) service);
-                   startActivity(intent);
+                FirebaseFirestore.getInstance().collection("User")
+                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .collection("security")
+                        .document("security_doc")
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()){
+                                    DocumentSnapshot s = task.getResult();
+
+                                    if(s.getString("contactNumber")== null || s.getString("contactNumber").equals("")){
+                                        Toast.makeText(shooter_display_details.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                    else{
+                                        Intent intent = new Intent(shooter_display_details.this, set_appointment.class);
+                                        intent.putExtra("model", (Serializable) service);
+                                        startActivity(intent);
+                                         }
+
+                                }
+                            }
+                        });
             }
         });
+
+
     }
 
     private void removeLike() {

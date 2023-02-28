@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.checkout_adapter;
 import com.example.hi_breed.classesFile.priceFormat;
+import com.example.hi_breed.current_address;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -45,6 +47,9 @@ public class checkout_activity extends BaseActivity {
     checkout_adapter adapter;
     RecyclerView recyclerView;
     LinearLayout backLayoutService;
+    RelativeLayout current;
+
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +74,17 @@ public class checkout_activity extends BaseActivity {
         texts = findViewById(R.id.texts);
         onSiteLayout = findViewById(R.id.onSiteLayout);
 
+        current = findViewById(R.id.currentAddress);
+        current.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(checkout_activity.this,current_address.class);
+                i.putExtra("address",checkout_address.getText().toString());
+                i.putExtra("zip",checkout_zip.getText().toString());
+                i.putExtra("phone",checkout_number.getText().toString());
+                startActivity(i);
+            }
+        });
         backLayoutService = findViewById(R.id.backLayoutService);
         backLayoutService.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +104,9 @@ public class checkout_activity extends BaseActivity {
         adapter = new checkout_adapter(this);
         int total = 0;
         Intent i = getIntent();
+        //Using this to upload na order
         List<add_to_cart_class> list = (List<add_to_cart_class>) i.getSerializableExtra("mode");
+
         for (add_to_cart_class a : list) {
             total += Integer.parseInt(a.getProd_price());
             if(a.getProd_category().equals("forSale")){
@@ -201,6 +219,7 @@ public class checkout_activity extends BaseActivity {
                     }
                 }
                 else{
+                    //Check from List getSerializable at the tom from their category if petforsale or product.
                     gotoAnotherActivity();
                 }
             }

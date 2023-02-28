@@ -235,11 +235,9 @@
                     android:layout_marginTop="22dp"
                     android:layout_toEndOf="@id/savePetNameButton"
                     android:src="@drawable/cancel"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
                 <ImageView
-                    android:visibility="gone"
                     android:id="@+id/savePetNameButton"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
@@ -247,7 +245,8 @@
                     android:layout_marginTop="22dp"
                     android:layout_marginEnd="42dp"
                     android:layout_toEndOf="@id/petNameEdit"
-                    android:src="@drawable/icon_check_grey" />
+                    android:src="@drawable/icon_check_grey"
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <RelativeLayout

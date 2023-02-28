@@ -15,6 +15,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -39,8 +40,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -50,6 +54,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,6 +63,9 @@ import pl.droidsonroids.gif.GifImageView;
 public class
 user_profile_account_contact extends BaseActivity {
 
+    FirebaseAuth mAuth;
+    String verificationID;
+    PhoneAuthProvider.ForceResendingToken  tokens;
     String clickName;
     String before_email;
     String before_contact;
@@ -94,6 +102,7 @@ user_profile_account_contact extends BaseActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+        mAuth = FirebaseAuth.getInstance();
         fireStore = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -175,8 +184,6 @@ user_profile_account_contact extends BaseActivity {
         });
 
     }
-
-
     int count = 0;
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void allAlertDialog(String clickName) {
@@ -721,6 +728,7 @@ user_profile_account_contact extends BaseActivity {
             okay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     Matcher m = phonePattern.matcher(editText.getText().toString());
                     if(editText.getText().toString().equals("") || editText.getText().toString() == null){
                         count = 0;
@@ -738,18 +746,42 @@ user_profile_account_contact extends BaseActivity {
                     else{
 
 
-
+                        okay.setEnabled(false);
                         // Remove leading "0" and replace with "+63"
-                       phoneNumber = editText.getText().toString().trim();
+                        phoneNumber = editText.getText().toString().trim();
                         if (phoneNumber.startsWith("0") && phoneNumber.length() == 11) {
                             phoneNumber = "+63" + phoneNumber.substring(1);
+                            Toast.makeText(user_profile_account_contact.this, phoneNumber, Toast.LENGTH_SHORT).show();
+
+                            PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                                    phoneNumber,
+                                    60,
+                                    TimeUnit.SECONDS,
+                                    user_profile_account_contact.this,
+                                    new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                                        @Override
+                                        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+                                            holder = phoneAuthCredential.getSmsCode();
+
+                                        }
+
+                                        @Override
+                                        public void onVerificationFailed(@NonNull FirebaseException e) {
+                                            Toast.makeText(user_profile_account_contact.this, "Verification failed", Toast.LENGTH_SHORT).show();
+                                            Log.d("ERROR",e.getLocalizedMessage());
+                                        }
+
+                                        @Override
+                                        public void onCodeSent(@NonNull String verification, @NonNull PhoneAuthProvider.ForceResendingToken token) {
+                                            verificationID = verification;
+                                            tokens = token;
+                                            getOtpFromMessage(verification,alert3);
+                                            Toast.makeText(user_profile_account_contact.this, "OTP sent", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    });
                         }
-
-
-                        alert3.dismiss();
                         Toast.makeText(user_profile_account_contact.this, phoneNumber, Toast.LENGTH_SHORT).show();
-
-
                     }
                 }
             });
@@ -757,9 +789,13 @@ user_profile_account_contact extends BaseActivity {
     }
 
 
-    @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
-    private void getOtpFromMessage(String message) {
 
+    // method to verify OTP
+
+    @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
+    private void getOtpFromMessage(String message,AlertDialog dialog) {
+
+        dialog.dismiss();
         AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
         View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
         builder3.setCancelable(false);
@@ -825,7 +861,6 @@ user_profile_account_contact extends BaseActivity {
                     });
                 }
                 else{
-
                     clear.setVisibility(View.GONE);
                 }
             }
@@ -846,28 +881,32 @@ user_profile_account_contact extends BaseActivity {
                 if(editText.getText().toString().isEmpty()){
                     Toast.makeText(user_profile_account_contact.this, "Field is empty!", Toast.LENGTH_SHORT).show();
                     count = 0;
-                }else
-                if (message.equals(editText.getText().toString())){
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("contactNumber",phoneNumber);
-                    contactInput.setText(phoneNumber);
-                    FirebaseFirestore.getInstance().collection("User")
-                            .document(user.getUid())
-                            .collection("security")
-                            .document("security_doc")
-                            .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    Toast.makeText(user_profile_account_contact.this, "Successfully Set", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                    Toast.makeText(user_profile_account_contact.this, "OTP success", Toast.LENGTH_SHORT).show();
-                    count =1;
                 }
                 else{
-                    Toast.makeText(user_profile_account_contact.this, "Incorrect OTP", Toast.LENGTH_SHORT).show();
-                    count=0;
+                        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(message,editText.getText().toString());
+                    if (phoneAuthCredential.getSmsCode().equals(editText.getText().toString())) {
+                        // OTP is valid
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("contactNumber", phoneNumber);
+                        contactInput.setText(phoneNumber);
+                        FirebaseFirestore.getInstance().collection("User")
+                                .document(user.getUid())
+                                .collection("security")
+                                .document("security_doc")
+                                .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(user_profile_account_contact.this, "Successfully Set", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                        Toast.makeText(user_profile_account_contact.this, "OTP success", Toast.LENGTH_SHORT).show();
+                        count = 1;
+                    } else {
+                        // Invalid OTP
+                        Toast.makeText(user_profile_account_contact.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
                 if(count != 0){
                     alert3.dismiss();
                 }
@@ -882,10 +921,10 @@ user_profile_account_contact extends BaseActivity {
                 alert3.dismiss();
             }
         });
-
-
-
     }
+    String holder;
+
+
 
     private void getUser(DocumentReference documentReference) {
 

@@ -13,7 +13,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,8 @@ import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.addToCart_adapter;
 import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.priceFormat;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -87,9 +91,27 @@ public class add_to_cart extends BaseActivity implements addToCart_adapter.ItemC
             @Override
             public void onClick(View v) {
                 if(selectedItems.size() != 0){
-                    Intent i = new Intent(add_to_cart.this, checkout_activity.class);
-                    i.putExtra("mode",(Serializable) selectedItems);
-                    startActivity(i);
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .collection("security")
+                            .document("security_doc")
+                            .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()){
+                                        DocumentSnapshot s = task.getResult();
+                                        if(s.getString("contactNumber") == null || s.getString("contactNumber").equals("")){
+                                            Toast.makeText(add_to_cart.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                        else{
+                                            Intent i = new Intent(add_to_cart.this, checkout_activity.class);
+                                            i.putExtra("mode",(Serializable) selectedItems);
+                                            startActivity(i);
+                                        }
+                                    }
+                                }
+                            });
                 }
             }
         });

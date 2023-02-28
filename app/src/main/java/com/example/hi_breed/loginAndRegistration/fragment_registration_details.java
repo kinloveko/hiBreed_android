@@ -95,11 +95,7 @@ public class fragment_registration_details extends Fragment {
                         roleHolder.remove(breeder.getText().toString());
 
                     }
-                    if(shooter.isChecked()){
-                       count--;
-                        shooter.setChecked(false);
-                        roleHolder.remove(shooter.getText().toString());
-                    }
+
                     count--;
                     roleHolder.remove(owner.getText().toString());
                     owner.setChipStartPadding(0);
@@ -139,25 +135,16 @@ public class fragment_registration_details extends Fragment {
             }
         });
 
-
         shooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(shooter.isChecked()){
                     // checked if the owner already checked
 
-                   if(owner.isChecked()){
                        count++;
                        roleHolder.add(shooter.getText().toString());
                        shooter.setChipStartPadding(20);
-                   }else{
-                       count+=2;
-                       roleHolder.add(shooter.getText().toString());
-                       shooter.setChipStartPadding(20);
-                       owner.setChecked(true);
-                       owner.setChipStartPadding(20);
-                       roleHolder.add(owner.getText().toString());
-                   }
+
                 }
                 else{
                     count--;
@@ -171,38 +158,15 @@ public class fragment_registration_details extends Fragment {
             @Override
             public void onClick(View v) {
                 if(vet.isChecked()){
-                    count = 0;
-                    count++;
+                    count +=2;
                     roleHolder.add(vet.getText().toString());
                     vet.setChipStartPadding(15);
-                    breeder.setEnabled(false);
-                    owner.setEnabled(false);
-                    shooter.setEnabled(false);
-                    if(owner.isChecked()){
-                        owner.setChecked(false);
-                        roleHolder.remove(owner.getText().toString());
-                        owner.setChipStartPadding(0);
-                    }
-                    if(breeder.isChecked()){
-                       breeder.setChecked(false);
-                        roleHolder.remove(breeder.getText().toString());
-                        breeder.setChipStartPadding(0);
-                    }
-                    if(shooter.isChecked()){
-                        shooter.setChecked(false);
-                        roleHolder.remove(shooter.getText().toString());
-                        shooter.setChipStartPadding(0);
-                    }
                 }
                 else{
                     count--;
                     roleHolder.remove(vet.getText().toString());
                     vet.setChipStartPadding(0);
-                    breeder.setEnabled(true);
-                    owner.setEnabled(true);
-                    shooter.setEnabled(true);
                 }
-
             }
         });
 
@@ -219,7 +183,6 @@ public class fragment_registration_details extends Fragment {
                     fragment_registration_requirements requirements = new fragment_registration_requirements();
                     requirements.setArguments(bundle);
 
-
                     FragmentTransaction fr = getFragmentManager().beginTransaction();
                     fr.replace(R.id.fragmentContainerView2,requirements);
                     fr.addToBackStack("name");
@@ -229,6 +192,4 @@ public class fragment_registration_details extends Fragment {
         });
 
     }
-
-
 }

@@ -19,13 +19,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.example.hi_breed.checkout.checkout_thankyou;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.service_class;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,7 +57,7 @@ public class set_appointment extends BaseActivity {
     TextView dateTextView,
     itemSlot;
     Button saveButton;
-    RelativeLayout toolbarID,timeLayout,dateLayout;
+    RelativeLayout toolbarID,currentAddress,timeLayout,dateLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("SimpleDateFormat")
@@ -73,6 +76,7 @@ public class set_appointment extends BaseActivity {
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
         // find the picker
+        currentAddress =findViewById(R.id.currentAddress);
         saveButton = findViewById(R.id.saveButton);
         timeLayout = findViewById(R.id.timeLayout);
         dateLayout = findViewById(R.id.dateLayout);
@@ -82,6 +86,19 @@ public class set_appointment extends BaseActivity {
         checkout_number = findViewById(R.id.checkout_number);
         checkout_address = findViewById(R.id.checkout_address);
         checkout_zip = findViewById(R.id.checkout_zip);
+
+        currentAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(set_appointment.this,current_address.class);
+                i.putExtra("address",checkout_address.getText().toString());
+                i.putExtra("zip",checkout_zip.getText().toString());
+                i.putExtra("phone",checkout_number.getText().toString());
+                startActivity(i);
+
+            }
+        });
         FirebaseFirestore.getInstance().collection("User")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -95,7 +112,21 @@ public class set_appointment extends BaseActivity {
 
                     }
                 });
+        FirebaseFirestore.getInstance().collection("User")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("security")
+                .document("security_doc")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot s = task.getResult();
+                            checkout_number.setText(s.getString("contactNumber"));
 
+                        }
+                    }
+                });
         toolbarID = findViewById(R.id.toolbarID);
         toolbarID.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,16 +152,61 @@ public class set_appointment extends BaseActivity {
 // Step 1: Get the available days from Firestore
                     List<String> availableDays = (List<String>) documentSnapshot.get("schedule");
 
-                    timeLayout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            getTime(availability);
-                        }
-                    });
+                    // Get the selected date and time from the numberPickers
+                    Calendar selectedDateTime = Calendar.getInstance();
+
+
+
+                    // check if the time service is not available
+                    Calendar currentDateTime = Calendar.getInstance();
+                    String startTimeString = availability.get(0);
+                    String endTimeString = availability.get(1);
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("h:mm a");
+
+                    // Use "h:m a" pattern instead for minutes less than 10
+                    if (startTimeString.contains(":0")) {
+                        format = new SimpleDateFormat("h:m a");
+                    }
+
+                    Date endDate = null;
+                    try {
+                        endDate = format.parse(endTimeString);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    Calendar endCalendar = Calendar.getInstance();
+                    endCalendar.setTime(endDate);
+                    int endHour = endCalendar.get(Calendar.HOUR_OF_DAY);
+
+                    selectedDateTime.set(Calendar.HOUR_OF_DAY, endHour); // replace with the hour selected by the user
+
                     dateLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+
+                            
                             getDate(availableDays);
+                        }
+                    });
+                    timeLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            if(dateTextView.getText().toString().equals("Date")) {
+                                Toast.makeText(set_appointment.this, "Select a date first", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            selectedDateTime.set(Calendar.YEAR, datePicker.getYear()); // replace with the year selected by the user
+                            selectedDateTime.set(Calendar.MONTH, datePicker.getMonth()); // replace with the month selected by the user
+                            selectedDateTime.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth()); // replace with the day selected by the user
+
+                            if(selectedDateTime.getTime().before(currentDateTime.getTime())){
+                                Toast.makeText(set_appointment.this, "This service is close at this time", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            getTime(availability);
                         }
                     });
                 }
@@ -251,11 +327,14 @@ public class set_appointment extends BaseActivity {
                 });
     }
 
-
+    NumberPicker picker,pm_am_numberPicker,minutes_numberPicker;
     String pmAMHolder,minutesHolder,hoursHolder;
-    int count=0;
+
     @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
     private void getTime(List<String> availability) {
+
+        Calendar currentDateTime = Calendar.getInstance();
+
         AlertDialog.Builder builder =new AlertDialog.Builder(this);
         View view = View.inflate(this,R.layout.m_service_time_dialog,null);
         MaterialButton done,cancel;
@@ -273,7 +352,7 @@ public class set_appointment extends BaseActivity {
         done.setText("Proceed");
         cancel = view.findViewById(R.id.gender_dialog_btn_cancel);
         //pm am
-        NumberPicker pm_am_numberPicker = view.findViewById(R.id.pm_am_numberPicker);
+        pm_am_numberPicker = view.findViewById(R.id.pm_am_numberPicker);
         String[] pmAM = {"AM","PM"};
         pm_am_numberPicker.setMinValue(0);
         pm_am_numberPicker.setMaxValue(pmAM.length-1);
@@ -288,7 +367,7 @@ public class set_appointment extends BaseActivity {
             }
         });
         //minutes
-        NumberPicker minutes_numberPicker = view.findViewById(R.id.minutes_numberPicker);
+         minutes_numberPicker = view.findViewById(R.id.minutes_numberPicker);
         minutes_numberPicker.setMinValue(0);
         minutes_numberPicker.setMaxValue(59);
         minutes_numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
@@ -300,14 +379,11 @@ public class set_appointment extends BaseActivity {
                 minutesHolder = String.valueOf(newVal);
             }
         });
-
-
-
         String startTimeString = availability.get(0);
         String endTimeString = availability.get(1);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("h:mm a");
 
-// Use "h:m a" pattern instead for minutes less than 10
+        // Use "h:m a" pattern instead for minutes less than 10
         if (startTimeString.contains(":0")) {
             format = new SimpleDateFormat("h:m a");
         }
@@ -330,10 +406,8 @@ public class set_appointment extends BaseActivity {
         int endHour = endCalendar.get(Calendar.HOUR_OF_DAY);
 
         // Step 3: Set up the NumberPicker for hours
-
-
         //hours
-        NumberPicker picker = view.findViewById(R.id.hours_numberPicker);
+        picker = view.findViewById(R.id.hours_numberPicker);
         picker.setMinValue(startHour);
         picker.setMaxValue(endHour);
         picker.setValue(startHour);
@@ -356,10 +430,12 @@ public class set_appointment extends BaseActivity {
                 hoursHolder = String.valueOf(newVal);
             }
         });
+
         builder.setView(view);
         AlertDialog dialog = builder.create();
         dialog.show();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         done.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -379,7 +455,22 @@ public class set_appointment extends BaseActivity {
                 int hour = Integer.parseInt(hoursHolder);
                 int minute = Integer.parseInt(minutesHolder);
 
-// Convert 24-hour format to 12-hour format
+
+
+            // Get the selected date and time from the numberPickers
+                Calendar selectedDateTime = Calendar.getInstance();
+
+
+                    selectedDateTime.set(Calendar.YEAR, datePicker.getYear()); // replace with the year selected by the user
+                    selectedDateTime.set(Calendar.MONTH, datePicker.getMonth()); // replace with the month selected by the user
+                    selectedDateTime.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth()); // replace with the day selected by the user
+
+                selectedDateTime.set(Calendar.HOUR_OF_DAY, picker.getValue()); // replace with the hour selected by the user
+                selectedDateTime.set(Calendar.MINUTE, minutes_numberPicker.getValue()); // replace with the minute selected by the user
+                selectedDateTime.set(Calendar.AM_PM, pm_am_numberPicker.getValue()); // replace with the AM/PM selected by the user
+
+                // Convert 24-hour format to 12-hour format
+
                 String pmAMHolders = "AM";
                 if (hour >= 12) {
                     pmAMHolders = "PM";
@@ -389,12 +480,32 @@ public class set_appointment extends BaseActivity {
                     hour = 12;
                 }
 
-                itemSlot.setText(convertDate(hour) + ":" + convertDate(minute) + " " + pmAMHolders);
-                dialog.dismiss();
-                hoursHolder="";
-                pmAMHolder="";
-                pmAMHolders="";
-                minutesHolder="";
+                // Check if the selected date is the current date
+                if (currentDateTime.get(Calendar.YEAR) == selectedDateTime.get(Calendar.YEAR) &&
+                        currentDateTime.get(Calendar.DAY_OF_YEAR) == selectedDateTime.get(Calendar.DAY_OF_YEAR)) {
+
+                    // Calculate the time difference between the current time and the selected time
+                    long timeDifference = selectedDateTime.getTimeInMillis() - currentDateTime.getTimeInMillis();
+                    int hoursDifference = (int) (timeDifference / (1000 * 60 * 60)); // convert milliseconds to hours
+
+                    // Check if the selected time is at least 2 hours ahead of the current time
+                    if (hoursDifference > 2) {
+                        itemSlot.setText(convertDate(hour) + ":" + convertDate(minute) + " " + pmAMHolders);
+
+                    }
+                    else if (selectedDateTime.getTime().before(currentDateTime.getTime())){
+                        // Do not allow the user to save the appointment and show an error message
+                        Toast.makeText(set_appointment.this, "Selected time has already passed", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        // Do not allow the user to save the appointment and show an error message
+                        Toast.makeText(set_appointment.this, "Appointment must be at least 2 hours ahead", Toast.LENGTH_SHORT).show();
+                    }
+
+                 } else {
+                    itemSlot.setText(convertDate(hour) + ":" + convertDate(minute) + " " + pmAMHolders);
+                    dialog.dismiss();
+                }
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -412,12 +523,12 @@ public class set_appointment extends BaseActivity {
             return "0" + String.valueOf(input);
         }
     }
-
+    DatePicker datePicker;
     @SuppressLint({"DefaultLocale", "UseCompatLoadingForDrawables", "SetTextI18n"})
     private void getDate(List<String> schedule){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = View.inflate(this, R.layout.product_add_expiration_dialog, null);
-        DatePicker datePicker = view.findViewById(R.id.datePickers);
+        datePicker = view.findViewById(R.id.datePickers);
         AppCompatImageView appCompatImageView = view.findViewById(R.id.appCompatImageView);
         appCompatImageView.setImageDrawable(getDrawable(R.drawable.dialog_calendar_borders));
         TextView from = view.findViewById(R.id.from);
@@ -452,6 +563,8 @@ public class set_appointment extends BaseActivity {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+
 
                 // Check if the day of the week is in the schedule array
                 if (schedule.contains(getDayOfWeek(dayOfWeek))) {

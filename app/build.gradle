@@ -5,6 +5,10 @@ plugins {
 }
 
 android {
+
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
     compileSdk 32
     defaultConfig {
         applicationId "com.example.hi_breed"
@@ -50,6 +54,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:23.1.1'
     implementation 'androidx.lifecycle:lifecycle-process:2.5.1'
     implementation 'com.android.volley:volley:1.2.1'
+    implementation 'androidx.navigation:navigation-fragment:2.5.2'
+    implementation 'androidx.navigation:navigation-ui:2.5.2'
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
@@ -72,7 +78,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'com.github.yalantis:ucrop:2.2.6'
     // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:30.4.1')
+    implementation platform('com.google.firebase:firebase-bom:31.2.2')
 
     implementation 'com.google.firebase:firebase-messaging:23.1.1'
     implementation 'com.google.firebase:firebase-analytics'

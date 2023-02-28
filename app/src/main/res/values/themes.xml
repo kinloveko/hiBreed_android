@@ -79,6 +79,12 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">false</item>
     </style>
+    <style name="Theme.HiBreed.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.HiBreed.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.HiBreed.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>
