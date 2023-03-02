@@ -80,13 +80,13 @@
             android:name=".ask_a_professional.ask_a_professional"
             android:exported="false" />
         <activity
-            android:name=".shooter.edit_service"
+            android:name=".shooter.shooter_vet_edit_service"
             android:exported="false" />
         <activity
-            android:name=".shooter.shooter_display_details"
+            android:name=".shooter.shooter_vet_display_details"
             android:exported="false" />
         <activity
-            android:name=".shooter.shooter_service"
+            android:name=".shooter.shooter_vet_add_service"
             android:exported="false" />
         <activity
             android:name=".shop.view_breeder_shop"
@@ -110,7 +110,7 @@
             android:name=".Pet.pet_for_sale_details"
             android:exported="false" />
         <activity
-            android:name=".shooter.shooter_panel"
+            android:name=".shooter.shooter_vet_panel"
             android:exported="false" />
         <activity
             android:name=".Pet.pet_add_for_dating"

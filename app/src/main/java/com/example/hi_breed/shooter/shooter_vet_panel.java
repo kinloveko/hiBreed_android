@@ -30,7 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
-public class shooter_panel extends BaseActivity {
+public class shooter_vet_panel extends BaseActivity {
 
     RelativeLayout backLayoutPet;
     Button shooter_verifyButton;
@@ -63,14 +63,14 @@ public class shooter_panel extends BaseActivity {
         backLayoutPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shooter_panel.this.onBackPressed();
+                shooter_vet_panel.this.onBackPressed();
                 finish();
             }
         });
         shooter_verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(shooter_panel.this,shooter_service.class));
+                startActivity(new Intent(shooter_vet_panel.this, shooter_vet_add_service.class));
 
             }
         });

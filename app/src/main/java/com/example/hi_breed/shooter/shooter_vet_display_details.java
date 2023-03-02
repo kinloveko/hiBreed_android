@@ -43,7 +43,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class shooter_display_details extends BaseActivity {
+public class shooter_vet_display_details extends BaseActivity {
     ImageView heart_like,share_to_messenger;
    LinearLayout backLayout;
    ImageSlider imageSliderDetails;
@@ -110,7 +110,7 @@ public class shooter_display_details extends BaseActivity {
         backLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shooter_display_details.this.onBackPressed();
+                shooter_vet_display_details.this.onBackPressed();
                 finish();
             }
         });
@@ -170,8 +170,10 @@ public class shooter_display_details extends BaseActivity {
 
             details_shooter_name.setText(service.getServiceType());
             details_shooter_price.setText(service.getService_fee());
+
             details_service_availability.setText("From "+service.getAvailability().get(0)+"-"+service.getAvailability().get(1));
-            details_pet_description.setText(service.getService_description());
+
+                details_pet_description.setText(service.getService_description());
             if(service.getSchedule().size() !=0){
 
                 for(int i = 0; i < service.getSchedule().size();i++){
@@ -216,11 +218,11 @@ public class shooter_display_details extends BaseActivity {
                                     DocumentSnapshot s = task.getResult();
 
                                     if(s.getString("contactNumber")== null || s.getString("contactNumber").equals("")){
-                                        Toast.makeText(shooter_display_details.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(shooter_vet_display_details.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
 
                                     }
                                     else{
-                                        Intent intent = new Intent(shooter_display_details.this, set_appointment.class);
+                                        Intent intent = new Intent(shooter_vet_display_details.this, set_appointment.class);
                                         intent.putExtra("model", (Serializable) service);
                                         startActivity(intent);
                                          }
@@ -256,7 +258,7 @@ public class shooter_display_details extends BaseActivity {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if(task.isSuccessful()){
-                                                                        Toast.makeText(shooter_display_details.this, "Successfully removed from your liked pets", Toast.LENGTH_SHORT).show();
+                                                                        Toast.makeText(shooter_vet_display_details.this, "Successfully removed from your liked pets", Toast.LENGTH_SHORT).show();
 
                                                                         heart_like.setEnabled(true);
                                                                     }
@@ -307,7 +309,7 @@ public class shooter_display_details extends BaseActivity {
                                                                         @Override
                                                                         public void onComplete(@NonNull Task<Void> task) {
                                                                             if(task.isSuccessful()){
-                                                                                Toast.makeText(shooter_display_details.this, "Successfully added to your likes", Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(shooter_vet_display_details.this, "Successfully added to your likes", Toast.LENGTH_SHORT).show();
                                                                                 heart_like.setEnabled(true);
                                                                             }
                                                                         }

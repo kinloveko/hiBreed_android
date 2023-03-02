@@ -59,6 +59,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -67,7 +68,7 @@ import java.util.Map;
 
 import pl.droidsonroids.gif.GifImageView;
 
-public class edit_service extends BaseActivity implements service_edit_adapter.CountOfImagesCurrent,service_edit_adapter.itemCurrentClickListenerPet
+public class shooter_vet_edit_service extends BaseActivity implements service_edit_adapter.CountOfImagesCurrent,service_edit_adapter.itemCurrentClickListenerPet
                {
 
     RecyclerView service_images_view;
@@ -125,9 +126,9 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
             @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
             @Override
             public void onClick(View v) {
-                androidx.appcompat.app.AlertDialog.Builder builder2 = new androidx.appcompat.app.AlertDialog.Builder(edit_service.this);
+                androidx.appcompat.app.AlertDialog.Builder builder2 = new androidx.appcompat.app.AlertDialog.Builder(shooter_vet_edit_service.this);
                 builder2.setCancelable(false);
-                View view = View.inflate(edit_service.this, R.layout.screen_custom_alert, null);
+                View view = View.inflate(shooter_vet_edit_service.this, R.layout.screen_custom_alert, null);
                 //title
                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                 //loading text
@@ -165,9 +166,9 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
                     @Override
                     public void onClick(View v) {
                         alert2.dismiss();
-                        AlertDialog.Builder builder2 = new AlertDialog.Builder(edit_service.this);
+                        AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_edit_service.this);
                         builder2.setCancelable(false);
-                        View view = View.inflate(edit_service.this, R.layout.screen_custom_alert, null);
+                        View view = View.inflate(shooter_vet_edit_service.this, R.layout.screen_custom_alert, null);
                         //title
                         TextView title = view.findViewById(R.id.screen_custom_alert_title);
                         //loading text
@@ -223,9 +224,9 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
                                                                                                     }
                                                                                                     storageReference.delete();
                                                                                                     alert2.show();
-                                                                                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(edit_service.this);
+                                                                                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_edit_service.this);
                                                                                                     builder2.setCancelable(false);
-                                                                                                    View view = View.inflate(edit_service.this, R.layout.screen_custom_alert, null);
+                                                                                                    View view = View.inflate(shooter_vet_edit_service.this, R.layout.screen_custom_alert, null);
                                                                                                     //title
                                                                                                     TextView title = view.findViewById(R.id.screen_custom_alert_title);
                                                                                                     //loading text
@@ -257,7 +258,7 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
                                                                                                     okay.setOnClickListener(new View.OnClickListener() {
                                                                                                         @Override
                                                                                                         public void onClick(View v) {
-                                                                                                            startActivity(new Intent(edit_service.this, shooter_panel.class));
+                                                                                                            startActivity(new Intent(shooter_vet_edit_service.this, shooter_vet_panel.class));
                                                                                                             finish();
                                                                                                         }
                                                                                                     });
@@ -314,7 +315,7 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
         backLayoutService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                edit_service.this.onBackPressed();
+                shooter_vet_edit_service.this.onBackPressed();
                 finish();
             }
         });
@@ -379,6 +380,11 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
             id = service.getId();
             shooterID = service.getShooter_id();
             serviceDescEdit.setText(service.getService_description());
+            if(service.getAvailability() == null)
+            {
+
+            }
+            else
             availabilityTextView.setText("From"+service.getAvailability().get(0)+"-"+service.getAvailability().get(0));
 
             servicePriceTextView.setText(service.getService_fee());
@@ -475,7 +481,7 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
                                     Map<String,Object> data = new HashMap<>();
                                     data.put("schedule",widget.getSelectedDaysText());
                                     if(widget.noDaySelected()){
-                                        Toast.makeText(edit_service.this, "Schedule must not be empty.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(shooter_vet_edit_service.this, "Schedule must not be empty.", Toast.LENGTH_SHORT).show();
                                     }else{
                                         FirebaseFirestore.getInstance().collection("Services")
                                                 .document(id)
@@ -492,7 +498,7 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
                                                                         @Override
                                                                         public void onComplete(@NonNull Task<Void> task) {
                                                                             if(task.isSuccessful()){
-                                                                                Toast.makeText(edit_service.this, "Successfully updated", Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(shooter_vet_edit_service.this, "Successfully updated", Toast.LENGTH_SHORT).show();
                                                                                 saveChanges.setVisibility(View.GONE);
                                                                                 cancelChanges.setVisibility(View.GONE);
 
@@ -545,9 +551,9 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
                 Toast.makeText(this, "Please upload one at a time", Toast.LENGTH_SHORT).show();
             }
             else{
-                AlertDialog.Builder builder2 = new AlertDialog.Builder(edit_service.this);
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_edit_service.this);
                 builder2.setCancelable(false);
-                View view = View.inflate(edit_service.this,R.layout.screen_custom_alert,null);
+                View view = View.inflate(shooter_vet_edit_service.this,R.layout.screen_custom_alert,null);
                 //title
                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                 //loading text
@@ -698,14 +704,14 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
                     servicePriceTextView.setText("₱ "+text.getText().toString()+".0");
                     price =text.getText().toString();
                     UpdateInfo("service_fee",price);
-                    Toast.makeText(edit_service.this, "₱ "+text.getText().toString()+".0", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(shooter_vet_edit_service.this, "₱ "+text.getText().toString()+".0", Toast.LENGTH_SHORT).show();
                     counter = 1;
                 }
                 if(counter !=0){
                     alert.dismiss();
                 }
                 else{
-                    Toast.makeText(edit_service.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(shooter_vet_edit_service.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -807,6 +813,8 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
 
     }
 
+    String froms;
+    String tos;
     String toHoursHolder = "";
     String toPmAMHolder = "";
     String toMinutesHolder = "";
@@ -848,6 +856,7 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
 
                 toMinutesHolder = String.valueOf(newVal);
+
             }
         });
         //hours
@@ -889,10 +898,26 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
 
                 alertDialog.dismiss();
                 availabilityTextView.setTextSize(10);
+                froms = convertDate(Integer.parseInt(finalHoursHolder)) +":"+ convertDate(Integer.parseInt(finalMinutesHolder))+" "+finalPmAMHolder;
+                tos =convertDate(Integer.parseInt(toHoursHolder))+":"+convertDate(Integer.parseInt(toMinutesHolder))+" "+toPmAMHolder;
+
                 availabilityTextView.setText("From "+ convertDate(Integer.parseInt(finalHoursHolder)) +" : "+ convertDate(Integer.parseInt(finalMinutesHolder)) +" "+ finalPmAMHolder +"-"
                         +convertDate(Integer.parseInt(toHoursHolder))+" : "+convertDate(Integer.parseInt(toMinutesHolder))+" "+toPmAMHolder);
-                UpdateInfo("availability",availabilityTextView.getText().toString());
-                dialog.dismiss();
+                List<String> avail = new ArrayList<>();
+                avail = Arrays.asList(froms,tos);
+                FirebaseFirestore.getInstance().collection("Services")
+                                .document(id)
+                                        .update("availability",avail)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if(task.isSuccessful()){
+                                                            Toast.makeText(shooter_vet_edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
+                                                            dialog.dismiss();
+                                                        }
+                                                    }
+                                                });
+
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -946,13 +971,13 @@ public class edit_service extends BaseActivity implements service_edit_adapter.C
                                                                                     @Override
                                                                                     public void onComplete(@NonNull Task<Void> task) {
                                                                                             if(task.isSuccessful()){
-                                                                                                Toast.makeText(edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
+                                                                                                Toast.makeText(shooter_vet_edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
                                                                                             }
                                                                                     }
                                                                                 });
                                                                     }
                                                                     else{
-                                                                        Toast.makeText(edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
+                                                                        Toast.makeText(shooter_vet_edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
                                                                     }
                                                                   }
                                                             });

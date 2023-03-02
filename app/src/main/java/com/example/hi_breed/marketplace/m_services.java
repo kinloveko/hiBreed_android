@@ -79,5 +79,4 @@ public class m_services extends Fragment {
                     }
                 });
     }
-
 }

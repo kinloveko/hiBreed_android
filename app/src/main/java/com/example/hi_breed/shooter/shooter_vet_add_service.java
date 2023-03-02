@@ -71,7 +71,7 @@ import java.util.UUID;
 
 import pl.droidsonroids.gif.GifImageView;
 
-public class shooter_service extends BaseActivity implements petImagesRecyclerAdapter.CountOfImagesWhenRemovedPet,
+public class shooter_vet_add_service extends BaseActivity implements petImagesRecyclerAdapter.CountOfImagesWhenRemovedPet,
         petImagesRecyclerAdapter.itemClickListenerPet{
 
     private RecyclerView service_images_view;
@@ -150,7 +150,7 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
         backLayoutService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shooter_service.this.onBackPressed();
+                shooter_vet_add_service.this.onBackPressed();
                 finish();
             }
         });
@@ -506,9 +506,9 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
                                                                         .set(item,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_service.this);
+                                                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_add_service.this);
                                                                                 builder2.setCancelable(false);
-                                                                                View view = View.inflate(shooter_service.this,R.layout.screen_custom_alert,null);
+                                                                                View view = View.inflate(shooter_vet_add_service.this,R.layout.screen_custom_alert,null);
                                                                                 //title
                                                                                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                                                                                 //loading text
@@ -553,9 +553,9 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
                                                                         .set(item,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_service.this);
+                                                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_add_service.this);
                                                                                 builder2.setCancelable(false);
-                                                                                View view = View.inflate(shooter_service.this,R.layout.screen_custom_alert,null);
+                                                                                View view = View.inflate(shooter_vet_add_service.this,R.layout.screen_custom_alert,null);
                                                                                 //title
                                                                                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                                                                                 //loading text
@@ -609,7 +609,7 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
             public void run() {
                 Intent intent = new Intent();
                 intent.setClass(getApplication(), user_dashboard.class);
-                shooter_service.this.overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out);
+                shooter_vet_add_service.this.overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out);
                 startActivity(intent);
                 finish();
             }
@@ -844,14 +844,14 @@ public class shooter_service extends BaseActivity implements petImagesRecyclerAd
                 } else {
                     servicePriceTextView.setText("₱ "+text.getText().toString()+".0");
                     price =text.getText().toString();
-                    Toast.makeText(shooter_service.this, "₱ "+text.getText().toString()+".0", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(shooter_vet_add_service.this, "₱ "+text.getText().toString()+".0", Toast.LENGTH_SHORT).show();
                     counter = 1;
                 }
                 if(counter !=0){
                     alert.dismiss();
                 }
                 else{
-                    Toast.makeText(shooter_service.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(shooter_vet_add_service.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
                 }
             }
         });

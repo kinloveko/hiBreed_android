@@ -29,6 +29,7 @@
         app:layout_constraintVertical_bias="0.261">
 
         <TextView
+            android:id="@+id/custom_breed_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -41,6 +42,7 @@
             tools:ignore="HardcodedText" />
 
         <TextView
+            android:id="@+id/custom_breed_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

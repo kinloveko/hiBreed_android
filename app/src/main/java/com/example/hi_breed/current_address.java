@@ -30,7 +30,8 @@ public class current_address extends AppCompatActivity {
 
     String addressBefore,zipBefore;
     TextInputEditText phoneEdit,addressEdit,zipEdit;
-    RelativeLayout phoneLayout;
+    RelativeLayout phoneLayout,toolbarID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +40,14 @@ public class current_address extends AppCompatActivity {
         phoneEdit = findViewById(R.id.phoneEdit);
         addressEdit = findViewById(R.id.addressEdit);
         zipEdit = findViewById(R.id.zipEdit);
-
+        toolbarID = findViewById(R.id.toolbarID);
+        toolbarID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                current_address.this.onBackPressed();
+                finish();
+            }
+        });
 
         Intent i = getIntent();
         String address = i.getStringExtra("address");

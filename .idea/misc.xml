@@ -80,6 +80,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/editicon.xml" value="0.156" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/editsquare.xml" value="0.156" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/fade_in.xml" value="0.1" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/filter.xml" value="0.1665" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/gradation_black.xml" value="0.1035" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/gradation_black_three.xml" value="0.1395" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/gradation_black_two.xml" value="0.152" />
@@ -268,6 +269,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/custom_dialog_zoom.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/custom_dog_gender.xml" value="0.20863616930312098" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/custom_single_image.xml" value="0.12" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/filter_layout.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_home_fragment.xml" value="0.31573157315731576" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_image.xml" value="0.1748610517315092" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_likes_fragment.xml" value="0.2318840579710145" />

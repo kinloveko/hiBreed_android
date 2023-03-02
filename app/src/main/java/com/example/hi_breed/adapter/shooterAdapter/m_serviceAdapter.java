@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.service_class;
-import com.example.hi_breed.shooter.shooter_display_details;
+import com.example.hi_breed.shooter.shooter_vet_display_details;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -79,7 +79,7 @@ public class m_serviceAdapter extends RecyclerView.Adapter<m_serviceAdapter.View
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, shooter_display_details.class);
+                Intent intent = new Intent(context, shooter_vet_display_details.class);
                 intent.putExtra("mode", (Serializable) productModel);
                 context.startActivity(intent);
             }

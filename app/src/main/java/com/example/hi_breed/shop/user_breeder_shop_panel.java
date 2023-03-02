@@ -26,7 +26,7 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.product.product_add_activity;
 import com.example.hi_breed.product.product_my_product;
-import com.example.hi_breed.shooter.shooter_panel;
+import com.example.hi_breed.shooter.shooter_vet_panel;
 import com.example.hi_breed.userFile.dashboard.user_dashboard;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -264,7 +264,7 @@ public class user_breeder_shop_panel extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(role.contains("Pet Owner") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_panel.class));
+                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_vet_panel.class));
                     return;
 
                 }
@@ -275,16 +275,16 @@ public class user_breeder_shop_panel extends BaseActivity {
                 }
 
                 if(role.contains("Pet Shooter") && role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_panel.class));
+                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_vet_panel.class));
                     return;
                 }
 
                 if(role.contains("Pet Shooter")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_panel.class));
+                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_vet_panel.class));
                     return;
                 }
                 if(role.contains("Veterinarian")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_panel.class));
+                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_vet_panel.class));
                     return;
                 }
                 if(role.contains("Pet Owner")){

@@ -39,6 +39,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -294,6 +295,7 @@ public class set_appointment extends BaseActivity {
                                         map.put("service_price",service.getService_fee()); // Service fee
                                         map.put("service_id",service.getId()); //Service ID FK
                                         map.put("appointment_status","pending");
+
                                         FirebaseFirestore.getInstance().collection("Appointments")
                                                 .add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                     @Override
@@ -333,7 +335,6 @@ public class set_appointment extends BaseActivity {
     @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
     private void getTime(List<String> availability) {
 
-        Calendar currentDateTime = Calendar.getInstance();
 
         AlertDialog.Builder builder =new AlertDialog.Builder(this);
         View view = View.inflate(this,R.layout.m_service_time_dialog,null);
@@ -437,6 +438,7 @@ public class set_appointment extends BaseActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         done.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
@@ -456,19 +458,6 @@ public class set_appointment extends BaseActivity {
                 int minute = Integer.parseInt(minutesHolder);
 
 
-
-            // Get the selected date and time from the numberPickers
-                Calendar selectedDateTime = Calendar.getInstance();
-
-
-                    selectedDateTime.set(Calendar.YEAR, datePicker.getYear()); // replace with the year selected by the user
-                    selectedDateTime.set(Calendar.MONTH, datePicker.getMonth()); // replace with the month selected by the user
-                    selectedDateTime.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth()); // replace with the day selected by the user
-
-                selectedDateTime.set(Calendar.HOUR_OF_DAY, picker.getValue()); // replace with the hour selected by the user
-                selectedDateTime.set(Calendar.MINUTE, minutes_numberPicker.getValue()); // replace with the minute selected by the user
-                selectedDateTime.set(Calendar.AM_PM, pm_am_numberPicker.getValue()); // replace with the AM/PM selected by the user
-
                 // Convert 24-hour format to 12-hour format
 
                 String pmAMHolders = "AM";
@@ -479,33 +468,39 @@ public class set_appointment extends BaseActivity {
                 if (hour == 0) {
                     hour = 12;
                 }
+                LocalTime currentTime = LocalTime.now();
+                LocalTime selectedTime = LocalTime.of(picker.getValue(),minutes_numberPicker.getValue());
 
-                // Check if the selected date is the current date
-                if (currentDateTime.get(Calendar.YEAR) == selectedDateTime.get(Calendar.YEAR) &&
-                        currentDateTime.get(Calendar.DAY_OF_YEAR) == selectedDateTime.get(Calendar.DAY_OF_YEAR)) {
+                Calendar currentDateTime = Calendar.getInstance();
+// Get the selected date and time from the numberPickers
+                Calendar selectedDateTime = Calendar.getInstance();
+                selectedDateTime.set(Calendar.YEAR, datePicker.getYear()); // replace with the year selected by the user
+                selectedDateTime.set(Calendar.MONTH, datePicker.getMonth()); // replace with the month selected by the user
+                selectedDateTime.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth()); // replace with the day selected by the user
 
-                    // Calculate the time difference between the current time and the selected time
-                    long timeDifference = selectedDateTime.getTimeInMillis() - currentDateTime.getTimeInMillis();
-                    int hoursDifference = (int) (timeDifference / (1000 * 60 * 60)); // convert milliseconds to hours
+                if ((selectedDateTime.get(Calendar.YEAR) == currentDateTime.get(Calendar.YEAR) &&
+                        selectedDateTime.get(Calendar.MONTH) == currentDateTime.get(Calendar.MONTH) &&
+                        selectedDateTime.get(Calendar.DAY_OF_MONTH) == currentDateTime.get(Calendar.DAY_OF_MONTH))){
+                    if (selectedTime.isBefore(currentTime)) {
+                        Toast.makeText(set_appointment.this, "Selected time is already passed", Toast.LENGTH_SHORT).show();
 
-                    // Check if the selected time is at least 2 hours ahead of the current time
-                    if (hoursDifference > 2) {
-                        itemSlot.setText(convertDate(hour) + ":" + convertDate(minute) + " " + pmAMHolders);
+                    }else{
 
+                        if(selectedTime.isAfter(currentTime.plusHours(2))){
+                            itemSlot.setText(convertDate(hour) + ":" + convertDate(minute) + " " + pmAMHolders);
+                            dialog.dismiss();
+                        }
+                        else{
+                            Toast.makeText(set_appointment.this, "Appointment must be at least 2 hours ahead", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    else if (selectedDateTime.getTime().before(currentDateTime.getTime())){
-                        // Do not allow the user to save the appointment and show an error message
-                        Toast.makeText(set_appointment.this, "Selected time has already passed", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        // Do not allow the user to save the appointment and show an error message
-                        Toast.makeText(set_appointment.this, "Appointment must be at least 2 hours ahead", Toast.LENGTH_SHORT).show();
-                    }
-
-                 } else {
+                }
+                else{
                     itemSlot.setText(convertDate(hour) + ":" + convertDate(minute) + " " + pmAMHolders);
                     dialog.dismiss();
                 }
+
+
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {
