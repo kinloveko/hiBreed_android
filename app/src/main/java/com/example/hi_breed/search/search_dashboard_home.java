@@ -101,7 +101,6 @@ public class search_dashboard_home extends BaseActivity {
             }
         });
 
-
         EditText searchBar = findViewById(R.id.search_bar);
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override

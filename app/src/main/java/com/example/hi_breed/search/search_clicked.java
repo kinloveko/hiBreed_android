@@ -2,6 +2,7 @@ package com.example.hi_breed.search;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -46,14 +47,9 @@ public class search_clicked extends BaseActivity {
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
 
-
-
         search_result = findViewById(R.id.search_result);
         search_result.setLayoutManager(new GridLayoutManager(this,2));
         adapter = new searchClickedAdapter(this);
-
-
-
         searchBack = findViewById(R.id.searchBack);
         searchBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +63,7 @@ public class search_clicked extends BaseActivity {
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onResume() {
         super.onResume();
@@ -83,6 +80,5 @@ public class search_clicked extends BaseActivity {
             }
         }
         search_result.setAdapter(adapter);
-
     }
 }

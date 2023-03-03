@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,11 +39,18 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.BreedClass;
 import com.example.hi_breed.classesFile.size_class;
+import com.example.hi_breed.filter_search;
 import com.example.hi_breed.search.search_dashboard_home;
 import com.example.hi_breed.userFile.cart.add_to_cart;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,23 +128,28 @@ public class m_market_place_container extends BaseActivity {
         initView();
     }
 
-    EditText locationEdit,colorEdit;
-    RelativeLayout locationFilter,locationEditLayout,service_vet_layout,pet_color_layout,pet_size_layout,pet_breed_layout,
-    service_shooter_layout,
+    EditText locationEdit,colorEdit,shopEdit;
+    RelativeLayout locationFilter,genderLayout,gender_edit_layout,shopEditLayout,
+            locationEditLayout,service_vet_layout,
+            pet_color_layout,pet_size_layout,
+            pet_breed_layout,
+            service_shooter_layout,
             breed_edit_layout,
-    size_edit_layout,
+            size_edit_layout,
             color_edit_layout,
             shopFilter,
             productFilter,
             petFilter,
             servicesFilter,
             product_dog_accessories_layout,
-    product_medicine_layout,
+            product_medicine_layout,
             applyFilter;
-    TextView breedTextView,
+
+    TextView breedTextView,genderTextView,
     sizeTextView;
 
-    ImageView locationCheck, service_shooter,product_dog_accessories,pet_breed,
+    ImageView locationCheck, service_shooter,pet_gender,
+            product_dog_accessories,pet_breed,
     pet_size,
             pet_color,
     product_medicine,
@@ -147,60 +160,83 @@ public class m_market_place_container extends BaseActivity {
             petCheck;
 
     int count = 0;
-    String serviceSelected ="";
-    String productSelected= "";
-    String petSelected="";
+    String category="";
+    String color="";
+    String breed="";
+    String size= "";
+    String gender="";
+
+    String shop = "";
+    String location = "";
+
+    String serviceShooter ="";
+    String serviceVet = "";
+
+    String productAccessories = "";
+    String productMedicine = "";
+    Query query;
+    List<String> selected = new ArrayList<>();
+
     private void viewFilter() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = View.inflate(this,R.layout.filter_layout,null);
 
-        service_vet_layout = view.findViewById(R.id.service_vet_layout);
-        service_shooter_layout = view.findViewById(R.id.service_shooter_layout);
-        service_shooter = view.findViewById(R.id.service_shooter);
-        service_vet = view.findViewById(R.id.service_vet);
+        if(view!=null){
+            service_vet_layout = view.findViewById(R.id.service_vet_layout);
+            service_shooter_layout = view.findViewById(R.id.service_shooter_layout);
+            service_shooter = view.findViewById(R.id.service_shooter);
+            service_vet = view.findViewById(R.id.service_vet);
 
-        pet_breed = view.findViewById(R.id.pet_breed);
-        pet_size = view.findViewById(R.id.pet_size);
-        pet_color = view.findViewById(R.id.pet_color);
+            shopEditLayout = view.findViewById(R.id.shopEditLayout);
+            shopEdit = view.findViewById(R.id.shopEdit);
 
-        breed_edit_layout = view.findViewById(R.id.breed_edit_layout);
-        size_edit_layout = view.findViewById(R.id.size_edit_layout);
-        color_edit_layout = view.findViewById(R.id.color_edit_layout);
+            pet_breed = view.findViewById(R.id.pet_breed);
+            pet_size = view.findViewById(R.id.pet_size);
+            pet_color = view.findViewById(R.id.pet_color);
 
-        colorEdit = view.findViewById(R.id.colorEdit);
+            breed_edit_layout = view.findViewById(R.id.breed_edit_layout);
+            size_edit_layout = view.findViewById(R.id.size_edit_layout);
 
-        pet_color_layout = view.findViewById(R.id.pet_color_layout);
-        pet_size_layout = view.findViewById(R.id.pet_size_layout);
-        pet_breed_layout = view.findViewById(R.id.pet_breed_layout);
+            color_edit_layout = view.findViewById(R.id.color_edit_layout);
+            colorEdit = view.findViewById(R.id.colorEdit);
+            pet_color_layout = view.findViewById(R.id.pet_color_layout);
 
-        breedTextView = view.findViewById(R.id.breedTextView);
-        sizeTextView = view.findViewById(R.id.sizeTextView);
+            pet_size_layout = view.findViewById(R.id.pet_size_layout);
+            pet_breed_layout = view.findViewById(R.id.pet_breed_layout);
 
-        product_dog_accessories_layout = view.findViewById(R.id.product_dog_accessories_layout);
-        product_medicine_layout = view.findViewById(R.id.product_medicine_layout);
-        product_dog_accessories = view.findViewById(R.id.product_dog_accessories);
-        product_medicine = view.findViewById(R.id.product_medicine);
+            breedTextView = view.findViewById(R.id.breedTextView);
+            sizeTextView = view.findViewById(R.id.sizeTextView);
 
-        locationEdit = view.findViewById(R.id.locationEdit);
-        locationEditLayout = view.findViewById(R.id.locationEditLayout);
-        applyFilter = view.findViewById(R.id.applyFilter);
+            genderLayout = view.findViewById(R.id.genderLayout);
+            pet_gender = view.findViewById(R.id.pet_gender);
+            gender_edit_layout = view.findViewById(R.id.gender_edit_layout);
+            genderTextView = view.findViewById(R.id.genderTextView);
 
-        locationCheck = view.findViewById(R.id.locationCheck);
-        locationFilter = view.findViewById(R.id.locationFilter);
+            product_dog_accessories_layout = view.findViewById(R.id.product_dog_accessories_layout);
+            product_medicine_layout = view.findViewById(R.id.product_medicine_layout);
+            product_dog_accessories = view.findViewById(R.id.product_dog_accessories);
+            product_medicine = view.findViewById(R.id.product_medicine);
 
-        shopFilter = view.findViewById(R.id.shopFilter);
-        shopCheck = view.findViewById(R.id.shopCheck);
+            locationEdit = view.findViewById(R.id.locationEdit);
+            locationEditLayout = view.findViewById(R.id.locationEditLayout);
+            applyFilter = view.findViewById(R.id.applyFilter);
 
-        productFilter = view.findViewById(R.id.productFilter);
-        productCheck = view.findViewById(R.id.productCheck);
+            locationCheck = view.findViewById(R.id.locationCheck);
+            locationFilter = view.findViewById(R.id.locationFilter);
 
-        petCheck = view.findViewById(R.id.petCheck);
-        petFilter = view.findViewById(R.id.petFilter);
+            shopFilter = view.findViewById(R.id.shopFilter);
+            shopCheck = view.findViewById(R.id.shopCheck);
 
-        servicesFilter = view.findViewById(R.id.servicesFilter);
-        servicesCheck = view.findViewById(R.id.servicesCheck);
+            productFilter = view.findViewById(R.id.productFilter);
+            productCheck = view.findViewById(R.id.productCheck);
 
+            petCheck = view.findViewById(R.id.petCheck);
+            petFilter = view.findViewById(R.id.petFilter);
 
+            servicesFilter = view.findViewById(R.id.servicesFilter);
+            servicesCheck = view.findViewById(R.id.servicesCheck);
+
+        }
 
         builder.setView(view);
 
@@ -225,7 +261,6 @@ public class m_market_place_container extends BaseActivity {
                 }
             }
         });
-
         shopFilter.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseCompatLoadingForDrawables")
             @Override
@@ -233,6 +268,8 @@ public class m_market_place_container extends BaseActivity {
                 // Change the ImageDrawable of shopCheck
                 if(shopCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_circle_check).getConstantState()) {
                     shopCheck.setImageResource(R.drawable.icon_not_check);
+                    shopEditLayout.setVisibility(View.GONE);
+                    shopEdit.getText().clear();
 
                 } else {
                     servicesCheck.setImageResource(R.drawable.icon_not_check);
@@ -242,6 +279,7 @@ public class m_market_place_container extends BaseActivity {
                     service_shooter.setImageResource(R.drawable.icon_check_boxs);
 
                     shopCheck.setImageResource(R.drawable.icon_circle_check);
+                    shopEditLayout.setVisibility(View.VISIBLE);
 
                     productCheck.setImageResource(R.drawable.icon_not_check);
                     product_dog_accessories_layout.setVisibility(View.GONE);
@@ -255,17 +293,20 @@ public class m_market_place_container extends BaseActivity {
                     pet_color_layout.setVisibility(View.GONE);
                     pet_breed.setImageResource(R.drawable.icon_check_boxs);
                     pet_size.setImageResource(R.drawable.icon_check_boxs);
+                    pet_gender.setImageResource(R.drawable.icon_check_boxs);
                     pet_color.setImageResource(R.drawable.icon_check_boxs);
                     breedTextView.setText("");
                     sizeTextView.setText("");
+                    genderTextView.setText("");
                     colorEdit.getText().clear();
                     breed_edit_layout.setVisibility(View.GONE);
+                    gender_edit_layout.setVisibility(View.GONE);
                     size_edit_layout.setVisibility(View.GONE);
                     color_edit_layout.setVisibility(View.GONE);
+                    genderLayout.setVisibility(View.GONE);
                 }
             }
         });
-
         productFilter.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseCompatLoadingForDrawables")
             @Override
@@ -307,10 +348,6 @@ public class m_market_place_container extends BaseActivity {
                             }
                         }
                     });
-
-
-
-
                     servicesCheck.setImageResource(R.drawable.icon_not_check);
                     service_vet_layout.setVisibility(View.GONE);
                     service_shooter_layout.setVisibility(View.GONE);
@@ -318,25 +355,29 @@ public class m_market_place_container extends BaseActivity {
                     service_shooter.setImageResource(R.drawable.icon_check_boxs);
 
                     shopCheck.setImageResource(R.drawable.icon_not_check);
-
+                    shopEditLayout.setVisibility(View.GONE);
+                    shopEdit.getText().clear();
                     petCheck.setImageResource(R.drawable.icon_not_check);
                     pet_breed_layout.setVisibility(View.GONE);
                     pet_size_layout.setVisibility(View.GONE);
                     pet_color_layout.setVisibility(View.GONE);
                     pet_breed.setImageResource(R.drawable.icon_check_boxs);
                     pet_size.setImageResource(R.drawable.icon_check_boxs);
+                    pet_gender.setImageResource(R.drawable.icon_check_boxs);
                     pet_color.setImageResource(R.drawable.icon_check_boxs);
                     breedTextView.setText("");
                     sizeTextView.setText("");
+                    genderTextView.setText("");
                     colorEdit.getText().clear();
                     breed_edit_layout.setVisibility(View.GONE);
+                    gender_edit_layout.setVisibility(View.GONE);
                     size_edit_layout.setVisibility(View.GONE);
                     color_edit_layout.setVisibility(View.GONE);
+                    genderLayout.setVisibility(View.GONE);
 
                 }
             }
         });
-
         petFilter.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseCompatLoadingForDrawables")
             @Override
@@ -347,14 +388,18 @@ public class m_market_place_container extends BaseActivity {
                     pet_breed.setImageResource(R.drawable.icon_check_boxs);
                     pet_size.setImageResource(R.drawable.icon_check_boxs);
                     pet_color.setImageResource(R.drawable.icon_check_boxs);
+                    pet_gender.setImageResource(R.drawable.icon_check_boxs);
                     breed_edit_layout.setVisibility(View.GONE);
                     size_edit_layout.setVisibility(View.GONE);
                     color_edit_layout.setVisibility(View.GONE);
                     pet_breed_layout.setVisibility(View.GONE);
                     pet_size_layout.setVisibility(View.GONE);
+                    gender_edit_layout.setVisibility(View.GONE);
                     pet_color_layout.setVisibility(View.GONE);
+                    genderLayout.setVisibility(View.GONE);
                     breedTextView.setText("");
                     sizeTextView.setText("");
+                    genderTextView.setText("");
                     colorEdit.getText().clear();
                 } else {
                     servicesCheck.setImageResource(R.drawable.icon_not_check);
@@ -364,6 +409,8 @@ public class m_market_place_container extends BaseActivity {
                     service_shooter.setImageResource(R.drawable.icon_check_boxs);
 
                     shopCheck.setImageResource(R.drawable.icon_not_check);
+                    shopEditLayout.setVisibility(View.GONE);
+                    shopEdit.getText().clear();
 
                     productCheck.setImageResource(R.drawable.icon_not_check);
                     product_dog_accessories_layout.setVisibility(View.GONE);
@@ -371,10 +418,32 @@ public class m_market_place_container extends BaseActivity {
                     product_dog_accessories.setImageResource(R.drawable.icon_check_boxs);
                     product_medicine.setImageResource(R.drawable.icon_check_boxs);
 
+
                     petCheck.setImageResource(R.drawable.icon_circle_check);
                     pet_breed_layout.setVisibility(View.VISIBLE);
                     pet_size_layout.setVisibility(View.VISIBLE);
                     pet_color_layout.setVisibility(View.VISIBLE);
+                    genderLayout.setVisibility(View.VISIBLE);
+                    genderLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(pet_gender.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState()){
+                                pet_gender.setImageResource(R.drawable.icon_check_click);
+                                gender_edit_layout.setVisibility(View.VISIBLE);
+                                gender_edit_layout.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                       genderCategory();
+                                    }
+                                });
+                            }
+                            else{
+                                genderTextView.setText("");
+                                gender_edit_layout.setVisibility(View.GONE);
+                                pet_gender.setImageResource(R.drawable.icon_check_boxs);
+                            }
+                        }
+                    });
                     pet_breed_layout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -431,10 +500,10 @@ public class m_market_place_container extends BaseActivity {
                         }
                     });
 
+
                 }
             }
         });
-
         servicesFilter.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseCompatLoadingForDrawables")
             @Override
@@ -479,7 +548,10 @@ public class m_market_place_container extends BaseActivity {
 
 
                     servicesCheck.setImageResource(R.drawable.icon_circle_check);
+
                     shopCheck.setImageResource(R.drawable.icon_not_check);
+                    shopEditLayout.setVisibility(View.GONE);
+                    shopEdit.getText().clear();
 
                     productCheck.setImageResource(R.drawable.icon_not_check);
                     product_dog_accessories_layout.setVisibility(View.GONE);
@@ -493,18 +565,21 @@ public class m_market_place_container extends BaseActivity {
                     pet_color_layout.setVisibility(View.GONE);
                     pet_breed.setImageResource(R.drawable.icon_check_boxs);
                     pet_size.setImageResource(R.drawable.icon_check_boxs);
+                    pet_gender.setImageResource(R.drawable.icon_check_boxs);
                     pet_color.setImageResource(R.drawable.icon_check_boxs);
                     breedTextView.setText("");
                     sizeTextView.setText("");
+                    genderTextView.setText("");
                     colorEdit.getText().clear();
                     breed_edit_layout.setVisibility(View.GONE);
+                    gender_edit_layout.setVisibility(View.GONE);
                     size_edit_layout.setVisibility(View.GONE);
                     color_edit_layout.setVisibility(View.GONE);
+                    genderLayout.setVisibility(View.GONE);
 
                 }
             }
         });
-
         applyFilter.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseCompatLoadingForDrawables")
             @Override
@@ -518,94 +593,283 @@ public class m_market_place_container extends BaseActivity {
                     return;
                 }
                 else {
-                    if (!(servicesCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())) {
 
+                    if (!(servicesCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())) {
+                        category = "Services";
                         if (service_shooter.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState() &&
                                 service_vet.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState()){
-                            Toast.makeText(m_market_place_container.this, "Please choose one or more of the categories listed below in service.", Toast.LENGTH_SHORT).show();
+                              Toast.makeText(m_market_place_container.this, "Please choose one or more of the categories listed below in service.", Toast.LENGTH_SHORT).show();
 
                         } else {
                         if (!(service_shooter.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())) {
-                                serviceSelected += "Shooter Service ";
+
+                             //   serviceSelected += "Shooter Service ";
+
+                            serviceShooter = "Shooter Service";
+                        }
+                        else{
+                            serviceShooter = "";
                         }
                         if(!(service_vet.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
-                            serviceSelected += "Veterinarian Service ";
+                          //  serviceSelected += "Veterinarian Service ";
+
+                            serviceVet= "Veterinarian Service";
                         }
-                            Toast.makeText(m_market_place_container.this, "Services: "+serviceSelected, Toast.LENGTH_SHORT).show();
-                            serviceSelected ="";
+                        else{
+                            serviceVet= "";
+                        }
                     }
                 }
-
                    else if(!(petCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())){
-
+                        category = "Pet";
                       if(pet_breed.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState()&&
                               pet_size.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState() &&
-                              pet_color.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState()) {
+                              pet_color.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState() &&
+                              pet_gender.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState()) {
                           Toast.makeText(m_market_place_container.this, "Please choose one or more of the categories listed below in pets", Toast.LENGTH_SHORT).show();
                       }else{
+
                           if(!(pet_breed.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
-                              if(breedTextView.getText().toString().equals("")){
-                                  Toast.makeText(m_market_place_container.this, "Select breed before clicking apply", Toast.LENGTH_SHORT).show();
-                                  return;
-                              }
-                              else{
-                                  petSelected += breedTextView.getText().toString()+" ";
-                              }
+
+                                  if(!breedTextView.getText().toString().equals("")){
+
+                                      breed = breedTextView.getText().toString();
+
+                                  }
+                                  else{
+
+                                      breed = "";
+                                      Toast.makeText(m_market_place_container.this, "Select breed before clicking apply", Toast.LENGTH_SHORT).show();
+
+                                  }
                           }
+
                           if(!(pet_size.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
-                              if(!sizeTextView.getText().toString().equals("")){
-                                  petSelected += sizeTextView.getText().toString()+" ";
-                              }
-                              else{
-                                  Toast.makeText(m_market_place_container.this, "Select size before clicking apply", Toast.LENGTH_SHORT).show();
-                                    return;
-                                 }
+
+                                  if(!sizeTextView.getText().toString().equals("")){
+                                    //  petSelected += sizeTextView.getText().toString()+" ";
+                                     size = sizeTextView.getText().toString();
+                                  }
+                                  else{
+                                      size= "";
+                                      Toast.makeText(m_market_place_container.this, "Select size before clicking apply", Toast.LENGTH_SHORT).show();
+                                     }
+
                           }
                           if(!(pet_color.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
-                              if(!(colorEdit.getText().toString().equals("") || colorEdit.getText().toString().isEmpty())){
-                                  petSelected += colorEdit.getText().toString()+" ";
-                              }
-                              else{
-                                  Toast.makeText(m_market_place_container.this, "Enter color first before clicking apply", Toast.LENGTH_SHORT).show();
+
+                                  if(!(colorEdit.getText().toString().equals("") || colorEdit.getText().toString().isEmpty())){
+                                     color = colorEdit.getText().toString();
+                                  }
+                                  else{
+                                      color = "";
+                                      Toast.makeText(m_market_place_container.this, "Enter color first before clicking apply", Toast.LENGTH_SHORT).show();
+                                  }
+
+                          }
+                          if(!(pet_gender.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())) {
+
+                              if (!genderTextView.getText().toString().equals("")) {
+                                  //petSelected += genderTextView.getText().toString()+" ";
+                                    gender = genderTextView.getText().toString();
+                              }else{
+                                  gender = "";
+                                  Toast.makeText(m_market_place_container.this, "Enter gender first before clicking apply", Toast.LENGTH_SHORT).show();
                               }
                           }
-                          Toast.makeText(m_market_place_container.this, petSelected, Toast.LENGTH_SHORT).show();
-                          petSelected="";
                       }
                    }
-                   else if(!(shopCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())){
-                       Toast.makeText(m_market_place_container.this, "Shop", Toast.LENGTH_SHORT).show();
-                   }
-                   else if(!(locationCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())){
-                        if(locationEdit.getText().toString().isEmpty()){
-                            Toast.makeText(m_market_place_container.this, "Please enter specific location", Toast.LENGTH_SHORT).show();
-                            return;
+                    else
+                    if(!(shopCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())){
+                        category = "Shop";
+                        if(!shopEdit.getText().toString().equals("")){
+                           shop = shopEdit.getText().toString();
                         }
-                       Toast.makeText(m_market_place_container.this, "Location selected: "+locationEdit.getText().toString(), Toast.LENGTH_SHORT).show();
-                   }
-
-                   else if(!(productCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())){
+                        else{
+                           shop = "";
+                            Toast.makeText(m_market_place_container.this, "Enter Shop name first before clicking apply", Toast.LENGTH_SHORT).show();
+                        }
+                   } else
+                    if(!(productCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())){
+                        category = "Products";
                         if(product_dog_accessories.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState() &&
                                 product_medicine.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState()) {
                             Toast.makeText(m_market_place_container.this, "Please choose one or more of the categories listed below in product.", Toast.LENGTH_SHORT).show();
                         }
                         else{
                             if(!(product_dog_accessories.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
-                                    productSelected += "Dog Accessories ";
+                                // productSelected += "Dog Accessories ";
+                                productAccessories = "Dog Accessories";
+                            }
+                            else{
+                               productAccessories="";
                             }
                             if(!(product_medicine.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
-                                    productSelected += "Medicine";
+                              productMedicine = "Medicine";
                             }
-                            Toast.makeText(m_market_place_container.this, "Product selected: "+ productSelected, Toast.LENGTH_SHORT).show();
-                            productSelected="";
+                            else {
+                             productMedicine = "";
+                            }
+                        }
+                    }
+
+                    if(!(locationCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())){
+                        if(!locationEdit.getText().toString().equals("")){
+
+                            location = locationEdit.getText().toString();
+
+                        }else{
+                            location = "";
+                            Toast.makeText(m_market_place_container.this, "Please enter specific location", Toast.LENGTH_SHORT).show();
                         }
                    }
+
+                    Toast.makeText(m_market_place_container.this, selected.toString(), Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(m_market_place_container.this, filter_search.class);
+
+                    if (!TextUtils.isEmpty(category)) {
+
+                        if (category.equals("Pet")){
+                            // Get a reference to the "products" collection in Firestore
+                            CollectionReference petRef = FirebaseFirestore.getInstance().collection("Pet");
+                            Query petQuery = petRef.whereEqualTo("displayFor", "forSale");
+
+                            if (color != null && !color.isEmpty()) {
+                                petQuery = petQuery.whereEqualTo("pet_colorMarkings", color);
+                            }
+                            if (breed != null && !breed.isEmpty()) {
+                                petQuery = petQuery.whereEqualTo("pet_breed", breed);
+                            }
+                            if (size != null && !size.isEmpty()) {
+                                petQuery = petQuery.whereEqualTo("pet_size", size);
+                            }
+                            if (gender != null && !gender.isEmpty()) {
+                                petQuery = petQuery.whereEqualTo("pet_gender", gender);
+                            }
+                            if (!TextUtils.isEmpty(location)) {
+                                petQuery = petQuery.whereEqualTo("address", location);
+                            }
+                            petQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                                }
+                            });
+                        }
+                    } else if (category.equals("Services")){
+
+                        if (!TextUtils.isEmpty(serviceVet)) {
+
+                        }
+                        if (!TextUtils.isEmpty(serviceShooter)) {
+
+                        }
+                    }
+
+
+
+
+                    // Execute the query and show the results
+                    query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot querySnapshot) {
+                            // Process the query results here
+                        }
+                    });
+                    if (!TextUtils.isEmpty(shop)) {
+                        intent.putExtra("shop", shop);
+                    }
+                    if (!TextUtils.isEmpty(location)) {
+                        intent.putExtra("location", location);
+                    }
+                    if (!TextUtils.isEmpty(serviceShooter)) {
+                        intent.putExtra("serviceShooter", serviceShooter);
+                    }
+                    if (!TextUtils.isEmpty(serviceVet)) {
+                        intent.putExtra("serviceVet", serviceVet);
+                    }
+                    if (!TextUtils.isEmpty(productAccessories)) {
+                        intent.putExtra("productAccessories", productAccessories);
+                    }
+                    if (!TextUtils.isEmpty(productMedicine)) {
+                        intent.putExtra("productMedicine", productMedicine);
+                    }
+
+                    startActivity(intent);
+                    category = "";
 
                 }
             }
         });
 
     }
+
+    ListView genderListViews;
+    EditText genderEditTexts;
+    ArrayAdapter<String> genderArrayAdapters;
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void genderCategory() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //ListView
+        String gender [] = {"Male","Female"};
+
+        View pop = View.inflate(m_market_place_container.this,R.layout.pet_add_search_dialog,null);
+        RelativeLayout search_customBreedID =  pop.findViewById(R.id.search_customBreedID);
+        search_customBreedID.setVisibility(View.GONE);
+        TextInputLayout input = pop.findViewById(R.id.input);
+        input.setVisibility(View.GONE);
+        genderEditTexts = pop.findViewById(R.id.search_searchEditID);
+        genderEditTexts.setVisibility(View.GONE);
+        genderListViews = pop.findViewById(R.id.search_breedListView);
+        MaterialButton cancel;
+        cancel = pop.findViewById(R.id.search_dialog_btn_cancel);
+        genderArrayAdapters = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,gender);
+        genderListViews.setAdapter(genderArrayAdapters);
+        builder.setView(pop);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        if(genderEditTexts.getText()!=null || genderEditTexts.getText().equals("")) {
+            genderEditTexts.addTextChangedListener(genderFilterTextWatcher);
+        }
+
+        if(genderListViews.getCount() == 0 || genderListViews == null){
+            genderListViews.setVisibility(View.GONE);
+            genderListViews.setCacheColorHint(Color.TRANSPARENT);
+            genderListViews.setBackground(new ColorDrawable(Color.TRANSPARENT));
+            genderListViews.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        }
+        else{
+            genderListViews.setBackground(getDrawable(R.drawable.shape));
+            genderListViews.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+            genderListViews.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = genderListViews.getLayoutParams();
+            params.height = 400;
+            genderListViews.setLayoutParams(params);
+            genderListViews.requestLayout();
+        }
+
+        genderListViews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String holder = genderListViews.getItemAtPosition(position).toString();
+                genderTextView.setText(holder);
+                Toast.makeText(m_market_place_container.this, holder, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+    }
+
     RelativeLayout addCustoms;
     ListView listViews;
     EditText editTexts;
@@ -723,6 +987,7 @@ public class m_market_place_container extends BaseActivity {
             }
         });
     }
+
 
     RelativeLayout addCustom;
     ListView listView;
@@ -846,6 +1111,22 @@ public class m_market_place_container extends BaseActivity {
                                   int count) {
 
             arrayAdapter.getFilter().filter(s);
+
+        }
+    };
+    private final TextWatcher genderFilterTextWatcher = new TextWatcher() {
+
+        public void afterTextChanged(Editable s) {
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                                      int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before,
+                                  int count) {
+
+            genderArrayAdapters.getFilter().filter(s);
 
         }
     };

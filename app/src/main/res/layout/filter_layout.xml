@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="200dp"
-        android:layout_marginTop="350dp"
+        android:layout_marginTop="250dp"
         android:src="@drawable/icon_styles" />
 
     <ImageView
@@ -51,12 +51,13 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <RelativeLayout
                     android:id="@+id/servicesFilter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginEnd="10dp"
                     android:background="@android:color/white">
 
@@ -144,7 +145,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/service_shooter_layout"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:background="@android:color/white">
 
@@ -170,13 +171,13 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:visibility="gone"
                     android:id="@+id/pet_breed_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/petFilter"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="10dp"
-                    android:visibility="gone">
+                    android:layout_marginTop="10dp">
 
                     <ImageView
                         android:id="@+id/pet_breed"
@@ -233,12 +234,13 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:visibility="gone"
                     android:id="@+id/pet_size_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/breed_edit_layout"
                     android:layout_marginStart="30dp"
-                    android:visibility="gone">
+                    >
 
                     <ImageView
                         android:id="@+id/pet_size"
@@ -296,12 +298,13 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:visibility="gone"
                     android:id="@+id/pet_color_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/size_edit_layout"
                     android:layout_marginStart="30dp"
-                    android:visibility="gone">
+                    >
 
                     <ImageView
                         android:id="@+id/pet_color"
@@ -323,6 +326,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:visibility="gone"
                     android:id="@+id/color_edit_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -332,8 +336,7 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/stlye_border_relative_three"
-                    android:padding="5dp"
-                    android:visibility="gone">
+                    android:padding="5dp">
 
                     <EditText
                         android:id="@+id/colorEdit"
@@ -349,12 +352,76 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:visibility="gone"
+                    android:id="@+id/genderLayout"
+                    android:layout_below="@id/color_edit_layout"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/pet_gender"
+                        android:layout_width="25dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/icon_check_boxs" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_toEndOf="@id/pet_gender"
+                        android:text="Gender"
+                        android:textSize="17sp"
+                        tools:ignore="HardcodedText" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:visibility="gone"
+                    android:id="@+id/gender_edit_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/genderLayout"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/stlye_border_relative_three"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:id="@+id/genderTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/transparent"
+                        android:hint="Select gender"
+                        android:maxLines="1"
+                        android:paddingStart="10sp"
+                        android:singleLine="true"
+                        android:textSize="16sp"
+                        tools:ignore="HardcodedText,RtlSymmetry" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_toEndOf="@id/genderTextView"
+                        android:src="@drawable/icon_down_arrow"
+                        android:tint="@color/grey"
+                        tools:ignore="UseAppTint" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
                     android:id="@+id/productFilter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/color_edit_layout"
+                    android:layout_below="@id/gender_edit_layout"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:background="@android:color/white">
 
@@ -439,7 +506,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/product_dog_accessories_layout"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:background="@android:color/white">
 
@@ -462,7 +529,53 @@
                         android:textColor="@color/material_blue_grey_80"
                         android:textSize="18sp"
                         tools:ignore="HardcodedText" />
+
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:id="@+id/shopEditLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/shopCheck"
+                     >
+
+                        <TextView
+                            android:id="@+id/shopLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="25dp"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/poppinsregular"
+                            android:text="Enter specific shop name"
+                            android:textColor="@color/material_blue_grey_80"
+                            tools:ignore="HardcodedText" />
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/shopLabel"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/stlye_border_relative_three"
+                            android:padding="5dp">
+
+                            <EditText
+                                android:id="@+id/shopEdit"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/transparent"
+                                android:hint="e.g. Bully Star shop"
+                                android:maxLines="1"
+                                android:paddingStart="10sp"
+                                android:singleLine="true"
+                                android:textSize="16sp"
+                                tools:ignore="HardcodedText,RtlSymmetry" />
+                        </RelativeLayout>
+                    </RelativeLayout>
                 </RelativeLayout>
+
+
 
                 <RelativeLayout
                     android:id="@+id/locationFilter"
@@ -470,7 +583,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/shopFilter"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:background="@android:color/white">
 
@@ -530,13 +643,12 @@
                                 android:background="@drawable/transparent"
                                 android:hint="e.g. Talamban, Cebu City"
                                 android:maxLines="1"
+                                android:textSize="16sp"
                                 android:paddingStart="10sp"
                                 android:singleLine="true"
                                 tools:ignore="HardcodedText,RtlSymmetry" />
                         </RelativeLayout>
                     </RelativeLayout>
-
-
                 </RelativeLayout>
 
                 <RelativeLayout

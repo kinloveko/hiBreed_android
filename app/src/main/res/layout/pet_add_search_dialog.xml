@@ -68,6 +68,7 @@
             />
 
         <RelativeLayout
+
             android:layout_marginTop="10dp"
             android:id="@+id/search_customBreedID"
             android:layout_width="match_parent"
