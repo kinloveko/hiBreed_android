@@ -56,12 +56,14 @@ import com.example.hi_breed.classesFile.BreedClass;
 import com.example.hi_breed.classesFile.PetDateClass;
 import com.example.hi_breed.classesFile.PhotoClass;
 import com.example.hi_breed.classesFile.UserClass;
+import com.example.hi_breed.classesFile.size_class;
 import com.example.hi_breed.userFile.dashboard.user_dashboard;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -214,7 +216,7 @@ public class pet_add_for_dating extends BaseActivity implements petImagesRecycle
         petSizeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSizeDialog();
+                selectSize();
             }
         });
         vaccineLayout.setOnClickListener(new View.OnClickListener() {
@@ -276,121 +278,90 @@ public class pet_add_for_dating extends BaseActivity implements petImagesRecycle
 
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
-    private void showSizeDialog() {
+    RelativeLayout addCustoms;
+    ListView listViews;
+    EditText editTexts;
+    ArrayAdapter<String> arrayAdapters;
+    int counters = 0;
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void selectSize() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        //ListView
+        size_class size = new size_class();
 
-        AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-        View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
-        builder3.setCancelable(false);
-        //title
-        TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
-        title2.setText("Pet Size");
-        //message
-        TextView message2 = view2.findViewById(R.id.screen_custom_alert_message);
-        message2.setText("Please input your pets size");
-        //loading
-        TextView loadingText = view2.findViewById(R.id.screen_custom_alert_loadingText);
-        loadingText.setVisibility(View.GONE);
-        //top image
-        AppCompatImageView imageViewCompat2 = view2.findViewById(R.id.appCompatImageView);
-        imageViewCompat2.setVisibility(View.VISIBLE);
-        imageViewCompat2.setImageDrawable(getDrawable(R.drawable.dialog_size_borders));
-        //gif
-        GifImageView gif = view2.findViewById(R.id.screen_custom_alert_gif);
-        gif.setVisibility(View.GONE);
-        //button layout
-        LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
-        buttonLayout.setVisibility(View.VISIBLE);
-        //button
-        MaterialButton cancel,okay;
-        //cancel button
-        cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
-        cancel.setText("Cancel");
-        //Okay button
-        okay = view2.findViewById(R.id.screen_custom_alert_dialog_btn_done);
-        okay.setText("Save");
-        okay.setBackgroundColor(Color.parseColor("#F6B75A"));
-        okay.setTextColor(Color.WHITE);
-        //EditText Layout
-        RelativeLayout editLayout = view2.findViewById(R.id.screen_custom_editText_layout);
-        editLayout.setVisibility(View.VISIBLE);
-        //EditText
-        EditText editText = view2.findViewById(R.id.screen_custom_editText);
-        editText.setHint("Ex. small . .");
+        View pop = View.inflate(pet_add_for_dating.this,R.layout.pet_add_search_dialog,null);
+        addCustoms = pop.findViewById(R.id.search_customBreedID);
+        addCustoms.setVisibility(View.GONE);
+        TextInputLayout input = pop.findViewById(R.id.input);
+        input.setVisibility(View.GONE);
+        editTexts = pop.findViewById(R.id.search_searchEditID);
+        editTexts.setVisibility(View.GONE);
+        listViews = pop.findViewById(R.id.search_breedListView);
+        MaterialButton cancel;
+        cancel = pop.findViewById(R.id.search_dialog_btn_cancel);
+        arrayAdapters = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,size.size);
+        listViews.setAdapter(arrayAdapters);
+        builder.setView(pop);
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        editText.setInputType(InputType.TYPE_CLASS_TEXT);
-        editText.setVisibility(View.VISIBLE);
-        //valid
-        ImageView valid = view2.findViewById(R.id.screen_custom_valid_icon);
-        //clear text
-        TextView clear = view2.findViewById(R.id.screen_custom_clearText);
-        clear.setVisibility(View.GONE);
-        editText.addTextChangedListener(new TextWatcher() {
+        if(editTexts.getText()!=null || editTexts.getText().equals("")) {
+            editTexts.addTextChangedListener(filterTextWatchers);
+        }
+
+        if(listViews.getCount() == 0 || listViews == null){
+            listViews.setVisibility(View.GONE);
+            listViews.setCacheColorHint(Color.TRANSPARENT);
+            listViews.setBackground(new ColorDrawable(Color.TRANSPARENT));
+            listViews.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        }
+        else{
+            listViews.setBackground(getDrawable(R.drawable.shape));
+            listViews.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+            listViews.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = listViews.getLayoutParams();
+            params.height = 400;
+            listViews.setLayoutParams(params);
+            listViews.requestLayout();
+        }
+
+        listViews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()!=0){
-                    if(s.length() >= 2){
-                        valid.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        valid.setVisibility(View.GONE);
-                    }
-                    clear.setVisibility(View.VISIBLE);
-                    clear.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            editText.getText().clear();
-                        }
-                    });
-                }
-                else{
-
-                    valid.setVisibility(View.GONE);
-                    clear.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String holder = listViews.getItemAtPosition(position).toString();
+                petSizeTextView.setText(holder);
+                Toast.makeText(pet_add_for_dating.this, holder, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
             }
         });
-        builder3.setView(view2);
-        AlertDialog alert3 = builder3.create();
-        alert3.show();
-        alert3.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alert3.dismiss();
-            }
-        });
-        okay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(editText.getText().toString().equals("")  || editText.getText().toString() == null){
-                    count = 0;
-                    Toast.makeText(pet_add_for_dating.this, "Oops. You made no entry! a Pet size was expected", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    petSizeTextView.setText(editText.getText().toString());
-                    Toast.makeText(pet_add_for_dating.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
-                    count = 1;
-                }
-                if(count != 0){
-                    alert3.dismiss();
-                }
-                else{
-
-                }
+                dialog.dismiss();
             }
         });
 
     }
+
+    private final TextWatcher filterTextWatchers = new TextWatcher() {
+
+        public void afterTextChanged(Editable s) {
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                                      int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before,
+                                  int count) {
+
+            arrayAdapters.getFilter().filter(s);
+
+        }
+    };
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void showKiloDialog() {

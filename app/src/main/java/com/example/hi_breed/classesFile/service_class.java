@@ -22,12 +22,14 @@ public class service_class implements Serializable, Parcelable {
     String serviceType;
     String displayFor;
     Boolean show;
+    String name;
     public service_class(){
 
     }
 
-    public service_class(String id,  String service_description, List<String> schedule, List<String> availability, String address, String service_fee, ArrayList<String> photos, String shooter_id, String serviceType,String displayFor,Timestamp timestamp  ,boolean show) {
+    public service_class(String id,String name , String service_description, List<String> schedule, List<String> availability, String address, String service_fee, ArrayList<String> photos, String shooter_id, String serviceType,String displayFor,Timestamp timestamp  ,boolean show) {
         this.id = id;
+        this.name = name;
         this.availability=  availability;
         this.schedule =schedule;
         this.service_fee = service_fee;
@@ -40,7 +42,6 @@ public class service_class implements Serializable, Parcelable {
         this.show = show;
         this.timestamp = timestamp;
     }
-
 
     protected service_class(Parcel in) {
         availability = in.createStringArrayList();
@@ -56,22 +57,7 @@ public class service_class implements Serializable, Parcelable {
         displayFor = in.readString();
         byte tmpShow = in.readByte();
         show = tmpShow == 0 ? null : tmpShow == 1;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringList(availability);
-        dest.writeStringList(schedule);
-        dest.writeStringList(photos);
-        dest.writeString(service_fee);
-        dest.writeString(service_description);
-        dest.writeParcelable(timestamp, flags);
-        dest.writeString(address);
-        dest.writeString(id);
-        dest.writeString(shooter_id);
-        dest.writeString(serviceType);
-        dest.writeString(displayFor);
-        dest.writeByte((byte) (show == null ? 0 : show ? 1 : 2));
+        name = in.readString();
     }
 
     public static final Creator<service_class> CREATOR = new Creator<service_class>() {
@@ -85,6 +71,10 @@ public class service_class implements Serializable, Parcelable {
             return new service_class[size];
         }
     };
+
+    public String getName() {
+        return name;
+    }
 
     public Timestamp getTimestamp() {
         return timestamp;
@@ -138,6 +128,24 @@ public class service_class implements Serializable, Parcelable {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeStringList(availability);
+        dest.writeStringList(schedule);
+        dest.writeStringList(photos);
+        dest.writeString(service_fee);
+        dest.writeString(service_description);
+        dest.writeParcelable(timestamp, flags);
+        dest.writeString(address);
+        dest.writeString(id);
+        dest.writeString(shooter_id);
+        dest.writeString(serviceType);
+        dest.writeString(displayFor);
+        dest.writeByte((byte) (show == null ? 0 : show ? 1 : 2));
+        dest.writeString(name);
     }
 
 

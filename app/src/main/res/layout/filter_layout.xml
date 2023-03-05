@@ -90,23 +90,23 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/servicesFilter"
                     android:layout_marginStart="30dp"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    >
 
                     <ImageView
-                        android:id="@+id/service_vet"
+                        android:id="@+id/service_shooter"
                         android:layout_width="25dp"
                         android:layout_height="20dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="10dp"
                         android:src="@drawable/icon_check_boxs" />
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="8dp"
-                        android:layout_toEndOf="@id/service_vet"
-                        android:text="Veterinarian Service"
+                        android:layout_toEndOf="@id/service_shooter"
+                        android:text="Shooter Service"
                         android:textSize="17sp"
                         tools:ignore="HardcodedText" />
                 </RelativeLayout>
@@ -117,23 +117,25 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/service_vet_layout"
                     android:layout_marginStart="30dp"
-                    android:visibility="gone">
-
+                    android:visibility="gone"
+                  >
                     <ImageView
-                        android:id="@+id/service_shooter"
+                        android:id="@+id/service_vet"
                         android:layout_width="25dp"
                         android:layout_height="20dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="10dp"
                         android:src="@drawable/icon_check_boxs" />
 
+
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="8dp"
-                        android:layout_toEndOf="@id/service_shooter"
-                        android:text="Shooter Service"
+                        android:layout_toEndOf="@id/service_vet"
+                        android:text="Veterinarian Service"
                         android:textSize="17sp"
                         tools:ignore="HardcodedText" />
                 </RelativeLayout>
@@ -531,12 +533,11 @@
                         tools:ignore="HardcodedText" />
 
                     <RelativeLayout
-                        android:visibility="gone"
                         android:id="@+id/shopEditLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/shopCheck"
-                     >
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/shopLabel"
@@ -574,7 +575,6 @@
                         </RelativeLayout>
                     </RelativeLayout>
                 </RelativeLayout>
-
 
 
                 <RelativeLayout
@@ -643,9 +643,9 @@
                                 android:background="@drawable/transparent"
                                 android:hint="e.g. Talamban, Cebu City"
                                 android:maxLines="1"
-                                android:textSize="16sp"
                                 android:paddingStart="10sp"
                                 android:singleLine="true"
+                                android:textSize="16sp"
                                 tools:ignore="HardcodedText,RtlSymmetry" />
                         </RelativeLayout>
                     </RelativeLayout>

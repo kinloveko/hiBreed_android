@@ -7,7 +7,7 @@
     android:layout_marginTop="10dp"
     android:layout_marginBottom="10dp"
     android:layout_marginEnd="10dp"
-    android:layout_marginStart="30dp"
+    android:layout_marginStart="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/dropshadow_two"
     android:backgroundTint="@color/white"

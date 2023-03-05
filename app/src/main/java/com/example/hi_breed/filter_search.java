@@ -1,28 +1,90 @@
 package com.example.hi_breed;
 
+import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.hi_breed.adapter.search_bar_adapter.searchClickedAdapter;
+import com.example.hi_breed.classesFile.item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class filter_search extends AppCompatActivity {
 
+    private TextView noMatches;
+    private LinearLayout searchBack;
+    private RecyclerView search_result;
+    private searchClickedAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter_search);
 
+        Window window = getWindow();
+        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setStatusBarColor(Color.parseColor("#ffffff"));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
+        }
+        else{
+            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            window.setStatusBarColor(Color.parseColor("#e28743"));
+        }
+        search_result = findViewById(R.id.search_result);
+        search_result.setLayoutManager(new GridLayoutManager(this,2));
+        adapter = new searchClickedAdapter(this);
+        searchBack = findViewById(R.id.searchBack);
+        searchBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filter_search.this.onBackPressed();
+                finish();
+            }
+        });
+        noMatches = findViewById(R.id.noMatches);
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        List<item> newSearch = new ArrayList<>();
+        adapter.clearList();
         Intent intent = getIntent();
-        String category = intent.getStringExtra("category");
-        String color = intent.getStringExtra("color");
-        String breed = intent.getStringExtra("breed");
-        String size = intent.getStringExtra("size");
-        String gender = intent.getStringExtra("gender");
-        String shop = intent.getStringExtra("shop");
-        String location = intent.getStringExtra("location");
-        String serviceShooter = intent.getStringExtra("serviceShooter");
-        String serviceVet = intent.getStringExtra("serviceVet");
-        String productAccessories = intent.getStringExtra("productAccessories");
-        String productMedicine = intent.getStringExtra("productMedicine");
+        if(intent.getSerializableExtra("mode") !=null){
+            List<item> hold = (List<item>) intent.getSerializableExtra("mode");
+
+            for(item item:hold){
+                newSearch.add(item);
+                adapter.addSearch(newSearch);
+                /*   headerName.setText("Search results:"+);*/
+            }
+            search_result.setAdapter(adapter);
+
+        }
+
+        if (newSearch.size() != 0){
+            noMatches.setVisibility(View.GONE);
+            search_result.setVisibility(View.VISIBLE);
+        }
+        else{
+            noMatches.setVisibility(View.VISIBLE);
+            search_result.setVisibility(View.GONE);
+        }
     }
 }

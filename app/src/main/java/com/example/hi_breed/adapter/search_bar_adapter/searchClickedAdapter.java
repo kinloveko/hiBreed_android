@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdapter.ViewHolder> {
         Context context;
@@ -63,11 +64,9 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
 
         item result = searchResults.get(i);
 
-
         viewHolder.price.setText(result.getPrice());
-
-
         viewHolder.type.setText(result.getType());
+
         FirebaseFirestore.getInstance().collection("Shop")
                 .document(result.getSeller_id())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -79,15 +78,50 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                         }
                     }
                 });
+        if(result.getCategory()!=null) {
+            if (Objects.equals(result.getCategory(), "Shooter Service") || Objects.equals(result.getCategory(), "Veterinarian Service")) {
 
-        if(result.getCategory().equals("Shooter Service") || result.getCategory().equals("Veterinarian Service")){
+                FirebaseFirestore.getInstance().collection("Services")
+                        .document(result.getId())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot s = task.getResult();
+                                    List<String> photos = (List<String>) s.get("photos");
+                                    Glide.with(viewHolder.itemView.getContext())
+                                            .load(photos.get(0))
+                                            .placeholder(R.drawable.noimage)
+                                            .into(viewHolder.image);
 
-               FirebaseFirestore.getInstance().collection("Services")
-                       .document(result.getId())
-                       .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                           @Override
-                           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()){
+                                }
+                            }
+                        });
+
+            } else if (result.getCategory().equals("Medicine") || result.getCategory().equals("Dog Accessories")) {
+                FirebaseFirestore.getInstance().collection("Pet")
+                        .document(result.getId())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot s = task.getResult();
+                                    List<String> list = (List<String>) s.get("photos");
+                                    Glide.with(viewHolder.itemView.getContext())
+                                            .load(list.get(0))
+                                            .placeholder(R.drawable.noimage)
+                                            .into(viewHolder.image);
+                                }
+                            }
+                        });
+            } else {
+                FirebaseFirestore.getInstance().collection("Pet")
+                        .document(result.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
                                     DocumentSnapshot s = task.getResult();
                                     List<String> photos = (List<String>) s.get("photos");
                                     Glide.with(viewHolder.itemView.getContext())
@@ -95,46 +129,10 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                                             .placeholder(R.drawable.noimage)
                                             .into(viewHolder.image);
                                 }
-                           }
-                       });
-
-        }
-        else if(result.getCategory().equals("Medicine") ||result.getCategory().equals("Dog Accessories")){
-            FirebaseFirestore.getInstance().collection("Pet")
-                    .document(result.getId())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
-                                DocumentSnapshot s = task.getResult();
-                                List<String> list = (List<String>) s.get("photos");
-                                Glide.with(viewHolder.itemView.getContext())
-                                        .load(list.get(0))
-                                        .placeholder(R.drawable.noimage)
-                                        .into(viewHolder.image);
                             }
-                        }
-                    });
+                        });
+            }
         }
-        else{
-            FirebaseFirestore.getInstance().collection("Pet")
-                    .document(result.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @SuppressLint("SetTextI18n")
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
-                                DocumentSnapshot s = task.getResult();
-                                List<String> photos = (List<String>) s.get("photos");
-                                Glide.with(viewHolder.itemView.getContext())
-                                        .load(photos.get(0))
-                                        .placeholder(R.drawable.noimage)
-                                        .into(viewHolder.image);
-                            }
-                        }
-                    });
-        }
-
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

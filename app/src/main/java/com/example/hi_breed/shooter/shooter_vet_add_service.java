@@ -364,7 +364,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
         String id = UUID.randomUUID().toString();
 
         if(roles.contains("Veterinarian")){
-            service_class service = new service_class(id,description,schedule,avails,address,price,null,user.getUid(),name,"Service", Timestamp.now(),true);
+            service_class service = new service_class(id,name,description,schedule,avails,address,price,null,user.getUid(),"Veterinarian Service","Service", Timestamp.now(),true);
             FirebaseFirestore.getInstance().collection("User").document(user.getUid())
                     .collection("Services")
                     .document(id)
@@ -397,8 +397,9 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                     });
 
 
-        }else{
-            service_class service = new service_class(id,description,schedule,avails,address,price,null,user.getUid(),"Shooter","Service", Timestamp.now(),true);
+        }
+        else{
+            service_class service = new service_class(id,"Dog Shooter",description,schedule,avails,address,price,null,user.getUid(),"Shooter Service","Service", Timestamp.now(),true);
             FirebaseFirestore.getInstance().collection("User").document(user.getUid())
                     .collection("Services")
                     .document(id)

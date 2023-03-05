@@ -75,10 +75,8 @@ public class view_breeder_shop  extends BaseActivity {
 
         Intent intent = getIntent();
         if(intent!=null){
-
             id = intent.getStringExtra("breeder");
             display(id);
-
         }
     }
 

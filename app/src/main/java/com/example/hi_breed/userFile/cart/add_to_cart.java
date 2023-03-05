@@ -102,7 +102,6 @@ public class add_to_cart extends BaseActivity implements addToCart_adapter.ItemC
                                         DocumentSnapshot s = task.getResult();
                                         if(s.getString("contactNumber") == null || s.getString("contactNumber").equals("")){
                                             Toast.makeText(add_to_cart.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
-
                                         }
                                         else{
                                             Intent i = new Intent(add_to_cart.this, checkout_activity.class);
@@ -110,8 +109,8 @@ public class add_to_cart extends BaseActivity implements addToCart_adapter.ItemC
                                             startActivity(i);
                                         }
                                     }
-                                }
-                            });
+                           }
+                     });
                 }
             }
         });

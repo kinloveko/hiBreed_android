@@ -281,7 +281,7 @@ public class set_appointment extends BaseActivity {
                         FirebaseFirestore.getInstance().collection("Transaction")
                                 .document(documentReference.getId())
                                 .update("id",documentReference.getId(),
-                                        "trans_date_time", FieldValue.serverTimestamp())
+                                        "trans_date_created", FieldValue.serverTimestamp())
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
@@ -291,6 +291,7 @@ public class set_appointment extends BaseActivity {
                                         map.put("seller_id",service.getShooter_id()); // id of the one who offers the service
                                         map.put("transaction_id",documentReference.getId()); //transaction id FK
                                         map.put("appointment_date",date); // date selected
+                                        map.put("timestamp", Timestamp.now());
                                         map.put("appointment_time",time); // time selected
                                         map.put("service_price",service.getService_fee()); // Service fee
                                         map.put("service_id",service.getId()); //Service ID FK
@@ -307,7 +308,7 @@ public class set_appointment extends BaseActivity {
                                                                     public void onSuccess(Void unused) {
                                                                         FirebaseFirestore.getInstance().collection("Transaction")
                                                                                 .document(documentReference.getId())
-                                                                                .update("appointment_id",s.getId())
+                                                                                .update("appointment_id",s.getId(),"timestamp",FieldValue.serverTimestamp())
                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void unused) {
