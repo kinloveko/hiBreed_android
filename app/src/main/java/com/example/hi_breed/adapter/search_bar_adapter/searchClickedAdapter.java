@@ -78,6 +78,7 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                         }
                     }
                 });
+
         if(result.getCategory()!=null) {
             if (Objects.equals(result.getCategory(), "Shooter Service") || Objects.equals(result.getCategory(), "Veterinarian Service")) {
 

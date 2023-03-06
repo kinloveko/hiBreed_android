@@ -45,7 +45,7 @@ import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.PhotoClass;
 import com.example.hi_breed.classesFile.item;
 import com.example.hi_breed.classesFile.service_class;
-import com.example.hi_breed.userFile.dashboard.user_dashboard;
+import com.example.hi_breed.shop.user_breeder_shop_panel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -374,7 +374,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                             if(task.isSuccessful()){
                                 FirebaseFirestore.getInstance().collection("Shop")
                                         .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .collection("Service")
+                                        .collection("Services")
                                         .document(id)
                                         .set(service,SetOptions.merge())
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -489,15 +489,15 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
+
                                             FirebaseFirestore.getInstance().collection("Shop")
                                                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                    .collection("Service")
+                                                    .collection("Services")
                                                     .document(id)
                                                     .update("photos",photos,"timestamp",FieldValue.serverTimestamp())
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void unused) {
-                                                            alertDialog.dismiss();
 
                                                             if(roles.contains("Veterinarian")){
                                                                 item item = new item(id,FirebaseAuth.getInstance().getCurrentUser().getUid(),
@@ -507,6 +507,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                                                                         .set(item,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
+                                                                                alertDialog.dismiss();
                                                                                 AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_add_service.this);
                                                                                 builder2.setCancelable(false);
                                                                                 View view = View.inflate(shooter_vet_add_service.this,R.layout.screen_custom_alert,null);
@@ -548,12 +549,14 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                                                                         });
                                                             }
                                                             else{
+
                                                                 item item = new item(id,FirebaseAuth.getInstance().getCurrentUser().getUid(),price,"Shooter Service","Shooter Service",true);
 
                                                                 FirebaseFirestore.getInstance().collection("Search").document(id)
                                                                         .set(item,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
+                                                                                alertDialog.dismiss();
                                                                                 AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_add_service.this);
                                                                                 builder2.setCancelable(false);
                                                                                 View view = View.inflate(shooter_vet_add_service.this,R.layout.screen_custom_alert,null);
@@ -609,7 +612,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
             @Override
             public void run() {
                 Intent intent = new Intent();
-                intent.setClass(getApplication(), user_dashboard.class);
+                intent.setClass(getApplication(), user_breeder_shop_panel.class);
                 shooter_vet_add_service.this.overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out);
                 startActivity(intent);
                 finish();

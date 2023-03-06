@@ -385,6 +385,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/set_appointment.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shooter_display_details.xml" value="0.144" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shooter_edit_service.xml" value="0.264" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shooter_pannel.xml" value="0.11151315789473684" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_breeder_view.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_custom_tab.xml" value="0.17443351859769132" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_edit_profile.xml" value="0.19709277469003847" />
@@ -392,7 +393,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_product_fragment.xml" value="0.13125" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_service_fragment.xml" value="0.13157894736842105" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_shooter_fragment.xml" value="0.13125" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/user_breeder_shop_panel.xml" value="0.152" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/user_breeder_shop_panel.xml" value="0.4" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/user_owner_panel_fragment.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/user_profile_account_contact_info.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/user_profile_account_info.xml" value="0.176" />
