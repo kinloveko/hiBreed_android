@@ -88,7 +88,6 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class pet_add_for_selling extends BaseActivity implements petImagesRecyclerAdapter.CountOfImagesWhenRemovedPet,  petImagesRecyclerAdapter.itemClickListenerPet, shooter_proof_RecyclerAdapter.itemClickListeners,shooter_proof_RecyclerAdapter.CountOfImagesWhenRemoves {
 
-
     ListView listView;
     EditText editText;
     RelativeLayout addCustom;
@@ -125,6 +124,7 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
     EditText textIn;
     TextView imageClear;
     //Button
+    String address = "";
     Button buttonAdd,pet_add_create_Button;
 
     @Override
@@ -146,6 +146,14 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
         fireStore = FirebaseFirestore.getInstance();
         documentReference = fireStore.collection("User").document(firebaseUser.getUid());
 
+        fireStore.collection("User")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        address = documentSnapshot.getString("address");
+                    }
+                });
          DocumentReference doc = fireStore.collection("User").document(firebaseUser.getUid())
                  .collection("validation")
                  .document("validation_doc");
@@ -276,8 +284,6 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
 
             }
         });
-        
-
 
         priceLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -633,6 +639,7 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
 
 
                                     done.setOnClickListener(new View.OnClickListener() {
+                                        @SuppressLint("UseCompatLoadingForDrawables")
                                         @Override
                                         public void onClick(View v) {
 
@@ -1200,7 +1207,7 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
                                                           public void onComplete(@NonNull Task<Void> task) {
 
                                                               item i = new item(id,firebaseUser.getUid(),petPriceTextView.getText().toString(),petBreedTextView.getText().toString()
-                                                                      ,petBreedTextView.getText().toString(),true);
+                                                                      ,petBreedTextView.getText().toString(),address,true);
                                                               FirebaseFirestore.getInstance().collection("Search")
                                                                       .document(id)
                                                                       .set(i)
@@ -1397,7 +1404,7 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
 
 
         PetSaleClass petClass = new PetSaleClass("",petName,description,colorMarkings,breedCategory,petSize,petKilo,null,null,saveVaccine,genderPet,birthdayPet,pricePet
-                                                ,firebaseUser.getUid(),kennel,"forSale", Timestamp.now(),true);
+                                                ,firebaseUser.getUid(),kennel,"forSale",address ,Timestamp.now(),true);
 
         //documentReference
         FirebaseFirestore.getInstance().collection("Pet").add(petClass)
@@ -1405,7 +1412,7 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         PetSaleClass petClass = new PetSaleClass(documentReference.getId(),petName,description,colorMarkings,breedCategory,petSize,petKilo,null,null,saveVaccine,genderPet,birthdayPet,pricePet
-                                ,firebaseUser.getUid(),kennel,"forSale", Timestamp.now(),true);
+                                ,firebaseUser.getUid(),kennel,"forSale",address , Timestamp.now(),true);
 
                         FirebaseFirestore.getInstance()
                                 .collection("Shop")

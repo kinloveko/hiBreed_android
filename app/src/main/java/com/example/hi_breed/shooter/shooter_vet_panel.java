@@ -124,7 +124,7 @@ public class shooter_vet_panel extends BaseActivity {
     private void getService() {
         FirebaseFirestore.getInstance()
                 .collection("Services")
-                .whereEqualTo("serviceType","Shooter")
+                .whereEqualTo("serviceType","Shooter Service")
                 .whereEqualTo("shooter_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override

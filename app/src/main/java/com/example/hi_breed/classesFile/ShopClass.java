@@ -1,20 +1,26 @@
 package com.example.hi_breed.classesFile;
 
 public class ShopClass {
+    boolean show;
 
     String bio,gender,birthday,shopName,profImage,backgroundImage;
     String Breeder;
     public ShopClass(){
 
     }
-    public ShopClass(String shopName, String bio, String gender, String birthday, String profImage, String backgroundImage, String Breeder){
+    public ShopClass(String shopName, String bio, String gender, String birthday, String profImage, String backgroundImage, String Breeder,boolean show){
         this.shopName = shopName;
         this.birthday = birthday;
         this.bio = bio;
         this.gender = gender;
+        this.show = show;
         this.backgroundImage = backgroundImage;
         this.profImage = profImage;
         this.Breeder=Breeder;
+    }
+
+    public boolean getShow() {
+        return show;
     }
 
     public void setBreeder(String Breeder) {

@@ -44,7 +44,7 @@ import com.example.hi_breed.classesFile.size_class;
 import com.example.hi_breed.filter_search;
 import com.example.hi_breed.search.search_dashboard_home;
 import com.example.hi_breed.userFile.cart.add_to_cart;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.example.hi_breed.userFile.dashboard.user_dashboard;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
@@ -127,7 +127,11 @@ public class m_market_place_container extends BaseActivity {
         backLayoutPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_market_place_container.this.onBackPressed();
+                Intent i = new Intent(m_market_place_container.this, user_dashboard.class);
+                // set the new task and clear flags
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+                finish();
             }
         });
         initView();
@@ -170,10 +174,10 @@ public class m_market_place_container extends BaseActivity {
     String breed="";
     String size= "";
     String gender="";
-
+    TextView locationText;
     String shop = "";
     String location = "";
-
+    Query serviceQuery ;
     private void viewFilter() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = View.inflate(this,R.layout.filter_layout,null);
@@ -218,6 +222,7 @@ public class m_market_place_container extends BaseActivity {
             locationEditLayout = view.findViewById(R.id.locationEditLayout);
             applyFilter = view.findViewById(R.id.applyFilter);
 
+            locationText = view.findViewById(R.id.locationText);
             locationCheck = view.findViewById(R.id.locationCheck);
             locationFilter = view.findViewById(R.id.locationFilter);
 
@@ -259,14 +264,17 @@ public class m_market_place_container extends BaseActivity {
             }
         });
         shopFilter.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("UseCompatLoadingForDrawables")
+            @SuppressLint({"UseCompatLoadingForDrawables"})
             @Override
             public void onClick(View v) {
                 // Change the ImageDrawable of shopCheck
                 if(shopCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_circle_check).getConstantState()) {
+
                     shopCheck.setImageResource(R.drawable.icon_not_check);
                     shopEditLayout.setVisibility(View.GONE);
                     shopEdit.getText().clear();
+                    locationFilter.setEnabled(true);
+                    locationText.setTextColor(ColorStateList.valueOf(Color.parseColor("#BD101417")));
 
                 } else {
                     servicesCheck.setImageResource(R.drawable.icon_not_check);
@@ -277,6 +285,9 @@ public class m_market_place_container extends BaseActivity {
 
                     shopCheck.setImageResource(R.drawable.icon_circle_check);
                     shopEditLayout.setVisibility(View.VISIBLE);
+
+                    locationFilter.setEnabled(false);
+                    locationText.setTextColor(Color.parseColor("#BBEFEFEF"));
 
                     productCheck.setImageResource(R.drawable.icon_not_check);
                     product_dog_accessories_layout.setVisibility(View.GONE);
@@ -603,11 +614,13 @@ public class m_market_place_container extends BaseActivity {
                 if(!(productCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())){
                     category = "Products";
                 }
+                else
                 if(!(locationCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())){
-                   category = "Location";
+                    category = "Location";
+                    location = locationEdit.getText().toString();
                 }
-
                 if (!TextUtils.isEmpty(category)) {
+
 
                     if (category.equals("Pet")){
                         // Get a reference to the "products" collection in Firestore
@@ -621,7 +634,6 @@ public class m_market_place_container extends BaseActivity {
                             return;
                         }
                         else{
-
                             if(!(pet_breed.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
 
                                 if(!breedTextView.getText().toString().equals("")){
@@ -652,6 +664,7 @@ public class m_market_place_container extends BaseActivity {
                                     return;
                                 }
                             }
+
                             if(!(pet_gender.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())) {
                                 if (!genderTextView.getText().toString().equals("")) {
                                     gender = genderTextView.getText().toString();
@@ -673,52 +686,97 @@ public class m_market_place_container extends BaseActivity {
                                 List<item> items = new ArrayList<>();
                                 if(queryDocumentSnapshots!=null){
                                     List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                                    if(list.size() != 0) {
+                                    if (list.size() != 0) {
+                                        int itemCount = 0;
                                         for (DocumentSnapshot s : list) {
 
-                                            if (!(locationCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())) {
-                                                if (!TextUtils.isEmpty(location)) {
-                                                    FirebaseFirestore.getInstance().collection("User")
-                                                            .document(s.getString("pet_breeder"))
-                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                    if (documentSnapshot.getString("address").toLowerCase().contains(location.toLowerCase())) {
+                                            if (!(locationCheck.getDrawable().getConstantState() == ContextCompat.getDrawable(m_market_place_container.this, R.drawable.icon_not_check).getConstantState())) {
 
-                                                                        item item = new item(s.getId(), s.getString("pet_breeder"), s.getString("pet_price")
-                                                                                , s.getString("pet_breed"), s.getString("pet_breed"), true);
+                                                if(!TextUtils.isEmpty(locationEdit.getText().toString())){
 
-                                                                        items.add(item);
-                                                                        Intent i = new Intent(m_market_place_container.this, filter_search.class);
-                                                                        i.putExtra("mode", (Serializable) items);
-                                                                        startActivity(i);
-                                                                        alert2.dismiss();
-                                                                    }
+                                                    if (!s.getString("address").toLowerCase().contains(locationEdit.getText().toString().toLowerCase())) {
+                                                        // skip this item if its address does not match the filter
+                                                        continue;
+                                                    }
+
+                                                    if(!(pet_color.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
+                                                        if(!colorEdit.getText().toString().equals("")){
+                                                            if(s.getString("pet_colorMarkings").toLowerCase().contains(colorEdit.getText().toString().toLowerCase())){
+
+                                                                item item = new item(s.getId(), s.getString("pet_breeder"), s.getString("pet_price")
+                                                                        , s.getString("pet_breed"), s.getString("pet_breed"),s.getString("address"), true);
+                                                                items.add(item);
+
+                                                                itemCount++;
+                                                                // start activity                       if all items have been added
+                                                                if (itemCount == list.size()) {
+                                                                    gotoNextActivity(items,alert2);
+                                                                    break;
                                                                 }
-                                                            });
-                                                } else {
+
+                                                            }
+                                                        }
+                                                        else{
+                                                            Toast.makeText(m_market_place_container.this, "Please enter color before clicking apply", Toast.LENGTH_SHORT).show();
+                                                            return;
+                                                        }
+                                                    }
+
+                                                    item item = new item(s.getId(), s.getString("pet_breeder"), s.getString("pet_price")
+                                                            , s.getString("pet_breed"), s.getString("pet_breed"),s.getString("address"), true);
+                                                    items.add(item);
+
+                                                    itemCount++;
+                                                    // start activity                       if all items have been added
+                                                    if (itemCount == list.size()) {
+                                                        gotoNextActivity(items,alert2);
+                                                    }
+
+                                                }else{
                                                     Toast.makeText(m_market_place_container.this, "Please enter a specific location", Toast.LENGTH_SHORT).show();
-                                                    alert2.dismiss();
+                                                    return;
                                                 }
-                                            } else {
-
-                                                //if the user didn't check the location check box
-                                                item item = new item(s.getId(), s.getString("pet_breeder"), s.getString("pet_price")
-                                                        , s.getString("pet_breed"), s.getString("pet_breed"), true);
-                                                items.add(item);
-                                                Intent i = new Intent(m_market_place_container.this, filter_search.class);
-                                                i.putExtra("mode", (Serializable) items);
-                                                startActivity(i);
-                                                alert2.dismiss();
                                             }
+                                            else{
+                                                if(!(pet_color.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
+                                                    if(!colorEdit.getText().toString().equals("")){
+                                                        if(s.getString("pet_colorMarkings").toLowerCase().contains(colorEdit.getText().toString().toLowerCase())){
 
+                                                            item item = new item(s.getId(), s.getString("pet_breeder"), s.getString("pet_price")
+                                                                    , s.getString("pet_breed"), s.getString("pet_breed"),s.getString("address"), true);
+                                                            items.add(item);
+
+                                                            itemCount++;
+                                                            // start activity                       if all items have been added
+                                                            if (itemCount == list.size()) {
+                                                                gotoNextActivity(items,alert2);
+                                                                break;
+                                                            }
+
+                                                        }
+                                                    }
+                                                    else{
+                                                        Toast.makeText(m_market_place_container.this, "Please enter color before clicking apply", Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
+                                                }else{
+
+                                                    item item = new item(s.getId(), s.getString("pet_breeder"), s.getString("pet_price")
+                                                            , s.getString("pet_breed"), s.getString("pet_breed"),s.getString("address"), true);
+                                                    items.add(item);
+
+                                                    itemCount++;
+                                                    // start activity                       if all items have been added
+                                                    if (itemCount == list.size()) {
+                                                        gotoNextActivity(items,alert2);
+                                                    }
+                                                }
+                                            }
                                         }
+                                        gotoNextActivity(items,alert2);
                                     }
                                     else{
-                                        Intent i = new Intent(m_market_place_container.this, filter_search.class);
-                                        i.putExtra("mode", (Serializable) items);
-                                        startActivity(i);
-                                        alert2.dismiss();
+                                        gotoNextActivity(items,alert2);
                                         Toast.makeText(m_market_place_container.this, "No item matched", Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -726,8 +784,9 @@ public class m_market_place_container extends BaseActivity {
                         });
                     }
                     else if(category.equals("Services")) {
+
                         CollectionReference service = FirebaseFirestore.getInstance().collection("Services");
-                        Query serviceQuery = service.whereEqualTo("show", true);
+                        serviceQuery = service.whereEqualTo("show",true);
 
                         boolean isShooterChecked = service_shooter.getDrawable().getConstantState() == ContextCompat.getDrawable(m_market_place_container.this, R.drawable.icon_check_boxs).getConstantState();
                         boolean isVetChecked = service_vet.getDrawable().getConstantState() == ContextCompat.getDrawable(m_market_place_container.this, R.drawable.icon_check_boxs).getConstantState();
@@ -736,12 +795,16 @@ public class m_market_place_container extends BaseActivity {
                                 service_vet.getDrawable().getConstantState() == ContextCompat.getDrawable(m_market_place_container.this, R.drawable.icon_check_boxs).getConstantState()) {
                             Toast.makeText(m_market_place_container.this, "Please choose one or more of the categories listed below in service.", Toast.LENGTH_SHORT).show();
                             return;
-                        } else {
+                        }
+                        else {
                             if (isVetChecked) {
+
                                 serviceQuery = serviceQuery.whereEqualTo("serviceType", "Veterinarian Service");
+
                             }
                             if (isShooterChecked) {
-                                   serviceQuery = serviceQuery.whereEqualTo("serviceType", "Shooter Service");
+
+                                serviceQuery = serviceQuery.whereEqualTo("serviceType", "Shooter Service");
                             }
                         }
 
@@ -752,44 +815,107 @@ public class m_market_place_container extends BaseActivity {
 
                                 if (queryDocumentSnapshots != null) {
                                     List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                                    if(list.size() != 0) {
+
+                                    if (list.size() != 0) {
+                                        int itemCount = 0;
                                         for (DocumentSnapshot s : queryDocumentSnapshots.getDocuments()) {
-                                            if (!(locationCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())) {
-                                                if (!TextUtils.isEmpty(locationEdit.getText().toString())) {
-                                                    if (s.getString("address").toLowerCase().contains(location.toLowerCase())) {
-                                                        item e = new item(s.getString("id"), s.getString("shooter_id"), s.getString("service_fee"), s.getString("serviceType"), s.getString("name"), true);
-                                                        items.add(e);
-                                                    }
-                                                } else {
-                                                    Toast.makeText(m_market_place_container.this, "Please enter a specific location", Toast.LENGTH_SHORT).show();
-                                                    return;
-                                                }
-                                            } else {
-                                                item e = new item(s.getString("id"), s.getString("shooter_id"), s.getString("service_fee"), s.getString("serviceType"), s.getString("name"), true);
+                                            if (!(locationCheck.getDrawable().getConstantState() == ContextCompat.getDrawable(m_market_place_container.this, R.drawable.icon_not_check).getConstantState())) {
+
+                                           if(!TextUtils.isEmpty(locationEdit.getText().toString())){
+                                               if (!s.getString("address").toLowerCase().contains(locationEdit.getText().toString().toLowerCase())) {
+                                                   // skip this item if its address does not match the filter
+                                                   continue;
+                                               }
+                                               // add item to the list
+                                               item e = new item(s.getString("id"), s.getString("shooter_id"), s.getString("service_fee"), s.getString("serviceType"), s.getString("name"), s.getString("address"), true);
+                                               items.add(e);
+                                               itemCount++;
+                                               // start activity                       if all items have been added
+                                               if (itemCount == list.size()) {
+                                                   gotoNextActivity(items,alert2);
+                                               }
+
+                                           }else{
+                                               Toast.makeText(m_market_place_container.this, "Please enter a specific location", Toast.LENGTH_SHORT).show();
+                                               return;
+                                           }
+
+                                           }
+                                            else{
+                                                // add item to the list
+                                                item e = new item(s.getString("id"), s.getString("shooter_id"), s.getString("service_fee"), s.getString("serviceType"), s.getString("name"), s.getString("address"), true);
                                                 items.add(e);
+                                                itemCount++;
+                                                // start activity                       if all items have been added
+                                                if (itemCount == list.size()) {
+                                                    gotoNextActivity(items,alert2);
+                                                }
                                             }
                                         }
-                                        Intent i = new Intent(m_market_place_container.this, filter_search.class);
-                                        i.putExtra("mode", (Serializable) items);
-                                        startActivity(i);
-                                        alert2.dismiss();
+                                        gotoNextActivity(items,alert2);
                                     }
-                                    else{
-                                        Intent i = new Intent(m_market_place_container.this, filter_search.class);
-                                        i.putExtra("mode", (Serializable) items);
-                                        startActivity(i);
-                                        alert2.dismiss();
+                                    else {
+
+                                        gotoNextActivity(items,alert2);
                                         Toast.makeText(m_market_place_container.this, "No item matched", Toast.LENGTH_SHORT).show();
+                                        return;
                                     }
+
                                 }
                             }
                         });
                     }
                     else if (category.equals("Shop")){
-
+                        CollectionReference petRef = FirebaseFirestore.getInstance().collection("Shop");
+                        Query shopQuery = petRef.whereEqualTo("show", true);
                         if(!shopEdit.getText().toString().equals("")){
                             shop = shopEdit.getText().toString();
 
+                            shopQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    //if the ID is equal to shop name queued get and send to filter_search.class
+                                    List<item> items = new ArrayList<>();
+                                    List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                                    if(list.size() !=0){
+                                        for(DocumentSnapshot s : list){
+
+                                            FirebaseFirestore.getInstance().collection("Search")
+                                                    .whereEqualTo("seller_id",s.getString("breeder")).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                            List<DocumentSnapshot> lists = queryDocumentSnapshots.getDocuments();
+                                                            if(lists.size() !=0){
+
+                                                                for(DocumentSnapshot a:lists){
+                                                                    FirebaseFirestore.getInstance().collection("Shop")
+                                                                            .document(a.getString("seller_id"))
+                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                @Override
+                                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                    if(documentSnapshot.getString("shopName").toLowerCase().contains(shop.toLowerCase())){
+                                                                                        item item = a.toObject(item.class);
+                                                                                        items.add(item);
+                                                                                        count++;
+                                                                                        if(count == lists.size()){
+                                                                                            gotoNextActivity(items,alert2);
+                                                                                        }
+                                                                                    }
+
+                                                                                }
+                                                                            });
+                                                                }
+                                                                gotoNextActivity(items,alert2);
+                                                            }
+                                                            else{
+                                                                gotoNextActivity(items,alert2);
+                                                             }
+                                                        }
+                                                    });
+                                        }
+                                    }
+                                }
+                            });
                         }
                         else{
                             shop = "";
@@ -807,146 +933,138 @@ public class m_market_place_container extends BaseActivity {
                         return;
                         }
                         else{
-                            if(!(product_dog_accessories.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
+                            boolean isDogAccessoriesChecked = product_dog_accessories.getDrawable().getConstantState() == ContextCompat.getDrawable(m_market_place_container.this, R.drawable.icon_check_boxs).getConstantState();
+                            boolean isMedicineChecked = product_medicine.getDrawable().getConstantState() == ContextCompat.getDrawable(m_market_place_container.this, R.drawable.icon_check_boxs).getConstantState();
+
+                            if(isDogAccessoriesChecked){
                                 productQuery = productQuery.whereEqualTo("prod_category","Dog Accessories");
                             }
-                            if(!(product_medicine.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_check_boxs).getConstantState())){
+                            if(isMedicineChecked){
                                 productQuery = productQuery.whereEqualTo("prod_category", "Medicine");
                             }
                         }
 
-                        productQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                       productQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
                                 List<item> items = new ArrayList<>();
                                 if(queryDocumentSnapshots!=null) {
+
                                     List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                                    if(list.size() != 0){
-                                        for (DocumentSnapshot s : list) {
-                                            if(!(locationCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())) {
-                                                if (!TextUtils.isEmpty(locationEdit.getText().toString())) {
-                                                    FirebaseFirestore.getInstance().collection("User")
-                                                            .document(s.getString("vet_id"))
-                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                    if (documentSnapshot.getString("address").toLowerCase().contains(location.toLowerCase())) {
-                                                                        item a = new item(s.getString("id"), s.getString("vet_id"), s.getString("prod_price"),
-                                                                                s.getString("prod_category"), s.getString("prod_name"), true);
-                                                                        items.add(a);
+                                        if (list.size() != 0) {
+                                            int itemCount = 0;
+                                            for (DocumentSnapshot s : list) {
 
-                                                                        Intent i = new Intent(m_market_place_container.this, filter_search.class);
-                                                                        i.putExtra("mode", (Serializable) items);
-                                                                        startActivity(i);
-                                                                        alert2.dismiss();
-                                                                    }
-                                                                    else{
-                                                                        Toast.makeText(m_market_place_container.this, "failed to load", Toast.LENGTH_SHORT).show();
-                                                                    }
-                                                                }
-                                                            }).addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Toast.makeText(m_market_place_container.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            });
-                                                }
-                                                else{
-                                                    Toast.makeText(m_market_place_container.this, "Please enter a specific location", Toast.LENGTH_SHORT).show();
-                                                    return;
+                                                if (!(locationCheck.getDrawable().getConstantState() == ContextCompat.getDrawable(m_market_place_container.this, R.drawable.icon_not_check).getConstantState())) {
+                                                  if(!TextUtils.isEmpty(locationEdit.getText().toString())){
+                                                        if (!s.getString("address").toLowerCase().contains(locationEdit.getText().toString().toLowerCase())) {
+                                                            // skip this item if its address does not match the filter
+                                                            continue;
+                                                        }
+                                                      // add item to the list
+                                                      item a = new item(s.getString("id"), s.getString("vet_id"), s.getString("prod_price"),
+                                                              s.getString("prod_category"), s.getString("prod_name"),s.getString("address"), true);
+                                                      items.add(a);
+                                                      itemCount++;
+
+                                                      // start activity                       if all items have been added
+                                                      if (itemCount == list.size()) {
+                                                          gotoNextActivity(items,alert2);
+                                                      }
+                                                    }
+                                                  else{
+                                                      Toast.makeText(m_market_place_container.this, "Please enter a specific location", Toast.LENGTH_SHORT).show();
+                                                      return;
+                                                  }
+                                                }else{
+                                                    // add item to the list
+                                                    item a = new item(s.getString("id"), s.getString("vet_id"), s.getString("prod_price"),
+                                                            s.getString("prod_category"), s.getString("prod_name"),s.getString("address"), true);
+                                                    items.add(a);
+                                                    itemCount++;
+
+                                                    // start activity                       if all items have been added
+                                                    if (itemCount == list.size()) {
+                                                        gotoNextActivity(items,alert2);
+                                                    }
                                                 }
                                             }
-                                            else{
-                                                item a = new item(s.getString("id"),s.getString("vet_id"),s.getString("prod_price"),
-                                                        s.getString("prod_category"),s.getString("prod_name"),true);
-                                                items.add(a);
-                                                Intent i = new Intent(m_market_place_container.this, filter_search.class);
-                                                i.putExtra("mode", (Serializable) items);
-                                                startActivity(i);
-                                                alert2.dismiss();
-                                            }
+                                            gotoNextActivity(items,alert2);
                                         }
-                                    }else{
-                                        Intent i = new Intent(m_market_place_container.this, filter_search.class);
-                                        i.putExtra("mode", (Serializable) items);
-                                        startActivity(i);
-                                        alert2.dismiss();
-                                        Toast.makeText(m_market_place_container.this, "No item matched", Toast.LENGTH_SHORT).show();
+                                        else{
+                                            gotoNextActivity(items,alert2);
+                                        }
+                                   }
+                               }
+                            });
+                      }
+                    else
+                    if(category.equals("Location")){
+                        CollectionReference location = FirebaseFirestore.getInstance().collection("Search");
+                        Query locationQuery = location.whereEqualTo("show", true);
 
-                                    }
+                        if (!(locationCheck.getDrawable().getConstantState() == ContextCompat.getDrawable(m_market_place_container.this, R.drawable.icon_not_check).getConstantState())) {
 
-                                }
-                            }
-                        });
-                    }
-
-                    else if (category.equals("Location")){
-                        if(!(locationCheck.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.icon_not_check).getConstantState())) {
-                            if (!locationEdit.getText().toString().equals("")) {
-                                location = locationEdit.getText().toString();
-                                List<item> newList = new ArrayList<>();
-                                FirebaseFirestore.getInstance().collection("Search").whereEqualTo("show",true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            if(!TextUtils.isEmpty(locationEdit.getText().toString())) {
+                                locationQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
+                                        List<item> items = new ArrayList<>();
                                         List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                                        if (list.size() != 0) {
-                                            for (DocumentSnapshot a : list) {
-                                                String id = a.getString("seller_id");
-                                                FirebaseFirestore.getInstance().collection("User")
-                                                        .document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                            @Override
-                                                            public void onSuccess(DocumentSnapshot s) {
-                                                                String add = s.getString("address");
-                                                                assert add != null;
-                                                                if (add.toLowerCase().contains(location.toLowerCase())) {
-                                                                    item item = a.toObject(item.class);
-                                                                    newList.add(item);
+                                        int itemCount = 0;
+                                        if(list.size() !=0){
 
-                                                                }
-                                                            }
-                                                        });
-                                            }
-                                            count++;
-                                            if (count == list.size()) {
-                                                callIntent(newList);
-                                            }
+                                            for(DocumentSnapshot s: list){
 
+                                                if (!s.getString("address").toLowerCase().contains(locationEdit.getText().toString().toLowerCase())) {
+                                                    // skip this item if its address does not match the filter
+                                                    continue;
+                                                }
+                                                item a = new item(s.getString("id"), s.getString("seller_id"), s.getString("price"),
+                                                        s.getString("category"), s.getString("type"),s.getString("address"), true);
+                                                items.add(a);
+                                                itemCount++;
+
+                                                if(itemCount==list.size()){
+                                                    gotoNextActivity(items,alert2);
+                                                }
+
+                                            }
+                                            gotoNextActivity(items,alert2);
                                         }
-                                        else {
-                                            Toast.makeText(m_market_place_container.this, "No item found", Toast.LENGTH_SHORT).show();
+                                        else{
+                                            Toast.makeText(m_market_place_container.this, "No matched", Toast.LENGTH_SHORT).show();
+                                            return;
                                         }
                                     }
                                 });
-                            } else {
-                                location = "";
-                                Toast.makeText(m_market_place_container.this, "Please enter specific locations", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toast.makeText(m_market_place_container.this, "Please enter a specific location", Toast.LENGTH_SHORT).show();
+                                return;
                             }
                         }
                     }
-                }
 
-                category = "";
-                count = 0;
+                }
+            category  = "";
             }
         });
     }
 
-
-
-    private void callIntent(List<item> newList) {
-        Intent intent = new Intent(m_market_place_container.this, filter_search.class);
-        intent.putExtra("mode", (Serializable) newList);
-        startActivity(intent);
-        Toast.makeText(m_market_place_container.this, "Sending", Toast.LENGTH_SHORT).show();
-
+    private void gotoNextActivity(List<item> items,AlertDialog alert2) {
+        Intent i = new Intent(m_market_place_container.this, filter_search.class);
+        i.putExtra("mode", (Serializable) items);
+        startActivity(i);
+        alert2.dismiss();
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-
-
     }
 
     ListView genderListViews;
@@ -975,17 +1093,21 @@ public class m_market_place_container extends BaseActivity {
         dialog.show();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+
         if(genderEditTexts.getText()!=null || genderEditTexts.getText().equals("")) {
             genderEditTexts.addTextChangedListener(genderFilterTextWatcher);
         }
 
         if(genderListViews.getCount() == 0 || genderListViews == null){
+
             genderListViews.setVisibility(View.GONE);
             genderListViews.setCacheColorHint(Color.TRANSPARENT);
             genderListViews.setBackground(new ColorDrawable(Color.TRANSPARENT));
             genderListViews.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+
         }
         else{
+
             genderListViews.setBackground(getDrawable(R.drawable.shape));
             genderListViews.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
             genderListViews.setVisibility(View.VISIBLE);
@@ -993,6 +1115,7 @@ public class m_market_place_container extends BaseActivity {
             params.height = 400;
             genderListViews.setLayoutParams(params);
             genderListViews.requestLayout();
+
         }
 
         genderListViews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -1292,4 +1415,12 @@ public class m_market_place_container extends BaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(m_market_place_container.this, user_dashboard.class);
+        // set the new task and clear flags
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
+        finish();
+    }
 }

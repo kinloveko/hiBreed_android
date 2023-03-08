@@ -5,8 +5,10 @@ import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +31,7 @@ public class product_my_product extends AppCompatActivity {
 
     RecyclerView my_products_view;
     productForDisplay adapter;
+    RelativeLayout toolbarID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +45,14 @@ public class product_my_product extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
         }
+        toolbarID = findViewById(R.id.toolbarID);
+        toolbarID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                product_my_product.this.onBackPressed();
+                finish();
+            }
+        });
         my_products_view = findViewById(R.id.my_products_view);
         my_products_view.setLayoutManager(new GridLayoutManager(this,2));
         adapter = new productForDisplay(getApplication());
@@ -66,7 +77,5 @@ public class product_my_product extends AppCompatActivity {
 
                     }
                 });
-
-
     }
 }

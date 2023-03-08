@@ -61,6 +61,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -91,7 +92,7 @@ public class product_add_activity extends AppCompatActivity implements petImages
     ArrayList<Uri> uri = new ArrayList<>();
     Uri imageUri;
     int countOfImages;
-
+    String address = "";
     TextView petKiloTextView, petSizeTextView, petBreedTextView, petBirthdayTextView, petPriceTextView, petNameCount, petDescCount, petColorCount;
     String kennel;
     //Relative Layout
@@ -127,7 +128,12 @@ public class product_add_activity extends AppCompatActivity implements petImages
         fireStore = FirebaseFirestore.getInstance();
         documentReference = fireStore.collection("User").document(firebaseUser.getUid());
 
-
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+               address = documentSnapshot.getString("address");
+            }
+        });
 
         storage = FirebaseStorage.getInstance();
 
@@ -750,7 +756,7 @@ public class product_add_activity extends AppCompatActivity implements petImages
         alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         if(product_category.equals("Medicine")){
-         prod = new product_class("",product_name,product_description,product_treatment,product_category,brand,product_price,product_expiration,stock,null,FirebaseAuth.getInstance().getCurrentUser().getUid(),"forProducts",Timestamp.now(),true);
+         prod = new product_class("",product_name,product_description,product_treatment,product_category,brand,product_price,product_expiration,stock,null,FirebaseAuth.getInstance().getCurrentUser().getUid(),"forProducts",address,Timestamp.now(),true);
          FirebaseFirestore.getInstance().collection("Pet")
                  .add(prod).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                      @Override
@@ -762,7 +768,7 @@ public class product_add_activity extends AppCompatActivity implements petImages
                                  .addOnSuccessListener(new OnSuccessListener<Void>() {
                                      @Override
                                      public void onSuccess(Void unused) {
-                                         product_class  prod = new product_class(documentReference.getId(),product_name,product_description,"",product_category,brand,product_price,"",stock,null,FirebaseAuth.getInstance().getCurrentUser().getUid(),"forProducts", Timestamp.now(),true);
+                                         product_class  prod = new product_class(documentReference.getId(),product_name,product_description,"",product_category,brand,product_price,"",stock,null,FirebaseAuth.getInstance().getCurrentUser().getUid(),"forProducts",address, Timestamp.now(),true);
                                          //Shop Collection
                                          FirebaseFirestore.getInstance().collection("Shop")
                                                  .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -799,7 +805,7 @@ public class product_add_activity extends AppCompatActivity implements petImages
 
        }
         else{
-         prod = new product_class("",product_name,product_description,"",product_category,brand,product_price,"",stock,null,FirebaseAuth.getInstance().getCurrentUser().getUid(),"forProducts",Timestamp.now(),true);
+         prod = new product_class("",product_name,product_description,"",product_category,brand,product_price,"",stock,null,FirebaseAuth.getInstance().getCurrentUser().getUid(),"forProducts",address,Timestamp.now(),true);
             FirebaseFirestore.getInstance().collection("Pet")
                     .add(prod).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
@@ -811,8 +817,7 @@ public class product_add_activity extends AppCompatActivity implements petImages
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
-                                          product_class  prod = new product_class(documentReference.getId(),product_name,product_description,"",product_category,brand,product_price,"",stock,null,FirebaseAuth.getInstance().getCurrentUser().getUid(),"forProducts",null,true);
-
+                                          product_class  prod = new product_class(documentReference.getId(),product_name,product_description,"",product_category,brand,product_price,"",stock,null,FirebaseAuth.getInstance().getCurrentUser().getUid(),"forProducts",address,null,true);
 
                                           //Shop Collection
                                             FirebaseFirestore.getInstance().collection("Shop")
@@ -916,7 +921,7 @@ public class product_add_activity extends AppCompatActivity implements petImages
                                                                 if(task.isSuccessful()){
                                                                     alert2.dismiss();
 
-                                                                   item i = new item(id,firebaseUser.getUid(),petPriceTextView.getText().toString(),petBreedTextView.getText().toString(),petNameEdit.getText().toString(),true);
+                                                                   item i = new item(id,firebaseUser.getUid(),petPriceTextView.getText().toString(),petBreedTextView.getText().toString(),petNameEdit.getText().toString(),address,true);
 
                                                                    FirebaseFirestore.getInstance().collection("Search")
                                                                            .document(id)

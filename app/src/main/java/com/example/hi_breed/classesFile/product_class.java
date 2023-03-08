@@ -22,12 +22,13 @@ public class product_class implements Serializable, Parcelable {
     String prod_price;
     Boolean show;
     List<String> photos;
+    String address;
     String displayFor;
     com.google.firebase.Timestamp timestamp;
     public product_class(){
 
     }
-    public product_class(String id, String prod_name, String prod_description, String prod_treatment, String prod_category, String prod_brand, String prod_price, String prod_expiration, String prod_stocks, List<String> photos , String vet_id, String displayFor, com.google.firebase.Timestamp timestamp, Boolean show) {
+    public product_class(String id, String prod_name, String prod_description, String prod_treatment, String prod_category, String prod_brand, String prod_price, String prod_expiration, String prod_stocks, List<String> photos , String vet_id, String displayFor,String address, Timestamp timestamp, Boolean show) {
         this.id = id;
         this.prod_name = prod_name;
         this.prod_description = prod_description;
@@ -40,6 +41,7 @@ public class product_class implements Serializable, Parcelable {
         this.prod_price = prod_price;
         this.photos = photos;
         this.show = show;
+        this.address = address;
         this.displayFor = displayFor;
         this.timestamp =timestamp;
     }
@@ -58,6 +60,7 @@ public class product_class implements Serializable, Parcelable {
         byte tmpShow = in.readByte();
         show = tmpShow == 0 ? null : tmpShow == 1;
         photos = in.createStringArrayList();
+        address = in.readString();
         displayFor = in.readString();
         timestamp = in.readParcelable(Timestamp.class.getClassLoader());
     }
@@ -73,6 +76,10 @@ public class product_class implements Serializable, Parcelable {
             return new product_class[size];
         }
     };
+
+    public String getAddress() {
+        return address;
+    }
 
     public Timestamp getTimestamp() {
         return timestamp;
@@ -138,6 +145,7 @@ public class product_class implements Serializable, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+
         dest.writeString(id);
         dest.writeString(prod_name);
         dest.writeString(prod_description);
@@ -150,7 +158,9 @@ public class product_class implements Serializable, Parcelable {
         dest.writeString(prod_price);
         dest.writeByte((byte) (show == null ? 0 : show ? 1 : 2));
         dest.writeStringList(photos);
+        dest.writeString(address);
         dest.writeString(displayFor);
         dest.writeParcelable(timestamp, flags);
     }
+
 }

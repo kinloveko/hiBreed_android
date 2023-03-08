@@ -51,7 +51,7 @@ public class user_breeder_shop_panel extends BaseActivity {
     ArrayList<String> role = new ArrayList<>();
     TextView breederName, breederLabel;
     CircleImageView imageView;
-    CardView createPetProfile,myPets,sellPetCardView8,serviceCardView8,myProducts;
+    CardView createPetProfile,myPets,sellPetCardView8,serviceCardView8,myProducts,sellProductView8;
     CircleImageView cardView2;
     TextView textView15,textViewSellPetName,textViewLabel;
 
@@ -90,6 +90,7 @@ public class user_breeder_shop_panel extends BaseActivity {
         sellPetCardView8 = findViewById(R.id.sellPetCardView8);
         //Service
         //Cardview
+        sellProductView8 = findViewById(R.id.sellProductView8);
         cardView2 = findViewById(R.id.cardView2);
         serviceCardView8 = findViewById(R.id.serviceCardView8);
         viewShop = findViewById(R.id.viewShopID);
@@ -185,6 +186,57 @@ public class user_breeder_shop_panel extends BaseActivity {
                         }
                     });
 
+        sellProductView8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(role.contains("Veterinarian") && role.contains("Pet Owner")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
+                    return;
+                }
+                if(role.contains("Veterinarian") && role.contains("Pet Breeder")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
+                    return;
+                }
+                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Owner")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
+                    return;
+                }
+                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
+                    return;
+                }
+                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Shooter") && role.contains("Pet Owner")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
+                    return;
+                }
+                if(role.contains("Pet Owner") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
+                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(role.contains("Pet Owner") && role.contains("Pet Breeder")){
+                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(role.contains("Pet Shooter") && role.contains("Pet Owner")){
+                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(role.contains("Pet Shooter")){
+                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(role.contains("Pet Owner")){
+                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        });
+
         myPets.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,6 +279,7 @@ public class user_breeder_shop_panel extends BaseActivity {
                 finish();
             }
         });
+
         sellPetCardView8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,8 +307,20 @@ public class user_breeder_shop_panel extends BaseActivity {
                     Toast.makeText(user_breeder_shop_panel.this, "Only a breeder can sell a pet", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(role.contains("Veterinarian")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
+                if(role.contains("Veterinarian") && role.contains("Pet Breeder")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
+                    return;
+                }
+                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Owner")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
+                    return;
+                }
+                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
+                    return;
+                }
+                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Shooter") && role.contains("Pet Owner")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
                     return;
                 }
             }

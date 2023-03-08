@@ -21,6 +21,7 @@ public class PetSaleClass implements Serializable, Parcelable {
     String pet_gender;
     String pet_name;
     String pet_price;
+    String address;
     String displayFor;
     ArrayList<String> pet_vaccine;
     ArrayList<String> papers;
@@ -31,7 +32,7 @@ public class PetSaleClass implements Serializable, Parcelable {
 
     }
     public PetSaleClass(String id,String pet_name, String pet_description, String pet_colorMarkings, String pet_breed,String petSize,String petKilo,ArrayList<String> photos,ArrayList<String> papers, ArrayList<String> pet_vaccine,
-                        String pet_gender, String pet_birthday, String pet_price,  String pet_breeder,String kennel,String displayFor,Timestamp timestamp, Boolean show) {
+                        String pet_gender, String pet_birthday, String pet_price,  String pet_breeder,String kennel,String displayFor,String address,Timestamp timestamp, Boolean show) {
         this.pet_birthday = pet_birthday;
         this.pet_breed = pet_breed;
         this.pet_breeder = pet_breeder;
@@ -40,6 +41,7 @@ public class PetSaleClass implements Serializable, Parcelable {
         this.pet_gender = pet_gender;
         this.petSize = petSize;
         this.petKilo = petKilo;
+        this.address = address;
         this.pet_name = pet_name;
         this.pet_price = pet_price;
         this.pet_vaccine = pet_vaccine;
@@ -51,6 +53,7 @@ public class PetSaleClass implements Serializable, Parcelable {
         this.timestamp = timestamp;
         this.papers = papers;
     }
+
 
     protected PetSaleClass(Parcel in) {
         pet_birthday = in.readString();
@@ -65,6 +68,7 @@ public class PetSaleClass implements Serializable, Parcelable {
         pet_gender = in.readString();
         pet_name = in.readString();
         pet_price = in.readString();
+        address = in.readString();
         displayFor = in.readString();
         pet_vaccine = in.createStringArrayList();
         papers = in.createStringArrayList();
@@ -85,6 +89,10 @@ public class PetSaleClass implements Serializable, Parcelable {
             return new PetSaleClass[size];
         }
     };
+
+    public String getAddress() {
+        return address;
+    }
 
     public Timestamp getTimestamp() {
         return timestamp;
@@ -228,6 +236,7 @@ public class PetSaleClass implements Serializable, Parcelable {
         this.pet_vaccine = pet_vaccine;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -247,6 +256,7 @@ public class PetSaleClass implements Serializable, Parcelable {
         dest.writeString(pet_gender);
         dest.writeString(pet_name);
         dest.writeString(pet_price);
+        dest.writeString(address);
         dest.writeString(displayFor);
         dest.writeStringList(pet_vaccine);
         dest.writeStringList(papers);

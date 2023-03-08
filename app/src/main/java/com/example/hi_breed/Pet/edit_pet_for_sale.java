@@ -652,79 +652,114 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
             if (petSale.getPapers() != null) {
 
-               int countOfPapers = petSale.getPapers().size();
                 for (int i = 0; i < countOfPapers; i++) {
-                    Uri imageUriPapers = Uri.parse(petSale.getPapers().get(i));
-                    uriCurrentPapers.add(imageUriPapers);
-                    if (petSale.getPapers().size() == 0) {
-                        pet_papers_current.setVisibility(View.GONE);
-                    } else {
-                        pet_papers_current.setVisibility(View.VISIBLE);
+                    String paperUri = petSale.getPapers().get(i);
+                    if (paperUri != null && !paperUri.isEmpty()) {
+                        imageUriPapers = Uri.parse(paperUri);
+                            uriCurrentPapers.add(imageUriPapers);
+                            if (petSale.getPapers().size() == 0) {
+                                pet_papers_current.setVisibility(View.GONE);
+                            } else {
+                                pet_papers_current.setVisibility(View.VISIBLE);
+                            }
+
+                        pet_paper_current_adapter = new pet_papers_check_current(uriCurrentPapers, getApplicationContext(), this, this, id, breederID);
+                        pet_paper_current_adapter.notifyDataSetChanged();
                     }
-                    pet_paper_current_adapter = new pet_papers_check_current(uriCurrentPapers, getApplicationContext(), this, this,id,breederID);
-                    pet_paper_current_adapter.notifyDataSetChanged();
+
+
                 }
             }
 
-        if(petSale.getPet_vaccine() !=null) {
-            for (int j = 0; j < petSale.getPet_vaccine().size(); j++) {
+/*            List<String> al = new ArrayList<String>();
+            al.add(vaccine);
 
-                LayoutInflater layoutInflater =
-                        (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View saveView = layoutInflater.inflate(R.layout.pet_add_vaccine_save_row, null);
-                save_textOut = saveView.findViewById(R.id.vaccine_save_textout);
-                save_count = saveView.findViewById(R.id.vaccine_save_count);
-                Button removeButton = saveView.findViewById(R.id.vaccine_save_remove);
+            for (String c : al) {
+                StringBuffer alpha = new StringBuffer(), num = new StringBuffer();
+                String[] word = c.split(":");
+                String str = Arrays.toString(word);
 
-                String vaccine = petSale.getPet_vaccine().get(j);
-
-                List<String> al = new ArrayList<String>();
-                al.add(vaccine);
-
-                for (String c : al) {
-                    StringBuffer alpha = new StringBuffer(), num = new StringBuffer();
-                    String[] word = c.split(":");
-                    String str = Arrays.toString(word);
-
-                    for (int i = 0; i < str.length(); i++) {
-                        if (Character.isAlphabetic(str.charAt(i)))
-                            alpha.append(str.charAt(i));
-                        else if (Character.isWhitespace(str.charAt(i)))
-                            alpha.append(str.charAt(i));
-                        else if (Character.isDigit(str.charAt(i)))
-                            num.append(str.charAt(i));
-
-                    }
-                    save_textOut.setText(alpha);
-                    save_count.setText(num);
+                for (int i = 0; i < str.length(); i++) {
+                    if (Character.isAlphabetic(str.charAt(i)))
+                        alpha.append(str.charAt(i));
+                    else if (Character.isWhitespace(str.charAt(i)))
+                        alpha.append(str.charAt(i));
+                    else if (Character.isDigit(str.charAt(i)))
+                        num.append(str.charAt(i));
 
                 }
-                removeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int count = added_vaccine.getChildCount();
-                        if(count == 1){
-                            Toast.makeText(edit_pet_for_sale.this, "This cannot be deleted vaccine must not be empty", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        else{
-                            removeSaveView(saveView);
-                        }
-                        count-=1;
-                        if(count==0){
-                            text3.setVisibility(View.GONE);
-                            text4.setVisibility(View.GONE);
-                        }
-                    }
-                });
+                save_textOut.setText(alpha);
+                save_count.setText(num);
 
-                added_vaccine.addView(saveView);
-            }
-        }
+            }*/
 
+            if(petSale.getPet_vaccine().size()!=0) {
+            FirebaseFirestore.getInstance().collection("Pet")
+                    .document(petSale.getId())
+                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            List<String> list = (List<String>) documentSnapshot.get("pet_vaccine");
+
+
+                            for(String j:list){
+                                String vaccine = j;
+
+                                LayoutInflater layoutInflater =
+                                        (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                View saveView = layoutInflater.inflate(R.layout.pet_add_vaccine_save_row, null);
+                                save_textOut = saveView.findViewById(R.id.vaccine_save_textout);
+                                save_count = saveView.findViewById(R.id.vaccine_save_count);
+                                Button removeButton = saveView.findViewById(R.id.vaccine_save_remove);
+
+                                List<String> al = new ArrayList<String>();
+                                al.add(vaccine);
+
+                                for (String c : al) {
+                                    StringBuffer alpha = new StringBuffer(), num = new StringBuffer();
+                                    String[] word = c.split(":");
+                                    String str = Arrays.toString(word);
+
+                                    for (int i = 0; i < str.length(); i++) {
+                                        if (Character.isAlphabetic(str.charAt(i)))
+                                            alpha.append(str.charAt(i));
+                                        else if (Character.isWhitespace(str.charAt(i)))
+                                            alpha.append(str.charAt(i));
+                                        else if (Character.isDigit(str.charAt(i)))
+                                            num.append(str.charAt(i));
+
+                                    }
+                                    save_textOut.setText(alpha);
+                                    save_count.setText(num);
+
+                                }
+
+                                removeButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        int count = added_vaccine.getChildCount();
+                                        if(count == 1){
+                                            Toast.makeText(edit_pet_for_sale.this, "This cannot be deleted vaccine must not be empty", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        else{
+                                            removeSaveView(saveView);
+                                        }
+                                        count-=1;
+                                        if(count==0){
+                                            text3.setVisibility(View.GONE);
+                                            text4.setVisibility(View.GONE);
+                                        }
+                                    }
+                                });
+
+                                added_vaccine.addView(saveView);
+                            }
+                        }
+                    });
         }
+      }
     }
-
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     RelativeLayout addCustoms;

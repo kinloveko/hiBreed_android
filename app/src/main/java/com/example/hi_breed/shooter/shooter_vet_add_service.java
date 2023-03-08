@@ -501,7 +501,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
 
                                                             if(roles.contains("Veterinarian")){
                                                                 item item = new item(id,FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                                                        price,"Veterinarian Service",petNameEdit.getText().toString(),true);
+                                                                        price,"Veterinarian Service",petNameEdit.getText().toString(),address,true);
 
                                                                 FirebaseFirestore.getInstance().collection("Search").document(id)
                                                                         .set(item,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -550,7 +550,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                                                             }
                                                             else{
 
-                                                                item item = new item(id,FirebaseAuth.getInstance().getCurrentUser().getUid(),price,"Shooter Service","Shooter Service",true);
+                                                                item item = new item(id,FirebaseAuth.getInstance().getCurrentUser().getUid(),price,"Shooter Service","Shooter Service",address,true);
 
                                                                 FirebaseFirestore.getInstance().collection("Search").document(id)
                                                                         .set(item,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {

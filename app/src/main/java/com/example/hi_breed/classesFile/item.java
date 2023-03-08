@@ -6,7 +6,7 @@ public class item implements Serializable {
     private String id;
     private String seller_id;
     private String price;
-
+    private String address;
     private String category;
     private boolean show;
     private String type;
@@ -16,14 +16,19 @@ public class item implements Serializable {
 
     }
 
-    public item(String id, String seller_id, String price, String category,String type, boolean show) {
+
+    public item(String id, String seller_id, String price, String category,String type,String address, boolean show) {
         this.id = id;
         this.seller_id = seller_id;
         this.price = price;
-
+        this.address = address;
         this.type = type;
         this.category = category;
         this.show = show;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public String getType() {

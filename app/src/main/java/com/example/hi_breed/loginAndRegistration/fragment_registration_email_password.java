@@ -239,6 +239,22 @@ public class fragment_registration_email_password extends Fragment {
             return;
         }
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View view = View.inflate(getContext(),R.layout.screen_custom_alert,null);
+        TextView title = view.findViewById(R.id.screen_custom_alert_title);
+
+        builder.setCancelable(false);
+        AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+        imageViewCompat.setImageURI(Uri.parse(String.valueOf(R.drawable.icon_check_grey)));
+        title.setVisibility(View.GONE);
+
+        TextView message = view.findViewById(R.id.screen_custom_alert_message);
+        message.setVisibility(View.GONE);
+        builder.setView(view);
+        AlertDialog alert = builder.create();
+        alert.show();
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
            mAuth.fetchSignInMethodsForEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
                     @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
@@ -249,21 +265,6 @@ public class fragment_registration_email_password extends Fragment {
 
                         if (isNewUser) {
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                            View view = View.inflate(getContext(),R.layout.screen_custom_alert,null);
-                            TextView title = view.findViewById(R.id.screen_custom_alert_title);
-
-                            builder.setCancelable(false);
-                            AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
-                            imageViewCompat.setImageURI(Uri.parse(String.valueOf(R.drawable.icon_check_grey)));
-                            title.setVisibility(View.GONE);
-
-                            TextView message = view.findViewById(R.id.screen_custom_alert_message);
-                            message.setVisibility(View.GONE);
-                            builder.setView(view);
-                            AlertDialog alert = builder.create();
-                            alert.show();
-                            alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                             mAuth.createUserWithEmailAndPassword(email,password)
                                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -320,7 +321,8 @@ public class fragment_registration_email_password extends Fragment {
                                                             documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
 
                                                             //for creation of shop data
-                                                            ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid());
+
+                                                            ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
                                                             DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
                                                             documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.adapter.search_bar_adapter.searchClickedAdapter;
 import com.example.hi_breed.classesFile.item;
+import com.example.hi_breed.marketplace.m_market_place_container;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,14 +50,30 @@ public class filter_search extends AppCompatActivity {
         search_result.setLayoutManager(new GridLayoutManager(this,2));
         adapter = new searchClickedAdapter(this);
         searchBack = findViewById(R.id.searchBack);
+
         searchBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                filter_search.this.onBackPressed();
+
+                Intent i = new Intent(filter_search.this, m_market_place_container.class);
+                // set the new task and clear flags
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
                 finish();
+
             }
         });
+
         noMatches = findViewById(R.id.noMatches);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(filter_search.this, m_market_place_container.class);
+        // set the new task and clear flags
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
+        finish();
     }
 
     @SuppressLint("SetTextI18n")
@@ -67,16 +84,16 @@ public class filter_search extends AppCompatActivity {
         adapter.clearList();
         Intent intent = getIntent();
         if(intent.getSerializableExtra("mode") !=null){
+
             List<item> hold = (List<item>) intent.getSerializableExtra("mode");
 
             for(item item:hold){
                 newSearch.add(item);
                 adapter.addSearch(newSearch);
-                /*   headerName.setText("Search results:"+);*/
             }
             search_result.setAdapter(adapter);
-
         }
+
 
         if (newSearch.size() != 0){
             noMatches.setVisibility(View.GONE);
@@ -86,5 +103,7 @@ public class filter_search extends AppCompatActivity {
             noMatches.setVisibility(View.VISIBLE);
             search_result.setVisibility(View.GONE);
         }
+
+
     }
 }

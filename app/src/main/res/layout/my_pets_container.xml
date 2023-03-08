@@ -96,7 +96,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/icon_sells"
+                    android:src="@drawable/icon_sell"
                     app:layout_constraintHorizontal_bias="0.684"
                     app:layout_constraintStart_toEndOf="@+id/textView15"
                     app:layout_constraintTop_toTopOf="parent" />

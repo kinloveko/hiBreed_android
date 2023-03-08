@@ -76,13 +76,13 @@ public class pet_for_sale_details extends BaseActivity {
             ,address_details;
     ConstraintLayout details_shop_profile_Layout;
     CircleImageView details_shopProfile_details;
-    RelativeLayout autoCompleteTextView;
+
     Button details_button_addToCard
             ,details_button_buyNow;
     RelativeLayout details_moredetails_relative;
-    ImageView image;
-    String id,breeder;
 
+    String id,breeder;
+    String vac="";
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -107,7 +107,6 @@ public class pet_for_sale_details extends BaseActivity {
                 startActivity(new Intent(pet_for_sale_details.this, add_to_cart.class));
             }
         });
-
 
         backLayout = findViewById(R.id.backLayout);
         backLayout.setOnClickListener(new View.OnClickListener() {
@@ -174,7 +173,6 @@ public class pet_for_sale_details extends BaseActivity {
 
             id = pet.getId();
             breeder = pet.getPet_breeder();
-
 
             FirebaseFirestore.getInstance().collection("Likes")
                     .whereEqualTo("likedBy",FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -251,17 +249,14 @@ public class pet_for_sale_details extends BaseActivity {
                                     }
                                 }
                             });
-            kennel_details.setText(pet.getKennel());
 
+            kennel_details.setText(pet.getKennel());
             details_pet_color.setText(pet.getPet_colorMarkings());
             details_pet_gender.setText(pet.getPet_gender());
-
-
-            StringBuilder text = new StringBuilder();
-            for(int i = 0; i < pet.getPet_vaccine().size(); i++){
-                text.append(pet.getPet_vaccine().get(i)).append('\n');
+            for(String str:pet.getPet_vaccine()){
+                vac += str +"\n";
             }
-            details_pet_vaccines.setText(text.toString());
+            details_pet_vaccines.setText(vac);
             details_pet_size_kilo.setText(pet.getPetSize()+" "+pet.getPetKilo()+"kg");
 
         }
@@ -279,8 +274,6 @@ public class pet_for_sale_details extends BaseActivity {
                 viewShop();
             }
         });
-
-
 
 
         heart_like.setOnClickListener(new View.OnClickListener() {

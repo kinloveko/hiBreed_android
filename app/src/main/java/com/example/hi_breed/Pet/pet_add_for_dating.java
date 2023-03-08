@@ -242,11 +242,7 @@ public class pet_add_for_dating extends BaseActivity implements petImagesRecycle
         birthdayLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-  /*              datePickerClass pickerClass = new datePickerClass(datePickerDialog,pet_add.this,R.id.petBirthdayTextView);
-               if(pickerClass!=null) {
-                   pickerClass.initDatePicker();
-               }
-            */   openBirthdayDialog();
+                  openBirthdayDialog();
 
             }
         });
@@ -275,14 +271,11 @@ public class pet_add_for_dating extends BaseActivity implements petImagesRecycle
         }
     }
 
-
-
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     RelativeLayout addCustoms;
     ListView listViews;
     EditText editTexts;
     ArrayAdapter<String> arrayAdapters;
-    int counters = 0;
     @SuppressLint("UseCompatLoadingForDrawables")
     private void selectSize() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
@@ -968,6 +961,7 @@ public class pet_add_for_dating extends BaseActivity implements petImagesRecycle
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
+
                                                 FirebaseFirestore.getInstance()
                                                         .collection("User")
                                                         .document(firebaseUser.getUid())
@@ -979,6 +973,7 @@ public class pet_add_for_dating extends BaseActivity implements petImagesRecycle
                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                 if(task.isSuccessful()){
                                                                     alertDialog.dismiss();
+
 
                                                                     AlertDialog.Builder builder2 = new AlertDialog.Builder(pet_add_for_dating.this);
                                                                     builder2.setCancelable(false);

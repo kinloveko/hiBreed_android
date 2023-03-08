@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -90,11 +91,7 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot s = task.getResult();
                                     List<String> photos = (List<String>) s.get("photos");
-                                    Glide.with(viewHolder.itemView.getContext())
-                                            .load(photos.get(0))
-                                            .placeholder(R.drawable.noimage)
-                                            .into(viewHolder.image);
-
+                                    Picasso.get().load(photos.get(0)).into(viewHolder.image);
                                 }
                             }
                         });
