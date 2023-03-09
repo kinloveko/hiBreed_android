@@ -48,6 +48,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -60,8 +61,10 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import pl.droidsonroids.gif.GifImageView;
@@ -278,6 +281,7 @@ public class user_profile_account_edit extends BaseActivity {
     //to get the value of the imageView
     String imageProf="";
     String imageCover="";
+    List<String> roles= new ArrayList<>();
     private void getUserInfo(DocumentReference userID) {
 
         FirebaseFirestore.getInstance().collection("User").document(firebaseUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -287,6 +291,7 @@ public class user_profile_account_edit extends BaseActivity {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()) {
 
+                        roles =(List<String>) documentSnapshot.get("role");
                         before_first = documentSnapshot.getString("firstName");
                         before_middle = documentSnapshot.getString("middleName");
                         before_last = documentSnapshot.getString("lastName");
@@ -952,8 +957,53 @@ public class user_profile_account_edit extends BaseActivity {
                                 .set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
-                                        Toast.makeText(user_profile_account_edit.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
-                                    }
+
+                                        if(roles.contains("Pet Shooter") || roles.contains("Veterinarian")){
+                                            FirebaseFirestore.getInstance().collection("Services")
+                                                    .whereEqualTo("shooter_id",FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .get()
+                                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                                                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+
+                                                            if(list!=null){
+
+                                                                for(DocumentSnapshot s:list){
+                                                                    FirebaseFirestore.getInstance().collection("Services")
+                                                                            .document(s.getId())
+                                                                            .update("address",editText.getText().toString())
+                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void unused) {
+
+                                                                                     FirebaseFirestore.getInstance().collection("Search")
+                                                                                             .document(s.getId()).update("address",editText.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                 @Override
+                                                                                                 public void onSuccess(Void unused) {
+                                                                                                     count++;
+                                                                                                     if(count==list.size()){
+                                                                                                         if(roles.contains("Veterinarian")){
+                                                                                                             gotoAnotherUpdate(editText.getText().toString());
+                                                                                                             before_address = editText.getText().toString();
+                                                                                                         }
+                                                                                                     }
+                                                                                                 }
+                                                                                             });
+                                                                                }
+                                                                            });
+                                                                }
+                                                             }
+                                                        }
+                                                    });
+                                        }
+
+                                        if(roles.contains("Pet Breeder") || roles.contains("Veterinarian")){
+                                                gotoAnotherUpdateForItems(editText.getText().toString());
+                                            before_address = editText.getText().toString();
+                                        }
+                                      }
                                 });
                     }
                     if(count != 0){
@@ -1103,6 +1153,81 @@ public class user_profile_account_edit extends BaseActivity {
         else{
             Toast.makeText(this, "Cannot open a dialog", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void gotoAnotherUpdateForItems(String toString) {
+            if(roles.contains("Pet breeder")){
+                FirebaseFirestore.getInstance().collection("Pet")
+                        .whereEqualTo("displayFor","forSale")
+                        .whereEqualTo("pet_breeder",FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                                if(list!=null){
+                                    for(DocumentSnapshot s:list){
+                                        FirebaseFirestore.getInstance().collection("Pet")
+                                                .document(s.getId()).update("address",toString).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+                                                        FirebaseFirestore.getInstance().collection("Search")
+                                                                .document(s.getId()).update("address",toString).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void unused) {
+                                                                        count++;
+                                                                        if(count==list.size()){
+                                                                            Toast.makeText(user_profile_account_edit.this, "Successfully updated", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    }
+                                                                });
+                                                    }
+                                                });
+                                        
+                                    }
+                                }
+                                
+                            }
+                        });
+            }
+            else if(roles.contains("Veterinarian")){
+                FirebaseFirestore.getInstance().collection("Pet")
+                        .whereEqualTo("displayFor","forProducts")
+                        .whereEqualTo("vet_id",FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                                if(list!=null){
+                                    for(DocumentSnapshot s:list){
+                                     FirebaseFirestore.getInstance().collection("Pet")
+                                             .document(s.getId())
+                                             .update("address",toString).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                 @Override
+                                                 public void onSuccess(Void unused) {
+                                                   FirebaseFirestore.getInstance().collection("Search")
+                                                           .document(s.getId())
+                                                           .update("address",toString).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                               @Override
+                                                               public void onSuccess(Void unused) {
+                                                                   count++;
+                                                                   if(count==list.size()){
+                                                                       Toast.makeText(user_profile_account_edit.this, "Successfully updated", Toast.LENGTH_SHORT).show();
+                                                                   }
+                                                               }
+                                                           });
+                                                 }
+                                             });
+                                    }
+                                }
+                            }
+                        });
+            }
+         
+    }
+
+    private void gotoAnotherUpdate(String address) {
+
+
+
     }
 
     private void imagePermissionBackground() {

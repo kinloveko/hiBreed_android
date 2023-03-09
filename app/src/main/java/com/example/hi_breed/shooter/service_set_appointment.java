@@ -1,4 +1,4 @@
-package com.example.hi_breed;
+package com.example.hi_breed.shooter;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
@@ -23,9 +23,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.example.hi_breed.R;
 import com.example.hi_breed.checkout.checkout_thankyou;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.service_class;
+import com.example.hi_breed.current_address;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -49,7 +51,7 @@ import java.util.Map;
 
 import pl.droidsonroids.gif.GifImageView;
 
-public class set_appointment extends BaseActivity {
+public class service_set_appointment extends BaseActivity {
 
     TextView check_out_name,
             checkout_number,
@@ -92,7 +94,7 @@ public class set_appointment extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                Intent i = new Intent(set_appointment.this,current_address.class);
+                Intent i = new Intent(service_set_appointment.this, current_address.class);
                 i.putExtra("address",checkout_address.getText().toString());
                 i.putExtra("zip",checkout_zip.getText().toString());
                 i.putExtra("phone",checkout_number.getText().toString());
@@ -132,7 +134,7 @@ public class set_appointment extends BaseActivity {
         toolbarID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                set_appointment.this.onBackPressed();
+                service_set_appointment.this.onBackPressed();
                 finish();
             }
         });
@@ -195,7 +197,7 @@ public class set_appointment extends BaseActivity {
                         public void onClick(View v) {
 
                             if(dateTextView.getText().toString().equals("Date")) {
-                                Toast.makeText(set_appointment.this, "Select a date first", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(service_set_appointment.this, "Select a date first", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                             selectedDateTime.set(Calendar.YEAR, datePicker.getYear()); // replace with the year selected by the user
@@ -203,7 +205,7 @@ public class set_appointment extends BaseActivity {
                             selectedDateTime.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth()); // replace with the day selected by the user
 
                             if(selectedDateTime.getTime().before(currentDateTime.getTime())){
-                                Toast.makeText(set_appointment.this, "This service is close at this time", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(service_set_appointment.this, "This service is close at this time", Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
@@ -313,7 +315,7 @@ public class set_appointment extends BaseActivity {
                                                                                     @Override
                                                                                     public void onSuccess(Void unused) {
                                                                                         alert2.dismiss();
-                                                                                        Intent i = new Intent(set_appointment.this, checkout_thankyou.class);
+                                                                                        Intent i = new Intent(service_set_appointment.this, checkout_thankyou.class);
                                                                                         i.putExtra("from","Service");
                                                                                         startActivity(i);
                                                                                         finish();
@@ -483,7 +485,7 @@ public class set_appointment extends BaseActivity {
                         selectedDateTime.get(Calendar.MONTH) == currentDateTime.get(Calendar.MONTH) &&
                         selectedDateTime.get(Calendar.DAY_OF_MONTH) == currentDateTime.get(Calendar.DAY_OF_MONTH))){
                     if (selectedTime.isBefore(currentTime)) {
-                        Toast.makeText(set_appointment.this, "Selected time is already passed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(service_set_appointment.this, "Selected time is already passed", Toast.LENGTH_SHORT).show();
 
                     }else{
 
@@ -492,7 +494,7 @@ public class set_appointment extends BaseActivity {
                             dialog.dismiss();
                         }
                         else{
-                            Toast.makeText(set_appointment.this, "Appointment must be at least 2 hours ahead", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(service_set_appointment.this, "Appointment must be at least 2 hours ahead", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -568,12 +570,12 @@ public class set_appointment extends BaseActivity {
                     SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
                     String formattedDate = sdf.format(calendar.getTime());
                     dateTextView.setText(formattedDate);
-                    Toast.makeText(set_appointment.this, formattedDate, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(service_set_appointment.this, formattedDate, Toast.LENGTH_SHORT).show();
 
                     dialog.dismiss();
                 } else {
                     // Display an error message
-                    Toast.makeText(set_appointment.this, "Selected date is not available in the schedule", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(service_set_appointment.this, "Selected date is not available in the schedule", Toast.LENGTH_SHORT).show();
                 }
 
             }

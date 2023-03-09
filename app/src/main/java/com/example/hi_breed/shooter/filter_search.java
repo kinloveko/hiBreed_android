@@ -1,4 +1,4 @@
-package com.example.hi_breed;
+package com.example.hi_breed.shooter;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.search_bar_adapter.searchClickedAdapter;
 import com.example.hi_breed.classesFile.item;
 import com.example.hi_breed.marketplace.m_market_place_container;

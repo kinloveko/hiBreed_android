@@ -64,6 +64,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/down_arrow.xml" value="0.179" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow.xml" value="0.1455" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button.xml" value="0.114" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button_four.xml" value="0.1865" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button_ten.xml" value="0.2255" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button_three.xml" value="0.1855" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button_two.xml" value="0.152" />
@@ -240,6 +241,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_registration_for_owner.xml" value="0.19581017528858485" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_search_clicked.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_search_dashboard_home.xml" value="0.2" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_service_status.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_shoot_panel.xml" value="0.15305686190679776" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_shooter_panel.xml" value="0.16460025651988028" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_shooter_service.xml" value="0.2" />
@@ -279,6 +281,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_my_pets_pet_for_date.xml" value="0.1" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_my_pets_pet_for_sale.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_notifications_fragment.xml" value="0.2318840579710145" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_pending.xml" value="0.15789473684210525" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_pet_for_date.xml" value="0.1" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_pet_fragment.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/fragment_products_fragment.xml" value="0.14309210526315788" />
@@ -379,13 +382,14 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/search_display.xml" value="0.4" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/search_display_clicked.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/search_dog_breed.xml" value="0.264" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/service_status_layout.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/service_time_dialog.xml" value="0.4" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/services.xml" value="0.4" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/services_card_layout.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/set_appointment.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shooter_display_details.xml" value="0.144" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shooter_edit_service.xml" value="0.264" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shooter_pannel.xml" value="0.11151315789473684" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shooter_pannel.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_breeder_view.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_custom_tab.xml" value="0.17443351859769132" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_edit_profile.xml" value="0.19709277469003847" />

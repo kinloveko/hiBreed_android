@@ -10,11 +10,11 @@
         android:background="@color/fbWhite"
         android:layout_height="match_parent">
     <!-- TODO: Update blank fragment layout -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/services_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/services_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none" />
     <TextView
         android:visibility="gone"
         android:id="@+id/noOneTextView_pet_sale_card"

@@ -11,8 +11,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,12 +23,15 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.shooterAdapter.s_p_serviceAdapter;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.service_class;
+import com.example.hi_breed.service_status.service_status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
@@ -37,7 +43,8 @@ public class shooter_vet_panel extends BaseActivity {
     RelativeLayout serviceLayout,show_serviceLayout;
     RecyclerView show_service_recycler;
     s_p_serviceAdapter adapter;
-
+    TextView acquiredNumber;
+    CardView acquiredCardView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +62,7 @@ public class shooter_vet_panel extends BaseActivity {
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
 
-
+        acquiredCardView = findViewById(R.id.acquiredCardView);
         backLayoutPet = findViewById(R.id.toolbarID);
         shooter_verifyButton = findViewById(R.id.shooter_verifyButton);
         serviceLayout = findViewById(R.id.serviceLayout);
@@ -74,7 +81,7 @@ public class shooter_vet_panel extends BaseActivity {
 
             }
         });
-
+        acquiredNumber = findViewById(R.id.acquiredNumber);
         show_service_recycler = findViewById(R.id.show_service_recycler);
         adapter = new s_p_serviceAdapter(this);
         show_service_recycler.setLayoutManager(new GridLayoutManager(this,1));
@@ -97,7 +104,28 @@ public class shooter_vet_panel extends BaseActivity {
                         }
                     }
                 });
-
+        FirebaseFirestore.getInstance().collection("Appointments")
+                .whereEqualTo("seller_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null){
+                            return;
+                        }
+                        if(value!=null){
+                            List<DocumentSnapshot> list = value.getDocuments();
+                            if(list!=null) {
+                                acquiredNumber.setText(Integer.toString(list.size())); // Convert int to string
+                            }
+                        }
+                    }
+                });
+        acquiredCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    startActivity(new Intent(shooter_vet_panel.this, service_status.class));
+            }
+        });
 
     }
     private void getVeterinarianService(){

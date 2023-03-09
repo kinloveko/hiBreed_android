@@ -27,7 +27,6 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.likes_class;
 import com.example.hi_breed.classesFile.service_class;
-import com.example.hi_breed.set_appointment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -222,7 +221,7 @@ public class shooter_vet_display_details extends BaseActivity {
 
                                     }
                                     else{
-                                        Intent intent = new Intent(shooter_vet_display_details.this, set_appointment.class);
+                                        Intent intent = new Intent(shooter_vet_display_details.this, service_set_appointment.class);
                                         intent.putExtra("model", (Serializable) service);
                                         startActivity(intent);
                                          }

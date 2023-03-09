@@ -1,4 +1,4 @@
-package com.example.hi_breed.adapter.shooterAdapter;
+package com.example.hi_breed.adapter.service_status;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,9 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.classesFile.service_class;
+import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.shooter.shooter_vet_edit_service;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,24 +26,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class s_p_serviceAdapter extends RecyclerView.Adapter<s_p_serviceAdapter.ViewHolder> {
+public class pending_serviceAdapter extends RecyclerView.Adapter<pending_serviceAdapter.ViewHolder> {
 
         Context context;
-    private List<service_class> list;
+    private List<appointment_class> list;
 
-    public s_p_serviceAdapter(Context context){
+    public pending_serviceAdapter(Context context){
             this.context = context;
             this.list = new ArrayList<>();
     }
-    public void addServiceDisplay(service_class service_class){
-        list.add(service_class);
+
+    public void addServiceDisplay(appointment_class appointment_class){
+        list.add(appointment_class);
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.m_services_card_layout,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.service_status_layout,parent,false);
 
         return new ViewHolder(view);
     }
@@ -51,25 +53,30 @@ public class s_p_serviceAdapter extends RecyclerView.Adapter<s_p_serviceAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        service_class productModel = list.get(position);
-        holder.label.setText(productModel.getServiceType());
-        FirebaseFirestore.getInstance().collection("User").document(productModel.getShooter_id())
+        appointment_class productModel = list.get(position);
+        FirebaseFirestore.getInstance().collection("User").document(productModel.getCustomer_id())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if(task.isSuccessful()){
                             DocumentSnapshot snapshot = task.getResult();
-
+                            Picasso.get().load(snapshot.getString("image")).placeholder(R.drawable.noimage).into(holder.imageRecycler);
                             holder.nameRecycler.setText(snapshot.getString("firstName")+" "+snapshot.getString("middleName")
                                     +" "+snapshot.getString("lastName"));
                         }
                     }
                 });
-        holder.button_contact.setText("EDIT");
-        holder.servicePriceRecycler.setText(productModel.getService_fee()+".0");
-        holder.descriptionRecycler.setText(productModel.getService_description());
-        if(productModel.getPhotos()!=null)
-        Picasso.get().load(productModel.getPhotos().get(0)).placeholder(R.drawable.noimage).into(holder.imageRecycler);
+        FirebaseFirestore.getInstance().collection("User")
+                        .document(productModel.getCustomer_id()).collection("security")
+                .document("security_doc").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                         holder.nameRecycler.setText(documentSnapshot.getString("phoneNumber"));
+                    }
+                });
+        holder.descriptionRecycler.setText(productModel.getAppointment_date()+" @ "+productModel.getAppointment_time());
+
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,16 +94,15 @@ public class s_p_serviceAdapter extends RecyclerView.Adapter<s_p_serviceAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView servicePriceRecycler;
         ImageView imageRecycler;
         TextView  nameRecycler;
-        TextView  descriptionRecycler;
+        TextView  descriptionRecycler,numberRecycler;
         TextView button_contact;
         TextView label;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            numberRecycler = itemView.findViewById(R.id.numberRecycler);
             label = itemView.findViewById(R.id.label);
-            servicePriceRecycler = itemView.findViewById(R.id.servicePriceRecycler);
             imageRecycler = itemView.findViewById(R.id.imageRecycler);
             nameRecycler = itemView.findViewById(R.id.nameRecycler);
             descriptionRecycler = itemView.findViewById(R.id.descriptionRecycler);

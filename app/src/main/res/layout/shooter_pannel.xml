@@ -11,10 +11,10 @@
         android:id="@+id/toolbarID"
         android:layout_width="match_parent"
         android:layout_height="55dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"
         android:background="@color/white"
         android:elevation="3dp"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentTop="true"
 
         tools:context=".loginAndRegistration.container_fragment_registration_users"
         tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
@@ -27,17 +27,17 @@
             android:layout_marginTop="3dp"
             android:layout_toEndOf="@id/backLayoutService"
             android:fontFamily="@font/poppinsemibold"
+            android:gravity="center"
             android:text="Service"
             android:textColor="@color/material_blue_grey_80"
             android:textSize="17sp"
-            android:gravity="center"
             tools:ignore="HardcodedText" />
 
         <LinearLayout
-            android:layout_marginTop="2dp"
             android:id="@+id/backLayoutService"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginTop="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,8 +48,8 @@
                 android:id="@+id/shop_edit_backArrowImage"
                 android:layout_width="20dp"
                 android:layout_height="35dp"
-                android:layout_marginStart="10dp"
                 android:layout_gravity="center"
+                android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:src="@drawable/icon_arrowback"
                 tools:ignore="ContentDescription,NestedWeights"
@@ -100,7 +100,7 @@
 
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cardView6"
+                    android:id="@+id/acquiredCardView"
                     android:layout_width="80dp"
                     android:layout_height="82dp"
                     android:layout_marginStart="5dp"
@@ -115,7 +115,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        android:id="@+id/IDNumberToShip"
+                        android:id="@+id/acquiredNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
