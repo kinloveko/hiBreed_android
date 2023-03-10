@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +24,7 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.shooterAdapter.s_p_serviceAdapter;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.service_class;
-import com.example.hi_breed.service_status.service_status;
+import com.example.hi_breed.service_status_for_seller.service_status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -45,6 +46,7 @@ public class shooter_vet_panel extends BaseActivity {
     s_p_serviceAdapter adapter;
     TextView acquiredNumber;
     CardView acquiredCardView;
+    String number;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,8 +79,25 @@ public class shooter_vet_panel extends BaseActivity {
         shooter_verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(shooter_vet_panel.this, shooter_vet_add_service.class));
-
+                FirebaseFirestore.getInstance().collection("User")
+                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .collection("security")
+                                                .document("security_doc")
+                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if(documentSnapshot.getString("contactNumber")==null ||
+                                         documentSnapshot.getString("contactNumber").equals("")){
+                                    Toast.makeText(shooter_vet_panel.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                else{
+                                    startActivity(new Intent(shooter_vet_panel.this, shooter_vet_add_service.class));
+                                   }
+                            }
+                        });
+              
+                
             }
         });
         acquiredNumber = findViewById(R.id.acquiredNumber);

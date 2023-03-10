@@ -80,6 +80,7 @@ public class message_conversation_activity extends BaseActivity {
     String match;
     String name;
     String images;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,7 +117,6 @@ public class message_conversation_activity extends BaseActivity {
             }
         });
         user = FirebaseAuth.getInstance().getCurrentUser();
-
         chat_recyclerview = findViewById(R.id.chat_recyclerview);
 
         adapter = new message_conversation_reply_adapter(this,user.getUid());
@@ -203,9 +203,6 @@ public class message_conversation_activity extends BaseActivity {
         conversation.put("messages", Arrays.asList(latestMessage));
         conversation.put("matchID",matchID);
 
-
-
-
         FirebaseFirestore.getInstance().collection("Chat").document(matchID)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -234,7 +231,6 @@ public class message_conversation_activity extends BaseActivity {
                                                 }
                                             }
                                         });
-
                             }
                             else{
                                 FirebaseFirestore.getInstance()

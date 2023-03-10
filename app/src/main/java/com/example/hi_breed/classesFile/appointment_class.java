@@ -1,8 +1,14 @@
 package com.example.hi_breed.classesFile;
 
-import java.sql.Timestamp;
 
-public class appointment_class {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.firebase.Timestamp;
+
+import java.io.Serializable;
+
+public class appointment_class implements Serializable, Parcelable {
     String customer_id;
     String id;
     String seller_id;
@@ -13,6 +19,10 @@ public class appointment_class {
     String service_id;
     String appointment_status;
     Timestamp timestamp;
+
+    public appointment_class(){
+
+    }
 
     public appointment_class(String id,String customer_id ,String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status, Timestamp timestamp) {
         this.id = id;
@@ -26,6 +36,31 @@ public class appointment_class {
         this.appointment_status = appointment_status;
         this.timestamp = timestamp;
     }
+
+    protected appointment_class(Parcel in) {
+        customer_id = in.readString();
+        id = in.readString();
+        seller_id = in.readString();
+        transaction_id = in.readString();
+        appointment_date = in.readString();
+        appointment_time = in.readString();
+        service_price = in.readString();
+        service_id = in.readString();
+        appointment_status = in.readString();
+        timestamp = in.readParcelable(Timestamp.class.getClassLoader());
+    }
+
+    public static final Creator<appointment_class> CREATOR = new Creator<appointment_class>() {
+        @Override
+        public appointment_class createFromParcel(Parcel in) {
+            return new appointment_class(in);
+        }
+
+        @Override
+        public appointment_class[] newArray(int size) {
+            return new appointment_class[size];
+        }
+    };
 
     public String getCustomer_id() {
         return customer_id;
@@ -67,4 +102,22 @@ public class appointment_class {
         return timestamp;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(customer_id);
+        dest.writeString(id);
+        dest.writeString(seller_id);
+        dest.writeString(transaction_id);
+        dest.writeString(appointment_date);
+        dest.writeString(appointment_time);
+        dest.writeString(service_price);
+        dest.writeString(service_id);
+        dest.writeString(appointment_status);
+        dest.writeParcelable(timestamp, flags);
+    }
 }

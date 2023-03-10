@@ -27,7 +27,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".service_status.service_status"
+            android:name=".acquired_service_details"
+            android:exported="false"
+            android:label="@string/title_activity_acquired_service_details"
+            android:theme="@style/Theme.HiBreed.NoActionBar" />
+        <activity
+            android:name=".service_status_for_buyer.appointment_user_side"
+            android:exported="false" />
+        <activity
+            android:name=".service_status_for_seller.service_status"
             android:exported="false" />
         <activity
             android:name=".shooter.filter_search"
@@ -172,8 +180,8 @@
 
         <service
             android:name=".classesFile.MessagingService"
-            android:exported="false"
-            android:permission="com.google.android.cd2m.permission.Send">
+            android:permission="com.google.android.cd2m.permission.Send"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.Recieve" />

@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.example.hi_breed.R;
 import com.example.hi_breed.screenLoading.LoadingDialog;
 import com.example.hi_breed.screenLoading.screen_WelcomeToHiBreed;
+import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
 import com.example.hi_breed.userFile.cart.add_to_cart;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,7 +50,7 @@ public class user_profile_fragment extends Fragment {
     private DocumentReference documentReference;
     String  userID;
     CircleImageView imageView;
-    ConstraintLayout editLayout,shoppingConstraint;
+    ConstraintLayout editLayout,shoppingConstraint,trackingConstraint;
     ConstraintLayout accountLayout,cardLayout,faqLayout,aboutLayout;
     TextView ownerDisplay;
     TextView label;
@@ -85,7 +86,7 @@ public class user_profile_fragment extends Fragment {
 
         if (isAdded() && getActivity() != null) {
 
-
+            trackingConstraint = view.findViewById(R.id.trackingConstraint);
             shoppingConstraint = view.findViewById(R.id.shoppingConstraint);
             //images
             imageView = view.findViewById(R.id.profileImage);
@@ -140,6 +141,12 @@ public class user_profile_fragment extends Fragment {
                 }
             });
 
+            trackingConstraint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getContext(), appointment_user_side.class));
+                }
+            });
 // to save the image
 
 

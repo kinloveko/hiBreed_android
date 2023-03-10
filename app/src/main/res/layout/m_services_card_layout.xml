@@ -83,12 +83,12 @@
 
     <ImageView
         android:id="@+id/pesoSign"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="10dp"
-        android:layout_marginBottom="15dp"
         android:layout_marginTop="-1dp"
+        android:layout_marginBottom="12dp"
         android:layout_toEndOf="@id/buttonContact"
         android:src="@drawable/icon_peso"
         tools:ignore="HardcodedText" />
@@ -96,20 +96,18 @@
     <TextView
         android:id="@+id/servicePriceRecycler"
         android:layout_width="wrap_content"
-        android:layout_height="27dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="1dp"
+        android:layout_marginBottom="3dp"
         android:layout_toEndOf="@id/pesoSign"
         android:ellipsize="end"
         android:fontFamily="@font/poppinsmedium"
-        android:layout_marginBottom="20dp"
         android:gravity="center"
         android:maxLines="1"
-        android:paddingStart="10sp"
-        android:paddingEnd="10sp"
         android:text="1500"
         android:textColor="@color/material_blue_grey_80"
-        android:textSize="25sp"
+        android:textSize="26sp"
         tools:ignore="HardcodedText" />
 
     <LinearLayout

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fbWhite"
-    tools:context=".service_status_for_seller.CompletedFragment">
+    tools:context=".service_status_for_buyer.cancelled_user_side">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

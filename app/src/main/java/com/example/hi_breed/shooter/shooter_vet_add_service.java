@@ -94,6 +94,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
     private String name;
     private String picture;
     private TextView petNamecountID;
+
     private TextInputEditText petNameEdit;
     private RelativeLayout serviceNameLayout;
     private ImageView petNameclearButton;
@@ -332,6 +333,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
             servicePriceTextView.requestFocus();
             return;
         }
+
 
         AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
         builder2.setCancelable(false);

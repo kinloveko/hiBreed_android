@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".service_status_for_seller.service_status">
+    tools:context=".service_status_for_buyer.appointment_user_side">
+
 
     <RelativeLayout
         android:id="@+id/toolbarID"
@@ -13,10 +14,10 @@
         android:layout_height="55dp"
         android:layout_alignParentTop="true"
         android:background="@color/white"
-        android:elevation="3dp"
 
         tools:context=".loginAndRegistration.container_fragment_registration_users"
         tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
+
 
         <TextView
             android:id="@+id/text1"
@@ -27,7 +28,7 @@
             android:layout_toEndOf="@id/backLayoutService"
             android:fontFamily="@font/poppinsmedium"
             android:gravity="center"
-            android:text="Acquired status"
+            android:text="Appointments"
             android:textColor="@color/material_blue_grey_80"
             android:textSize="17sp"
             tools:ignore="HardcodedText" />
@@ -55,7 +56,6 @@
                 tools:layout_editor_absoluteX="339dp"
                 tools:layout_editor_absoluteY="122dp" />
 
-
         </LinearLayout>
 
     </RelativeLayout>
@@ -72,9 +72,9 @@
         app:tabMode="scrollable" />
 
     <androidx.viewpager.widget.ViewPager
-        android:layout_below="@+id/tab_layout"
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:layout_below="@+id/tab_layout"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.example.hi_breed.service_status;
+package com.example.hi_breed.service_status_for_buyer;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
@@ -19,12 +19,16 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.service_status_for_seller.AcceptedFragment;
+import com.example.hi_breed.service_status_for_seller.CancelledFragment;
+import com.example.hi_breed.service_status_for_seller.CompletedFragment;
+import com.example.hi_breed.service_status_for_seller.PendingFragment;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class service_status extends AppCompatActivity {
+public class appointment_user_side extends AppCompatActivity {
 
 
     private TabLayout tabLayout;
@@ -34,8 +38,7 @@ public class service_status extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_service_status);
-
+        setContentView(R.layout.activity_appointment_user_side);
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
@@ -51,7 +54,7 @@ public class service_status extends AppCompatActivity {
         toolbarID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service_status.this.onBackPressed();
+                appointment_user_side.this.onBackPressed();
                 finish();
             }
         });
@@ -59,15 +62,16 @@ public class service_status extends AppCompatActivity {
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
 
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new PendingFragment(), "Pending");
-        viewPagerAdapter.addFragment(new AcceptedFragment(), "Accepted");
-        viewPagerAdapter.addFragment(new CompletedFragment(), "Completed");
-        viewPagerAdapter.addFragment(new CancelledFragment(), "Cancelled");
+        viewPagerAdapter = new appointment_user_side.ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFragment(new pending_user_side(), "Pending");
+        viewPagerAdapter.addFragment(new accepted_user_side(), "Accepted");
+        viewPagerAdapter.addFragment(new completed_user_side(), "Completed");
+        viewPagerAdapter.addFragment(new cancelled_user_side(), "Cancelled");
 
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }
+
     private static class ViewPagerAdapter extends FragmentPagerAdapter {
 
         private final List<Fragment> fragments = new ArrayList<>();

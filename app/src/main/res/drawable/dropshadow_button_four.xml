@@ -38,7 +38,7 @@
             <item>
                 <shape>
 
-                    <solid android:color="@color/realGreen"/>
+                    <solid android:color="@color/mustard"/>
                     <corners android:radius="19dp"/>
 
                 </shape>
@@ -48,8 +48,8 @@
                 <shape>
                     <padding android:bottom="5dp"/>
                     <gradient
-                        android:startColor="@color/material_box_stroke"
-                        android:endColor="@color/realGreen"
+                        android:startColor="@color/mustard"
+                        android:endColor="@color/mustard"
                         android:angle="270" />
                     <corners
                         android:radius="19dp"/>

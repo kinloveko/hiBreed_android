@@ -2,9 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/relativeLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:elevation="3dp"
-    android:layout_height="210dp"
+    android:layout_marginTop="10dp"
+    android:layout_height="wrap_content"
     android:layout_marginStart="5dp"
     android:background="@drawable/dropshadow_two"
     android:backgroundTint="@color/white"
@@ -43,24 +45,42 @@
         android:maxLines="3"
         android:text="Appointment request"
         android:textColor="@color/material_blue_grey_90"
-        android:textSize="17sp"
+        android:textSize="16sp"
         tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/descriptionRecycler"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="25dp"
         android:layout_below="@id/label"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@id/card"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/dateImage"
         android:ellipsize="end"
         android:fontFamily="@font/poppinsregular"
         android:maxLines="1"
         android:singleLine="true"
-        android:text="March 12, 2023 @ 10:00 PM"
-        android:textSize="15sp"
+        android:text=""
+        android:textSize="14sp"
         tools:ignore="HardcodedText" />
 
+    <ImageView
+        android:layout_marginTop="3dp"
+        android:id="@+id/dateImage"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/label"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/card"
+        android:src="@drawable/icon_date" />
+    <ImageView
+        android:id="@+id/nameImage"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/descriptionRecycler"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/card"
+        android:src="@drawable/icon_persons" />
 
     <TextView
         android:id="@+id/nameRecycler"
@@ -69,11 +89,11 @@
         android:layout_below="@+id/descriptionRecycler"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_toEndOf="@id/card"
+        android:layout_toEndOf="@id/nameImage"
         android:ellipsize="end"
         android:fontFamily="@font/poppinsregular"
-        android:maxLines="2"
-        android:text="Kenneth Dela Cruz"
+        android:maxLines="1"
+        android:text=""
         android:textSize="15sp"
         tools:ignore="HardcodedText" />
 
@@ -85,63 +105,79 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_toEndOf="@id/card"
+        android:layout_toEndOf="@id/callImage"
         android:ellipsize="end"
+
         android:fontFamily="@font/poppinsregular"
         android:maxLines="2"
-        android:text="09318924806"
+        android:text=""
         android:textSize="15sp"
         tools:ignore="HardcodedText" />
 
-    <LinearLayout
-        android:id="@+id/buttonContact"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
+    <ImageView
+        android:id="@+id/callImage"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/nameRecycler"
         android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/dropshadow_button_four"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/button_contact"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:shadowColor="@color/material_blue_grey_80"
-            android:shadowRadius="10"
-            android:text="ACCEPT"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-
+        android:layout_toEndOf="@id/card"
+        android:src="@drawable/icon_call" />
     <LinearLayout
-
-        android:id="@+id/buttonDelete"
-        android:layout_width="150dp"
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/dropshadow_button_zero"
+        android:layout_below="@id/card"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
-        android:padding="10dp">
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/button_delete"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:shadowColor="@color/material_blue_grey_80"
-            android:shadowRadius="10"
-            android:text="DECLINE"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
+        <LinearLayout
+            android:id="@+id/buttonContact"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/dropshadow_button_four"
+            android:gravity="center">
 
+            <TextView
+                android:id="@+id/button_contact"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:shadowColor="@color/material_blue_grey_80"
+                android:shadowRadius="10"
+                android:text="ACCEPT"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonDelete"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/dropshadow_button_zero"
+            android:gravity="center"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/button_delete"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:shadowColor="@color/material_blue_grey_80"
+                android:shadowRadius="10"
+                android:text="DECLINE"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
     </LinearLayout>
+
 
 </RelativeLayout>

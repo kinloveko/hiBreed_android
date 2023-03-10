@@ -1,4 +1,4 @@
-package com.example.hi_breed.service_status;
+package com.example.hi_breed.service_status_for_seller;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,10 +11,10 @@ import com.example.hi_breed.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CancelledFragment#newInstance} factory method to
+ * Use the {@link AcceptedFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CancelledFragment extends Fragment {
+public class AcceptedFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,7 +25,7 @@ public class CancelledFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public CancelledFragment() {
+    public AcceptedFragment() {
         // Required empty public constructor
     }
 
@@ -35,11 +35,11 @@ public class CancelledFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CancelledFragment.
+     * @return A new instance of fragment AcceptedFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CancelledFragment newInstance(String param1, String param2) {
-        CancelledFragment fragment = new CancelledFragment();
+    public static AcceptedFragment newInstance(String param1, String param2) {
+        AcceptedFragment fragment = new AcceptedFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,6 +60,6 @@ public class CancelledFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cancelled, container, false);
+        return inflater.inflate(R.layout.fragment_accepted, container, false);
     }
 }

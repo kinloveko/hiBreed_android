@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".service_status.CancelledFragment">
+    android:background="@color/fbWhite"
+    tools:context=".service_status_for_seller.CancelledFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

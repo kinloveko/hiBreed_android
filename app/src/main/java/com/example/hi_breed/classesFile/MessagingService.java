@@ -53,7 +53,6 @@ public class MessagingService extends FirebaseMessagingService {
         String match = remoteMessage.getData().get("matchID");
         String notCurrentUser = remoteMessage.getData().get("notCurrentUser");
 
-
         FirebaseFirestore.getInstance().collection("Matches")
                 .document(match).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -98,7 +97,7 @@ public class MessagingService extends FirebaseMessagingService {
     private void createNotificationManager(NotificationManager manager) {
         NotificationChannel channel;
             channel = new NotificationChannel(CHANNEL_ID,"Chat", NotificationManager.IMPORTANCE_HIGH);
-        channel.setDescription("You have new message!");
+        channel.setDescription("You have notification!");
             channel.enableLights(true);
             channel.setLightColor(Color.WHITE);
         manager.createNotificationChannel(channel);

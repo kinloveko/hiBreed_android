@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".service_status.PendingFragment">
+    android:background="@color/fbWhite"
+    tools:context=".service_status_for_seller.PendingFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
                 android:id="@+id/pendingRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp" />
+                />
 
         </RelativeLayout>
     </ScrollView>

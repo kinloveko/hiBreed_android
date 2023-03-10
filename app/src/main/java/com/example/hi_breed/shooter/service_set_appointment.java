@@ -60,6 +60,7 @@ public class service_set_appointment extends BaseActivity {
     TextView dateTextView,
     itemSlot;
     Button saveButton;
+
     RelativeLayout toolbarID,currentAddress,timeLayout,dateLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -79,6 +80,7 @@ public class service_set_appointment extends BaseActivity {
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
         // find the picker
+
         currentAddress =findViewById(R.id.currentAddress);
         saveButton = findViewById(R.id.saveButton);
         timeLayout = findViewById(R.id.timeLayout);
@@ -89,6 +91,7 @@ public class service_set_appointment extends BaseActivity {
         checkout_number = findViewById(R.id.checkout_number);
         checkout_address = findViewById(R.id.checkout_address);
         checkout_zip = findViewById(R.id.checkout_zip);
+
 
         currentAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +129,6 @@ public class service_set_appointment extends BaseActivity {
                         if(task.isSuccessful()){
                             DocumentSnapshot s = task.getResult();
                             checkout_number.setText(s.getString("contactNumber"));
-
                         }
                     }
                 });
@@ -265,8 +267,6 @@ public class service_set_appointment extends BaseActivity {
         Map<String,Object> trans = new HashMap<>();
 
 
-
-
         trans.put("id","");
         trans.put("trans_date_created", Timestamp.now());
         trans.put("trans_payment","on-site");
@@ -298,7 +298,6 @@ public class service_set_appointment extends BaseActivity {
                                         map.put("service_price",service.getService_fee()); // Service fee
                                         map.put("service_id",service.getId()); //Service ID FK
                                         map.put("appointment_status","pending");
-
                                         FirebaseFirestore.getInstance().collection("Appointments")
                                                 .add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                     @Override
