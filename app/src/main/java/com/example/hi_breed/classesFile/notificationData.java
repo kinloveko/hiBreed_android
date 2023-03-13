@@ -5,11 +5,12 @@ public class notificationData {
     String title;
     String matchID;
     String notCurrentUser;
-
+    String type;
     public notificationData(){
 
     }
-    public notificationData(String message, String title,String matchID,String notCurrentUser) {
+
+    public notificationData(String message, String title,String matchID,String notCurrentUser,String type) {
         this.message = message;
         this.title = title;
         this.matchID = matchID;
@@ -17,6 +18,9 @@ public class notificationData {
 
     }
 
+    public String getType() {
+        return type;
+    }
 
     public String getNotCurrentUser() {
         return notCurrentUser;

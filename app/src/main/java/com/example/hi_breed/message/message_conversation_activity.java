@@ -219,7 +219,7 @@ public class message_conversation_activity extends BaseActivity {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful()){
                                                     if(!available){
-                                                       pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser),userToken);
+                                                       pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"message"),userToken);
                                                         sendNotif(notification);
                                                         scrollView.post(new Runnable() {
                                                             @Override
@@ -247,7 +247,7 @@ public class message_conversation_activity extends BaseActivity {
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if(task.isSuccessful()){
                                                                         if(!available){
-                                                                            pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser), userToken);
+                                                                            pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"message"), userToken);
                                                                             sendNotif(notification);
                                                                             scrollView.post(new Runnable() {
                                                                                 @Override
@@ -313,7 +313,6 @@ public class message_conversation_activity extends BaseActivity {
                                     }
                                 });
                             }
-
                         }
                     }
                 });

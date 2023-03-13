@@ -14,8 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.acquired_service_details;
 import com.example.hi_breed.message.message_conversation_activity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -53,10 +55,50 @@ public class MessagingService extends FirebaseMessagingService {
         String match = remoteMessage.getData().get("matchID");
         String notCurrentUser = remoteMessage.getData().get("notCurrentUser");
 
-        FirebaseFirestore.getInstance().collection("Matches")
-                .document(match).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        // it's either appointment,transaction,message
+        String type = remoteMessage.getData().get("type");
+
+        if(type.equals("appointment")){
+            int notificationId = (int) System.currentTimeMillis();
+            FirebaseFirestore.getInstance().collection("Appointments")
+                    .document(match)
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if(documentSnapshot.exists()){
+
+                                    appointment_class appointment = documentSnapshot.toObject(appointment_class.class);
+                                    Intent intent = new Intent(getApplicationContext(), acquired_service_details.class);
+                                    intent.putExtra("mode",(Serializable) appointment);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                    createNotificationManagerAppointments(manager);
+
+                                    Notification.Builder builder = new Notification.Builder(MessagingService.this, CHANNEL_ID)
+                                            .setSmallIcon(R.drawable.hibreedlogo)
+                                            .setContentTitle("Appointment request from: "+ sender)
+                                            .setContentText(text)
+                                            .setPriority(Notification.PRIORITY_HIGH)
+                                            .setAutoCancel(true)
+                                            .setContentIntent(pendingIntent)
+                                            .setGroup(match);
+
+                                    Notification notification = builder.build();
+                                    manager.notify(notificationId, notification);
+
+                                }
+                        }
+                    });
+
+        }
+        else if(type.equals("message")){
+
+            FirebaseFirestore.getInstance().collection("Matches")
+                    .document(match).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if(task.isSuccessful()){
                                 DocumentSnapshot s = task.getResult();
                                 if(s.exists()){
@@ -66,33 +108,47 @@ public class MessagingService extends FirebaseMessagingService {
                                     timestamp = time;
                                 }
                             }
-                    }
-                });
+                        }
+                    });
 
-        int notificationId = (int) System.currentTimeMillis();
-        matches_class m = new matches_class(participants,match,true,timestamp);
-        Intent intent = new Intent(this, message_conversation_activity.class);
-        intent.putExtra("model",(Serializable) m);
-        intent.putExtra("notCurrentUser",notCurrentUser);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+            int notificationId = (int) System.currentTimeMillis();
+            matches_class m = new matches_class(participants,match,true,timestamp);
+            Intent intent = new Intent(this, message_conversation_activity.class);
+            intent.putExtra("model",(Serializable) m);
+            intent.putExtra("notCurrentUser",notCurrentUser);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             createNotificationManager(manager);
 
-        Notification.Builder builder = new Notification.Builder(MessagingService.this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.hibreedlogo)
-                .setContentTitle("New message from: "+sender)
-                .setContentText(text)
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .setGroup(match);
+            Notification.Builder builder = new Notification.Builder(MessagingService.this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.hibreedlogo)
+                    .setContentTitle("New message from: "+sender)
+                    .setContentText(text)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .setGroup(match);
 
-        Notification notification = builder.build();
-        manager.notify(notificationId, notification);
+            Notification notification = builder.build();
+            manager.notify(notificationId, notification);
+
+        }
     }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationManagerAppointments(NotificationManager manager) {
+        NotificationChannel channel;
+        channel = new NotificationChannel(CHANNEL_ID,"Appointment", NotificationManager.IMPORTANCE_HIGH);
+        channel.setDescription("You have notification!");
+        channel.enableLights(true);
+        channel.setLightColor(Color.WHITE);
+        manager.createNotificationChannel(channel);
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createNotificationManager(NotificationManager manager) {
         NotificationChannel channel;

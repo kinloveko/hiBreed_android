@@ -75,6 +75,7 @@ public class acquired_service_details extends AppCompatActivity {
         checkout_address = findViewById(R.id.checkout_address);
         checkout_zip = findViewById(R.id.checkout_zip);
         buttonLayout = findViewById(R.id.buttonLayout);
+
         Intent intent = getIntent();
 
         appointment_class appointment = (appointment_class) intent.getSerializableExtra("mode");

@@ -122,17 +122,19 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                             }
                         }
                     });
-
-
         }
+
         holder.descriptionRecycler.setText(productModel.getAppointment_date()+" @ "+productModel.getAppointment_time());
 
         holder.buttonContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              
+             /*       FirebaseFirestore.getInstance().collection("Notifications")
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .set();*/
             }
         });
+
 
         holder.buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,6 +142,7 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
 
             }
         });
+
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override

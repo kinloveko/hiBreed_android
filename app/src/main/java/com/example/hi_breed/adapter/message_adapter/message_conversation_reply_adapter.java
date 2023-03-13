@@ -84,9 +84,6 @@ public class message_conversation_reply_adapter extends RecyclerView.Adapter<mes
             rParam.addRule(RelativeLayout.END_OF,R.id.image);
             holder.relative.setLayoutParams(rParam);
 
-
-
-
             RelativeLayout.LayoutParams textParam = (RelativeLayout.LayoutParams) holder.details_chat.getLayoutParams();
             textParam.addRule(RelativeLayout.END_OF,R.id.image);
             textParam.addRule(RelativeLayout.BELOW,R.id.relative);
@@ -126,7 +123,6 @@ public class message_conversation_reply_adapter extends RecyclerView.Adapter<mes
                         }
                     }
                 });
-
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
