@@ -219,7 +219,7 @@ public class message_conversation_activity extends BaseActivity {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful()){
                                                     if(!available){
-                                                       pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"message"),userToken);
+                                                       pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"message",null),userToken);
                                                         sendNotif(notification);
                                                         scrollView.post(new Runnable() {
                                                             @Override
@@ -247,7 +247,7 @@ public class message_conversation_activity extends BaseActivity {
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if(task.isSuccessful()){
                                                                         if(!available){
-                                                                            pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"message"), userToken);
+                                                                            pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"message",null), userToken);
                                                                             sendNotif(notification);
                                                                             scrollView.post(new Runnable() {
                                                                                 @Override
@@ -287,9 +287,7 @@ public class message_conversation_activity extends BaseActivity {
                 Toast.makeText(message_conversation_activity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
-
 
     private void getConversation(String matchID) {
 

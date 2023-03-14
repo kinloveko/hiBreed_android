@@ -6,16 +6,24 @@ public class notificationData {
     String matchID;
     String notCurrentUser;
     String type;
+    String notificationFor;
+
+
     public notificationData(){
 
     }
 
-    public notificationData(String message, String title,String matchID,String notCurrentUser,String type) {
+    public notificationData(String message, String title,String matchID,String notCurrentUser,String type,String notificationFor) {
         this.message = message;
         this.title = title;
         this.matchID = matchID;
         this.notCurrentUser = notCurrentUser;
+        this.type = type;
+        this.notificationFor = notificationFor;
+    }
 
+    public String getNotificationFor() {
+        return notificationFor;
     }
 
     public String getType() {

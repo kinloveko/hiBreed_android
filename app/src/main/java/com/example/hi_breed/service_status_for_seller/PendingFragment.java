@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.adapter.service_status_for_seller.pending_serviceAdapter;
+import com.example.hi_breed.adapter.service_status_for_seller_buyer.pending_serviceAdapter;
 import com.example.hi_breed.classesFile.appointment_class;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;

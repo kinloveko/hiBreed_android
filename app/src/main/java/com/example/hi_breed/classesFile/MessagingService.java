@@ -1,5 +1,6 @@
 package com.example.hi_breed.classesFile;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,10 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.acquired_service_details;
 import com.example.hi_breed.message.message_conversation_activity;
+import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
+import com.example.hi_breed.service_status_for_seller.service_status;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -28,6 +29,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MessagingService extends FirebaseMessagingService {
 
@@ -54,44 +56,57 @@ public class MessagingService extends FirebaseMessagingService {
         String text =  remoteMessage.getData().get("message");
         String match = remoteMessage.getData().get("matchID");
         String notCurrentUser = remoteMessage.getData().get("notCurrentUser");
+        String notificationFor = remoteMessage.getData().get("notificationFor");
 
         // it's either appointment,transaction,message
         String type = remoteMessage.getData().get("type");
 
         if(type.equals("appointment")){
-            int notificationId = (int) System.currentTimeMillis();
-            FirebaseFirestore.getInstance().collection("Appointments")
-                    .document(match)
-                    .get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                if(documentSnapshot.exists()){
 
-                                    appointment_class appointment = documentSnapshot.toObject(appointment_class.class);
-                                    Intent intent = new Intent(getApplicationContext(), acquired_service_details.class);
-                                    intent.putExtra("mode",(Serializable) appointment);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
-                                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                                    createNotificationManagerAppointments(manager);
+            if(notificationFor.equals("seller")){
+                int notificationId = (int) (new Random().nextInt() + System.currentTimeMillis());
+                Intent intent = new Intent(this, service_status.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                                    Notification.Builder builder = new Notification.Builder(MessagingService.this, CHANNEL_ID)
-                                            .setSmallIcon(R.drawable.hibreedlogo)
-                                            .setContentTitle("Appointment request from: "+ sender)
-                                            .setContentText(text)
-                                            .setPriority(Notification.PRIORITY_HIGH)
-                                            .setAutoCancel(true)
-                                            .setContentIntent(pendingIntent)
-                                            .setGroup(match);
+                PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                createNotificationManagerAppointments(manager);
 
-                                    Notification notification = builder.build();
-                                    manager.notify(notificationId, notification);
+                Notification.Builder builder = new Notification.Builder(MessagingService.this, "Appointment")
+                        .setSmallIcon(R.drawable.hibreedlogo)
+                        .setContentTitle(sender)
+                        .setContentText(text)
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setGroup(match);
 
-                                }
-                        }
-                    });
+                Notification notification = builder.build();
+                manager.notify(notificationId, notification);
+            }
+            else{
+                int notificationId = (int) (new Random().nextInt() + System.currentTimeMillis());
+                Intent intent = new Intent(this, appointment_user_side.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
+                PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                createNotificationManagerAppointments(manager);
+
+                Notification.Builder builder = new Notification.Builder(MessagingService.this, "Appointment")
+                        .setSmallIcon(R.drawable.hibreedlogo)
+                        .setContentTitle(sender)
+                        .setContentText(text)
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setColor(Color.WHITE)
+                        .setContentIntent(pendingIntent)
+                        .setGroup(match);
+
+                Notification notification = builder.build();
+                manager.notify(notificationId, notification);
+
+            }
         }
         else if(type.equals("message")){
 
@@ -118,7 +133,7 @@ public class MessagingService extends FirebaseMessagingService {
             intent.putExtra("notCurrentUser",notCurrentUser);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+            @SuppressLint("InlinedApi") PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             createNotificationManager(manager);
 
@@ -129,6 +144,7 @@ public class MessagingService extends FirebaseMessagingService {
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent)
+                    .setColor(Color.WHITE)
                     .setGroup(match);
 
             Notification notification = builder.build();
@@ -141,12 +157,11 @@ public class MessagingService extends FirebaseMessagingService {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createNotificationManagerAppointments(NotificationManager manager) {
         NotificationChannel channel;
-        channel = new NotificationChannel(CHANNEL_ID,"Appointment", NotificationManager.IMPORTANCE_HIGH);
+        channel = new NotificationChannel("Appointment","Appointment", NotificationManager.IMPORTANCE_HIGH);
         channel.setDescription("You have notification!");
         channel.enableLights(true);
         channel.setLightColor(Color.WHITE);
         manager.createNotificationChannel(channel);
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

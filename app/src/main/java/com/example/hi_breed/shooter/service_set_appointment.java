@@ -347,8 +347,8 @@ public class service_set_appointment extends BaseActivity {
                                                                                                     @Override
                                                                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                                                                         if(task.isSuccessful()){
-                                                                                                            DocumentSnapshot s = task.getResult();
-                                                                                                            if(s.exists()){
+                                                                                                            DocumentSnapshot a = task.getResult();
+                                                                                                            if(a.exists()){
 
                                                                                                                 FirebaseFirestore.getInstance().collection("Notifications")
                                                                                                                         .document(service.getShooter_id())
@@ -356,15 +356,12 @@ public class service_set_appointment extends BaseActivity {
                                                                                                                             @Override
                                                                                                                             public void onSuccess(Void unused) {
                                                                                                                                 alert2.dismiss();
-                                                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString(),s.getId(),service.getShooter_id(),"appointment"), userToken);
+
+                                                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
+                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller"), userToken);
                                                                                                                                 sendNotif(notification);
 
 
-                                                                                                                                Intent i = new Intent(service_set_appointment.this, checkout_thankyou.class);
-                                                                                                                                i.putExtra("from","Service");
-
-                                                                                                                                startActivity(i);
-                                                                                                                                finish();
                                                                                                                             }
                                                                                                                         });
                                                                                                             }
@@ -376,13 +373,9 @@ public class service_set_appointment extends BaseActivity {
                                                                                                                             public void onSuccess(Void unused) {
                                                                                                                                 alert2.dismiss();
 
-                                                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString(),s.getId(),service.getShooter_id(),"appointment"), userToken);
+                                                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
+                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller"), userToken);
                                                                                                                                 sendNotif(notification);
-
-                                                                                                                                Intent i = new Intent(service_set_appointment.this, checkout_thankyou.class);
-                                                                                                                                i.putExtra("from","Service");
-                                                                                                                                startActivity(i);
-                                                                                                                                finish();
                                                                                                                             }
                                                                                                                         });
                                                                                                             }
@@ -407,7 +400,10 @@ public class service_set_appointment extends BaseActivity {
             @Override
             public void onResponse(Call<pushNotification> call, Response<pushNotification> response) {
                 if(response.isSuccessful()){
-
+                       Intent i = new Intent(service_set_appointment.this, checkout_thankyou.class);
+                    i.putExtra("from","Service");
+                    startActivity(i);
+                    finish();
                 }
                 else{
 

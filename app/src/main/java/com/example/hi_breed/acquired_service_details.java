@@ -26,6 +26,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
+
 public class acquired_service_details extends AppCompatActivity {
 
     TextView check_out_name,
@@ -34,7 +36,7 @@ public class acquired_service_details extends AppCompatActivity {
             checkout_zip;
     TextView dateTextView,pet_text,check_out_service_acquired,
             itemSlot;
-    Button cancelButton;
+    Button cancelButton,messageButton;
     RelativeLayout toolbarID,currentAddress,timeLayout,dateLayout;
     LinearLayout buttonLayout;
 
@@ -42,7 +44,8 @@ public class acquired_service_details extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_acquired_service_details);
+        setContentView(R.layout.acquired_service_details);
+
 
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -63,6 +66,8 @@ public class acquired_service_details extends AppCompatActivity {
                 finish();
             }
         });
+        messageButton = findViewById(R.id.messageButton);
+
         check_out_service_acquired = findViewById(R.id.check_out_service_acquired);
         pet_text = findViewById(R.id.pet_text);
         currentAddress =findViewById(R.id.currentAddress);
@@ -75,39 +80,69 @@ public class acquired_service_details extends AppCompatActivity {
         checkout_address = findViewById(R.id.checkout_address);
         checkout_zip = findViewById(R.id.checkout_zip);
         buttonLayout = findViewById(R.id.buttonLayout);
-
         Intent intent = getIntent();
 
         appointment_class appointment = (appointment_class) intent.getSerializableExtra("mode");
 
-        dateTextView.setText(appointment.getAppointment_date());
-        itemSlot.setText(appointment.getAppointment_time());
+        if(appointment!=null) {
 
-        if(appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-            pet_text.setText("Service details");
-            cancelButton.setVisibility(View.VISIBLE);
-            FirebaseFirestore.getInstance().collection("Shop")
-                    .document(appointment.getSeller_id())
-                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @SuppressLint("SetTextI18n")
-                        @Override
-                        public void onSuccess(DocumentSnapshot s) {
-                            check_out_service_acquired.setVisibility(View.VISIBLE);
-                            check_out_name.setText(s.getString("shopName"));
+            dateTextView.setText(appointment.getAppointment_date());
+            itemSlot.setText(appointment.getAppointment_time());
 
-                          FirebaseFirestore.getInstance().collection("User")
-                                  .document(s.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                      @Override
-                                      public void onSuccess(DocumentSnapshot documentSnapshot) {
+            if(appointment.getAppointment_status().equals("pending")){
+                if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    cancelButton.setVisibility(View.VISIBLE);
+                }
+                if (appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    buttonLayout.setVisibility(View.VISIBLE);
+                }
+            }
+            if(appointment.getAppointment_status().equals("accepted")){
+                  messageButton.setVisibility(View.VISIBLE);
+                buttonLayout.setVisibility(View.GONE);
+                cancelButton.setVisibility(View.GONE);
+                  messageButton.setOnClickListener(new View.OnClickListener() {
+                      @Override
+                      public void onClick(View v) {
+                          Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
+                          intent.putExtra("mode", (Serializable) appointment);
+                          startActivity(intent);
+                      }
+                  });
+            }
+            if(appointment.getAppointment_status().equals("completed")){
 
-                                          checkout_address.setText(documentSnapshot.getString("address"));
-                                          checkout_zip.setText(documentSnapshot.getString("zipCode"));
+            }
+            if(appointment.getAppointment_status().equals("cancelled")){
 
-                                          FirebaseFirestore.getInstance().collection("User")
-                                                  .document(s.getId()).collection("security")
-                                                  .document("security_doc").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                      @Override
-                                                      public void onSuccess(DocumentSnapshot documentSnapshot) {
+            }
+
+            if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+                pet_text.setText("Service details");
+
+                FirebaseFirestore.getInstance().collection("Shop")
+                        .document(appointment.getSeller_id())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onSuccess(DocumentSnapshot s) {
+                                check_out_service_acquired.setVisibility(View.VISIBLE);
+                                check_out_name.setText(s.getString("shopName"));
+
+                                FirebaseFirestore.getInstance().collection("User")
+                                        .document(s.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                checkout_address.setText(documentSnapshot.getString("address"));
+                                                checkout_zip.setText(documentSnapshot.getString("zipCode"));
+
+                                                FirebaseFirestore.getInstance().collection("User")
+                                                        .document(s.getId()).collection("security")
+                                                        .document("security_doc").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                                 checkout_number.setText(documentSnapshot.getString("contactNumber"));
 
                                                                 FirebaseFirestore.getInstance().collection("Services").document(appointment.getService_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -120,55 +155,44 @@ public class acquired_service_details extends AppCompatActivity {
 
                                                                     }
                                                                 });
-                                                      }
-                                                  });
-                                      }
-                                  });
+                                                            }
+                                                        });
+                                            }
+                                        });
+
+                            }
+                        });
+
+            }
+
+            FirebaseFirestore.getInstance().collection("User")
+                    .document(appointment.getCustomer_id())
+                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onSuccess(DocumentSnapshot s) {
+
+                            check_out_name.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
+                            checkout_address.setText(s.getString("address"));
+                            checkout_zip.setText(s.getString("zipCode"));
 
                         }
                     });
 
-        }else
-        if(appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-            buttonLayout.setVisibility(View.VISIBLE);
-
-        }
-        else{
-            cancelButton.setVisibility(View.GONE);
-            buttonLayout.setVisibility(View.GONE);
-        }
-
-        FirebaseFirestore.getInstance().collection("User")
-                .document(appointment.getCustomer_id())
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onSuccess(DocumentSnapshot s) {
-
-                        check_out_name.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
-                        checkout_address.setText(s.getString("address"));
-                        checkout_zip.setText(s.getString("zipCode"));
-
-                    }
-                });
-
-
-        FirebaseFirestore.getInstance().collection("User")
-                .document(appointment.getCustomer_id())
-                .collection("security")
-                .document("security_doc")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            DocumentSnapshot s = task.getResult();
-                            checkout_number.setText(s.getString("contactNumber"));
+            FirebaseFirestore.getInstance().collection("User")
+                    .document(appointment.getCustomer_id())
+                    .collection("security")
+                    .document("security_doc")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                DocumentSnapshot s = task.getResult();
+                                checkout_number.setText(s.getString("contactNumber"));
+                            }
                         }
-                    }
-                });
-
-
-
+                    });
+        }
     }
 }

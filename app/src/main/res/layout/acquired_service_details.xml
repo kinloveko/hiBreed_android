@@ -268,6 +268,35 @@
 
 
         </RelativeLayout>
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/messageButton"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MESSAGE"
+            android:fontFamily="@font/poppinsmedium"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@drawable/dropshadow_button_five"
+            tools:ignore="HardcodedText" />
+     <!--   <Button
+            android:id="@+id/completedButton"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="COMPLETED"
+            android:fontFamily="@font/poppinsmedium"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@drawable/dropshadow_button_ten"
+            tools:ignore="HardcodedText" />
+        -->
         <Button
             android:visibility="gone"
             android:id="@+id/cancelButton"
@@ -282,6 +311,7 @@
             android:textColor="@color/white"
             android:background="@drawable/dropshadow_button_two"
             tools:ignore="HardcodedText" />
+
         <LinearLayout
             android:visibility="gone"
             android:id="@+id/buttonLayout"

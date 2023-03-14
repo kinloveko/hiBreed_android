@@ -1,4 +1,4 @@
-package com.example.hi_breed.adapter.service_status_for_seller;
+package com.example.hi_breed.adapter.service_status_for_seller_buyer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,27 +10,37 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
 import com.example.hi_breed.acquired_service_details;
+import com.example.hi_breed.classesFile.ApiUtilities;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.notificationData;
+import com.example.hi_breed.classesFile.pushNotification;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class pending_serviceAdapter extends RecyclerView.Adapter<pending_serviceAdapter.ViewHolder> {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
+public class pending_serviceAdapter extends RecyclerView.Adapter<pending_serviceAdapter.ViewHolder> {
         Context context;
     private List<appointment_class> list;
     private String userID;
@@ -53,7 +63,7 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.service_status_layout,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.service_status_layout_pending,parent,false);
 
         return new ViewHolder(view);
     }
@@ -90,10 +100,6 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                             }
                         }
                     });
-
-
-
-
         }
         else if(productModel.getSeller_id().equals(userID)){
 
@@ -129,20 +135,60 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
         holder.buttonContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             /*       FirebaseFirestore.getInstance().collection("Notifications")
-                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .set();*/
+                FirebaseFirestore.getInstance().collection("User")
+                                .document(productModel.getCustomer_id()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                if(error!=null){
+                                    return;
+                                }
+                                if(value.exists()){
+                                    String token= value.getString("fcmToken");
+                                    FirebaseFirestore.getInstance().collection("Appointments")
+                                            .document(productModel.getId())
+                                            .update("appointment_status","accepted")
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                            "Accepted appointment",productModel.getId(),productModel.getCustomer_id(),"appointment","buyer"), token);
+                                                    sendNotif(notification,"accepted");
+                                                }
+                                            });
+                                }
+                            }
+                        });
             }
         });
-
 
         holder.buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                FirebaseFirestore.getInstance().collection("User")
+                        .document(productModel.getCustomer_id()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                if(error!=null){
+                                    return;
+                                }
+                                if(value.exists()){
+                                    String token= value.getString("fcmToken");
+                                    FirebaseFirestore.getInstance().collection("Appointments")
+                                            .document(productModel.getId())
+                                            .update("appointment_status","cancelled")
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been cancelled",
+                                                            "Cancelled appointment",productModel.getId(),productModel.getCustomer_id(),"appointment","buyer"), token);
+                                                    sendNotif(notification,"cancelled");
+                                                }
+                                            });
+                                }
+                            }
+                        });
             }
         });
-
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,6 +198,30 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                 context.startActivity(intent);
             }
         });
+    }
+
+    private void sendNotif(pushNotification notification,String from) {
+        ApiUtilities.getClient().sendNotification(notification).enqueue(new Callback<pushNotification>() {
+            @Override
+            public void onResponse(Call<pushNotification> call, Response<pushNotification> response) {
+                if(response.isSuccessful()){
+                    if(from.equals("accepted")){
+                        Toast.makeText(context, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(context, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<pushNotification> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override
@@ -184,6 +254,4 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
 
         }
     }
-
-
 }
