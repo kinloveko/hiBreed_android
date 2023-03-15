@@ -32,6 +32,7 @@
             android:src="@drawable/noimage"
             />
     </androidx.cardview.widget.CardView>
+
     <TextView
         android:id="@+id/label"
         android:layout_width="match_parent"
@@ -41,8 +42,8 @@
         android:layout_toEndOf="@id/card"
         android:ellipsize="end"
         android:fontFamily="@font/poppinsmedium"
-        android:maxLines="3"
-        android:text="Accepted Appointment"
+        android:maxLines="1"
+        android:text="Cancelled Appointment"
         android:textColor="@color/material_blue_grey_90"
         android:textSize="16sp"
         tools:ignore="HardcodedText" />
@@ -123,12 +124,12 @@
         android:src="@drawable/icon_call" />
 
     <LinearLayout
-        android:id="@+id/messageID"
+        android:id="@+id/cancelled_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/card"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/dropshadow_button_five"
@@ -136,12 +137,12 @@
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/completed"
+            android:id="@+id/cancelled_textView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:shadowColor="@color/material_blue_grey_80"
             android:shadowRadius="10"
-            android:text="SEND MESSAGE"
+            android:text="VIEW"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textStyle="bold"

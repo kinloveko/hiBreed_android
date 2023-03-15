@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.acquired_service_accepted_message;
 import com.example.hi_breed.acquired_service_details;
 import com.example.hi_breed.classesFile.appointment_class;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,11 +30,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class pending_serviceAdapter extends RecyclerView.Adapter<pending_serviceAdapter.ViewHolder> {
-        Context context;
+public class cancelled_serviceAdapter extends RecyclerView.Adapter<cancelled_serviceAdapter.ViewHolder> {
+
+    Context context;
     private List<appointment_class> list;
     private String userID;
-    public pending_serviceAdapter(Context context,String userID){
+
+    public cancelled_serviceAdapter(Context context, String userID){
             this.context = context;
             this.userID =userID;
             this.list = new ArrayList<>();
@@ -52,7 +55,7 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.service_status_layout_pending,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.service_status_layout_cancelled,parent,false);
 
         return new ViewHolder(view);
     }
@@ -65,8 +68,6 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
 
         if(productModel.getCustomer_id().equals(userID))
         {
-
-            holder.button_contact.setText("VIEW YOUR REQUEST");
             FirebaseFirestore.getInstance().collection("Services")
                             .document(productModel.getService_id())
                                     .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -90,7 +91,6 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                     });
         }
         else if(productModel.getSeller_id().equals(userID)){
-            holder.button_contact.setText("VIEW REQUEST");
             DocumentReference doc=
             FirebaseFirestore.getInstance().collection("User").document(productModel.getCustomer_id());
 
@@ -111,13 +111,22 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                 holder.numberRecycler.setText(documentSnapshot.getString("contactNumber"));
                                             }
-                                        });
+                                  });
                             }
                         }
                     });
         }
 
         holder.descriptionRecycler.setText(productModel.getAppointment_date()+" @ "+productModel.getAppointment_time());
+
+        holder.messageID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, acquired_service_accepted_message.class);
+                intent.putExtra("mode", (Serializable) productModel);
+                context.startActivity(intent);
+            }
+        });
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,8 +137,6 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
             }
         });
     }
-
-
 
     @Override
     public int getItemCount() {
@@ -143,13 +150,12 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
         TextView button_contact;
         TextView label;
         RelativeLayout relativeLayout;
-        LinearLayout  buttonContact ;
+        LinearLayout messageID;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            messageID = itemView.findViewById(R.id.cancelled_id);
             relativeLayout = itemView.findViewById(R.id.relativeLayout);
-            buttonContact = itemView.findViewById(R.id.buttonContact);
 
             numberRecycler = itemView.findViewById(R.id.numberRecycler);
             label = itemView.findViewById(R.id.label);
@@ -157,7 +163,6 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
             nameRecycler = itemView.findViewById(R.id.nameRecycler);
             descriptionRecycler = itemView.findViewById(R.id.descriptionRecycler);
             button_contact = itemView.findViewById(R.id.button_contact);
-
         }
     }
 }

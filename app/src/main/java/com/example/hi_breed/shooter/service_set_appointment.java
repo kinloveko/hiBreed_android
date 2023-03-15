@@ -331,15 +331,16 @@ public class service_set_appointment extends BaseActivity {
 
 
                                                                                         Map<String,Object> map = new HashMap<>();
-                                                                                        map.put("customer_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                                                        map.put("send_to_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
                                                                                         map.put("message","Appointment request from:"+check_out_name.getText().toString());
                                                                                         map.put("timestamp",Timestamp.now());
                                                                                         map.put("type","appointment");
 
                                                                                         Map<String,Object> maps = new HashMap<>();
-
+                                                                                        maps.put("id",s.getId());
                                                                                         maps.put("latestNotification",map);
                                                                                         maps.put("notification", Arrays.asList(map));
+
 
 
                                                                                         FirebaseFirestore.getInstance().collection("Notifications").document(service.getShooter_id())
@@ -358,9 +359,8 @@ public class service_set_appointment extends BaseActivity {
                                                                                                                                 alert2.dismiss();
 
                                                                                                                                 pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
-                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller"), userToken);
+                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller","pending"), userToken);
                                                                                                                                 sendNotif(notification);
-
 
                                                                                                                             }
                                                                                                                         });
@@ -374,7 +374,7 @@ public class service_set_appointment extends BaseActivity {
                                                                                                                                 alert2.dismiss();
 
                                                                                                                                 pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
-                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller"), userToken);
+                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller","pending"), userToken);
                                                                                                                                 sendNotif(notification);
                                                                                                                             }
                                                                                                                         });

@@ -122,62 +122,30 @@
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/card"
         android:src="@drawable/icon_call" />
+
+
     <LinearLayout
-        android:id="@+id/buttonLayout"
+        android:id="@+id/buttonContact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/card"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/dropshadow_button_four"
+        android:gravity="center">
 
-        <LinearLayout
-            android:id="@+id/buttonContact"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="@drawable/dropshadow_button_four"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/button_contact"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:shadowColor="@color/material_blue_grey_80"
-                android:shadowRadius="10"
-                android:text="ACCEPT"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                tools:ignore="HardcodedText" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/buttonDelete"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="@drawable/dropshadow_button_zero"
-            android:gravity="center"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/button_delete"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:shadowColor="@color/material_blue_grey_80"
-                android:shadowRadius="10"
-                android:text="DECLINE"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                tools:ignore="HardcodedText" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/button_contact"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:shadowColor="@color/material_blue_grey_80"
+            android:shadowRadius="10"
+            android:text="VIEW REQUEST"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
-
-
 </RelativeLayout>

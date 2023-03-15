@@ -31,9 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_serviceAdapter.ViewHolder> {
-        Context context;
+
+    Context context;
     private List<appointment_class> list;
     private String userID;
+
     public accepted_serviceAdapter(Context context, String userID){
             this.context = context;
             this.userID =userID;

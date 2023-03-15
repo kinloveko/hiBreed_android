@@ -63,7 +63,6 @@ public class AcceptedFragment extends Fragment {
 
                         if(value!=null){
                             adapter.clearList();
-
                             for(DocumentSnapshot s: value){
                                 appointment_class appointment = s.toObject(appointment_class.class);
                                 adapter.addServiceDisplay(appointment);

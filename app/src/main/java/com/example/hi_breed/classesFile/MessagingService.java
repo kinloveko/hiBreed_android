@@ -57,18 +57,23 @@ public class MessagingService extends FirebaseMessagingService {
         String match = remoteMessage.getData().get("matchID");
         String notCurrentUser = remoteMessage.getData().get("notCurrentUser");
         String notificationFor = remoteMessage.getData().get("notificationFor");
+        String SELECTED_TAB = remoteMessage.getData().get("SELECTED_TAB");
 
         // it's either appointment,transaction,message
         String type = remoteMessage.getData().get("type");
+
+        Log.d("MyApp", "SELECTED_TAB FROM FIREBASE MESSAGING SERVICE: " + SELECTED_TAB);
+
 
         if(type.equals("appointment")){
 
             if(notificationFor.equals("seller")){
                 int notificationId = (int) (new Random().nextInt() + System.currentTimeMillis());
                 Intent intent = new Intent(this, service_status.class);
+                intent.putExtra("SELECTED_TAB",(Serializable) SELECTED_TAB);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                @SuppressLint("InlinedApi") PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 createNotificationManagerAppointments(manager);
 
@@ -85,11 +90,13 @@ public class MessagingService extends FirebaseMessagingService {
                 manager.notify(notificationId, notification);
             }
             else{
+
                 int notificationId = (int) (new Random().nextInt() + System.currentTimeMillis());
                 Intent intent = new Intent(this, appointment_user_side.class);
+                intent.putExtra("SELECTED_TAB",SELECTED_TAB);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+              PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 createNotificationManagerAppointments(manager);
 

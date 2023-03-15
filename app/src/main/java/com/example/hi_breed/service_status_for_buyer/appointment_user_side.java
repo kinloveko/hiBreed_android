@@ -2,9 +2,11 @@ package com.example.hi_breed.service_status_for_buyer;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,10 +21,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.service_status_for_seller.AcceptedFragment;
-import com.example.hi_breed.service_status_for_seller.CancelledFragment;
-import com.example.hi_breed.service_status_for_seller.CompletedFragment;
-import com.example.hi_breed.service_status_for_seller.PendingFragment;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -35,6 +33,7 @@ public class appointment_user_side extends AppCompatActivity {
     private ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     RelativeLayout toolbarID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +69,28 @@ public class appointment_user_side extends AppCompatActivity {
 
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        Intent intent = getIntent();
+        Log.d("MyApp", "Intent extras: " + intent.getExtras());
+        if (intent != null) {
+            Log.d("MyApp", "Intent extras: " + intent.toString()); // Add this log
+            String selectedTab = intent.getStringExtra("SELECTED_TAB");
+            Log.d("MyApp", "SELECTED_TAB_APPOINTMENT: " + selectedTab);
+
+            if (selectedTab != null) {
+                if (selectedTab.equals("pending")) {
+                    viewPager.setCurrentItem(0, true);
+                } else if (selectedTab.equals("accepted")) {
+                    viewPager.setCurrentItem(1, true);
+                } else if (selectedTab.equals("completed")) {
+                    viewPager.setCurrentItem(2, true);
+                } else if (selectedTab.equals("cancelled")) {
+                    viewPager.setCurrentItem(3, true);
+                }
+            }
+        } else {
+            Log.d("MyApp", "No intent extras found");
+        }
     }
 
     private static class ViewPagerAdapter extends FragmentPagerAdapter {

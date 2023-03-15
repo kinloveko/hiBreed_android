@@ -7,19 +7,24 @@ public class notificationData {
     String notCurrentUser;
     String type;
     String notificationFor;
-
+    String SELECTED_TAB;
 
     public notificationData(){
 
     }
 
-    public notificationData(String message, String title,String matchID,String notCurrentUser,String type,String notificationFor) {
+    public notificationData(String message, String title,String matchID,String notCurrentUser,String type,String notificationFor,String SELECTED_TAB) {
         this.message = message;
         this.title = title;
         this.matchID = matchID;
         this.notCurrentUser = notCurrentUser;
         this.type = type;
+        this.SELECTED_TAB = SELECTED_TAB;
         this.notificationFor = notificationFor;
+    }
+
+    public String getSELECTED_TAB() {
+        return SELECTED_TAB;
     }
 
     public String getNotificationFor() {

@@ -14,19 +14,33 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hi_breed.classesFile.ApiUtilities;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.notificationData;
+import com.example.hi_breed.classesFile.pushNotification;
+import com.example.hi_breed.service_status_for_seller.service_status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class acquired_service_details extends AppCompatActivity {
 
@@ -38,7 +52,7 @@ public class acquired_service_details extends AppCompatActivity {
             itemSlot;
     Button cancelButton,messageButton;
     RelativeLayout toolbarID,currentAddress,timeLayout,dateLayout;
-    LinearLayout buttonLayout;
+    LinearLayout buttonLayout,buttonContact,buttonDelete;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -57,8 +71,11 @@ public class acquired_service_details extends AppCompatActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+        buttonContact = findViewById(R.id.buttonContact);
+        buttonDelete = findViewById(R.id.buttonDelete);
         cancelButton=findViewById(R.id.cancelButton);
         toolbarID=findViewById(R.id.toolbarID);
+
         toolbarID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,31 +106,171 @@ public class acquired_service_details extends AppCompatActivity {
             dateTextView.setText(appointment.getAppointment_date());
             itemSlot.setText(appointment.getAppointment_time());
 
+
             if(appointment.getAppointment_status().equals("pending")){
+
                 if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     cancelButton.setVisibility(View.VISIBLE);
                 }
+                else
                 if (appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     buttonLayout.setVisibility(View.VISIBLE);
+                    buttonContact.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            FirebaseFirestore.getInstance().collection("User")
+                                    .document(appointment.getCustomer_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot value) {
+                                            if(value.exists()){
+                                                String token= value.getString("fcmToken");
+                                                Map<String,Object> map = new HashMap<>();
+                                                map.put("send_to_id", appointment.getCustomer_id());
+                                                map.put("message","Your request appointment has been accepted");
+                                                map.put("timestamp", Timestamp.now());
+                                                map.put("type","appointment");
+
+                                                Map<String,Object> maps = new HashMap<>();
+                                                maps.put("id",appointment.getId());
+                                                maps.put("latestNotification",map);
+                                                maps.put("notification", Arrays.asList(map));
+
+                                                FirebaseFirestore.getInstance().collection("Appointments")
+                                                        .document(appointment.getId())
+                                                        .update("appointment_status","accepted")
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+
+                                                                FirebaseFirestore.getInstance().collection("Notifications").document(appointment.getCustomer_id())
+                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                            @Override
+                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                                                if(documentSnapshot.exists()){
+
+                                                                                    FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                            .document(appointment.getCustomer_id())
+                                                                                            .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void unused) {
+                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                            "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
+                                                                                                    sendNotif(notification,"accepted");
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                            .document(appointment.getCustomer_id())
+                                                                                            .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void unused) {
+                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                            "Accepted appointment",appointment.getId(),appointment.getSeller_id(),"appointment","buyer","accepted"), token);
+                                                                                                    sendNotif(notification,"accepted");
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                            }
+                                                                        });
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                    });
+                        }
+                    });
+                    buttonDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            FirebaseFirestore.getInstance().collection("User")
+                                    .document(appointment.getCustomer_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot value) {
+                                            if(value.exists()){
+                                                String token= value.getString("fcmToken");
+                                                Map<String,Object> map = new HashMap<>();
+                                                map.put("send_to_id", appointment.getCustomer_id());
+                                                map.put("message","Your request appointment has been cancelled");
+                                                map.put("timestamp", Timestamp.now());
+                                                map.put("type","appointment");
+
+                                                Map<String,Object> maps = new HashMap<>();
+                                                maps.put("id",appointment.getId());
+                                                maps.put("latestNotification",map);
+                                                maps.put("notification", Arrays.asList(map));
+
+                                                FirebaseFirestore.getInstance().collection("Appointments")
+                                                        .document(appointment.getId())
+                                                        .update("appointment_status","cancelled")
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+
+                                                                FirebaseFirestore.getInstance().collection("Notifications").document(appointment.getCustomer_id())
+                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                            @Override
+                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                                                if(documentSnapshot.exists()){
+                                                                                    FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                            .document(appointment.getCustomer_id())
+                                                                                            .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void unused) {
+                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been cancelled",
+                                                                                                            "Cancelled appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","cancelled"), token);
+                                                                                                    sendNotif(notification,"cancelled");
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                                else{
+                                                                                    FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                            .document(appointment.getCustomer_id()).set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void unused) {
+                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been cancelled",
+                                                                                                            "Cancelled appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","cancelled"), token);
+                                                                                                    sendNotif(notification,"cancelled");
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                            }
+                                                                        });
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                    });
+                        }
+                    });
                 }
             }
-            if(appointment.getAppointment_status().equals("accepted")){
-                  messageButton.setVisibility(View.VISIBLE);
+            else if(appointment.getAppointment_status().equals("accepted")){
+
+                messageButton.setVisibility(View.VISIBLE);
                 buttonLayout.setVisibility(View.GONE);
                 cancelButton.setVisibility(View.GONE);
-                  messageButton.setOnClickListener(new View.OnClickListener() {
-                      @Override
-                      public void onClick(View v) {
-                          Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
-                          intent.putExtra("mode", (Serializable) appointment);
-                          startActivity(intent);
-                      }
-                  });
+
+                messageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
+                        intent.putExtra("mode", (Serializable) appointment);
+                        startActivity(intent);
+                    }
+                });
             }
-            if(appointment.getAppointment_status().equals("completed")){
+            else if(appointment.getAppointment_status().equals("completed")){
 
             }
-            if(appointment.getAppointment_status().equals("cancelled")){
+            else if(appointment.getAppointment_status().equals("cancelled")){
+
+                messageButton.setVisibility(View.GONE);
+                buttonLayout.setVisibility(View.GONE);
+                cancelButton.setVisibility(View.GONE);
 
             }
 
@@ -195,4 +352,44 @@ public class acquired_service_details extends AppCompatActivity {
                     });
         }
     }
+
+    private void sendNotif(pushNotification notification,String from) {
+
+        ApiUtilities.getClient().sendNotification(notification).enqueue(new Callback<pushNotification>() {
+            @Override
+            public void onResponse(Call<pushNotification> call, Response<pushNotification> response) {
+                if(response.isSuccessful()){
+                    if(from.equals("accepted")){
+
+                            Intent i = new Intent(acquired_service_details.this, service_status.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                         }
+                    else{
+
+                            Intent i = new Intent(acquired_service_details.this, service_status.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                    }
+                }else{
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<pushNotification> call, Throwable t) {
+                Toast.makeText(acquired_service_details.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+        });
+    }
+
 }

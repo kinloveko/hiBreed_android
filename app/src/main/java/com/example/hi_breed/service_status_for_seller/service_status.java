@@ -2,9 +2,11 @@ package com.example.hi_breed.service_status_for_seller;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,13 +26,14 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class service_status extends AppCompatActivity {
+public class service_status extends AppCompatActivity  {
 
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     RelativeLayout toolbarID;
+    String selectedTab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,7 @@ public class service_status extends AppCompatActivity {
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
@@ -67,7 +71,34 @@ public class service_status extends AppCompatActivity {
 
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-    }
+
+        viewPager.setAdapter(viewPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+
+        Intent intent = getIntent();
+        Log.d("MyApp", "Intent extras: " + intent.getExtras());
+        if (intent != null) {
+            Log.d("MyApp", "Intent extras: " + intent.toString()); // Add this log
+            String selectedTab = intent.getStringExtra("SELECTED_TAB");
+            Log.d("MyApp", "SELECTED_TAB_APPOINTMENT: " + selectedTab);
+
+            if (selectedTab != null) {
+                if (selectedTab.equals("pending")) {
+                    viewPager.setCurrentItem(0, true);
+                } else if (selectedTab.equals("accepted")) {
+                    viewPager.setCurrentItem(1, true);
+
+                } else if (selectedTab.equals("completed")) {
+                    viewPager.setCurrentItem(2, true);
+                } else if (selectedTab.equals("cancelled")) {
+                    viewPager.setCurrentItem(3, true);
+                }
+            }
+        } else {
+            Log.d("MyApp", "No intent extras found");
+        }
+      }
+
     private static class ViewPagerAdapter extends FragmentPagerAdapter {
 
         private final List<Fragment> fragments = new ArrayList<>();
