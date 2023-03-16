@@ -129,8 +129,12 @@ public class ask_question_details extends BaseActivity implements askSinglePhoto
 
 
         if(post!=null){
+
             if(post.getUserID().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+
                 edit_icons.setVisibility(View.VISIBLE);
+
+
                 edit_icons.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -244,8 +248,11 @@ public class ask_question_details extends BaseActivity implements askSinglePhoto
 
                                 List<String> ids = (List<String>) s.get("role");
                                 if(ids!=null){
-                                    if(ids.contains("Veterinarian")){
+                                    if(ids.contains("Veterinarian") || post.getUserID().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+
+
                                         reply_layout.setVisibility(View.VISIBLE);
+
                                         sendReplyImageView.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
@@ -280,7 +287,7 @@ public class ask_question_details extends BaseActivity implements askSinglePhoto
 
 
         list_of_reply = findViewById(R.id.list_of_reply);
-        adapter = new askProf_reply_adapter(this);
+        adapter = new askProf_reply_adapter(this,FirebaseAuth.getInstance().getCurrentUser().getUid());
         list_of_reply.setLayoutManager(new GridLayoutManager(this,1));
         list_of_reply.setAdapter(adapter);
         getReply();
@@ -303,6 +310,8 @@ public class ask_question_details extends BaseActivity implements askSinglePhoto
                             return;
                         }
                         if (value != null && !value.isEmpty()) {
+                            adapter.clearList();
+
                             List<DocumentSnapshot> list = value.getDocuments();
                             if(list!=null){
                                 for (DocumentSnapshot s: list){

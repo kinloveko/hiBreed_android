@@ -6,17 +6,20 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.TimeStampClass;
 import com.example.hi_breed.classesFile.replyClass;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.time.Instant;
@@ -29,9 +32,16 @@ public class askProf_reply_adapter extends RecyclerView.Adapter<askProf_reply_ad
 
      private    Context context;
     private List<replyClass> list;
+    String user;
+    public void clearList(){
+        this.list.clear();
+        notifyDataSetChanged();
 
-    public askProf_reply_adapter(Context context){
+    }
+
+    public askProf_reply_adapter(Context context,String user){
             this.context = context;
+            this.user=user;
             this.list = new ArrayList<>();
     }
     public void addPetDisplay(replyClass reply){
@@ -54,17 +64,35 @@ public class askProf_reply_adapter extends RecyclerView.Adapter<askProf_reply_ad
 
         replyClass productModel = list.get(position);
 
+        FirebaseFirestore.getInstance().collection("Post")
+                .document(productModel.getPostKey()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if(documentSnapshot.getString("userID").equals(productModel.getUserID())){
+                                holder.role.setText("Author");
+                                holder.image.setImageResource(R.drawable.icon_mic);
+                            }
+                            else{
+                                holder.role.setText("Veterinarian");
+                                holder.image.setImageResource(R.drawable.icon_verified);
+                            }
+                    }
+                });
+
         Instant instant = Instant.ofEpochMilli(productModel.getTimeStamp().toDate().getTime());
         TimeStampClass timeStamp = new TimeStampClass();
         holder.replyEdit.setText(productModel.getContent());
         holder.details_reply.setText(timeStamp.getRelativeTime(instant));
         holder.senderName.setText(productModel.getName());
 
-        Glide.with(holder.itemView.getContext())
-                .load(productModel.getImage())
-                .placeholder(R.drawable.noimage)
-                .error(R.drawable.screen_alert_image_error_border)
-                .into(holder.reply_image_user);
+        FirebaseFirestore.getInstance().collection("User").document(productModel.getUserID())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Picasso.get().load(documentSnapshot.getString("image")).placeholder(R.drawable.noimage)
+                                .into(holder.reply_image_user);
+                    }
+                });
 
     }
 
@@ -76,11 +104,15 @@ public class askProf_reply_adapter extends RecyclerView.Adapter<askProf_reply_ad
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         CircleImageView reply_image_user;
-        TextView  senderName,details_reply;
+        TextView  senderName,details_reply,role;
         TextInputEditText replyEdit;
+        ImageView image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            role = itemView.findViewById(R.id.role);
+            image = itemView.findViewById(R.id.image);
             reply_image_user = itemView.findViewById(R.id.reply_image_user);
             senderName = itemView.findViewById(R.id.senderName);
             replyEdit = itemView.findViewById(R.id.replyEdit);

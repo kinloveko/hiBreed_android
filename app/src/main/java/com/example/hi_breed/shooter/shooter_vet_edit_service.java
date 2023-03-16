@@ -1,5 +1,7 @@
 package com.example.hi_breed.shooter;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
 import android.Manifest;
@@ -13,6 +15,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -43,6 +46,7 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.shooterAdapter.service_edit_adapter;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.service_class;
+import com.example.hi_breed.product.product_add_activity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -347,7 +351,18 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
         servicePhotoCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePermission();
+                if( checkPermission()){
+                    imagePermission();
+                }
+                else{
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Permission is not granted, request it
+                        ActivityCompat.requestPermissions(shooter_vet_edit_service.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                30);
+                    }
+                }
             }
         });
 
@@ -524,22 +539,28 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
 
     }
 
+                   private boolean checkPermission() {
+                       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                           return Environment.isExternalStorageManager();
+                       } else {
+                           int readCheck = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+                           int writeCheck = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+                           return readCheck == PackageManager.PERMISSION_GRANTED && writeCheck == PackageManager.PERMISSION_GRANTED;
+                       }
+                   }
 
-    @SuppressLint("ObsoleteSdkInt")
-    private void imagePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
-            return;
-        }
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
-        }
-        startActivityForResult(Intent.createChooser(intent,"Select Picture"),1);
-    }
+                   @SuppressLint("ObsoleteSdkInt")
+                   private void imagePermission() {
+                       Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                       intent.setType("image/*");
+                       if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+                           intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+                       }
+
+                       startActivityForResult(Intent.createChooser(intent,"Select Picture"),1);
+                   }
+
+
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n", "UseCompatLoadingForDrawables"})
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

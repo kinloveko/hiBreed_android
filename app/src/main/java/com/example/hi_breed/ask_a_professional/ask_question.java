@@ -1,8 +1,11 @@
 package com.example.hi_breed.ask_a_professional;
 
-import android.Manifest;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -10,6 +13,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -19,6 +24,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -55,7 +64,10 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class ask_question extends BaseActivity implements petImagesRecyclerAdapter.CountOfImagesWhenRemovedPet,
         petImagesRecyclerAdapter.itemClickListenerPet {
-
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+    private static final int REQUEST_STORAGE_PERMISSION = 1;
+    private static final int REQUEST_MANAGE_EXTERNAL_STORAGE_PERMISSION = 2;
+    private static final int REQUEST_IMAGE_CODE = 100;
     String profile="";
 
     private petImagesRecyclerAdapter adapter;
@@ -82,8 +94,6 @@ public class ask_question extends BaseActivity implements petImagesRecyclerAdapt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ask_question);
-
-
 
         FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -116,7 +126,12 @@ public class ask_question extends BaseActivity implements petImagesRecyclerAdapt
         servicePhotoCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePermission();
+                if (checkPermission()) {
+                    imagePermission();
+                } else {
+                    requestPermission(); // Request Permission
+                }
+
             }
         });
         //back layout
@@ -145,26 +160,82 @@ public class ask_question extends BaseActivity implements petImagesRecyclerAdapt
         if( serviceDescEdit.getText() !=null ||  serviceDescEdit.getText().equals("")) {
             serviceDescEdit.addTextChangedListener(DescTextEditorWatcher);
         }
+        //Add these line of code in onCreate Method
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult( ActivityResult result ) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Environment.isExternalStorageManager())
+                        imagePermission();
+                    else
+                        Toast.makeText(getApplicationContext(), "You Denied the permission", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "You Denied the permission", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
+
     @SuppressLint("ObsoleteSdkInt")
     private void imagePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
-            return;
-        }
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("image/*");
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
         }
+
         startActivityForResult(Intent.createChooser(intent,"Select Picture"),1);
     }
+
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager();
+        } else {
+            int readCheck = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+            int writeCheck = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+            return readCheck == PackageManager.PERMISSION_GRANTED && writeCheck == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+    private String[] permissions = {READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE};
+    private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Permission")
+                    .setMessage("Please give the Storage permission")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick( DialogInterface dialog, int which ) {
+                            try {
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                intent.addCategory("android.intent.category.DEFAULT");
+                                intent.setData(Uri.parse(String.format("package:%s", new Object[]{getApplicationContext().getPackageName()})));
+                                activityResultLauncher.launch(intent);
+                            } catch (Exception e) {
+                                Intent intent = new Intent();
+                                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                activityResultLauncher.launch(intent);
+                            }
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+        } else {
+
+            ActivityCompat.requestPermissions( this, permissions, 30);
+
+        }
+    }
+
     private int countOfImages = 0;
     @SuppressLint("NotifyDataSetChanged")
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)     {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1 && resultCode == RESULT_OK && null != data){
 

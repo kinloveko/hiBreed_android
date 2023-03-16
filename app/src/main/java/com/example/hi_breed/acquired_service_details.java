@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hi_breed.classesFile.ApiUtilities;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.pushNotification;
 import com.example.hi_breed.service_status_for_seller.service_status;
@@ -33,7 +35,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,24 +54,24 @@ public class acquired_service_details extends AppCompatActivity {
     Button cancelButton,messageButton;
     RelativeLayout toolbarID,currentAddress,timeLayout,dateLayout;
     LinearLayout buttonLayout,buttonContact,buttonDelete;
-
+    String notCurrentUser;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acquired_service_details);
 
-
         Window window = getWindow();
-        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
-        } else {
-            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+        else{
+            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+
         buttonContact = findViewById(R.id.buttonContact);
         buttonDelete = findViewById(R.id.buttonDelete);
         cancelButton=findViewById(R.id.cancelButton);
@@ -97,11 +98,20 @@ public class acquired_service_details extends AppCompatActivity {
         checkout_address = findViewById(R.id.checkout_address);
         checkout_zip = findViewById(R.id.checkout_zip);
         buttonLayout = findViewById(R.id.buttonLayout);
+
+
         Intent intent = getIntent();
 
         appointment_class appointment = (appointment_class) intent.getSerializableExtra("mode");
 
         if(appointment!=null) {
+
+            if(!appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                notCurrentUser = appointment.getCustomer_id();
+            }
+            else if (!appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                notCurrentUser = appointment.getSeller_id();
+            }
 
             dateTextView.setText(appointment.getAppointment_date());
             itemSlot.setText(appointment.getAppointment_time());
@@ -130,6 +140,7 @@ public class acquired_service_details extends AppCompatActivity {
                                                 map.put("timestamp", Timestamp.now());
                                                 map.put("type","appointment");
 
+
                                                 Map<String,Object> maps = new HashMap<>();
                                                 maps.put("id",appointment.getId());
                                                 maps.put("latestNotification",map);
@@ -154,9 +165,31 @@ public class acquired_service_details extends AppCompatActivity {
                                                                                             .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                 @Override
                                                                                                 public void onSuccess(Void unused) {
-                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
-                                                                                                            "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
-                                                                                                    sendNotif(notification,"accepted");
+
+
+                                                                                                    Map<String, Object> connection = new HashMap<>();
+                                                                                                    connection.put("matchID", appointment.getId());
+                                                                                                    connection.put("participants", Arrays.asList(appointment.getCustomer_id(), appointment.getSeller_id()));
+                                                                                                    connection.put("time", Timestamp.now());
+                                                                                                    connection.put("show", true);
+
+                                                                                                    FirebaseFirestore.getInstance().collection("Matches").document(appointment.getId()).set(connection)
+                                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                @Override
+                                                                                                                public void onSuccess(Void unused) {
+                                                                                                                    FirebaseFirestore.getInstance().collection("Matches")
+                                                                                                                            .document(appointment.getId())
+                                                                                                                            .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                @Override
+                                                                                                                                public void onSuccess(Void unused) {
+                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                                                            "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
+                                                                                                                                    sendNotif(notification,"accepted");
+                                                                                                                                    Toast.makeText(acquired_service_details.this, "Message ID created", Toast.LENGTH_SHORT).show();
+                                                                                                                                }
+                                                                                                                            });
+                                                                                                                }
+                                                                                                            });
                                                                                                 }
                                                                                             });
                                                                                 }
@@ -167,9 +200,32 @@ public class acquired_service_details extends AppCompatActivity {
                                                                                             .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                 @Override
                                                                                                 public void onSuccess(Void unused) {
-                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
-                                                                                                            "Accepted appointment",appointment.getId(),appointment.getSeller_id(),"appointment","buyer","accepted"), token);
-                                                                                                    sendNotif(notification,"accepted");
+
+
+                                                                                                    Map<String, Object> connection = new HashMap<>();
+                                                                                                    connection.put("matchID", appointment.getId());
+                                                                                                    connection.put("participants", Arrays.asList(appointment.getCustomer_id(), appointment.getSeller_id()));
+                                                                                                    connection.put("time", Timestamp.now());
+                                                                                                    connection.put("show", true);
+
+                                                                                                    FirebaseFirestore.getInstance().collection("Matches").document(appointment.getId()).set(connection)
+                                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                @Override
+                                                                                                                public void onSuccess(Void unused) {
+                                                                                                                    FirebaseFirestore.getInstance().collection("Matches")
+                                                                                                                            .document(appointment.getId())
+                                                                                                                            .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                @Override
+                                                                                                                                public void onSuccess(Void unused) {
+                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                                                            "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
+                                                                                                                                    sendNotif(notification,"accepted");
+                                                                                                                                    Toast.makeText(acquired_service_details.this, "Message ID created", Toast.LENGTH_SHORT).show();
+                                                                                                                                }
+                                                                                                                            });
+                                                                                                                }
+                                                                                                            });
+
                                                                                                 }
                                                                                             });
                                                                                 }
@@ -257,9 +313,19 @@ public class acquired_service_details extends AppCompatActivity {
                 messageButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
-                        intent.putExtra("mode", (Serializable) appointment);
-                        startActivity(intent);
+                        FirebaseFirestore.getInstance().collection("Matches")
+                                .document(appointment.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        matches_class match = documentSnapshot.toObject(matches_class.class);
+                                        Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
+                                        intent.putExtra("model",  (Parcelable) match);
+                                        intent.putExtra("notCurrentUser",notCurrentUser);
+                                        startActivity(intent);
+                                    }
+                                });
+
+
                     }
                 });
             }

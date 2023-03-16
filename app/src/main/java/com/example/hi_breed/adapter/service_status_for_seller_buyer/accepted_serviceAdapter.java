@@ -3,6 +3,7 @@ package com.example.hi_breed.adapter.service_status_for_seller_buyer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.acquired_service_accepted_message;
 import com.example.hi_breed.acquired_service_details;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.matches_class;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -60,12 +62,29 @@ public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_servi
         return new ViewHolder(view);
     }
 
+    private matches_class match;
+    String notCurrentUser;
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         appointment_class productModel = list.get(position);
 
+
+        if(!productModel.getSeller_id().equals(userID)){
+            notCurrentUser = productModel.getSeller_id();
+        }
+        else if(!productModel.getCustomer_id().equals(userID)){
+            notCurrentUser = productModel.getCustomer_id();
+        }
+
+        FirebaseFirestore.getInstance().collection("Matches").document(productModel.getId())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        match = documentSnapshot.toObject(matches_class.class);
+                    }
+                });
         if(productModel.getCustomer_id().equals(userID))
         {
 
@@ -123,7 +142,8 @@ public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_servi
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, acquired_service_accepted_message.class);
-                intent.putExtra("mode", (Serializable) productModel);
+                intent.putExtra("model", (Parcelable) match);
+                intent.putExtra("notCurrentUser",notCurrentUser);
                 context.startActivity(intent);
             }
         });

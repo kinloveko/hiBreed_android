@@ -1,6 +1,5 @@
 package com.example.hi_breed.userFile.profile;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -11,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -47,20 +47,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
 import com.squareup.picasso.Picasso;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -108,7 +106,7 @@ public class user_profile_account_edit extends BaseActivity {
         if (firebaseUser != null) {
             userID = firebaseUser.getUid();
             documentReference = firebaseFirestore.collection("User").document(userID);
-            getUserInfo(documentReference);
+            getUserInfo();
         }
 
         //background cover
@@ -277,54 +275,58 @@ public class user_profile_account_edit extends BaseActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+        user_profile_account_edit.this.finish();
+    }
 
     //to get the value of the imageView
     String imageProf="";
     String imageCover="";
     List<String> roles= new ArrayList<>();
-    private void getUserInfo(DocumentReference userID) {
+    private void getUserInfo() {
 
-        FirebaseFirestore.getInstance().collection("User").document(firebaseUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        FirebaseFirestore.getInstance().collection("User").document(firebaseUser.getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    if (documentSnapshot.exists()) {
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
+                if(error!=null){
+                    return;
+                }
+                if (documentSnapshot.exists()) {
 
-                        roles =(List<String>) documentSnapshot.get("role");
-                        before_first = documentSnapshot.getString("firstName");
-                        before_middle = documentSnapshot.getString("middleName");
-                        before_last = documentSnapshot.getString("lastName");
-                        before_address = documentSnapshot.getString("address");
-                        before_zip = documentSnapshot.getString("birth");
-                        before_gender = documentSnapshot.getString("gender");
-                        before_birthday = documentSnapshot.getString("zipCode");
+                    roles =(List<String>) documentSnapshot.get("role");
+                    before_first = documentSnapshot.getString("firstName");
+                    before_middle = documentSnapshot.getString("middleName");
+                    before_last = documentSnapshot.getString("lastName");
+                    before_address = documentSnapshot.getString("address");
+                    before_zip = documentSnapshot.getString("birth");
+                    before_gender = documentSnapshot.getString("gender");
+                    before_birthday = documentSnapshot.getString("zipCode");
 
-                        reg_first.setText(documentSnapshot.getString("firstName"));
-                        reg_middle.setText(documentSnapshot.getString("middleName"));
-                        reg_last.setText(documentSnapshot.getString("lastName"));
-                        reg_gender.setText(documentSnapshot.getString("gender"));
-                        reg_birthday.setText(documentSnapshot.getString("birth"));
-                        reg_address.setText(documentSnapshot.getString("address"));
-                        reg_zip.setText(documentSnapshot.getString("zipCode"));
-                        if (documentSnapshot.getString("image") == "" || documentSnapshot.getString("image") == null) {
-                            imageView.setImageResource(R.drawable.noimage);
-                            imageProf = "";
-                        } else {
-                            Picasso.get().load(documentSnapshot.getString("image")).into(imageView);
-                            //setting the variable to what imageView picture has.
-                            imageProf = documentSnapshot.getString("image");
-                        }
-                        if (documentSnapshot.getString("backgroundImage") == "" || documentSnapshot.getString("backgroundImage")== null) {
-                            imageBackground.setImageResource(R.drawable.nobackground);
-                            imageCover = "";
-                        } else {
-                            Picasso.get().load(documentSnapshot.getString("backgroundImage")).into(imageBackground);
-                            //setting the variable to what imageView picture has.
-                            imageCover = documentSnapshot.getString("backgroundImage");
-                        }
+                    reg_first.setText(documentSnapshot.getString("firstName"));
+                    reg_middle.setText(documentSnapshot.getString("middleName"));
+                    reg_last.setText(documentSnapshot.getString("lastName"));
+                    reg_gender.setText(documentSnapshot.getString("gender"));
+                    reg_birthday.setText(documentSnapshot.getString("birth"));
+                    reg_address.setText(documentSnapshot.getString("address"));
+                    reg_zip.setText(documentSnapshot.getString("zipCode"));
+                    if (documentSnapshot.getString("image") == "" || documentSnapshot.getString("image") == null) {
+                        imageView.setImageResource(R.drawable.noimage);
+                        imageProf = "";
+                    } else {
+                        Picasso.get().load(documentSnapshot.getString("image")).into(imageView);
+                        //setting the variable to what imageView picture has.
+                        imageProf = documentSnapshot.getString("image");
                     }
-
+                    if (documentSnapshot.getString("backgroundImage") == "" || documentSnapshot.getString("backgroundImage")== null) {
+                        imageBackground.setImageResource(R.drawable.nobackground);
+                        imageCover = "";
+                    } else {
+                        Picasso.get().load(documentSnapshot.getString("backgroundImage")).into(imageBackground);
+                        //setting the variable to what imageView picture has.
+                        imageCover = documentSnapshot.getString("backgroundImage");
+                    }
                 }
             }
         });
@@ -1229,73 +1231,62 @@ public class user_profile_account_edit extends BaseActivity {
 
 
     }
+    private static final int REQUEST_CODE_PROFILE_IMAGE = 99;
+    private static final int REQUEST_CODE_BACKGROUND_IMAGE = 100;
 
     private void imagePermissionBackground() {
-        Dexter.withContext(user_profile_account_edit.this)
-                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        cropImageCover.launch("image/*");
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Toast.makeText(user_profile_account_edit.this, "Permission Denied",Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                }).check();
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_CODE_BACKGROUND_IMAGE );
     }
 
 
     private void imagePermission(){
-
-        Dexter.withContext(user_profile_account_edit.this)
-                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        cropImage.launch("image/*");
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Toast.makeText(user_profile_account_edit.this, "Permission Denied",Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                }).check();
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_CODE_PROFILE_IMAGE );
     }
+
     String resultsForCover="";
     String results="";
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-            if(requestCode==99 && resultCode == 102){
-                results = data.getStringExtra("CROPS");
-                imgsUri= data.getData();
-                if(results!=null){
-                    imgsUri = Uri.parse(results);
-                }
-                Picasso.get().load(imgsUri).into(imageView);
-                updateButton.setVisibility(View.VISIBLE);
+        if (resultCode == RESULT_OK && requestCode == 99){
+            Uri imageUri = data.getData();
+            cropImage(imageUri,imageView,"profile");
             }
-        if (requestCode == 100 && resultCode == 102){
-            resultsForCover = data.getStringExtra("CROPS");
-            imgUriCover = data.getData();
-            if (resultsForCover != null) {
-                imgUriCover = Uri.parse(resultsForCover);
-            }
-            Picasso.get().load(imgUriCover).into(imageBackground);
-            updateButton.setVisibility(View.VISIBLE);
+        else if(resultCode == RESULT_OK && requestCode ==100 ){
+            Uri imageUri = data.getData();
+            cropImage(imageUri,imageBackground,"background");
         }
+        else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            Uri croppedUri = UCrop.getOutput(data);
+            // Use the cropped image URI as needed
+            if (croppedUri != null) {
+                if (currentImageView != null && types != null) {
+                    if(types.equals("profile")){
+                        results = croppedUri.toString();
+                        uploadProfileImage();
+                    }
+                    else{
+                        resultsForCover = croppedUri.toString();
+                        uploadBackground();
+                    }
+
+                }
+
+            }
+        }
+    }
+
+
+    private ImageView currentImageView;
+    private String types;
+    private void cropImage(Uri sourceUri, ImageView imageView,String type) {
+        currentImageView = imageView;
+        types =type;
+        Uri destinationUri = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        UCrop uCrop = UCrop.of(sourceUri, destinationUri);
+        uCrop.start(this);
     }
 
     @SuppressLint("SetTextI18n")
@@ -1330,97 +1321,125 @@ public class user_profile_account_edit extends BaseActivity {
         alert2.show();
         alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-
             StorageReference imageName = fileRefBreeder.child("profile");
-            StorageReference imageCoverName = fileRefBreederBackground.child("background");
 
-            imageCoverName.putFile(imgUriCover).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+               imageName.putFile(imgsUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                builder2.setView(view);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        alert2.dismiss();
+                        updateButton.setVisibility(View.GONE);
+                    }
+                },2000);
+                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        imageProf = uri.toString();
+                        //for user profile
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("image", uri.toString());
+                        //for shop profile
 
-                    builder2.setView(view);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateButton.setVisibility(View.GONE);
-                            alert2.dismiss();
-                        }
-                    },2000);
-
-                             imageCoverName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                 @Override
-                                 public void onSuccess(Uri uri) {
-                                        imageCover = uri.toString();
-                                     Map<String, Object> data = new HashMap<>();
-                                     data.put("backgroundImage", uri.toString());
-                                     documentReference.set(data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                         @Override
-                                         public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
-                                                    DocumentReference ref=   FirebaseFirestore.getInstance()
-                                                            .collection("Shop")
-                                                            .document(firebaseUser.getUid());
-                                                    ref.set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void unused) {
-
-                                                        }
-                                                    });
-                                                }
-                                         }
-                                     });
-                                 }
-                             });
-                }
-            });
-
-            imageName.putFile(imgsUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    builder2.setView(view);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            alert2.dismiss();
-                            updateButton.setVisibility(View.GONE);
-                        }
-                    },2000);
-                    imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            imageProf = uri.toString();
-                            //for user profile
-                            Map<String, Object> data = new HashMap<>();
-                            data.put("image", uri.toString());
-                            //for shop profile
-
-                            documentReference.set(data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        Map<String, Object> shopImage = new HashMap<>();
-                                        shopImage.put("profImage", uri.toString());
-                                     DocumentReference ref= FirebaseFirestore.getInstance()
-                                                        .collection("Shop")
-                                                                .document(firebaseUser.getUid());
-                                        ref.set(shopImage,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
-                                                    Toast.makeText(user_profile_account_edit.this, "Successfully Changed.", Toast.LENGTH_SHORT).show();
-                                                }
+                        documentReference.set(data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Map<String, Object> shopImage = new HashMap<>();
+                                    shopImage.put("profImage", uri.toString());
+                                    DocumentReference ref= FirebaseFirestore.getInstance()
+                                            .collection("Shop")
+                                            .document(firebaseUser.getUid());
+                                    ref.set(shopImage,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Toast.makeText(user_profile_account_edit.this, "Successfully Changed.", Toast.LENGTH_SHORT).show();
                                             }
-                                        });
-                                    }
-                                    else{
-                                        Toast.makeText(user_profile_account_edit.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
-                                    }
+                                        }
+                                    });
                                 }
-                            });
-                        }
-                    });
-                }
-            });
+                                else{
+                                    Toast.makeText(user_profile_account_edit.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+    public void uploadBackground(){
+
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(user_profile_account_edit.this);
+        builder2.setCancelable(false);
+        View view = View.inflate(user_profile_account_edit.this,R.layout.screen_custom_alert,null);
+        //title
+        TextView title = view.findViewById(R.id.screen_custom_alert_title);
+        //loading text
+        TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+        loadingText.setVisibility(View.VISIBLE);
+        //gif
+        GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+        gif.setVisibility(View.GONE);
+        //header image
+        AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+        imageViewCompat.setVisibility(View.GONE);
+        //message
+        TextView message = view.findViewById(R.id.screen_custom_alert_message);
+
+        title.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
+        //button
+
+        builder2.setView(view);
+        AlertDialog alert2 = builder2.create();
+        alert2.show();
+        alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        imgUriCover  = Uri.parse(resultsForCover);
+        StorageReference imageCoverName = fileRefBreederBackground.child("background");
+        imageCoverName.putFile(imgUriCover).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                builder2.setView(view);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateButton.setVisibility(View.GONE);
+                        alert2.dismiss();
+                    }
+                },2000);
+
+                imageCoverName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        imageCover = uri.toString();
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("backgroundImage", uri.toString());
+                        documentReference.set(data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    DocumentReference ref=   FirebaseFirestore.getInstance()
+                                            .collection("Shop")
+                                            .document(firebaseUser.getUid());
+                                    ref.set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
     }
 
 

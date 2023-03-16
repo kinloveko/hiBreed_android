@@ -45,6 +45,7 @@
             android:fontFamily="@font/poppinsmedium"
             android:maxLines="1"
             android:singleLine="true"
+            android:layout_below="@id/role"
             android:text="Sender name"
             android:textColor="@color/material_blue_grey_95"
             android:textSize="12sp"
@@ -55,25 +56,24 @@
             android:id="@+id/role"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/senderName"
-            android:layout_marginTop="-4dp"
+            android:layout_toEndOf="@id/image"
             android:text="Veterinarian"
             android:textSize="10sp"
             tools:ignore="HardcodedText,SmallSp" />
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:id="@+id/image"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
             android:layout_marginTop="0dp"
-            android:layout_toEndOf="@id/senderName"
             android:src="@drawable/icon_verified" />
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/replyEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/role"
-            android:layout_marginTop="5dp"
+            android:layout_below="@id/senderName"
+            android:layout_marginTop="2dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/transparent"

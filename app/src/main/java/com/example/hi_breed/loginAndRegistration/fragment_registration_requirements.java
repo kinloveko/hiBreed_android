@@ -1,11 +1,14 @@
 package com.example.hi_breed.loginAndRegistration;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -15,6 +18,9 @@ import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -48,19 +54,14 @@ import com.bumptech.glide.Glide;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.breeder_kennel_cert_RecyclerAdapter;
 import com.example.hi_breed.adapter.shooterAdapter.shooter_proof_RecyclerAdapter;
-import com.example.hi_breed.phoneAccess.phone_UncropperActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
@@ -119,7 +120,7 @@ public class fragment_registration_requirements extends Fragment implements bree
     TextInputLayout reg_experience;
     ArrayList<String> role;
     ArrayList<String> saveRole;
-    ActivityResultLauncher<String> cropImageVet;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -144,6 +145,7 @@ public class fragment_registration_requirements extends Fragment implements bree
 
 // variable initialized
         //TextView
+
         prc_required_error = view.findViewById(R.id.prc_required_error);
         add_photo_vet = view.findViewById(R.id.add_photo_vet);
         textViewExp = view.findViewById(R.id.textViewExp);
@@ -332,22 +334,47 @@ public class fragment_registration_requirements extends Fragment implements bree
 
                 });
 
+
+
+
         dropImageCardViewShooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePermissionShooter();
+                if (checkPermission()) {
+                    imagePermissionShooter();
+                } else {
+                    requestPermissionShot(); // Request Permission
+                }
             }
         });
+
         dropImageCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePermission();
+                if (checkPermission()) {
+                    imagePermission();
+                } else {
+                    requestPermission(); // Request Permission
+                }
             }
         });
+
+
         dropImageCardViewVet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePermissionVet();
+                if( checkPermission()){
+                    imagePermissionVet();
+                }
+               else{
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Permission is not granted, request it
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                30);
+                    }
+                }
             }
         });
 
@@ -378,226 +405,135 @@ public class fragment_registration_requirements extends Fragment implements bree
                 checkInput();
             }
         });
-        //background image request
-        cropImageVet = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
-            Intent intent = new Intent(getContext(), phone_UncropperActivity.class);
-
-            if(result!=null){
-                intent.putExtra("SendingData", result.toString());
-                startActivityForResult(intent,100);
-            }
-            else{
-                Toast.makeText(getContext(),"No changes",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-
-    private void imagePermissionVet() {
-        Dexter.withContext(getContext())
-                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        cropImageVet.launch("image/*");
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Toast.makeText(getContext(), "Permission Denied",Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                }).check();
     }
 
 
-
-    @SuppressLint("SetTextI18n")
-    private void openBirthdayDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        View view = View.inflate(getContext(),R.layout.pet_add_birthday_dialog,null);
-        DatePicker datePicker = view.findViewById(R.id.datePicker);
-        datePicker.setMaxDate(System.currentTimeMillis());
-        builder.setView(view);
-        MaterialButton cancel,save;
-        TextView message,title;
-        title =view.findViewById(R.id.pet_add_birthday_set_title);
-        title.setText("Set Birthday");
-        message = view.findViewById(R.id.pet_add_birthday_set_message);
-        message.setText("Please set your exact birthday");
-        cancel = view.findViewById(R.id.birthday_dialog_btn_cancel);
-        save = view.findViewById(R.id.birthday_dialog_btn_done);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        save.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(View v) {
-                int   day  = datePicker.getDayOfMonth();
-                int   month= datePicker.getMonth();
-                int   year = datePicker.getYear();
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(year, month, day);
-
-                @SuppressLint("SimpleDateFormat")
-                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-                String formatedDate = sdf.format(calendar.getTime());
-                reg_birthEdit.setText(formatedDate);
-                reg_birthEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
-                Toast.makeText(getContext(), formatedDate, Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+    // Handle the result of the permission request
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == 30) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted, open the gallery
+                imagePermissionVet();
+            } else {
+                // Permission is not granted, show an error message
+                Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_SHORT).show();
             }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-    }
-    @SuppressLint("SetTextI18n")
-    private void openTransactionDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        View view = View.inflate(getContext(),R.layout.pet_add_birthday_dialog,null);
-        DatePicker datePicker = view.findViewById(R.id.datePicker);
-        datePicker.setMaxDate(System.currentTimeMillis());
-
-        MaterialButton cancel,save;
-        TextView message,title;
-        title = view.findViewById(R.id.pet_add_birthday_set_title);
-        title.setText("Date of last transaction");
-        message = view.findViewById(R.id.pet_add_birthday_set_message);
-        message.setText("Please indicate the date of your last transaction you perform dog shooting.");
-        cancel = view.findViewById(R.id.birthday_dialog_btn_cancel);
-        save = view.findViewById(R.id.birthday_dialog_btn_done);
-
-        builder.setView(view);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        save.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(View v) {
-                int   day  = datePicker.getDayOfMonth();
-                int   month= datePicker.getMonth();
-                int   year = datePicker.getYear();
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(year, month, day);
-
-                @SuppressLint("SimpleDateFormat")
-                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-                String formatedDate = sdf.format(calendar.getTime());
-                reg_transactionEdit
-                        .setText(formatedDate);
-                reg_transactionEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
-                Toast.makeText(getContext(), formatedDate, Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-    }
-
-    String genderHolder="";
-    @SuppressLint("SetTextI18n")
-    private void showGenderDialog() {
-        String[] gender = {"Male","Female","Other"};
-        AlertDialog.Builder builder =new AlertDialog.Builder(getContext());
-        View view = View.inflate(getContext(),R.layout.pet_add_gender_dialog,null);
-        MaterialButton done,cancel;
-
-        TextView message,title;
-        message = view.findViewById(R.id.pet_gender_dialog_message);
-        title = view.findViewById(R.id.pet_gender_dialog_title);
-
-        message.setText("Please select your gender");
-        title.setText("Set Gender");
-        done = view.findViewById(R.id.gender_dialog_btn_done);
-        cancel = view.findViewById(R.id.gender_dialog_btn_cancel);
-
-        NumberPicker picker = view.findViewById(R.id.gender_numberPicker);
-        picker.setMinValue(0);
-        picker.setMaxValue(gender.length -1 );
-        picker.setDisplayedValues(gender);
-        picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        picker.setWrapSelectorWheel(false);
-        picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-
-                genderHolder = String.valueOf(newVal);
-            }
-        });
-        builder.setView(view);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(genderHolder == ""|| genderHolder == null){
-                    genderHolder = "0";
-                }
-                reg_genderEdit.setText(gender[Integer.parseInt(genderHolder)]);
-               reg_genderEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
-                Toast.makeText(getContext(), gender[Integer.parseInt(genderHolder)], Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
-        });
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        genderHolder="";
+        }
     }
 
     @SuppressLint("ObsoleteSdkInt")
     private void imagePermission() {
-        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},Read_Permission);
-            return;
-        }
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("image/*");
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
         }
+
         startActivityForResult(Intent.createChooser(intent,"Select Picture"),PICK_IMAGE);
+    }
+
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager();
+        } else {
+            int readCheck = ContextCompat.checkSelfPermission(getActivity(), READ_EXTERNAL_STORAGE);
+            int writeCheck = ContextCompat.checkSelfPermission(getActivity(), WRITE_EXTERNAL_STORAGE);
+            return readCheck == PackageManager.PERMISSION_GRANTED && writeCheck == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+
+
+
+    private void imagePermissionVet() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_PICK_IMAGE);
+    }
+
+    private static final int REQUEST_PICK_IMAGE = 102;
+
+
+    private final String[] permissions = {READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE};
+    private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Permission")
+                    .setMessage("Please give the Storage permission")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick( DialogInterface dialog, int which ) {
+                            try {
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                intent.addCategory("android.intent.category.DEFAULT");
+                                intent.setData(Uri.parse(String.format("package:%s", new Object[]{getActivity().getPackageName()})));
+                                activityResultLauncher.launch(intent);
+                            } catch (Exception e) {
+                                Intent intent = new Intent();
+                                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                activityResultLauncher.launch(intent);
+                            }
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+        } else {
+
+            ActivityCompat.requestPermissions(fragment_registration_requirements.this.getActivity(), permissions, 30);
+
+        }
+    }
+
+    private void requestPermissionShot() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Permission")
+                    .setMessage("Please give the Storage permission")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick( DialogInterface dialog, int which ) {
+                            try {
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                intent.addCategory("android.intent.category.DEFAULT");
+                                intent.setData(Uri.parse(String.format("package:%s", new Object[]{getActivity().getPackageName()})));
+                                activityResultLauncherShooter.launch(intent);
+                            } catch (Exception e) {
+                                Intent intent = new Intent();
+                                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                activityResultLauncherShooter.launch(intent);
+                            }
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+        } else {
+
+            ActivityCompat.requestPermissions( getActivity(), permissions, 10);
+
+        }
 
     }
+
+
     @SuppressLint("ObsoleteSdkInt")
     private void imagePermissionShooter() {
-        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},Read_PermissionShooter);
-            return;
-        }
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("image/*");
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
         }
+
         startActivityForResult(Intent.createChooser(intent,"Select Picture"),PICK_IMAGE_Shooter);
 
     }
@@ -668,25 +604,35 @@ public class fragment_registration_requirements extends Fragment implements bree
             shooter_adapter.notifyDataSetChanged();
             Toast.makeText(getContext(),uriShooter.size()+": selected",Toast.LENGTH_SHORT).show();
         }
-        else     if (requestCode == 100 && resultCode == 102){
-            resultsForCover = data.getStringExtra("CROPS");
-            imgVet = data.getData();
-            if (resultsForCover != null) {
-                imgVet = Uri.parse(resultsForCover);
+        else     if (resultCode == RESULT_OK && requestCode == REQUEST_PICK_IMAGE) {
+            Uri imageUri = data.getData();
+            cropImage(imageUri);
+        }
+        else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            Uri croppedUri = UCrop.getOutput(data);
+            // Use the cropped image URI as needed
+            if(croppedUri!=null){
+                prc_image.setVisibility(View.VISIBLE);
+                prc_image.setImageURI(croppedUri);
+                add_photo_vet.setVisibility(View.GONE);
+                dropImageViewVet.setVisibility(View.GONE);
             }
-            prc_image.setVisibility(View.VISIBLE);
-            prc_image.setImageURI(imgVet);
-            imageview_vet_style.setVisibility(View.GONE);
-            add_photo_vet.setVisibility(View.GONE);
-        }
-        else{
 
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            Throwable error = UCrop.getError(data);
+            // Handle UCrop error as needed
+        }
+        else {
             //this code is for if user not picked any image
-            Toast.makeText(getContext(),"You Haven't Pick any image",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),"You Haven't Picked any image",Toast.LENGTH_SHORT).show();
         }
+    }
 
-
-
+    private void cropImage(Uri sourceUri) {
+        File cacheDir = getActivity().getCacheDir();
+        Uri destinationUri = Uri.fromFile(new File(cacheDir, "cropped"));
+        UCrop uCrop = UCrop.of(sourceUri, destinationUri);
+        uCrop.start(getContext(), this);
     }
 
     private void checkInput() {
@@ -856,7 +802,156 @@ public class fragment_registration_requirements extends Fragment implements bree
     }//end of check input method
 
 
+    @SuppressLint("SetTextI18n")
+    private void openBirthdayDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View view = View.inflate(getContext(),R.layout.pet_add_birthday_dialog,null);
+        DatePicker datePicker = view.findViewById(R.id.datePicker);
+        datePicker.setMaxDate(System.currentTimeMillis());
+        builder.setView(view);
+        MaterialButton cancel,save;
+        TextView message,title;
+        title =view.findViewById(R.id.pet_add_birthday_set_title);
+        title.setText("Set Birthday");
+        message = view.findViewById(R.id.pet_add_birthday_set_message);
+        message.setText("Please set your exact birthday");
+        cancel = view.findViewById(R.id.birthday_dialog_btn_cancel);
+        save = view.findViewById(R.id.birthday_dialog_btn_done);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        save.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View v) {
+                int   day  = datePicker.getDayOfMonth();
+                int   month= datePicker.getMonth();
+                int   year = datePicker.getYear();
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month, day);
+
+                @SuppressLint("SimpleDateFormat")
+                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+                String formatedDate = sdf.format(calendar.getTime());
+                reg_birthEdit.setText(formatedDate);
+                reg_birthEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
+                Toast.makeText(getContext(), formatedDate, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+    @SuppressLint("SetTextI18n")
+    private void openTransactionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View view = View.inflate(getContext(),R.layout.pet_add_birthday_dialog,null);
+        DatePicker datePicker = view.findViewById(R.id.datePicker);
+        datePicker.setMaxDate(System.currentTimeMillis());
+
+        MaterialButton cancel,save;
+        TextView message,title;
+        title = view.findViewById(R.id.pet_add_birthday_set_title);
+        title.setText("Date of last transaction");
+        message = view.findViewById(R.id.pet_add_birthday_set_message);
+        message.setText("Please indicate the date of your last transaction you perform dog shooting.");
+        cancel = view.findViewById(R.id.birthday_dialog_btn_cancel);
+        save = view.findViewById(R.id.birthday_dialog_btn_done);
+
+        builder.setView(view);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View v) {
+                int   day  = datePicker.getDayOfMonth();
+                int   month= datePicker.getMonth();
+                int   year = datePicker.getYear();
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month, day);
+
+                @SuppressLint("SimpleDateFormat")
+                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+                String formatedDate = sdf.format(calendar.getTime());
+                reg_transactionEdit
+                        .setText(formatedDate);
+                reg_transactionEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
+                Toast.makeText(getContext(), formatedDate, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    String genderHolder="";
+    @SuppressLint("SetTextI18n")
+    private void showGenderDialog() {
+        String[] gender = {"Male","Female","Other"};
+        AlertDialog.Builder builder =new AlertDialog.Builder(getContext());
+        View view = View.inflate(getContext(),R.layout.pet_add_gender_dialog,null);
+        MaterialButton done,cancel;
+
+        TextView message,title;
+        message = view.findViewById(R.id.pet_gender_dialog_message);
+        title = view.findViewById(R.id.pet_gender_dialog_title);
+
+        message.setText("Please select your gender");
+        title.setText("Set Gender");
+        done = view.findViewById(R.id.gender_dialog_btn_done);
+        cancel = view.findViewById(R.id.gender_dialog_btn_cancel);
+
+        NumberPicker picker = view.findViewById(R.id.gender_numberPicker);
+        picker.setMinValue(0);
+        picker.setMaxValue(gender.length -1 );
+        picker.setDisplayedValues(gender);
+        picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        picker.setWrapSelectorWheel(false);
+        picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+
+                genderHolder = String.valueOf(newVal);
+            }
+        });
+        builder.setView(view);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(genderHolder == ""|| genderHolder == null){
+                    genderHolder = "0";
+                }
+                reg_genderEdit.setText(gender[Integer.parseInt(genderHolder)]);
+                reg_genderEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
+                Toast.makeText(getContext(), gender[Integer.parseInt(genderHolder)], Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        genderHolder="";
+    }
 
     @Override
     public void clicked(int size) {
@@ -1019,6 +1114,5 @@ public class fragment_registration_requirements extends Fragment implements bree
         public void afterTextChanged(Editable editable) {
         }
     };
-
 
 }

@@ -1,5 +1,7 @@
 package com.example.hi_breed.Pet;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
 import android.Manifest;
@@ -16,6 +18,7 @@ import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -294,13 +297,36 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
         petPhotoCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePermission();
+                if( checkPermission()){
+                    imagePermission();
+                }
+                else{
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Permission is not granted, request it
+                        ActivityCompat.requestPermissions(pet_add_for_selling.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                30);
+                    }
+                }
+
             }
         });
         petPaperCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePermissionPapers();
+                if( checkPermission()){
+                    imagePermissionPapers();
+                }
+                else{
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Permission is not granted, request it
+                        ActivityCompat.requestPermissions(pet_add_for_selling.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                30);
+                    }
+                }
             }
         });
         pet_add_create_Button.setOnClickListener(new View.OnClickListener() {
@@ -322,6 +348,17 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
 
 
 
+    }
+
+
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager();
+        } else {
+            int readCheck = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+            int writeCheck = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+            return readCheck == PackageManager.PERMISSION_GRANTED && writeCheck == PackageManager.PERMISSION_GRANTED;
+        }
     }
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
@@ -945,29 +982,18 @@ public class pet_add_for_selling extends BaseActivity implements petImagesRecycl
 
     @SuppressLint("ObsoleteSdkInt")
     private void imagePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
-            return;
-        }
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("image/*");
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
         }
+
         startActivityForResult(Intent.createChooser(intent,"Select Picture"),1);
     }
 
     @SuppressLint("ObsoleteSdkInt")
     private void imagePermissionPapers() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 102);
-            return;
-        }
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("image/*");
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);

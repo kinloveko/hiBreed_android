@@ -60,6 +60,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class message_conversation_activity extends BaseActivity {
+
     LinearLayout backLayoutService;
     private   TextView headerName;
     private   RelativeLayout toolbarID;
@@ -116,6 +117,7 @@ public class message_conversation_activity extends BaseActivity {
                 finish();
             }
         });
+
         user = FirebaseAuth.getInstance().getCurrentUser();
         chat_recyclerview = findViewById(R.id.chat_recyclerview);
 

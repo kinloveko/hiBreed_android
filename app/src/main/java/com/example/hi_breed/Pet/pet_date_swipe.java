@@ -136,6 +136,7 @@ public class pet_date_swipe extends BaseActivity {
                                 }
                             }
                         });
+
             }
 
             @Override
@@ -235,12 +236,14 @@ public class pet_date_swipe extends BaseActivity {
                                 List<Map<String, Object>> swipes = (List<Map<String, Object>>) value.get("swipe");
                                 for (Map<String, Object> swipe : swipes) {
                                     if (swipe.get("swipedUserId").equals(currentUserId) && swipe.get("swipeDirection").equals("right")) {
+
                                         // both users swiped right on each other
                                         Map<String, Object> connection = new HashMap<>();
                                         connection.put("matchID", "");
                                         connection.put("participants", Arrays.asList(userId, item.getPet_breeder()));
                                         connection.put("time", Timestamp.now());
                                         connection.put("show", true);
+
                                         FirebaseFirestore.getInstance().collection("Matches").add(connection)
                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                     @Override
