@@ -3,7 +3,6 @@ package com.example.hi_breed.adapter.service_status_for_seller_buyer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,11 +141,12 @@ public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_servi
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, acquired_service_accepted_message.class);
-                intent.putExtra("model", (Parcelable) match);
-                intent.putExtra("notCurrentUser",notCurrentUser);
+                intent.putExtra("model", (Serializable) match);
                 context.startActivity(intent);
             }
         });
+
+
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +156,7 @@ public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_servi
                 context.startActivity(intent);
             }
         });
+
     }
 
     @Override

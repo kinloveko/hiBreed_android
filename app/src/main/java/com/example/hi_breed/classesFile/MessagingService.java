@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.acquired_service_accepted_message;
 import com.example.hi_breed.message.message_conversation_activity;
 import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
 import com.example.hi_breed.service_status_for_seller.service_status;
@@ -63,7 +64,7 @@ public class MessagingService extends FirebaseMessagingService {
         String type = remoteMessage.getData().get("type");
 
         Log.d("MyApp", "SELECTED_TAB FROM FIREBASE MESSAGING SERVICE: " + SELECTED_TAB);
-
+        Log.d("MyApp", notCurrentUser);
 
         if(type.equals("appointment")){
 
@@ -95,8 +96,15 @@ public class MessagingService extends FirebaseMessagingService {
                 Intent intent = new Intent(this, appointment_user_side.class);
                 intent.putExtra("SELECTED_TAB",SELECTED_TAB);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-              PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+                PendingIntent pendingIntent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+
+                } else {
+                    pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                }
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 createNotificationManagerAppointments(manager);
 
@@ -114,6 +122,53 @@ public class MessagingService extends FirebaseMessagingService {
                 manager.notify(notificationId, notification);
 
             }
+        }
+        else if(type.equals("messageAppointment")){
+
+            FirebaseFirestore.getInstance().collection("Matches")
+                    .document(match).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                DocumentSnapshot s = task.getResult();
+                                if(s.exists()){
+                                    List<String> user = (List<String>) s.get("participants");
+                                    Timestamp time = (Timestamp) s.get("time");
+                                    timestamp = time;
+                                    int notificationId = (int) System.currentTimeMillis();
+                                    matches_class m = new matches_class(user,match,true,timestamp);
+                                    Intent intent = new Intent(getApplicationContext(), acquired_service_accepted_message.class);
+                                    intent.putExtra("model",(Serializable) m);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                                    PendingIntent pendingIntent;
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+
+                                        } else {
+                                        pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                                     }
+                                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                    createNotificationManager(manager);
+
+                                    Notification.Builder builder = new Notification.Builder(MessagingService.this, CHANNEL_ID)
+                                            .setSmallIcon(R.drawable.hibreedlogo)
+                                            .setContentTitle("New message from: "+sender)
+                                            .setContentText(text)
+                                            .setPriority(Notification.PRIORITY_HIGH)
+                                            .setAutoCancel(true)
+                                            .setContentIntent(pendingIntent)
+                                            .setColor(Color.WHITE)
+                                            .setGroup(match);
+
+                                    Notification notification = builder.build();
+                                    manager.notify(notificationId, notification);
+                                }
+                            }
+                        }
+                    });
+
         }
         else if(type.equals("message")){
 
@@ -159,7 +214,6 @@ public class MessagingService extends FirebaseMessagingService {
 
         }
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createNotificationManagerAppointments(NotificationManager manager) {

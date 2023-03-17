@@ -35,6 +35,7 @@ import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.pushNotification;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
@@ -51,6 +52,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -126,13 +128,51 @@ public class acquired_service_accepted_message extends AppCompatActivity {
         headerName = findViewById(R.id.headerName);
         toolbarID = findViewById(R.id.toolbarID);
         image = findViewById(R.id.image);
+
+
         intent = getIntent();
-        matches_class m = (matches_class) intent.getSerializableExtra("model");
-        notCurrentUser = intent.getStringExtra("notCurrentUser");
+            matches_class m = (matches_class) intent.getSerializableExtra("model");
+
+
+
+        if(m.getParticipants().size()!=0) {
+            notCurrentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            if (!notCurrentUser.equals(m.getParticipants().get(0))) {
+                notCurrentUser = m.getParticipants().get(0);
+                getReceiverInfo(notCurrentUser);
+            } else if (!notCurrentUser.equals(m.getParticipants().get(1))) {
+                notCurrentUser = m.getParticipants().get(1);
+                getReceiverInfo(notCurrentUser);
+            }
+        }
+        else{
+            FirebaseFirestore.getInstance().collection("Matches").document(m.getMatchID())
+                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            List<String> list = (List<String>)  documentSnapshot.get("participants");
+                            if (list != null) {
+                                if(!list.get(0).equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+
+                                    notCurrentUser = list.get(0);
+                                    getReceiverInfo(notCurrentUser);
+                                }
+                                else{
+                                    notCurrentUser = list.get(1);
+                                    getReceiverInfo(notCurrentUser);
+                                }
+                            }
+                        }
+                    });
+        }
+
         getConversation(m.getMatchID());
         match = m.getMatchID();
+
         getCurrent();
-        getReceiverInfo(notCurrentUser);
+
+
+
         replyEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -209,6 +249,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                         if(task.isSuccessful()){
                             DocumentSnapshot s = task.getResult();
                             if(s.exists()){
+
                                 FirebaseFirestore.getInstance()
                                         .collection("Chat")
                                         .document(matchID)
@@ -217,8 +258,8 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful()){
-                                                    if(!available){
-                                                        pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"message",null,"pending"),userToken);
+
+                                                        pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"messageAppointment",null,""),userToken);
                                                         sendNotif(notification);
                                                         scrollView.post(new Runnable() {
                                                             @Override
@@ -226,7 +267,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                                                 scrollView.fullScroll(ScrollView.FOCUS_DOWN);
                                                             }
                                                         });
-                                                    }
+
                                                 }
                                             }
                                         });
@@ -245,8 +286,8 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if(task.isSuccessful()){
-                                                                        if(!available){
-                                                                            pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"message",null,"pending" ), userToken);
+
+                                                                            pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"messageAppointment","","" ), userToken);
                                                                             sendNotif(notification);
                                                                             scrollView.post(new Runnable() {
                                                                                 @Override
@@ -255,7 +296,6 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                                                                 }
                                                                             });
                                                                         }
-                                                                    }
                                                                 }
                                                             });
                                                 }

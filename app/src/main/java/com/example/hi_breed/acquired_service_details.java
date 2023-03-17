@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -35,6 +34,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -319,12 +319,10 @@ public class acquired_service_details extends AppCompatActivity {
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         matches_class match = documentSnapshot.toObject(matches_class.class);
                                         Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
-                                        intent.putExtra("model",  (Parcelable) match);
-                                        intent.putExtra("notCurrentUser",notCurrentUser);
+                                        intent.putExtra("model",  (Serializable) match);
                                         startActivity(intent);
                                     }
                                 });
-
 
                     }
                 });

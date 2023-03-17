@@ -65,6 +65,7 @@ public class message_conversation_reply_adapter extends RecyclerView.Adapter<mes
 
             RelativeLayout.LayoutParams rParam = (RelativeLayout.LayoutParams) holder.relative.getLayoutParams();
             rParam.addRule(RelativeLayout.START_OF,R.id.image);
+            rParam.setMarginStart(20);
             holder.relative.setLayoutParams(rParam);
 
             RelativeLayout.LayoutParams textParam = (RelativeLayout.LayoutParams) holder.details_chat.getLayoutParams();
@@ -82,6 +83,7 @@ public class message_conversation_reply_adapter extends RecyclerView.Adapter<mes
 
             RelativeLayout.LayoutParams rParam = (RelativeLayout.LayoutParams) holder.relative.getLayoutParams();
             rParam.addRule(RelativeLayout.END_OF,R.id.image);
+            rParam.setMarginEnd(20);
             holder.relative.setLayoutParams(rParam);
 
             RelativeLayout.LayoutParams textParam = (RelativeLayout.LayoutParams) holder.details_chat.getLayoutParams();
