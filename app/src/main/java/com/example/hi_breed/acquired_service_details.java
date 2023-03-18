@@ -24,6 +24,7 @@ import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.pushNotification;
+import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
 import com.example.hi_breed.service_status_for_seller.service_status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -121,6 +122,70 @@ public class acquired_service_details extends AppCompatActivity {
 
                 if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     cancelButton.setVisibility(View.VISIBLE);
+                    cancelButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            FirebaseFirestore.getInstance().collection("User")
+                                    .document(appointment.getSeller_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot value) {
+                                            if(value.exists()){
+                                                String token= value.getString("fcmToken");
+                                                Map<String,Object> map = new HashMap<>();
+                                                map.put("send_to_id", appointment.getSeller_id());
+                                                map.put("message","Requested appointment has been cancelled");
+                                                map.put("timestamp", Timestamp.now());
+                                                map.put("type","appointment");
+
+                                                Map<String,Object> maps = new HashMap<>();
+                                                maps.put("id",appointment.getId());
+                                                maps.put("latestNotification",map);
+                                                maps.put("notification", Arrays.asList(map));
+
+                                                FirebaseFirestore.getInstance().collection("Appointments")
+                                                        .document(appointment.getId())
+                                                        .update("appointment_status","cancelled")
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+
+                                                                FirebaseFirestore.getInstance().collection("Notifications").document(appointment.getCustomer_id())
+                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                            @Override
+                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                                                if(documentSnapshot.exists()){
+                                                                                    FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                            .document(appointment.getSeller_id())
+                                                                                            .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void unused) {
+                                                                                                    pushNotification notification = new pushNotification(new notificationData("Requested appointment has been cancelled",
+                                                                                                            "Cancelled appointment",appointment.getId(),appointment.getSeller_id(),"appointment","seller","cancelled"), token);
+                                                                                                    sendNotif(notification,"cancelled","seller");
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                                else{
+                                                                                    FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                            .document(appointment.getSeller_id()).set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void unused) {
+                                                                                                    pushNotification notification = new pushNotification(new notificationData("Requested appointment has been cancelled",
+                                                                                                            "Cancelled appointment",appointment.getId(),appointment.getSeller_id(),"appointment","seller","cancelled"), token);
+                                                                                                    sendNotif(notification,"cancelled","seller");
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                            }
+                                                                        });
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                    });
+                        }
+                    });
                 }
                 else
                 if (appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
@@ -184,7 +249,7 @@ public class acquired_service_details extends AppCompatActivity {
                                                                                                                                 public void onSuccess(Void unused) {
                                                                                                                                     pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
                                                                                                                                             "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
-                                                                                                                                    sendNotif(notification,"accepted");
+                                                                                                                                    sendNotif(notification,"accepted","buyer");
                                                                                                                                     Toast.makeText(acquired_service_details.this, "Message ID created", Toast.LENGTH_SHORT).show();
                                                                                                                                 }
                                                                                                                             });
@@ -219,7 +284,7 @@ public class acquired_service_details extends AppCompatActivity {
                                                                                                                                 public void onSuccess(Void unused) {
                                                                                                                                     pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
                                                                                                                                             "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
-                                                                                                                                    sendNotif(notification,"accepted");
+                                                                                                                                    sendNotif(notification,"accepted","buyer");
                                                                                                                                     Toast.makeText(acquired_service_details.this, "Message ID created", Toast.LENGTH_SHORT).show();
                                                                                                                                 }
                                                                                                                             });
@@ -278,7 +343,7 @@ public class acquired_service_details extends AppCompatActivity {
                                                                                                 public void onSuccess(Void unused) {
                                                                                                     pushNotification notification = new pushNotification(new notificationData("Your request appointment has been cancelled",
                                                                                                             "Cancelled appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","cancelled"), token);
-                                                                                                    sendNotif(notification,"cancelled");
+                                                                                                    sendNotif(notification,"cancelled","buyer");
                                                                                                 }
                                                                                             });
                                                                                 }
@@ -289,7 +354,7 @@ public class acquired_service_details extends AppCompatActivity {
                                                                                                 public void onSuccess(Void unused) {
                                                                                                     pushNotification notification = new pushNotification(new notificationData("Your request appointment has been cancelled",
                                                                                                             "Cancelled appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","cancelled"), token);
-                                                                                                    sendNotif(notification,"cancelled");
+                                                                                                    sendNotif(notification,"cancelled","buyer");
                                                                                                 }
                                                                                             });
                                                                                 }
@@ -323,7 +388,6 @@ public class acquired_service_details extends AppCompatActivity {
                                         startActivity(intent);
                                     }
                                 });
-
                     }
                 });
             }
@@ -417,7 +481,7 @@ public class acquired_service_details extends AppCompatActivity {
         }
     }
 
-    private void sendNotif(pushNotification notification,String from) {
+    private void sendNotif(pushNotification notification,String from,String notificationFor) {
 
         ApiUtilities.getClient().sendNotification(notification).enqueue(new Callback<pushNotification>() {
             @Override
@@ -425,24 +489,43 @@ public class acquired_service_details extends AppCompatActivity {
                 if(response.isSuccessful()){
                     if(from.equals("accepted")){
 
-                            Intent i = new Intent(acquired_service_details.this, service_status.class);
-                            i.putExtra("SELECTED_TAB",from);
-                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(i);
-                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
-                            finish();
+                            if(notificationFor.equals("buyer")){
+                                Intent i = new Intent(acquired_service_details.this, service_status.class);
+                                i.putExtra("SELECTED_TAB",from);
+                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(i);
+                                Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                            else{
+                                Intent i = new Intent(acquired_service_details.this, appointment_user_side.class);
+                                i.putExtra("SELECTED_TAB",from);
+                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(i);
+                                Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+
 
                          }
-                    else{
-
+                        else{
+                        if(notificationFor.equals("buyer")){
                             Intent i = new Intent(acquired_service_details.this, service_status.class);
                             i.putExtra("SELECTED_TAB",from);
                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
                             Toast.makeText(acquired_service_details.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
                             finish();
-
-                    }
+                        }
+                        else{
+                            Intent i = new Intent(acquired_service_details.this, appointment_user_side.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                        }
                 }else{
 
                 }
