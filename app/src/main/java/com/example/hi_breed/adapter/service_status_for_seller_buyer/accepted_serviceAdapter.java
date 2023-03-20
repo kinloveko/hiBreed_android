@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.acquired_service_accepted_message;
+import com.example.hi_breed.message.acquired_service_accepted_message;
 import com.example.hi_breed.acquired_service_details;
 import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.classesFile.matches_class;

@@ -38,7 +38,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".acquired_service_accepted_message"
+            android:name=".message.acquired_service_accepted_message"
             android:exported="false" />
         <activity
             android:name=".acquired_service_details"

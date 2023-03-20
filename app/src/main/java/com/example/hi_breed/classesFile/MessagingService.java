@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.acquired_service_accepted_message;
+import com.example.hi_breed.message.acquired_service_accepted_message;
 import com.example.hi_breed.message.message_conversation_activity;
 import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
 import com.example.hi_breed.service_status_for_seller.service_status;
@@ -65,7 +65,7 @@ public class MessagingService extends FirebaseMessagingService {
 
         Log.d("MyApp", "SELECTED_TAB FROM FIREBASE MESSAGING SERVICE: " + SELECTED_TAB);
         Log.d("MyApp", notCurrentUser);
-
+        Log.d("MyApp", match);
         if(type.equals("appointment")){
 
             if(notificationFor.equals("seller")){
@@ -74,7 +74,14 @@ public class MessagingService extends FirebaseMessagingService {
                 intent.putExtra("SELECTED_TAB",(Serializable) SELECTED_TAB);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                @SuppressLint("InlinedApi") PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                PendingIntent pendingIntent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+
+                } else {
+                    pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                }
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 createNotificationManagerAppointments(manager);
 
@@ -147,8 +154,8 @@ public class MessagingService extends FirebaseMessagingService {
 
                                         } else {
                                         pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
                                      }
+
                                     NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                                     createNotificationManager(manager);
 

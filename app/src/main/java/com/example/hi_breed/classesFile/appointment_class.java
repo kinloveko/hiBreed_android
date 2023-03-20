@@ -18,13 +18,16 @@ public class appointment_class implements Serializable, Parcelable {
     String service_price;
     String service_id;
     String appointment_status;
-    Timestamp timestamp;
+    String appointment_end_message;
+    Timestamp timestamp,appointment_end_date;
 
     public appointment_class(){
 
     }
 
-    public appointment_class(String id,String customer_id ,String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status, Timestamp timestamp) {
+    public appointment_class(String id,String customer_id ,String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status,String appointment_end_message ,Timestamp timestamp,Timestamp appointment_end_date) {
+        this.appointment_end_date = appointment_end_date;
+        this.appointment_end_message = appointment_end_message;
         this.id = id;
         this.customer_id = customer_id;
         this.seller_id = seller_id;
@@ -47,7 +50,9 @@ public class appointment_class implements Serializable, Parcelable {
         service_price = in.readString();
         service_id = in.readString();
         appointment_status = in.readString();
+        appointment_end_message = in.readString();
         timestamp = in.readParcelable(Timestamp.class.getClassLoader());
+        appointment_end_date = in.readParcelable(Timestamp.class.getClassLoader());
     }
 
     public static final Creator<appointment_class> CREATOR = new Creator<appointment_class>() {
@@ -61,6 +66,14 @@ public class appointment_class implements Serializable, Parcelable {
             return new appointment_class[size];
         }
     };
+
+    public Timestamp getAppointment_end_date() {
+        return appointment_end_date;
+    }
+
+    public String getAppointment_end_message() {
+        return appointment_end_message;
+    }
 
     public String getCustomer_id() {
         return customer_id;
@@ -102,6 +115,7 @@ public class appointment_class implements Serializable, Parcelable {
         return timestamp;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -118,6 +132,8 @@ public class appointment_class implements Serializable, Parcelable {
         dest.writeString(service_price);
         dest.writeString(service_id);
         dest.writeString(appointment_status);
+        dest.writeString(appointment_end_message);
         dest.writeParcelable(timestamp, flags);
+        dest.writeParcelable(appointment_end_date, flags);
     }
 }

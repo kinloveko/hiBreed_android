@@ -41,6 +41,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -244,6 +245,7 @@ public class service_set_appointment extends BaseActivity {
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void checkInput(service_class service) {
+
         String date = dateTextView.getText().toString();
         String time = itemSlot.getText().toString();
 
@@ -255,6 +257,7 @@ public class service_set_appointment extends BaseActivity {
             Toast.makeText(this, "Please set a time", Toast.LENGTH_SHORT).show();
             return;
         }
+
         AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
         builder2.setCancelable(true);
         View view = View.inflate(this,R.layout.screen_custom_alert,null);
@@ -281,20 +284,21 @@ public class service_set_appointment extends BaseActivity {
         alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         Map<String,Object> trans = new HashMap<>();
 
-
         trans.put("id","");
         trans.put("trans_date_created", Timestamp.now());
         trans.put("trans_payment","on-site");
         trans.put("total_amount",service.getService_fee());
         trans.put("trans_type","Service");
+        trans.put("status","pending");
         trans.put("customer_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
-        trans.put("appointment_id","");
+
 
         FirebaseFirestore.getInstance().collection("Transaction")
                 .add(trans)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
+
                         FirebaseFirestore.getInstance().collection("Transaction")
                                 .document(documentReference.getId())
                                 .update("id",documentReference.getId(),
@@ -302,21 +306,24 @@ public class service_set_appointment extends BaseActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
+
                                         Map<String,Object> map = new HashMap<>();
                                         map.put("id","");
                                         map.put("customer_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
                                         map.put("seller_id",service.getShooter_id()); // id of the one who offers the service
                                         map.put("transaction_id",documentReference.getId()); //transaction id FK
                                         map.put("appointment_date",date); // date selected
-                                        map.put("timestamp", Timestamp.now());
+                                        map.put("timestamp", Timestamp.now()); //date created
                                         map.put("appointment_time",time); // time selected
                                         map.put("service_price",service.getService_fee()); // Service fee
                                         map.put("service_id",service.getId()); //Service ID FK
                                         map.put("appointment_status","pending");
+
                                         FirebaseFirestore.getInstance().collection("Appointments")
                                                 .add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                     @Override
                                                     public void onSuccess(DocumentReference s) {
+
                                                         FirebaseFirestore.getInstance().collection("Appointments")
                                                                 .document(s.getId())
                                                                 .update("id",s.getId()).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -324,75 +331,93 @@ public class service_set_appointment extends BaseActivity {
                                                                     public void onSuccess(Void unused) {
                                                                         FirebaseFirestore.getInstance().collection("Transaction")
                                                                                 .document(documentReference.getId())
-                                                                                .update("appointment_id",s.getId(),"timestamp",FieldValue.serverTimestamp())
+                                                                                .update("timestamp",FieldValue.serverTimestamp())
                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void unused) {
 
+                                                                                        Map<String,Object> ids = new HashMap<>();
+                                                                                        ids.put("service_id",service.getId());
+                                                                                        ids.put("appointment_id",s.getId());
 
-                                                                                        Map<String,Object> map = new HashMap<>();
-                                                                                        map.put("send_to_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                                                                        map.put("message","Appointment request from:"+check_out_name.getText().toString());
-                                                                                        map.put("timestamp",Timestamp.now());
-                                                                                        map.put("type","appointment");
-
-                                                                                        Map<String,Object> maps = new HashMap<>();
-                                                                                        maps.put("id",s.getId());
-                                                                                        maps.put("latestNotification",map);
-                                                                                        maps.put("notification", Arrays.asList(map));
-
-
-
-                                                                                        FirebaseFirestore.getInstance().collection("Notifications").document(service.getShooter_id())
-                                                                                                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                                        FirebaseFirestore.getInstance().collection("Transaction")
+                                                                                                .document(documentReference.getId())
+                                                                                                .set(ids, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                     @Override
-                                                                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                                                        if(task.isSuccessful()){
-                                                                                                            DocumentSnapshot a = task.getResult();
-                                                                                                            if(a.exists()){
+                                                                                                    public void onSuccess(Void unused) {
 
-                                                                                                                FirebaseFirestore.getInstance().collection("Notifications")
-                                                                                                                        .document(service.getShooter_id())
-                                                                                                                        .update("latestNotification",map,"notification",FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                            @Override
-                                                                                                                            public void onSuccess(Void unused) {
-                                                                                                                                alert2.dismiss();
+                                                                                                        Map<String,Object> map = new HashMap<>();
+                                                                                                        map.put("send_to_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                                                                        map.put("message","Appointment request from:"+check_out_name.getText().toString());
+                                                                                                        map.put("timestamp",Timestamp.now());
+                                                                                                        map.put("type","appointment");
+                                                                                                        map.put("id",s.getId());
 
-                                                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
-                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller","pending"), userToken);
-                                                                                                                                sendNotif(notification);
+                                                                                                        Map<String,Object> maps = new HashMap<>();
 
+                                                                                                        maps.put("latestNotification",map);
+                                                                                                        maps.put("notification", Arrays.asList(map));
+
+
+
+                                                                                                        FirebaseFirestore.getInstance().collection("Notifications").document(service.getShooter_id())
+                                                                                                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                                                                    @Override
+                                                                                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                                                                        if(task.isSuccessful()){
+                                                                                                                            DocumentSnapshot a = task.getResult();
+                                                                                                                            if(a.exists()){
+
+                                                                                                                                FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                                                                        .document(service.getShooter_id())
+                                                                                                                                        .update("latestNotification",map,"notification",FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                            @Override
+                                                                                                                                            public void onSuccess(Void unused) {
+                                                                                                                                                alert2.dismiss();
+
+                                                                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
+                                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller","pending"), userToken);
+                                                                                                                                                sendNotif(notification);
+
+                                                                                                                                            }
+                                                                                                                                        });
                                                                                                                             }
-                                                                                                                        });
-                                                                                                            }
-                                                                                                            else{
-                                                                                                                FirebaseFirestore.getInstance().collection("Notifications")
-                                                                                                                        .document(service.getShooter_id())
-                                                                                                                        .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                            @Override
-                                                                                                                            public void onSuccess(Void unused) {
-                                                                                                                                alert2.dismiss();
+                                                                                                                            else{
+                                                                                                                                FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                                                                        .document(service.getShooter_id())
+                                                                                                                                        .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                            @Override
+                                                                                                                                            public void onSuccess(Void unused) {
+                                                                                                                                                alert2.dismiss();
 
-                                                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
-                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller","pending"), userToken);
-                                                                                                                                sendNotif(notification);
+                                                                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
+                                                                                                                                                        ,s.getId(),service.getShooter_id(),"appointment","seller","pending"), userToken);
+                                                                                                                                                sendNotif(notification);
+                                                                                                                                            }
+                                                                                                                                        });
                                                                                                                             }
-                                                                                                                        });
-                                                                                                            }
-                                                                                                        }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                });
+
+
                                                                                                     }
                                                                                                 });
+
+
                                                                                     }
                                                                                 });
                                                                     }
                                                                 });
                                                     }
                                                 });
+
                                     }
                                 });
 
                     }
                 });
+
     }
 
     private void sendNotif(pushNotification notification) {

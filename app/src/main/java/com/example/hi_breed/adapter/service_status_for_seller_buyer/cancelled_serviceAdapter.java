@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.acquired_service_accepted_message;
 import com.example.hi_breed.acquired_service_details;
 import com.example.hi_breed.classesFile.appointment_class;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -122,7 +121,7 @@ public class cancelled_serviceAdapter extends RecyclerView.Adapter<cancelled_ser
         holder.messageID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, acquired_service_accepted_message.class);
+                Intent intent = new Intent(context, acquired_service_details.class);
                 intent.putExtra("mode", (Serializable) productModel);
                 context.startActivity(intent);
             }

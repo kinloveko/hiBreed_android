@@ -613,6 +613,7 @@ public class fragment_registration_requirements extends Fragment implements bree
             // Use the cropped image URI as needed
             if(croppedUri!=null){
                 prc_image.setVisibility(View.VISIBLE);
+                imgVet = croppedUri;
                 prc_image.setImageURI(croppedUri);
                 add_photo_vet.setVisibility(View.GONE);
                 dropImageViewVet.setVisibility(View.GONE);

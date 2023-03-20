@@ -57,6 +57,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dialog_price_borders.xml" value="0.124" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dialog_product_borders.xml" value="0.2405" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dialog_search_borders.xml" value="0.182" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dialog_settings_borders.xml" value="0.1535" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dialog_size_borders.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dialog_stocks_borders.xml" value="0.231" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dialog_time_borders.xml" value="0.141" />
@@ -64,6 +65,8 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/down_arrow.xml" value="0.179" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow.xml" value="0.1455" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button.xml" value="0.114" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button_cancelled.xml" value="0.1535" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button_completed.xml" value="0.1535" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button_five.xml" value="0.196" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button_four.xml" value="0.1865" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/drawable/dropshadow_button_ten.xml" value="0.2255" />
@@ -218,7 +221,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/a_pet_add_shooter.xml" value="0.15647712697734073" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/a_pet_panel_owner.xml" value="0.136" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/acquired_service_accepted_message.xml" value="0.136" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/acquired_service_details.xml" value="0.264" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/acquired_service_details.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_acquired_service_details.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_add_to_cart.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_appointment_user_side.xml" value="0.2" />
@@ -261,6 +264,8 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_view_breeder_shop.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_welcome_to_hi_breed.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/add_to_cart_layout.xml" value="0.264" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/appointment_settings_cancell_options.xml" value="0.264" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/appointment_settings_layout.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/ask_prof_layout_post.xml" value="0.2799227799227799" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/ask_reply_layout.xml" value="0.4152542372881356" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/breeder_cart_fragment.xml" value="0.20863616930312098" />

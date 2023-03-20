@@ -269,6 +269,49 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/transactionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/dropshadow_two"
+            android:elevation="3dp">
+
+            <TextView
+                android:id="@+id/transactionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/image10"
+                android:fontFamily="@font/poppinsmedium"
+                android:text=""
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/transactionMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/transactionLabel"
+                android:fontFamily="@font/poppinsregular"
+                android:text=""
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/image10"
+                android:layout_width="30dp"
+                android:layout_height="27dp"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/message_icon" />
+
+        </RelativeLayout>
+
         <Button
             android:visibility="gone"
             android:id="@+id/messageButton"
