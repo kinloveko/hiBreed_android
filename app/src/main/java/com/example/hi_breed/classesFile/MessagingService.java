@@ -74,14 +74,8 @@ public class MessagingService extends FirebaseMessagingService {
                 intent.putExtra("SELECTED_TAB",(Serializable) SELECTED_TAB);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                PendingIntent pendingIntent;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
 
-                } else {
-                    pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                }
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 createNotificationManagerAppointments(manager);
 
@@ -103,15 +97,9 @@ public class MessagingService extends FirebaseMessagingService {
                 Intent intent = new Intent(this, appointment_user_side.class);
                 intent.putExtra("SELECTED_TAB",SELECTED_TAB);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Log.d("MyApp", "SELECTED_TAB FROM FIREBASE MESSAGING SERVICE buyer: " + SELECTED_TAB);
+                PendingIntent  pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                PendingIntent pendingIntent;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
-
-                } else {
-                    pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                }
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 createNotificationManagerAppointments(manager);
 

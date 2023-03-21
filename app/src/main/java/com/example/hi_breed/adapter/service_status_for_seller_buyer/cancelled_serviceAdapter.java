@@ -34,9 +34,10 @@ public class cancelled_serviceAdapter extends RecyclerView.Adapter<cancelled_ser
     Context context;
     private List<appointment_class> list;
     private String userID;
-
-    public cancelled_serviceAdapter(Context context, String userID){
+    private String from;
+    public cancelled_serviceAdapter(Context context, String userID,String from){
             this.context = context;
+            this.from = from;
             this.userID =userID;
             this.list = new ArrayList<>();
     }
@@ -65,6 +66,12 @@ public class cancelled_serviceAdapter extends RecyclerView.Adapter<cancelled_ser
 
         appointment_class productModel = list.get(position);
 
+        if(from.equals("cancelled")){
+            holder.label.setText("Cancelled appointment");
+        }
+        else if (from.equals("completed")){
+            holder.label.setText("Completed appointment");
+        }
         if(productModel.getCustomer_id().equals(userID))
         {
             FirebaseFirestore.getInstance().collection("Services")

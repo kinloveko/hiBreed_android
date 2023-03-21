@@ -80,12 +80,19 @@ public class appointment_user_side extends AppCompatActivity {
             if (selectedTab != null) {
                 if (selectedTab.equals("pending")) {
                     viewPager.setCurrentItem(0, true);
-                } else if (selectedTab.equals("accepted")) {
+                    return;
+                }else
+                if (selectedTab.equals("accepted")) {
                     viewPager.setCurrentItem(1, true);
-                } else if (selectedTab.equals("completed")) {
+                    return;
+                }else
+                if (selectedTab.equals("completed")) {
                     viewPager.setCurrentItem(2, true);
-                } else if (selectedTab.equals("cancelled")) {
+                    return;
+                }else
+                if (selectedTab.equals("cancelled")) {
                     viewPager.setCurrentItem(3, true);
+                    return;
                 }
             }
         } else {

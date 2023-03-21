@@ -45,7 +45,7 @@ public class cancelled_user_side extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         cancelledRecycler = view.findViewById(R.id.cancelledRecycler);
         cancelledRecycler.setLayoutManager(new GridLayoutManager(getContext(),1));
-        adapter = new cancelled_serviceAdapter(getContext(), FirebaseAuth.getInstance().getCurrentUser().getUid());
+        adapter = new cancelled_serviceAdapter(getContext(), FirebaseAuth.getInstance().getCurrentUser().getUid(),"cancelled");
         getPendingAppointment();
     }
 
