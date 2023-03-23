@@ -37,6 +37,7 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.message_adapter.message_conversation_reply_adapter;
 import com.example.hi_breed.classesFile.ApiUtilities;
 import com.example.hi_breed.classesFile.TimestampConverter;
+import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.classesFile.chat_conversation_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
@@ -60,6 +61,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -194,10 +196,9 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                     if(documentSnapshot.getString("appointment_status").equals("completed")){
 
                                         if(documentSnapshot.getString("customer_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-
+                                            appointment_class appoint = documentSnapshot.toObject(appointment_class.class);
                                             Intent i = new Intent(acquired_service_accepted_message.this, rate_service.class);
-                                            i.putExtra("SELECTED_TAB", "completed");
-                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            i.putExtra("model", (Serializable) appoint);
                                             startActivity(i);
                                             Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to completed tab", Toast.LENGTH_SHORT).show();
                                             finish();
@@ -406,7 +407,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
 
                         Map<String,Object> map = new HashMap<>();
                         map.put("appointment_end_date",Timestamp.now());
-
+                        map.put("isRated",false);
                         FirebaseFirestore.getInstance().collection("Appointments")
                                 .document(match).set(map,SetOptions.merge())
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -497,11 +498,12 @@ public class acquired_service_accepted_message extends AppCompatActivity {
 
 
                                         Map<String,Object> map = new HashMap<>();
+                                        map.put("id",match);
                                         map.put("send_to_id", notCurrentUser);
                                         map.put("message","Requested appointment has been cancelled");
                                         map.put("timestamp", Timestamp.now());
                                         map.put("type","appointment");
-                                        map.put("id",match);
+
 
                                         Map<String,Object> maps = new HashMap<>();
 

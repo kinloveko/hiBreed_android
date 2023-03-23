@@ -22,10 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.example.hi_breed.classesFile.ApiUtilities;
+import com.example.hi_breed.classesFile.TimestampConverter;
 import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
@@ -58,12 +60,18 @@ public class acquired_service_details extends AppCompatActivity {
             checkout_number,transactionLabel,transactionMessage,
             checkout_address,
             checkout_zip;
+
+    TextView statusLabel,status, transactionEndLabel ,transactionEnd ,transactionPaymentLabel,
+            transactionPayment,subTotalLabel,subTotal,totalLabel,total,
+            serviceFeeLabel,serviceFee;
+
     TextView dateTextView,pet_text,check_out_service_acquired,
-            itemSlot;
-    Button cancelButton,messageButton;
+            itemSlot,appointment_id;
+    Button cancelButton,messageButton,rateButton;
     RelativeLayout toolbarID,currentAddress,timeLayout,dateLayout,transactionLayout;
     LinearLayout buttonLayout,buttonContact,buttonDelete;
     String notCurrentUser;
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +89,21 @@ public class acquired_service_details extends AppCompatActivity {
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
 
+        statusLabel = findViewById(R.id.statusLabel);
+                status = findViewById(R.id.status);
+        transactionEndLabel = findViewById(R.id.transactionEndLabel);
+                transactionEnd = findViewById(R.id.transactionEnd);
+        transactionPaymentLabel = findViewById(R.id.transactionPaymentLabel);
+                transactionPayment = findViewById(R.id.transactionPayment);
+        subTotalLabel = findViewById(R.id.subTotalLabel);
+                subTotal = findViewById(R.id.subTotal);
+        totalLabel = findViewById(R.id.totalLabel);
+                total = findViewById(R.id.total);
+        serviceFeeLabel = findViewById(R.id.serviceFeeLabel);
+                serviceFee = findViewById(R.id.serviceFee);
+
+
+        rateButton = findViewById(R.id.rateButton);
         buttonContact = findViewById(R.id.buttonContact);
         buttonDelete = findViewById(R.id.buttonDelete);
         cancelButton= findViewById(R.id.cancelButton);
@@ -93,7 +116,7 @@ public class acquired_service_details extends AppCompatActivity {
                 finish();
             }
         });
-
+        appointment_id  = findViewById(R.id.appointment_id);
         messageButton = findViewById(R.id.messageButton);
         transactionLayout = findViewById(R.id.transactionLayout);
         transactionMessage = findViewById(R.id.transactionMessage);
@@ -124,11 +147,24 @@ public class acquired_service_details extends AppCompatActivity {
             else if (!appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                 notCurrentUser = appointment.getSeller_id();
             }
-
+            appointment_id.setText(appointment.getId());
             dateTextView.setText(appointment.getAppointment_date());
             itemSlot.setText(appointment.getAppointment_time());
 
             if(appointment.getAppointment_status().equals("pending")){
+                transactionLayout.setVisibility(View.VISIBLE);
+                transactionLabel.setVisibility(View.GONE);
+                transactionMessage.setVisibility(View.GONE);
+
+                status.setText(appointment.getAppointment_status());
+                transactionPayment.setText("on-site");
+                subTotal.setText("₱ "+appointment.getService_price());
+                total.setText("₱ "+appointment.getService_price()+".0");
+                serviceFee.setText("₱ "+appointment.getService_price());
+
+                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
+                transactionEnd.setText(formattedTime);
+
                 text1.setText("Appointment pending");
                 if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     cancelButton.setVisibility(View.VISIBLE);
@@ -296,6 +332,19 @@ public class acquired_service_details extends AppCompatActivity {
             }
             else if(appointment.getAppointment_status().equals("accepted")){
                 text1.setText("Appointment ongoing");
+
+                transactionLayout.setVisibility(View.VISIBLE);
+                transactionLabel.setVisibility(View.GONE);
+                transactionMessage.setVisibility(View.GONE);
+
+                status.setText(appointment.getAppointment_status());
+                transactionPayment.setText("on-site");
+                subTotal.setText("₱ "+appointment.getService_price());
+                total.setText("₱ "+appointment.getService_price()+".0");
+                serviceFee.setText("₱ "+appointment.getService_price());
+
+                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
+                transactionEnd.setText(formattedTime);
                 messageButton.setVisibility(View.VISIBLE);
                 buttonLayout.setVisibility(View.GONE);
                 cancelButton.setVisibility(View.GONE);
@@ -318,6 +367,43 @@ public class acquired_service_details extends AppCompatActivity {
             }
             else if(appointment.getAppointment_status().equals("completed")){
                 text1.setText("Appointment completed");
+                transactionLayout.setVisibility(View.VISIBLE);
+                transactionLabel.setVisibility(View.GONE);
+                transactionMessage.setVisibility(View.GONE);
+
+                status.setText(appointment.getAppointment_status());
+                transactionPayment.setText("on-site");
+                subTotal.setText("₱ "+appointment.getService_price());
+                total.setText("₱ "+appointment.getService_price()+".0");
+                serviceFee.setText("₱ "+appointment.getService_price());
+
+                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
+                transactionEnd.setText(formattedTime);
+
+              if(appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+
+                   FirebaseFirestore.getInstance().collection("Appointments")
+                           .document(appointment.getId())
+                           .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                               @Override
+                               public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    Boolean isTrue = (Boolean) documentSnapshot.get("isRated");
+
+                                    if(isTrue.equals(false)){
+                                        rateButton.setVisibility(View.VISIBLE);
+                                        rateButton.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent i = new Intent(acquired_service_details.this,rate_service.class);
+                                                i.putExtra("model", (Serializable) appointment);
+                                                startActivity(i);
+                                            }
+                                        });
+                                    }
+                               }
+                           });
+
+              }
             }
             else if(appointment.getAppointment_status().equals("cancelled")){
                 text1.setText("Appointment cancelled");
@@ -327,6 +413,16 @@ public class acquired_service_details extends AppCompatActivity {
                 buttonLayout.setVisibility(View.GONE);
                 cancelButton.setVisibility(View.GONE);
                 transactionLayout.setVisibility(View.VISIBLE);
+
+                status.setText(appointment.getAppointment_status());
+                transactionPayment.setText("on-site");
+                subTotal.setText("₱ "+appointment.getService_price());
+                total.setText("₱ "+appointment.getService_price());
+                serviceFee.setText("₱ "+appointment.getService_price());
+
+                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
+                transactionEnd.setText(formattedTime);
+
             }
 
             if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {

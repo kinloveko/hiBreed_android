@@ -20,15 +20,18 @@ public class appointment_class implements Serializable, Parcelable {
     String appointment_status;
     String appointment_end_message;
     Timestamp timestamp,appointment_end_date;
-
+    String cancelled_by;
+    Boolean isRated;
     public appointment_class(){
 
     }
 
-    public appointment_class(String id,String customer_id ,String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status,String appointment_end_message ,Timestamp timestamp,Timestamp appointment_end_date) {
+    public appointment_class(String id,String customer_id ,String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status,String appointment_end_message ,String cancelled_by,Timestamp timestamp,Timestamp appointment_end_date,Boolean isRated) {
         this.appointment_end_date = appointment_end_date;
         this.appointment_end_message = appointment_end_message;
+        this.cancelled_by = cancelled_by;
         this.id = id;
+        this.isRated = isRated;
         this.customer_id = customer_id;
         this.seller_id = seller_id;
         this.transaction_id = transaction_id;
@@ -53,6 +56,9 @@ public class appointment_class implements Serializable, Parcelable {
         appointment_end_message = in.readString();
         timestamp = in.readParcelable(Timestamp.class.getClassLoader());
         appointment_end_date = in.readParcelable(Timestamp.class.getClassLoader());
+        cancelled_by = in.readString();
+        byte tmpIsRated = in.readByte();
+        isRated = tmpIsRated == 0 ? null : tmpIsRated == 1;
     }
 
     public static final Creator<appointment_class> CREATOR = new Creator<appointment_class>() {
@@ -66,6 +72,15 @@ public class appointment_class implements Serializable, Parcelable {
             return new appointment_class[size];
         }
     };
+
+    public Boolean getRated() {
+        return isRated;
+    }
+
+    public String getCancelled_by() {
+        return cancelled_by;
+    }
+
 
     public Timestamp getAppointment_end_date() {
         return appointment_end_date;
@@ -135,5 +150,7 @@ public class appointment_class implements Serializable, Parcelable {
         dest.writeString(appointment_end_message);
         dest.writeParcelable(timestamp, flags);
         dest.writeParcelable(appointment_end_date, flags);
+        dest.writeString(cancelled_by);
+        dest.writeByte((byte) (isRated == null ? 0 : isRated ? 1 : 2));
     }
 }

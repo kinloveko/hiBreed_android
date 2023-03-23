@@ -65,14 +65,47 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbarID"
-        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <RelativeLayout
-            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp">
+
+            <TextView
+                android:id="@+id/appointText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Appointment ID"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/appointment_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@id/appointText"
+                android:ellipsize="end"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text=""
+                android:textAlignment="textEnd"
+                android:textSize="11sp"
+                tools:ignore="HardcodedText" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
             android:id="@+id/currentAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:background="@drawable/dropshadow_two"
             android:elevation="3dp">
 
@@ -99,7 +132,6 @@
                 android:src="@drawable/icon_location" />
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/check_out_service_acquired"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,6 +142,7 @@
                 android:text="Pet general checkup"
                 android:textColor="@color/material_blue_grey_80"
                 android:textSize="14sp"
+                android:visibility="gone"
                 tools:ignore="HardcodedText" />
 
             <TextView
@@ -172,10 +205,9 @@
         <RelativeLayout
             android:id="@+id/dateLayout"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-
+            android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/dropshadow_two"
@@ -184,18 +216,18 @@
 
             <ImageView
                 android:id="@+id/image4"
-                android:layout_width="40dp"
-                android:layout_height="50dp"
-
+                android:layout_width="35dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="5dp"
                 android:src="@drawable/calendar_icons" />
 
             <TextView
                 android:id="@+id/pet_text7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
-
-                android:layout_marginTop="5dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="15dp"
                 android:layout_toEndOf="@id/image4"
                 android:fontFamily="@font/poppinsemibold"
                 android:text="Date selected :"
@@ -208,35 +240,21 @@
                 android:id="@+id/dateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/pet_text7"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="20dp"
+
                 android:fontFamily="@font/poppinsemibold"
                 android:text="Date"
                 android:textSize="12sp"
                 tools:ignore="HardcodedText" />
 
-        </RelativeLayout>
-
-
-        <RelativeLayout
-
-            android:id="@+id/timeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/dropshadow_two"
-            android:elevation="3dp"
-            tools:ignore="OnClick,UsingOnClickInXml">
 
             <ImageView
                 android:id="@+id/image1"
                 android:layout_width="30dp"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@id/image4"
                 android:layout_marginStart="5dp"
                 android:src="@drawable/icon_clock" />
 
@@ -244,9 +262,9 @@
                 android:id="@+id/pet_text1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-
-                android:layout_marginTop="5dp"
+                android:layout_below="@id/dateTextView"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="18dp"
                 android:layout_toEndOf="@id/image1"
                 android:fontFamily="@font/poppinsemibold"
                 android:text="Time selected :"
@@ -258,9 +276,11 @@
                 android:id="@+id/itemSlot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@id/pet_text1"
+                android:layout_below="@id/dateTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="20dp"
+
                 android:fontFamily="@font/poppinsemibold"
                 android:text="Time"
                 android:textSize="12sp"
@@ -269,8 +289,10 @@
 
         </RelativeLayout>
 
+
         <RelativeLayout
-            android:visibility="gone"
+
+            android:padding="10dp"
             android:id="@+id/transactionLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -279,14 +301,54 @@
             android:elevation="3dp">
 
             <TextView
-                android:id="@+id/transactionLabel"
+                android:id="@+id/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="7dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/image10"
                 android:fontFamily="@font/poppinsmedium"
-                android:text=""
+                android:text="Appointment Summary"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/statusLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/image10"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Appointment status:"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="22.5dp"
+                android:layout_marginEnd="15dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="cancelled"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/transactionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/statusLabel"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Reason for cancelling:"
                 android:textColor="@color/material_blue_grey_95"
                 android:textSize="12sp"
                 tools:ignore="HardcodedText" />
@@ -295,12 +357,163 @@
                 android:id="@+id/transactionMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:layout_marginTop="4dp"
+                android:layout_below="@id/statusLabel"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="5.5dp"
+                android:layout_marginEnd="15dp"
                 android:layout_toEndOf="@id/transactionLabel"
+                android:ellipsize="end"
                 android:fontFamily="@font/poppinsregular"
-                android:text=""
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="I found something cheaper"
+                android:textAlignment="textEnd"
                 android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/transactionEndLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/transactionMessage"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Appointment end date :"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/transactionEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/transactionMessage"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="5.5dp"
+                android:layout_marginEnd="15dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="March 12, 2023"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/transactionPaymentLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/transactionEnd"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Payment method :"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/serviceFee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/transactionPaymentLabel"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="15,000"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/serviceFeeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/transactionPayment"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Service fee :"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/transactionPayment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/transactionEnd"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="5.5dp"
+                android:layout_marginEnd="15dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="on-site"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/subTotalLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/transactionPaymentLabel"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="28dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Subtotal :"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="13sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/subTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/transactionPayment"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="28.5dp"
+                android:layout_marginEnd="15dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="15,000"
+                android:textSize="13sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/totalLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/subTotalLabel"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/poppinsemibold"
+                android:text="Total :"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="16sp"
+                tools:ignore="HardcodedText" />
+
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/icon_cod"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@id/total"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/subTotal"
+                />
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/subTotal"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20.5dp"
+                android:layout_marginEnd="15dp"
+                android:fontFamily="@font/poppinsemibold"
+                android:text="15,000"
+                android:textColor="@color/material_blue_grey_90"
+                android:textSize="15sp"
                 tools:ignore="HardcodedText" />
 
             <ImageView
@@ -308,55 +521,56 @@
                 android:layout_width="30dp"
                 android:layout_height="27dp"
                 android:layout_marginStart="5dp"
-                android:src="@drawable/message_icon" />
+                android:src="@drawable/icon_summary" />
 
         </RelativeLayout>
 
         <Button
-            android:visibility="gone"
             android:id="@+id/messageButton"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="MESSAGE"
-            android:fontFamily="@font/poppinsmedium"
-            android:textStyle="bold"
-            android:textColor="@color/white"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/dropshadow_button_five"
-            tools:ignore="HardcodedText" />
-     <!--   <Button
-            android:id="@+id/completedButton"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="COMPLETED"
             android:fontFamily="@font/poppinsmedium"
-            android:textStyle="bold"
+            android:text="MESSAGE"
             android:textColor="@color/white"
-            android:background="@drawable/dropshadow_button_ten"
-            tools:ignore="HardcodedText" />
-        -->
-        <Button
+            android:textStyle="bold"
             android:visibility="gone"
-            android:id="@+id/cancelButton"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/rateButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CANCEL APPOINTMENT"
-            android:fontFamily="@font/poppinsregular"
-            android:textStyle="bold"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/dropshadow_button_ten"
+            android:fontFamily="@font/poppinsmedium"
+            android:text="RATE SERVICE"
             android:textColor="@color/white"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/dropshadow_button_two"
+            android:fontFamily="@font/poppinsregular"
+            android:text="CANCEL APPOINTMENT"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:visibility="gone"
             tools:ignore="HardcodedText" />
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/buttonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -365,7 +579,8 @@
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/buttonContact"

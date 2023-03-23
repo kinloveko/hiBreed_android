@@ -40,7 +40,6 @@ public class TimestampConverter {
         long now = System.currentTimeMillis();
         long difference = now - date.getTime();
 
-
         if (difference < 60000) {
             return " seconds ago";
         } else if (difference < 3600000) {
@@ -53,7 +52,12 @@ public class TimestampConverter {
             long minutes = TimeUnit.MILLISECONDS.toDays(difference);
             return minutes + " days ago";
         }
+    }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static String exactDateTime(Timestamp timestamp) {
+        Date date = timestamp.toDate();
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
     }
 
 }
