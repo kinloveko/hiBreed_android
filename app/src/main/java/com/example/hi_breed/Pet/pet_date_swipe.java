@@ -1,13 +1,17 @@
 package com.example.hi_breed.Pet;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,9 +22,14 @@ import androidx.cardview.widget.CardView;
 
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.edit_for_date_adapter.petDisplayForDateAdapter;
+import com.example.hi_breed.classesFile.ApiUtilities;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.PetDateClass;
+import com.example.hi_breed.classesFile.matches_class;
+import com.example.hi_breed.classesFile.notificationData;
+import com.example.hi_breed.classesFile.pushNotification;
 import com.example.hi_breed.message.message_activity;
+import com.example.hi_breed.message.message_conversation_activity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,11 +45,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class pet_date_swipe extends BaseActivity {
@@ -116,6 +130,7 @@ public class pet_date_swipe extends BaseActivity {
                                         Map<String, Object> swipeData = new HashMap<>();
                                         swipeData.put("swipedUserId", item.getPet_breeder());
                                         swipeData.put("swipeDirection", "left");
+                                        swipeData.put("pet_id",item.getId());
                                         FirebaseFirestore.getInstance().collection("Swipes")
                                                 .document(userId)
                                                 .update("swipe", FieldValue.arrayUnion(swipeData));
@@ -125,6 +140,7 @@ public class pet_date_swipe extends BaseActivity {
                                         Map<String, Object> swipe = new HashMap<>();
                                         swipe.put("swipedUserId", item.getPet_breeder());
                                         swipe.put("swipeDirection", "left");
+                                        swipe.put("pet_id",item.getId());
                                         List<Map<String,Object>> hold = new ArrayList<>();
                                         hold.add(swipe);
                                         Map<String,Object> x  = new HashMap<>();
@@ -156,6 +172,7 @@ public class pet_date_swipe extends BaseActivity {
                                         Map<String, Object> swipeData = new HashMap<>();
                                         swipeData.put("swipedUserId", item.getPet_breeder());
                                         swipeData.put("swipeDirection", "right");
+                                        swipeData.put("pet_id",item.getId());
                                         FirebaseFirestore.getInstance().collection("Swipes")
                                                 .document(userId)
                                                 .update("swipe", FieldValue.arrayUnion(swipeData)).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -171,6 +188,7 @@ public class pet_date_swipe extends BaseActivity {
                                         Map<String, Object> swipe = new HashMap<>();
                                         swipe.put("swipedUserId", item.getPet_breeder());
                                         swipe.put("swipeDirection", "right");
+                                        swipe.put("pet_id",item.getId());
                                         List<Map<String,Object>> hold = new ArrayList<>();
                                         hold.add(swipe);
                                         Map<String,Object> x  = new HashMap<>();
@@ -225,6 +243,8 @@ public class pet_date_swipe extends BaseActivity {
 
     private void isConnection(String userId, PetDateClass item){
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
         FirebaseFirestore.getInstance().collection("Swipes").document(item.getPet_breeder())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -241,24 +261,28 @@ public class pet_date_swipe extends BaseActivity {
                                         Map<String, Object> connection = new HashMap<>();
                                         connection.put("matchID", "");
                                         connection.put("participants", Arrays.asList(userId, item.getPet_breeder()));
+                                        connection.put("pets_participants",Arrays.asList(item.getId(),swipe.get("pet_id")));
                                         connection.put("time", Timestamp.now());
+                                        connection.put("matchFor","forDating");
                                         connection.put("show", true);
-
+                                        Log.d("match","its a match");
                                         FirebaseFirestore.getInstance().collection("Matches").add(connection)
                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                     @Override
-                                                    public void onSuccess(DocumentReference documentReference) {
+                                                    public void onSuccess(DocumentReference a) {
 
                                                         Map<String, Object> map = new HashMap<>();
-                                                        map.put("matchID", documentReference.getId());
-
+                                                        map.put("matchID", a.getId());
+                                                        Log.d("matchID",a.getId());
                                                         FirebaseFirestore.getInstance().collection("Matches")
-                                                                .document(documentReference.getId())
+                                                                .document(a.getId())
                                                                 .set(map, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
                                                                     public void onSuccess(Void unused) {
-                                                                        Toast.makeText(pet_date_swipe.this, "It's a match!", Toast.LENGTH_SHORT).show();
-                                                                    }
+
+                                                                        Log.d("matchID","successful");
+                                                                        matchNotification(a.getId(),item);
+                                                                      }
                                                                 });
                                                     }
                                                 });
@@ -270,6 +294,178 @@ public class pet_date_swipe extends BaseActivity {
                         }
                     }
                 });
+    }
+
+    private void matchNotification(String id, PetDateClass item) {
+
+        FirebaseFirestore.getInstance().collection("User")
+                .document(item.getPet_breeder()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String token= documentSnapshot.getString("fcmToken");
+
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("send_to_id", item.getPet_breeder());
+                        map.put("message","It's a match");
+                        map.put("timestamp", Timestamp.now());
+                        map.put("type","matchDating");
+
+                        Map<String,Object> maps = new HashMap<>();
+                        maps.put("id",id);
+                        maps.put("latestNotification",map);
+                        maps.put("notification", Arrays.asList(map));
+
+                        FirebaseFirestore.getInstance().collection("Notifications").document(item.getPet_breeder())
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if(documentSnapshot.exists()){
+
+                                            FirebaseFirestore.getInstance().collection("Notifications")
+                                                    .document(item.getPet_breeder())
+                                                    .update("latestNotification",map,"notification", FieldValue.arrayUnion(map))
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+                                                            pushNotification notification = new pushNotification(new notificationData("You have a matched! You can now talk to each other",
+                                                                    "Match notification",id,item.getPet_breeder(),"matchNotification","",""), token);
+                                                            sendNotif(notification);
+                                                        }
+                                                    });
+                                        }
+                                        else{
+
+                                            FirebaseFirestore.getInstance().collection("Notifications")
+                                                    .document(item.getPet_breeder())
+                                                    .set(maps)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+                                                            pushNotification notification = new pushNotification(new notificationData("You have a matched! You can now talk to each other",
+                                                                    "Match notification",id,item.getPet_breeder(),"matchNotification","",""), token);
+                                                            sendNotif(notification);
+                                                        }
+                                                    });
+                                        }
+                                    }
+                                });
+
+                    }
+                });
+
+        AlertDialog.Builder builder2 = new  AlertDialog.Builder(pet_date_swipe.this);
+        View view = View.inflate(pet_date_swipe.this,R.layout.matched_layout,null);
+        Button sendMessageButton,keepScrollingButton;
+        TextView match_message = view.findViewById(R.id.match_message);
+        sendMessageButton = view.findViewById(R.id.sendMessageButton);
+        keepScrollingButton = view.findViewById(R.id.keepScrollingButton);
+
+        FirebaseFirestore.getInstance().collection("User")
+                        .document(item.getPet_breeder())
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists()){
+                            match_message.setText("You and "+documentSnapshot.getString("firstName")+ " both liked the adorable pups you've displayed. Why not start messaging now and plan a doggy playdate? Your furry friends will love it! Woof woof!");
+                        }
+                    }
+                });
+
+        builder2.setView(view);
+        AlertDialog alert2 = builder2.create();
+        alert2.show();
+        alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        sendMessageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseFirestore.getInstance().collection("Matches").document(id)
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if(documentSnapshot.exists()){
+                                    matches_class match = documentSnapshot.toObject(matches_class.class);
+                                    Intent i = new Intent(pet_date_swipe.this, message_conversation_activity.class);
+                                    i.putExtra("model",(Serializable) match);
+                                    startActivity(i);
+                                    alert2.dismiss();
+                                }
+                            }
+                        });
+
+            }
+        });
+        keepScrollingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert2.dismiss();
+            }
+        });
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("send_to_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        map.put("message","It's a match");
+        map.put("timestamp", Timestamp.now());
+        map.put("type","matchDating");
+
+        Map<String,Object> maps = new HashMap<>();
+        maps.put("id",id);
+        maps.put("latestNotification",map);
+        maps.put("notification", Arrays.asList(map));
+        //notif for the user
+        FirebaseFirestore.getInstance().collection("Notifications").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if(documentSnapshot.exists()){
+
+                                FirebaseFirestore.getInstance().collection("Notifications")
+                                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .update("latestNotification",map,"notification", FieldValue.arrayUnion(map))
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+
+                                            }
+                                        });
+                            }
+                            else{
+
+                                FirebaseFirestore.getInstance().collection("Notifications")
+                                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .set(maps)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+
+                                            }
+                                        });
+
+                            }
+                    }
+                });
+
+    }
+
+    private void sendNotif(pushNotification notification) {
+        ApiUtilities.getClient().sendNotification(notification).enqueue(new Callback<pushNotification>() {
+            @Override
+            public void onResponse(Call<pushNotification> call, Response<pushNotification> response) {
+                if(response.isSuccessful()){
+                    Toast.makeText(pet_date_swipe.this, "You have a matched!", Toast.LENGTH_SHORT).show();
+                    Log.d("Match Notification","its a match");
+                }
+                else{
+                    Log.d("Match Notification","Failed");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<pushNotification> call, Throwable t) {
+                Toast.makeText(pet_date_swipe.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void getAllPets() {
@@ -295,7 +491,6 @@ public class pet_date_swipe extends BaseActivity {
                                     continue;
                                 allPets.add(pet);
                             }
-
                             userSwipes.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                 @Override
                                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -345,7 +540,6 @@ public class pet_date_swipe extends BaseActivity {
                     }
                 });
     }
-
 
     @Override
     public void onBackPressed() {

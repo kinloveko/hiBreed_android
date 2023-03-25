@@ -980,68 +980,55 @@ public class pet_add_for_dating extends BaseActivity implements petImagesRecycle
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
                             FirebaseFirestore.getInstance()
-                                    .collection("Shop")
+                                    .collection("User")
                                     .document(firebaseUser.getUid())
                                     .collection("Pet")
                                     .document(id)
                                     .set(photos,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
-
-                                                FirebaseFirestore.getInstance()
-                                                        .collection("User")
-                                                        .document(firebaseUser.getUid())
-                                                        .collection("Pet")
-                                                        .document(id)
-                                                        .set(photos,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                            @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
-                                                            @Override
-                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                if(task.isSuccessful()){
-                                                                    alertDialog.dismiss();
+                                                alertDialog.dismiss();
 
 
-                                                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(pet_add_for_dating.this);
-                                                                    builder2.setCancelable(false);
-                                                                    View view = View.inflate(pet_add_for_dating.this,R.layout.screen_custom_alert,null);
-                                                                    //title
-                                                                    TextView title = view.findViewById(R.id.screen_custom_alert_title);
-                                                                    //loading text
-                                                                    TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
-                                                                    loadingText.setVisibility(View.GONE);
-                                                                    //gif
-                                                                    GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
-                                                                    gif.setVisibility(View.GONE);
-                                                                    //header image
-                                                                    AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
-                                                                    imageViewCompat.setVisibility(View.VISIBLE);
-                                                                    imageViewCompat.setImageDrawable(getDrawable(R.drawable.screen_alert_image_valid_borders));
-                                                                    //message
-                                                                    TextView message = view.findViewById(R.id.screen_custom_alert_message);
-                                                                    title.setText("Successfully Created");
-                                                                    message.setVisibility(View.VISIBLE);
-                                                                    message.setText("Click okay to continue..");
-                                                                    LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
-                                                                    buttonLayout.setVisibility(View.VISIBLE);
-                                                                    MaterialButton cancel,okay;
-                                                                    cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
-                                                                    cancel.setVisibility(View.GONE);
-                                                                    okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
-                                                                    okay.setText("Okay");
-                                                                    builder2.setView(view);
-                                                                    AlertDialog alert2 = builder2.create();
-                                                                    alert2.show();
-                                                                    alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                                                    okay.setOnClickListener(new View.OnClickListener() {
-                                                                        @Override
-                                                                        public void onClick(View v) {
-                                                                            transistion();
-                                                                        }
-                                                                    });
-                                                                }
-                                                            }
-                                                        });
+                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(pet_add_for_dating.this);
+                                                builder2.setCancelable(false);
+                                                View view = View.inflate(pet_add_for_dating.this,R.layout.screen_custom_alert,null);
+                                                //title
+                                                TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                //loading text
+                                                TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                loadingText.setVisibility(View.GONE);
+                                                //gif
+                                                GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                gif.setVisibility(View.GONE);
+                                                //header image
+                                                AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                imageViewCompat.setVisibility(View.VISIBLE);
+                                                imageViewCompat.setImageDrawable(getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                //message
+                                                TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                title.setText("Successfully Created");
+                                                message.setVisibility(View.VISIBLE);
+                                                message.setText("Click okay to continue..");
+                                                LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                buttonLayout.setVisibility(View.VISIBLE);
+                                                MaterialButton cancel,okay;
+                                                cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                cancel.setVisibility(View.GONE);
+                                                okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                okay.setText("Okay");
+                                                builder2.setView(view);
+                                                AlertDialog alert2 = builder2.create();
+                                                alert2.show();
+                                                alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                okay.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        transistion();
+                                                    }
+                                                });
                                             }
                                         }
                                     });

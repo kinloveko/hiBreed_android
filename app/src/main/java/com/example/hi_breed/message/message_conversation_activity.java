@@ -141,6 +141,7 @@ public class message_conversation_activity extends BaseActivity {
                 notCurrentUser = m.getParticipants().get(1);
                 getReceiverInfo(notCurrentUser);
             }
+
         }
         else{
             FirebaseFirestore.getInstance().collection("Matches").document(m.getMatchID())
@@ -166,7 +167,7 @@ public class message_conversation_activity extends BaseActivity {
         getConversation(m.getMatchID());
         match = m.getMatchID();
         getCurrent();
-        getReceiverInfo(notCurrentUser);
+
         replyEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -236,6 +237,7 @@ public class message_conversation_activity extends BaseActivity {
         conversation.put("latestMessage", latestMessage);
         conversation.put("messages", Arrays.asList(latestMessage));
         conversation.put("matchID",matchID);
+        conversation.put("chatFor","forDating");
 
         FirebaseFirestore.getInstance().collection("Chat").document(matchID)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -326,6 +328,7 @@ public class message_conversation_activity extends BaseActivity {
     private void getConversation(String matchID) {
 
         FirebaseFirestore.getInstance().collection("Chat").whereEqualTo("matchID",matchID)
+                .whereEqualTo("chatFor","forDating")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

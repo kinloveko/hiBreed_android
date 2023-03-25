@@ -106,7 +106,8 @@ public class message_activity extends BaseActivity {
     }
 
     private void getConversation() {
-        Query query = FirebaseFirestore.getInstance().collection("Chat").whereArrayContains("participants",user.getUid());
+        Query query = FirebaseFirestore.getInstance().collection("Chat").whereArrayContains("participants",user.getUid())
+                .whereEqualTo("chatFor","forDating");
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
@@ -152,6 +153,7 @@ public class message_activity extends BaseActivity {
 
     private void getMatches() {
         FirebaseFirestore.getInstance().collection("Matches").whereArrayContains("participants",user.getUid())
+                .whereEqualTo("matchFor","forDating")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

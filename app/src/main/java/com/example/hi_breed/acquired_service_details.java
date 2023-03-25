@@ -22,11 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.example.hi_breed.classesFile.ApiUtilities;
+import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.TimestampConverter;
 import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.classesFile.matches_class;
@@ -41,8 +42,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 
 import java.io.Serializable;
@@ -54,7 +57,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class acquired_service_details extends AppCompatActivity {
+public class acquired_service_details extends BaseActivity {
 
     TextView check_out_name,text1,
             checkout_number,transactionLabel,transactionMessage,
@@ -90,17 +93,17 @@ public class acquired_service_details extends AppCompatActivity {
         }
 
         statusLabel = findViewById(R.id.statusLabel);
-                status = findViewById(R.id.status);
+        status = findViewById(R.id.status);
         transactionEndLabel = findViewById(R.id.transactionEndLabel);
-                transactionEnd = findViewById(R.id.transactionEnd);
+        transactionEnd = findViewById(R.id.transactionEnd);
         transactionPaymentLabel = findViewById(R.id.transactionPaymentLabel);
-                transactionPayment = findViewById(R.id.transactionPayment);
+        transactionPayment = findViewById(R.id.transactionPayment);
         subTotalLabel = findViewById(R.id.subTotalLabel);
-                subTotal = findViewById(R.id.subTotal);
+        subTotal = findViewById(R.id.subTotal);
         totalLabel = findViewById(R.id.totalLabel);
-                total = findViewById(R.id.total);
+        total = findViewById(R.id.total);
         serviceFeeLabel = findViewById(R.id.serviceFeeLabel);
-                serviceFee = findViewById(R.id.serviceFee);
+        serviceFee = findViewById(R.id.serviceFee);
 
 
         rateButton = findViewById(R.id.rateButton);
@@ -147,6 +150,43 @@ public class acquired_service_details extends AppCompatActivity {
             else if (!appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                 notCurrentUser = appointment.getSeller_id();
             }
+
+            FirebaseFirestore.getInstance().collection("Appointments")
+                            .document(appointment.getId())
+                                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
+                                            if(error!=null){
+                                                return;
+                                            }
+                                            if(documentSnapshot.exists()){
+
+                                                if(documentSnapshot.getString("appointment_status").equals("cancelled")){
+
+                                                    if(documentSnapshot.getString("customer_id") .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                                        cancelButton.setVisibility(View.GONE);
+                                                    }
+                                                    if(documentSnapshot.getString("seller_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                                        buttonLayout.setVisibility(View.GONE);
+
+                                                    }
+
+                                                }
+                                                else if(documentSnapshot.getString("appointment_status").equals("accepted")){
+                                                       messageButton.setVisibility(View.VISIBLE);
+                                                    buttonLayout.setVisibility(View.GONE);
+                                                    cancelButton.setVisibility(View.GONE);
+                                                }
+                                                else if(documentSnapshot.getString("appointment_status").equals("completed")){
+                                                    messageButton.setVisibility(View.GONE);
+                                                    buttonLayout.setVisibility(View.GONE);
+                                                    cancelButton.setVisibility(View.GONE);
+                                                }
+                                            }
+
+                                        }
+                                    });
+
             appointment_id.setText(appointment.getId());
             dateTextView.setText(appointment.getAppointment_date());
             itemSlot.setText(appointment.getAppointment_time());
@@ -162,8 +202,8 @@ public class acquired_service_details extends AppCompatActivity {
                 total.setText("₱ "+appointment.getService_price()+".0");
                 serviceFee.setText("₱ "+appointment.getService_price());
 
-                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
-                transactionEnd.setText(formattedTime);
+                transactionEnd.setVisibility(View.GONE);
+                transactionEndLabel.setVisibility(View.GONE);
 
                 text1.setText("Appointment pending");
                 if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
@@ -212,8 +252,8 @@ public class acquired_service_details extends AppCompatActivity {
                                                             public void onSuccess(Void unused) {
 
                                                                 FirebaseFirestore.getInstance().collection("Transaction")
-                                                                                .document(appointment.getTransaction_id())
-                                                                                        .update("status","ongoing").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        .document(appointment.getTransaction_id())
+                                                                        .update("status","ongoing").addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void unused) {
 
@@ -236,7 +276,7 @@ public class acquired_service_details extends AppCompatActivity {
                                                                                                                     connection.put("participants", Arrays.asList(appointment.getCustomer_id(), appointment.getSeller_id()));
                                                                                                                     connection.put("time", Timestamp.now());
                                                                                                                     connection.put("show", true);
-
+                                                                                                                    connection.put("matchFor","forAppointments");
                                                                                                                     FirebaseFirestore.getInstance().collection("Matches").document(appointment.getId()).set(connection)
                                                                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                                 @Override
@@ -274,6 +314,7 @@ public class acquired_service_details extends AppCompatActivity {
 
                                                                                                                                     Map<String, Object> connection = new HashMap<>();
                                                                                                                                     connection.put("matchID", appointment.getId());
+                                                                                                                                    connection.put("matchFor","forAppointments");
                                                                                                                                     connection.put("participants", Arrays.asList(appointment.getCustomer_id(), appointment.getSeller_id()));
                                                                                                                                     connection.put("time", Timestamp.now());
                                                                                                                                     connection.put("show", true);
@@ -343,8 +384,8 @@ public class acquired_service_details extends AppCompatActivity {
                 total.setText("₱ "+appointment.getService_price()+".0");
                 serviceFee.setText("₱ "+appointment.getService_price());
 
-                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
-                transactionEnd.setText(formattedTime);
+                transactionEnd.setVisibility(View.GONE);
+                transactionEndLabel.setVisibility(View.GONE);
                 messageButton.setVisibility(View.VISIBLE);
                 buttonLayout.setVisibility(View.GONE);
                 cancelButton.setVisibility(View.GONE);
@@ -380,13 +421,13 @@ public class acquired_service_details extends AppCompatActivity {
                 String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
                 transactionEnd.setText(formattedTime);
 
-              if(appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                if(appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
 
-                   FirebaseFirestore.getInstance().collection("Appointments")
-                           .document(appointment.getId())
-                           .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                               @Override
-                               public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    FirebaseFirestore.getInstance().collection("Appointments")
+                            .document(appointment.getId())
+                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     Boolean isTrue = (Boolean) documentSnapshot.get("isRated");
 
                                     if(isTrue.equals(false)){
@@ -400,10 +441,10 @@ public class acquired_service_details extends AppCompatActivity {
                                             }
                                         });
                                     }
-                               }
-                           });
+                                }
+                            });
 
-              }
+                }
             }
             else if(appointment.getAppointment_status().equals("cancelled")){
                 text1.setText("Appointment cancelled");
@@ -655,7 +696,6 @@ public class acquired_service_details extends AppCompatActivity {
                                                                                                                         "Cancelled appointment",appointmentId,sendTo,"appointment",role,"cancelled"), token);
                                                                                                                 Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
                                                                                                                 sendNotif(notification,"cancelled",role);
-
                                                                                                             }
                                                                                                         });
                                                                                             }
@@ -680,51 +720,52 @@ public class acquired_service_details extends AppCompatActivity {
             public void onResponse(Call<pushNotification> call, Response<pushNotification> response) {
                 if(response.isSuccessful()){
 
-                        if(from.equals("accepted")){
+                    if(from.equals("accepted")){
 
-                            if(notificationFor.equals("buyer")){
+                        if(notificationFor.equals("buyer")){
 
-                                Intent i = new Intent(acquired_service_details.this, service_status.class);
-                                i.putExtra("SELECTED_TAB",from);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(i);
-                                Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
-                                finish();
+                            Intent i = new Intent(acquired_service_details.this, service_status.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                            finish();
 
-                            }
-                            else{
+                        }
+                        else{
 
-                                Intent i = new Intent(acquired_service_details.this, appointment_user_side.class);
-                                i.putExtra("SELECTED_TAB",from);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(i);
-                                Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
-                                finish();
+                            Intent i = new Intent(acquired_service_details.this, appointment_user_side.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                            finish();
 
-                            }
+                        }
                     }
                     else  if(from.equals("cancelled")){
 
-                            if(notificationFor.equals("buyer")){
-                                Intent i = new Intent(acquired_service_details.this, service_status.class);
-                                i.putExtra("SELECTED_TAB",from);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(i);
-                                Toast.makeText(acquired_service_details.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                            else{
-                                Intent i = new Intent(acquired_service_details.this, appointment_user_side.class);
-                                i.putExtra("SELECTED_TAB",from);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(i);
-                                Toast.makeText(acquired_service_details.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                        }
-                    else{
+                        if(notificationFor.equals("buyer")){
+                            Intent i = new Intent(acquired_service_details.this, service_status.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            finish();
 
                         }
+                        else{
+                            Intent i = new Intent(acquired_service_details.this, appointment_user_side.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                    else{
+
+                    }
                 }else{
 
                 }

@@ -1,54 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
     android:elevation="3dp"
     android:backgroundTint="@color/white"
-    android:layout_height="140dp">
-
-    <LinearLayout
-        android:id="@+id/shopLinear"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:background="@color/white"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="5dp"
-            android:src="@drawable/icon_petshope" />
-
-
-        <TextView
-            android:id="@+id/shop_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="2dp"
-            android:fontFamily="@font/poppinsmedium"
-            android:text="Shop name"
-            android:textColor="@color/material_blue_grey_80"
-            tools:ignore="HardcodedText" />
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="1dp"
-
-            android:src="@drawable/profile_arrowright" />
-    </LinearLayout>
+    android:layout_height="100dp" android:layout_width="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/shopLinear"
         android:background="@color/white"
         android:elevation="1dp">
 
@@ -99,16 +62,6 @@
             android:textSize="16sp"
             tools:ignore="HardcodedText" />
 
-        <ImageView
-            android:id="@+id/pesoSign"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_below="@id/breed"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="-1dp"
-            android:layout_toEndOf="@id/cardView"
-            android:src="@drawable/icon_peso"
-            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/itemValue"
@@ -116,7 +69,7 @@
             android:layout_height="27dp"
             android:layout_below="@id/breed"
             android:layout_marginTop="1dp"
-            android:layout_toEndOf="@id/pesoSign"
+            android:layout_toEndOf="@id/cardView"
             android:background="@drawable/dropshadow_button_zero"
             android:backgroundTint="@color/lightWhite"
             android:ellipsize="end"

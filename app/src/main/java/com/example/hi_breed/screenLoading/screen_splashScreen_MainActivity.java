@@ -41,6 +41,7 @@ public class screen_splashScreen_MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
+
     }
 
     @Override
@@ -56,7 +57,6 @@ public class screen_splashScreen_MainActivity extends AppCompatActivity {
     }
 
 
-
     private void transition(){
         final screen_splashScreen_MainActivity sPlashScreen = this;
 
@@ -69,8 +69,8 @@ public class screen_splashScreen_MainActivity extends AppCompatActivity {
                     }
                 } catch (InterruptedException ignored) {
                 }
-                finish();
 
+                finish();
                 Intent intent = new Intent();
                 intent.setClass(sPlashScreen, screen_WelcomeToHiBreed.class);
                 startActivity(intent);

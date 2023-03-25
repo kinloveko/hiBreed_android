@@ -202,7 +202,6 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                             startActivity(i);
                                             Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to completed tab", Toast.LENGTH_SHORT).show();
                                             finish();
-
                                         }
                                     }
                                     else
@@ -598,6 +597,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
         conversation.put("latestMessage", latestMessage);
         conversation.put("messages", Arrays.asList(latestMessage));
         conversation.put("matchID",matchID);
+        conversation.put("chatFor","forAppointments");
 
         FirebaseFirestore.getInstance().collection("Chat").document(matchID)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -710,6 +710,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
     private void getConversation(String matchID) {
 
         FirebaseFirestore.getInstance().collection("Chat").whereEqualTo("matchID",matchID)
+                .whereEqualTo("chatFor","forAppointments")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

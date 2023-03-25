@@ -16,6 +16,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.hi_breed.R;
 import com.example.hi_breed.message.acquired_service_accepted_message;
+import com.example.hi_breed.message.message_activity;
 import com.example.hi_breed.message.message_conversation_activity;
 import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
 import com.example.hi_breed.service_status_for_seller.service_status;
@@ -67,13 +68,12 @@ public class MessagingService extends FirebaseMessagingService {
         Log.d("MyApp", notCurrentUser);
         Log.d("MyApp", match);
         if(type.equals("appointment")){
-
             if(notificationFor.equals("seller")){
                 int notificationId = (int) (new Random().nextInt() + System.currentTimeMillis());
                 Intent intent = new Intent(this, service_status.class);
                 intent.putExtra("SELECTED_TAB",(Serializable) SELECTED_TAB);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
+                Log.d("MyApp", "SELECTED_TAB FROM FIREBASE MESSAGING SERVICE Seller: " + SELECTED_TAB);
                 PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
 
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -117,6 +117,7 @@ public class MessagingService extends FirebaseMessagingService {
                 manager.notify(notificationId, notification);
 
             }
+
         }
         else if(type.equals("messageAppointment")){
 
@@ -208,7 +209,64 @@ public class MessagingService extends FirebaseMessagingService {
             manager.notify(notificationId, notification);
 
         }
+        else if(type.equals("matchNotification")){
+            Log.d("MyApp", match);
+            int notificationId = (int) System.currentTimeMillis();
+
+            Intent intent = new Intent(this, message_activity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            PendingIntent pendingIntent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                createNotificationManagerMatches(manager);
+
+                Notification.Builder builder = new Notification.Builder(MessagingService.this, "Matches")
+                        .setSmallIcon(R.drawable.hibreedlogo)
+                        .setContentTitle("You have a matched!")
+                        .setContentText(text)
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setColor(Color.WHITE)
+                        .setGroup(match);
+
+                Notification notification = builder.build();
+                manager.notify(notificationId, notification);
+            } else {
+                pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                createNotificationManagerMatches(manager);
+
+                Notification.Builder builder = new Notification.Builder(MessagingService.this, "Matches")
+                        .setSmallIcon(R.drawable.hibreedlogo)
+                        .setContentTitle("You have a matched!")
+                        .setContentText(text)
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setColor(Color.WHITE)
+                        .setGroup(match);
+
+                Notification notification = builder.build();
+                manager.notify(notificationId, notification);
+            }
+
+
+        }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationManagerMatches(NotificationManager manager) {
+        NotificationChannel channel;
+        channel = new NotificationChannel("Matches","Matches", NotificationManager.IMPORTANCE_HIGH);
+        channel.setDescription("You have a matched!");
+        channel.enableLights(true);
+        channel.setLightColor(Color.WHITE);
+        manager.createNotificationChannel(channel);
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createNotificationManagerAppointments(NotificationManager manager) {

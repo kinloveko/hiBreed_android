@@ -14,19 +14,19 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.classesFile.BaseActivity;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class appointment_user_side extends AppCompatActivity {
+public class appointment_user_side extends BaseActivity {
 
 
     private TabLayout tabLayout;
