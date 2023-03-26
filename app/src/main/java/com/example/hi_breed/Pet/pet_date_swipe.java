@@ -306,12 +306,14 @@ public class pet_date_swipe extends BaseActivity {
 
                         Map<String,Object> map = new HashMap<>();
                         map.put("send_to_id", item.getPet_breeder());
-                        map.put("message","It's a match");
+                        map.put("message","You can now message to each other to plan a date for your dogs");
+                        map.put("title","You have a match");
                         map.put("timestamp", Timestamp.now());
                         map.put("type","matchDating");
+                        map.put("id",id);
 
                         Map<String,Object> maps = new HashMap<>();
-                        maps.put("id",id);
+
                         maps.put("latestNotification",map);
                         maps.put("notification", Arrays.asList(map));
 
@@ -346,6 +348,7 @@ public class pet_date_swipe extends BaseActivity {
                                                             sendNotif(notification);
                                                         }
                                                     });
+
                                         }
                                     }
                                 });
@@ -405,15 +408,17 @@ public class pet_date_swipe extends BaseActivity {
 
         Map<String,Object> map = new HashMap<>();
         map.put("send_to_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
-        map.put("message","It's a match");
+        map.put("message","You can now message to each other to plan a date for your dogs");
+        map.put("title","You have a match");
         map.put("timestamp", Timestamp.now());
         map.put("type","matchDating");
+        map.put("id",id);
 
         Map<String,Object> maps = new HashMap<>();
-        maps.put("id",id);
+
         maps.put("latestNotification",map);
         maps.put("notification", Arrays.asList(map));
-        //notif for the user
+
         FirebaseFirestore.getInstance().collection("Notifications").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override

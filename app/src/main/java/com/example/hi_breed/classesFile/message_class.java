@@ -6,6 +6,7 @@ public class message_class {
     String text;
     Timestamp timestamp;
     String sender;
+
     public message_class(){
 
     }

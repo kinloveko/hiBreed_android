@@ -415,6 +415,8 @@ public class acquired_service_accepted_message extends AppCompatActivity {
 
                                         Map<String,Object> map = new HashMap<>();
                                         map.put("send_to_id", notCurrentUser);
+                                        map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                        map.put("title","Completed appointment");
                                         map.put("message","Appointment has been completed");
                                         map.put("timestamp", Timestamp.now());
                                         map.put("type","appointment");
@@ -499,6 +501,8 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                         Map<String,Object> map = new HashMap<>();
                                         map.put("id",match);
                                         map.put("send_to_id", notCurrentUser);
+                                        map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                        map.put("title","Cancelled appointment");
                                         map.put("message","Requested appointment has been cancelled");
                                         map.put("timestamp", Timestamp.now());
                                         map.put("type","appointment");

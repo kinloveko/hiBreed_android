@@ -339,6 +339,7 @@ public class message_conversation_activity extends BaseActivity {
                             for (DocumentSnapshot s : value) {
                                 chat_conversation_class c = s.toObject(chat_conversation_class.class);
                                 adapter.addMatchDisplay(c.getMessages());
+
                                 chat_recyclerview.setAdapter(adapter);
                                 chat_recyclerview.smoothScrollToPosition(chat_recyclerview.getAdapter().getItemCount());
                                 scrollView.post(new Runnable() {

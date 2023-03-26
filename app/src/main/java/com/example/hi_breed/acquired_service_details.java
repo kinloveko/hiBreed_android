@@ -235,12 +235,15 @@ public class acquired_service_details extends BaseActivity {
                                                 String token= value.getString("fcmToken");
                                                 Map<String,Object> map = new HashMap<>();
                                                 map.put("send_to_id", appointment.getCustomer_id());
+                                                map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                map.put("title","Accepted appointment");
                                                 map.put("message","Your request appointment has been accepted");
                                                 map.put("timestamp", Timestamp.now());
                                                 map.put("type","appointment");
+                                                map.put("id",appointment.getId());
 
                                                 Map<String,Object> maps = new HashMap<>();
-                                                maps.put("id",appointment.getId());
+
                                                 maps.put("latestNotification",map);
                                                 maps.put("notification", Arrays.asList(map));
 
@@ -641,12 +644,16 @@ public class acquired_service_details extends BaseActivity {
                             String token= value.getString("fcmToken");
                             Map<String,Object> map = new HashMap<>();
                             map.put("send_to_id", sendTo);
+                            map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            map.put("title","Cancelled appointment");
                             map.put("message","Requested appointment has been cancelled");
                             map.put("timestamp", Timestamp.now());
                             map.put("type","appointment");
+                            map.put("id",appointmentId);
+
 
                             Map<String,Object> maps = new HashMap<>();
-                            maps.put("id",appointmentId);
+
                             maps.put("latestNotification",map);
                             maps.put("notification", Arrays.asList(map));
                             FirebaseFirestore.getInstance().collection("Transaction")

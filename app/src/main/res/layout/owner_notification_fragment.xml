@@ -4,19 +4,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/lightWhite"
+    android:background="@color/fbWhite"
     tools:context=".userFile.notification.user_notification_fragment">
 
-
-<TextView
+<RelativeLayout
+    android:elevation="3dp"
+    android:background="@color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:text="Notification"
-    android:fontFamily="@font/poppinsmedium"
-    android:textStyle="bold"
-    android:textColor="@color/material_blue_grey_80"
-    tools:ignore="HardcodedText" />
+    android:layout_height="wrap_content">
 
+    <TextView
+        android:layout_toEndOf="@id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/poppinsemibold"
+        android:text="Notifications"
+        android:textColor="@color/material_blue_grey_80"
+        android:textSize="23sp"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="30dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="5dp"
+        android:src="@drawable/icon_notifempty" />
+</RelativeLayout>
+<ScrollView
+    android:layout_marginTop="55dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notification_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/float_transparent" />
+
+
+    </RelativeLayout>
+</ScrollView>
 
 </FrameLayout>

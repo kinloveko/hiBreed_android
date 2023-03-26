@@ -3,11 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
-    android:elevation="3dp"
     android:backgroundTint="@color/white"
-    android:layout_height="100dp" android:layout_width="match_parent">
+    android:elevation="1dp"
+    android:layout_marginBottom="5dp"
+    android:layout_height="wrap_content" android:layout_width="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,90 +16,84 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentStart="true"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="3dp"
+            app:cardCornerRadius="1000dp">
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/noimage" />
         </androidx.cardview.widget.CardView>
 
         <TextView
-            android:id="@+id/pet_name"
+            android:id="@+id/notificationTitle"
             android:layout_width="220dp"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_toEndOf="@id/cardView"
             android:ellipsize="end"
-            android:fontFamily="@font/poppinsregular"
+            android:fontFamily="@font/poppinsmedium"
             android:maxLines="1"
-            android:text="Pet Name"
+            android:text="Matched Notification"
             android:textColor="@color/material_blue_grey_80"
-            android:textSize="17sp"
+            android:textSize="13sp"
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/breed"
-            android:layout_width="195dp"
+            android:id="@+id/notificationMessage"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/pet_name"
+            android:layout_below="@id/notificationTitle"
             android:layout_marginStart="10dp"
             android:layout_marginTop="-3dp"
+            android:textColor="@color/semiBlack"
             android:layout_toEndOf="@id/cardView"
             android:ellipsize="end"
             android:fontFamily="@font/poppinsregular"
-            android:maxLines="1"
-            android:text="Pet Breed"
-            android:textSize="16sp"
+            android:maxLines="2"
+            android:text="You have a matched owner in pet dating"
+            android:textSize="12sp"
             tools:ignore="HardcodedText" />
 
 
         <TextView
-            android:id="@+id/itemValue"
+            android:id="@+id/time"
             android:layout_width="wrap_content"
-            android:layout_height="27dp"
-            android:layout_below="@id/breed"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/notificationMessage"
             android:layout_marginTop="1dp"
+            android:layout_marginBottom="5dp"
             android:layout_toEndOf="@id/cardView"
-            android:background="@drawable/dropshadow_button_zero"
-            android:backgroundTint="@color/lightWhite"
             android:ellipsize="end"
-            android:fontFamily="@font/poppinsmedium"
-
+            android:fontFamily="@font/poppinsregular"
+            android:textColor="@color/safe_grey"
             android:gravity="center"
             android:maxLines="1"
             android:paddingStart="10sp"
             android:paddingEnd="10sp"
-            android:text="1500"
-            android:textColor="@color/material_blue_grey_80"
-            android:textSize="18sp"
+            android:text="1hr ago"
+            android:textSize="11sp"
             tools:ignore="HardcodedText" />
 
-        <ImageView
-            android:id="@+id/check"
-            android:layout_width="40dp"
-            android:layout_height="35dp"
-            android:layout_centerInParent="true"
-            android:layout_marginEnd="15dp"
-            android:layout_toStartOf="@id/delete"
-            android:src="@drawable/icon_check_boxs" />
 
         <ImageView
-            android:id="@+id/delete"
-            android:layout_width="35dp"
-            android:layout_height="25dp"
+            android:id="@+id/menu"
+            android:layout_width="55dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_centerInParent="true"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/icon_deleted" />
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/icon_dots_horizontal" />
     </RelativeLayout>
 
 

@@ -347,11 +347,15 @@ public class service_set_appointment extends BaseActivity {
                                                                                                     public void onSuccess(Void unused) {
 
                                                                                                         Map<String,Object> map = new HashMap<>();
-                                                                                                        map.put("send_to_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                                                                                                        map.put("id",s.getId());
+                                                                                                        map.put("send_to_id",service.getShooter_id());
+                                                                                                        map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                                                                        map.put("title","Request Appointment");
                                                                                                         map.put("message","Appointment request from:"+check_out_name.getText().toString());
                                                                                                         map.put("timestamp",Timestamp.now());
                                                                                                         map.put("type","appointment");
-                                                                                                        map.put("id",s.getId());
+
 
                                                                                                         Map<String,Object> maps = new HashMap<>();
 
