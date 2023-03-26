@@ -29,8 +29,10 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.hi_breed.R;
+import com.example.hi_breed.checkout.checkout_activity;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.PetSaleClass;
+import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.likes_class;
 import com.example.hi_breed.classesFile.priceFormat;
 import com.example.hi_breed.shop.view_breeder_shop;
@@ -49,8 +51,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -173,6 +177,39 @@ public class pet_for_sale_details extends BaseActivity {
 
             id = pet.getId();
             breeder = pet.getPet_breeder();
+
+
+       
+            
+            details_button_buyNow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .collection("security")
+                            .document("security_doc")
+                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.getString("contactNumber") != null &&
+                                            !documentSnapshot.getString("contactNumber").equals("")){
+                                        add_to_cart_class buy = new add_to_cart_class("1",pet.getId(),pet.getDisplayFor(),pet.getPet_price(),FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                                pet.getPet_breeder(),Timestamp.now());
+                                        Intent i = new Intent(pet_for_sale_details.this, checkout_activity.class);
+                                        List<add_to_cart_class> add = new ArrayList<>();
+                                        add.add(buy);
+                                        i.putExtra("mode",(Serializable) add);
+                                        startActivity(i);
+                                    }
+                                    else{
+                                        Toast.makeText(pet_for_sale_details.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            });
 
             FirebaseFirestore.getInstance().collection("Likes")
                     .whereEqualTo("likedBy",FirebaseAuth.getInstance().getCurrentUser().getUid())

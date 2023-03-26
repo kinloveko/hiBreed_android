@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.order_user_side.order_user_side;
 import com.example.hi_breed.screenLoading.LoadingDialog;
 import com.example.hi_breed.screenLoading.screen_WelcomeToHiBreed;
 import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
@@ -49,8 +51,9 @@ public class user_profile_fragment extends Fragment {
     private FirebaseUser firebaseUser;
     private DocumentReference documentReference;
     String  userID;
+    ImageView cart;
     CircleImageView imageView;
-    ConstraintLayout editLayout,shoppingConstraint,trackingConstraint;
+    ConstraintLayout editLayout,orderConstraint,trackingConstraint;
     ConstraintLayout accountLayout,cardLayout,faqLayout,aboutLayout;
     TextView ownerDisplay;
     TextView label;
@@ -87,9 +90,11 @@ public class user_profile_fragment extends Fragment {
         if (isAdded() && getActivity() != null) {
 
             trackingConstraint = view.findViewById(R.id.trackingConstraint);
-            shoppingConstraint = view.findViewById(R.id.shoppingConstraint);
+            orderConstraint = view.findViewById(R.id.orderConstraint);
             //images
             imageView = view.findViewById(R.id.profileImage);
+            cart = view.findViewById(R.id.cart);
+
             //layout
             editLayout = view.findViewById(R.id.profileIconLayout);
             accountLayout = view.findViewById(R.id.accountLayout);
@@ -126,8 +131,13 @@ public class user_profile_fragment extends Fragment {
             } else {
                 Toast.makeText(this.getActivity().getApplicationContext(), "No current User", Toast.LENGTH_SHORT).show();
             }
-
-            shoppingConstraint.setOnClickListener(new View.OnClickListener() {
+            orderConstraint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getContext(), order_user_side.class));
+                }
+            });
+            cart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(getContext(), add_to_cart.class));

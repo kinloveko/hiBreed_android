@@ -246,7 +246,7 @@
 
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/cardView6"
+                        android:id="@+id/pending"
                         android:layout_width="80dp"
                         android:layout_height="72dp"
                         android:layout_marginStart="5dp"
@@ -261,7 +261,7 @@
                         app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
-                            android:id="@+id/IDNumberToShip"
+                            android:id="@+id/IDNumberPending"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -278,7 +278,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="10dp"
-                            android:text="To Sell"
+                            android:text="Pending"
                             android:textAlignment="center"
                             android:textColor="@color/material_blue_grey_95"
                             android:textSize="12sp"
@@ -288,7 +288,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/cardView7"
+                        android:id="@+id/ongoing"
                         android:layout_width="80dp"
                         android:layout_height="72dp"
                         android:layout_marginStart="10dp"
@@ -320,7 +320,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="10dp"
-                            android:text="Schedule"
+                            android:text="On-going"
                             android:textAlignment="center"
                             android:textColor="@color/material_blue_grey_95"
                             android:textSize="12sp"
@@ -331,7 +331,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/cardView10"
+                        android:id="@+id/reviews"
                         android:layout_width="80dp"
                         android:layout_height="72dp"
                         android:layout_marginTop="10dp"

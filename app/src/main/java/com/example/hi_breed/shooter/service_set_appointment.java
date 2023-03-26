@@ -326,7 +326,7 @@ public class service_set_appointment extends BaseActivity {
 
                                                         FirebaseFirestore.getInstance().collection("Appointments")
                                                                 .document(s.getId())
-                                                                .update("id",s.getId()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                .update("id",s.getId(),"timestamp",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
                                                                     public void onSuccess(Void unused) {
                                                                         FirebaseFirestore.getInstance().collection("Transaction")

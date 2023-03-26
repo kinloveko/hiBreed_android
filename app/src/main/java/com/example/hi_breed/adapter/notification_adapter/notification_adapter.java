@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hi_breed.R;
 import com.example.hi_breed.acquired_service_details;
 import com.example.hi_breed.classesFile.TimeStampClass;
-import com.example.hi_breed.classesFile.TimestampConverter;
 import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.classesFile.notification_data_class;
@@ -150,13 +149,40 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
                         });
 
             }
-            else{
+            else if(add.getType().equals("order")){
+                FirebaseFirestore.getInstance().collection("Appointments")
+                        .document(add.getId())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if(documentSnapshot.exists()){
+                                    if(user.equals(documentSnapshot.getString("seller_id"))){
+                                            FirebaseFirestore.getInstance().collection("User")
+                                                    .document(documentSnapshot.getString("customer_id"))
+                                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            if(documentSnapshot.exists()){
+                                                                Picasso.get().load(documentSnapshot.getString("image"))
+                                                                        .placeholder(R.drawable.noimage)
+                                                                        .into(v.imageView);
+                                                            }
+                                                        }
+                                                    });
+                                    }
+                                    else if(user.equals(documentSnapshot.getString("customer_id"))){
+                                        List<String> list = (List<String>) documentSnapshot.get("photos");
+                                        if(list!=null)
+                                        Picasso.get().load(list.get(0))
+                                                .placeholder(R.drawable.noimage)
+                                                .into(v.imageView);
+                                    }
+                                }
+                            }
+                        });
 
             }
         }
-
-
-
 
         v.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +202,9 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
                 else if(add.getType().equals("matchDating")){
                     Intent i = new Intent(context.getApplicationContext(), message_activity.class);
                     context.startActivity(i);
+                }
+                else{
+
                 }
             }
         });

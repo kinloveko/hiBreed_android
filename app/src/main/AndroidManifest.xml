@@ -37,6 +37,17 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".order_breeder_side.order_breeder_side"
+            android:exported="false" />
+        <activity
+            android:name=".order_details_activity"
+            android:exported="false"
+            android:label="@string/title_activity_order_details"
+            android:theme="@style/Theme.HiBreed.NoActionBar" />
+        <activity
+            android:name=".order_user_side.order_user_side"
+            android:exported="false" />
+        <activity
             android:name=".rate_service"
             android:exported="false" />
         <activity

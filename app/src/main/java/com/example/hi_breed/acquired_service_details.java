@@ -626,7 +626,6 @@ public class acquired_service_details extends BaseActivity {
                             return;
                         }
                         cancelDialog(sendTo,appointmentId,role,customReasonEdit.getText().toString(),transactionID,from);
-
                     }
                 });
 

@@ -5,6 +5,7 @@ import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -17,21 +18,42 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.classesFile.ApiUtilities;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.checkout_adapter;
+import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.priceFormat;
+import com.example.hi_breed.classesFile.pushNotification;
 import com.example.hi_breed.current_address;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import pl.droidsonroids.gif.GifImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class checkout_activity extends BaseActivity {
     TextView check_out_name,
@@ -133,10 +155,20 @@ public class checkout_activity extends BaseActivity {
                         check_out_name.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
                         checkout_address.setText(s.getString("address"));
                         checkout_zip.setText(s.getString("zipCode"));
-                        checkout_number.setText("09318924806");
+
                     }
                 });
-
+        FirebaseFirestore.getInstance().collection("User")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("security")
+                .document("security_doc")
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.getString("contactNumber") != null)
+                        checkout_number.setText(documentSnapshot.getString("contactNumber"));
+                    }
+                });
 
 /*          disabling it for future features
 
@@ -200,10 +232,10 @@ public class checkout_activity extends BaseActivity {
 
                 if ((gcashLayout.isShown() || codLayout.isShown()) && onSiteLayout.isShown()) {
                     if (gcashChecked) {
-                      gotoAnotherActivity();
+                      gotoAnotherActivity(list);
 
                     } else if (codChecked) {
-                        gotoAnotherActivity();
+                        gotoAnotherActivity(list);
                     }
                     else{
                         Toast.makeText(checkout_activity.this, "Select a payment", Toast.LENGTH_SHORT).show();
@@ -211,27 +243,210 @@ public class checkout_activity extends BaseActivity {
                 }
                 else if(gcashLayout.isShown() || codLayout.isShown()){
                     if (gcashChecked) {
-                        gotoAnotherActivity();
+                        gotoAnotherActivity(list);
                     } else if (codChecked) {
-                        gotoAnotherActivity();
+                        gotoAnotherActivity(list);
                     } else{
                         Toast.makeText(checkout_activity.this, "Select a payment", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else{
                     //Check from List getSerializable at the tom from their category if petforsale or product.
-                    gotoAnotherActivity();
+                    gotoAnotherActivity(list);
                 }
             }
         });
     }
 
-    private void gotoAnotherActivity() {
-        Intent i = new Intent(this,checkout_thankyou.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-         i.putExtra("from","Checkout");
-        startActivity(i);
-        startActivity(i);
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
         finish();
+    }
+
+    List<String> ids = new ArrayList<>();
+
+    private void gotoAnotherActivity(List<add_to_cart_class> add) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(checkout_activity.this);
+        View view = View.inflate(checkout_activity.this,R.layout.screen_custom_alert,null);
+        TextView title = view.findViewById(R.id.screen_custom_alert_title);
+        builder.setCancelable(false);
+        AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+        imageViewCompat.setVisibility(View.GONE);
+        GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+        gif.setVisibility(View.GONE);
+        title.setVisibility(View.GONE);
+        TextView message = view.findViewById(R.id.screen_custom_alert_message);
+        message.setVisibility(View.GONE);
+        builder.setView(view);
+        AlertDialog alert = builder.create();
+        alert.show();
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Map<String,Object> trans = new HashMap<>();
+        trans.put("id","");
+        trans.put("trans_date_created", Timestamp.now());
+        trans.put("trans_payment","on-site");
+        trans.put("total_amount",totalPayment.getText().toString());
+        trans.put("itemIDs", Arrays.asList(add));
+        trans.put("trans_type","order");
+        trans.put("status","pending");
+        trans.put("timestamp",Timestamp.now());
+        trans.put("customer_id",FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        FirebaseFirestore.getInstance().collection("Transaction").
+                add(trans).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                            FirebaseFirestore.getInstance().collection("Transaction").document(documentReference.getId())
+                                    .update("id",documentReference.getId(),"timestamp", FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+
+                                            for (add_to_cart_class item : add) {
+
+
+                                                FirebaseFirestore.getInstance().collection("User")
+                                                        .document(item.getProd_seller())
+                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentSnapshot z) {
+                                                                if(z.exists()){
+
+                                                                    String userToken = z.getString("fcmToken");
+
+                                                                    // Create a new appointment for this item
+                                                                    Map<String,Object> appointment = new HashMap<>();
+                                                                    appointment.put("id", "");
+                                                                    appointment.put("customer_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                                    appointment.put("seller_id", item.getProd_seller());
+                                                                    appointment.put("transaction_id", documentReference.getId());
+                                                                    appointment.put("timestamp", Timestamp.now());
+                                                                    appointment.put("item_price", item.getProd_price());
+                                                                    appointment.put("item_id", item.getProd_id());
+                                                                    appointment.put("order_status", "pending");
+
+                                                                    // Add the appointment to Firestore
+                                                                    FirebaseFirestore.getInstance().collection("Appointments")
+                                                                            .add(appointment)
+                                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                @Override
+                                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                                    // Appointment added successfully
+                                                                                    FirebaseFirestore.getInstance().collection("Appointments")
+                                                                                            .document(documentReference.getId())
+                                                                                            .update("id",documentReference.getId())
+                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void unused) {
+                                                                                                    ids.add(documentReference.getId());
+
+                                                                                                    Map<String,Object> map = new HashMap<>();
+
+                                                                                                    map.put("id",documentReference.getId());
+                                                                                                    map.put("send_to_id",item.getProd_seller());
+                                                                                                    map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                                                                    map.put("title","Pending Order");
+                                                                                                    map.put("message","You have a pending order from:"+check_out_name.getText().toString());
+                                                                                                    map.put("timestamp",Timestamp.now());
+                                                                                                    map.put("type","order");
+
+
+                                                                                                    Map<String,Object> maps = new HashMap<>();
+
+                                                                                                    maps.put("latestNotification",map);
+                                                                                                    maps.put("notification", Arrays.asList(map));
+                                                                                                    FirebaseFirestore.getInstance().collection("Notifications").document(item.getProd_seller())
+                                                                                                            .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                                                                @Override
+                                                                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                                                                    if(task.isSuccessful()){
+                                                                                                                        DocumentSnapshot a = task.getResult();
+                                                                                                                        if(a.exists()){
+
+                                                                                                                            FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                                                                    .document(item.getProd_seller())
+                                                                                                                                    .update("latestNotification",map,"notification",FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                        @Override
+                                                                                                                                        public void onSuccess(Void unused) {
+
+
+                                                                                                                                            pushNotification notification = new pushNotification(new notificationData("You have pending order from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
+                                                                                                                                                    ,documentReference.getId(),item.getProd_seller(),"order","seller","pending"), userToken);
+                                                                                                                                            sendNotif(notification,alert);
+
+                                                                                                                                        }
+                                                                                                                                    });
+                                                                                                                        }
+                                                                                                                        else{
+                                                                                                                            FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                                                                    .document(item.getProd_seller())
+                                                                                                                                    .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                        @Override
+                                                                                                                                        public void onSuccess(Void unused) {
+
+
+                                                                                                                                            pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
+                                                                                                                                                    ,documentReference.getId(),item.getProd_seller(),"appointment","seller","pending"), userToken);
+                                                                                                                                            sendNotif(notification,alert);
+                                                                                                                                        }
+                                                                                                                                    });
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            });
+
+                                                                                                }
+                                                                                            });
+
+                                                                                }
+                                                                            })
+                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    // Appointment adding failed
+                                                                                    alert.toString();
+                                                                                }
+                                                                            });
+
+
+
+                                                                }
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                    });
+                    }
+                });
+
+    }
+
+    private void sendNotif(pushNotification notification,AlertDialog alertDialog) {
+        ApiUtilities.getClient().sendNotification(notification).enqueue(new Callback<pushNotification>() {
+            @Override
+            public void onResponse(Call<pushNotification> call, Response<pushNotification> response) {
+                if(response.isSuccessful()){
+                    alertDialog.dismiss();
+                    Intent i = new Intent(checkout_activity.this,checkout_thankyou.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.putExtra("from","Checkout");
+                    startActivity(i);
+                    startActivity(i);
+                    finish();
+                }
+                else{
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<pushNotification> call, Throwable t) {
+                Toast.makeText(checkout_activity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
     }
 }

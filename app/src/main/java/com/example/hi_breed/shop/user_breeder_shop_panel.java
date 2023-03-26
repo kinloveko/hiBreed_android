@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +25,7 @@ import com.example.hi_breed.Pet.pet_add_for_selling;
 import com.example.hi_breed.Pet.pet_my_pets_panel;
 import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
+import com.example.hi_breed.order_breeder_side.order_breeder_side;
 import com.example.hi_breed.product.product_add_activity;
 import com.example.hi_breed.product.product_my_product;
 import com.example.hi_breed.shooter.shooter_vet_panel;
@@ -36,7 +38,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +56,9 @@ public class user_breeder_shop_panel extends BaseActivity {
     ArrayList<String> role = new ArrayList<>();
     TextView breederName, breederLabel;
     CircleImageView imageView;
-    CardView createPetProfile,myPets,sellPetCardView8,serviceCardView8,myProducts,sellProductView8;
+    CardView createPetProfile,myPets,pending,ongoing,reviews,sellPetCardView8,serviceCardView8,myProducts,sellProductView8;
     CircleImageView cardView2;
-    TextView textView15,textViewSellPetName,textViewLabel;
+    TextView textView15,IDNumberPending,textViewSellPetName,textViewLabel;
 
     LinearLayout owner,activityStatus;
     @SuppressLint("SetTextI18n")
@@ -75,7 +80,7 @@ public class user_breeder_shop_panel extends BaseActivity {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         fireStore = FirebaseFirestore.getInstance();
         databaseReference = fireStore.collection("User").document(firebaseUser.getUid());
-
+        IDNumberPending = findViewById(R.id.IDNumberPending);
         textViewSellPetName = findViewById(R.id.textView22);
         textViewLabel = findViewById(R.id.textView19);
 
@@ -90,6 +95,11 @@ public class user_breeder_shop_panel extends BaseActivity {
         sellPetCardView8 = findViewById(R.id.sellPetCardView8);
         //Service
         //Cardview
+        pending = findViewById(R.id.pending);
+        ongoing = findViewById(R.id.ongoing);
+        reviews = findViewById(R.id.reviews);
+
+
         sellProductView8 = findViewById(R.id.sellProductView8);
         cardView2 = findViewById(R.id.cardView2);
         serviceCardView8 = findViewById(R.id.serviceCardView8);
@@ -123,6 +133,9 @@ public class user_breeder_shop_panel extends BaseActivity {
                 }
             }
         });
+
+
+
             databaseReference = fireStore.collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
             databaseReference
                     .get()
@@ -173,6 +186,28 @@ public class user_breeder_shop_panel extends BaseActivity {
                                             myProducts.setVisibility(View.VISIBLE);
                                             textViewLabel.setText("Products and Services");
                                             textViewSellPetName.setText("Sell products");
+                                        }
+
+                                        if(role.contains("Pet Breeder")){
+                                            FirebaseFirestore.getInstance().collection("Appointments")
+                                                    .whereEqualTo("seller_id",FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                                            if(error!=null){
+                                                                return;
+                                                            }
+                                                            if(value.size()!=0){
+                                                                IDNumberPending.setText(String.valueOf(value.size()));
+                                                            }
+                                                        }
+                                         });
+                                            pending.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    startActivity(new Intent(user_breeder_shop_panel.this, order_breeder_side.class));
+                                                }
+                                            });
                                         }
 
                                     }
