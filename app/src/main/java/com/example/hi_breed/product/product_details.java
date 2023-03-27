@@ -256,6 +256,7 @@ public class product_details extends AppCompatActivity {
         objectMap.put("prod_category",details_product_category.getText().toString());
         objectMap.put("prod_price",p.getProd_price());
         objectMap.put("id","");
+        objectMap.put("type",p.getProd_category());
         objectMap.put("isChecked",false);
         objectMap.put("addBy",FirebaseAuth.getInstance().getCurrentUser().getUid());
         objectMap.put("timestamp",Timestamp.now());

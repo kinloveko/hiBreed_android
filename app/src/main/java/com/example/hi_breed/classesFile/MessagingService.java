@@ -18,6 +18,8 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.message.acquired_service_accepted_message;
 import com.example.hi_breed.message.message_activity;
 import com.example.hi_breed.message.message_conversation_activity;
+import com.example.hi_breed.order_breeder_side.order_breeder_side;
+import com.example.hi_breed.order_user_side.order_user_side;
 import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
 import com.example.hi_breed.service_status_for_seller.service_status;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,6 +56,7 @@ public class MessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
+
         String sender = remoteMessage.getData().get("title");
         String text =  remoteMessage.getData().get("message");
         String match = remoteMessage.getData().get("matchID");
@@ -74,22 +77,43 @@ public class MessagingService extends FirebaseMessagingService {
                 intent.putExtra("SELECTED_TAB",(Serializable) SELECTED_TAB);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 Log.d("MyApp", "SELECTED_TAB FROM FIREBASE MESSAGING SERVICE Seller: " + SELECTED_TAB);
-                PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
 
-                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                createNotificationManagerAppointments(manager);
+                PendingIntent pendingIntent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    createNotificationManagerAppointments(manager);
 
-                Notification.Builder builder = new Notification.Builder(MessagingService.this, "Appointment")
-                        .setSmallIcon(R.drawable.hibreedlogo)
-                        .setContentTitle(sender)
-                        .setContentText(text)
-                        .setPriority(Notification.PRIORITY_HIGH)
-                        .setAutoCancel(true)
-                        .setContentIntent(pendingIntent)
-                        .setGroup(match);
+                    Notification.Builder builder = new Notification.Builder(MessagingService.this, "Appointment")
+                            .setSmallIcon(R.drawable.hibreedlogo)
+                            .setContentTitle(sender)
+                            .setContentText(text)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setGroup(match);
 
-                Notification notification = builder.build();
-                manager.notify(notificationId, notification);
+                    Notification notification = builder.build();
+                    manager.notify(notificationId, notification);
+                }
+                else{
+                    pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    createNotificationManagerAppointments(manager);
+
+                    Notification.Builder builder = new Notification.Builder(MessagingService.this, "Appointment")
+                            .setSmallIcon(R.drawable.hibreedlogo)
+                            .setContentTitle(sender)
+                            .setContentText(text)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setGroup(match);
+
+                    Notification notification = builder.build();
+                    manager.notify(notificationId, notification);
+                }
+
             }
             else{
 
@@ -98,23 +122,139 @@ public class MessagingService extends FirebaseMessagingService {
                 intent.putExtra("SELECTED_TAB",SELECTED_TAB);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 Log.d("MyApp", "SELECTED_TAB FROM FIREBASE MESSAGING SERVICE buyer: " + SELECTED_TAB);
-                PendingIntent  pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                createNotificationManagerAppointments(manager);
+                PendingIntent  pendingIntent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                    pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    createNotificationManagerAppointments(manager);
 
-                Notification.Builder builder = new Notification.Builder(MessagingService.this, "Appointment")
-                        .setSmallIcon(R.drawable.hibreedlogo)
-                        .setContentTitle(sender)
-                        .setContentText(text)
-                        .setPriority(Notification.PRIORITY_HIGH)
-                        .setAutoCancel(true)
-                        .setColor(Color.WHITE)
-                        .setContentIntent(pendingIntent)
-                        .setGroup(match);
+                    Notification.Builder builder = new Notification.Builder(MessagingService.this, "Appointment")
+                            .setSmallIcon(R.drawable.hibreedlogo)
+                            .setContentTitle(sender)
+                            .setContentText(text)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setAutoCancel(true)
+                            .setColor(Color.WHITE)
+                            .setContentIntent(pendingIntent)
+                            .setGroup(match);
 
-                Notification notification = builder.build();
-                manager.notify(notificationId, notification);
+                    Notification notification = builder.build();
+                    manager.notify(notificationId, notification);
+                }
+                else{
+                    pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    createNotificationManagerAppointments(manager);
+
+                    Notification.Builder builder = new Notification.Builder(MessagingService.this, "Appointment")
+                            .setSmallIcon(R.drawable.hibreedlogo)
+                            .setContentTitle(sender)
+                            .setContentText(text)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setAutoCancel(true)
+                            .setColor(Color.WHITE)
+                            .setContentIntent(pendingIntent)
+                            .setGroup(match);
+
+                    Notification notification = builder.build();
+                    manager.notify(notificationId, notification);
+                }
+            }
+
+        }
+        else if(type.equals("order")){
+            if(notificationFor.equals("seller")){
+                int notificationId = (int) (new Random().nextInt() + System.currentTimeMillis());
+                Intent intent = new Intent(this, order_breeder_side.class);
+                intent.putExtra("SELECTED_TAB",(Serializable) SELECTED_TAB);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Log.d("MyApp", "SELECTED_TAB FROM FIREBASE MESSAGING ORDER Seller: " + SELECTED_TAB);
+
+                PendingIntent pendingIntent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    createNotificationManagerOrder(manager);
+
+                    Notification.Builder builder = new Notification.Builder(MessagingService.this, "Order")
+                            .setSmallIcon(R.drawable.hibreedlogo)
+                            .setContentTitle("Order Notification!")
+                            .setContentText(text)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setColor(Color.WHITE)
+                            .setGroup(match);
+
+                    Notification notification = builder.build();
+                    manager.notify(notificationId, notification);
+                }
+                else {
+                    pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    createNotificationManagerOrder(manager);
+
+                    Notification.Builder builder = new Notification.Builder(MessagingService.this, "Order")
+                            .setSmallIcon(R.drawable.hibreedlogo)
+                            .setContentTitle("Order Notification!")
+                            .setContentText(text)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setColor(Color.WHITE)
+                            .setGroup(match);
+
+                    Notification notification = builder.build();
+                    manager.notify(notificationId, notification);
+                }
+
+            }
+            else{
+
+                int notificationId = (int) (new Random().nextInt() + System.currentTimeMillis());
+                Intent intent = new Intent(this, order_user_side.class);
+                intent.putExtra("SELECTED_TAB",SELECTED_TAB);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Log.d("MyApp", "SELECTED_TAB FROM FIREBASE MESSAGING SERVICE buyer: " + SELECTED_TAB);
+                PendingIntent pendingIntent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    createNotificationManagerOrder(manager);
+
+                    Notification.Builder builder = new Notification.Builder(MessagingService.this, "Order")
+                            .setSmallIcon(R.drawable.hibreedlogo)
+                            .setContentTitle("Order Notification!")
+                            .setContentText(text)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setColor(Color.WHITE)
+                            .setGroup(match);
+
+                    Notification notification = builder.build();
+                    manager.notify(notificationId, notification);
+                }
+                else {
+                    pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    createNotificationManagerOrder(manager);
+
+                    Notification.Builder builder = new Notification.Builder(MessagingService.this, "Order")
+                            .setSmallIcon(R.drawable.hibreedlogo)
+                            .setContentTitle("Order Notification!")
+                            .setContentText(text)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setColor(Color.WHITE)
+                            .setGroup(match);
+
+                    Notification notification = builder.build();
+                    manager.notify(notificationId, notification);
+                }
+
 
             }
 
@@ -256,6 +396,18 @@ public class MessagingService extends FirebaseMessagingService {
 
         }
     }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationManagerOrder(NotificationManager manager) {
+        NotificationChannel channel;
+        channel = new NotificationChannel("Order","Order", NotificationManager.IMPORTANCE_HIGH);
+        channel.setDescription("You have a matched!");
+        channel.enableLights(true);
+        channel.setLightColor(Color.WHITE);
+        manager.createNotificationChannel(channel);
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createNotificationManagerMatches(NotificationManager manager) {

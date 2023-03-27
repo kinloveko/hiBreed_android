@@ -293,8 +293,7 @@ public class acquired_service_details extends BaseActivity {
                                                                                                                                                     pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
                                                                                                                                                             "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
                                                                                                                                                     sendNotif(notification,"accepted","buyer");
-                                                                                                                                                    Toast.makeText(acquired_service_details.this, "Message ID created0", Toast.LENGTH_SHORT).show();
-                                                                                                                                                }
+                                                                                                                                                   }
                                                                                                                                             });
                                                                                                                                 }
                                                                                                                             });

@@ -9,11 +9,12 @@
     android:backgroundTint="@color/white"
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
+
     <LinearLayout
         android:id="@+id/shopLinear"
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:layout_height="35dp"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <ImageView

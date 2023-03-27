@@ -196,7 +196,7 @@ public class pet_for_sale_details extends BaseActivity {
                                     if(documentSnapshot.getString("contactNumber") != null &&
                                             !documentSnapshot.getString("contactNumber").equals("")){
                                         add_to_cart_class buy = new add_to_cart_class("1",pet.getId(),pet.getDisplayFor(),pet.getPet_price(),FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                                pet.getPet_breeder(),Timestamp.now());
+                                                pet.getPet_breeder(),"pet",Timestamp.now());
                                         Intent i = new Intent(pet_for_sale_details.this, checkout_activity.class);
                                         List<add_to_cart_class> add = new ArrayList<>();
                                         add.add(buy);
@@ -427,6 +427,7 @@ public class pet_for_sale_details extends BaseActivity {
         objectMap.put("prod_category","forSale");
         objectMap.put("prod_price",pet.getPet_price());
         objectMap.put("id","");
+        objectMap.put("type","pet");
         objectMap.put("addBy",FirebaseAuth.getInstance().getCurrentUser().getUid());
         objectMap.put("timestamp",Timestamp.now());
 

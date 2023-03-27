@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/relativeLayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="3dp"
+    android:layout_marginTop="10dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:background="@drawable/dropshadow_two"
+    android:backgroundTint="@color/white"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical"
+    android:layout_marginEnd="10dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
+        app:cardCornerRadius="20dp"
+        android:layout_gravity="start"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageRecycler"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/noimage"
+            />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/card"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppinsmedium"
+        android:maxLines="3"
+        android:text="Order accepted"
+        android:textColor="@color/material_blue_grey_90"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_below="@id/label"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/personImage"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppinsregular"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text=""
+        android:textSize="14sp"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/personImage"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/label"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_toEndOf="@id/card"
+        android:src="@drawable/icon_persons" />
+
+    <ImageView
+        android:id="@+id/breedImage"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/name"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/card"
+        android:src="@drawable/icon_dog_breed" />
+
+    <TextView
+        android:id="@+id/breed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@id/breedImage"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppinsregular"
+        android:maxLines="1"
+        android:text=""
+        android:textSize="15sp"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/gender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/breed"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@id/genderImage"
+        android:ellipsize="end"
+
+        android:fontFamily="@font/poppinsregular"
+        android:maxLines="2"
+        android:text=""
+        android:textSize="15sp"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/genderImage"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/breed"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/card"
+        android:src="@drawable/icon_dog_gender" />
+
+
+    <LinearLayout
+        android:id="@+id/buttonView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/card"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:padding="12dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/dropshadow_button_ten"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:shadowColor="@color/material_blue_grey_80"
+            android:shadowRadius="10"
+            android:text="SEND MESSAGE"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+</RelativeLayout>

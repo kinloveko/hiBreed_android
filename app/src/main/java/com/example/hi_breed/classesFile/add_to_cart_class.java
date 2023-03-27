@@ -13,13 +13,14 @@ public class add_to_cart_class implements Serializable, Parcelable {
     String prod_price;
     String addBy;
     String prod_seller;
+    String type;
     Timestamp timestamp;
 
     public  add_to_cart_class() {
 
     }
     public add_to_cart_class(String id, String prod_id, String prod_category, String prod_price,
-                             String addBy, String prod_seller,Timestamp timestamp) {
+                             String addBy, String prod_seller,String type,Timestamp timestamp) {
         this.id = id;
         this.prod_id = prod_id;
         this.prod_category = prod_category;
@@ -27,7 +28,7 @@ public class add_to_cart_class implements Serializable, Parcelable {
         this.addBy = addBy;
         this.prod_seller = prod_seller;
         this.timestamp = timestamp;
-
+        this.type = type;
     }
 
 
@@ -38,6 +39,7 @@ public class add_to_cart_class implements Serializable, Parcelable {
         prod_price = in.readString();
         addBy = in.readString();
         prod_seller = in.readString();
+        type = in.readString();
         timestamp = in.readParcelable(Timestamp.class.getClassLoader());
     }
 
@@ -52,6 +54,10 @@ public class add_to_cart_class implements Serializable, Parcelable {
             return new add_to_cart_class[size];
         }
     };
+
+    public String getType() {
+        return type;
+    }
 
     public String getId() {
         return id;
@@ -81,6 +87,7 @@ public class add_to_cart_class implements Serializable, Parcelable {
         return timestamp;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -94,6 +101,7 @@ public class add_to_cart_class implements Serializable, Parcelable {
         dest.writeString(prod_price);
         dest.writeString(addBy);
         dest.writeString(prod_seller);
+        dest.writeString(type);
         dest.writeParcelable(timestamp, flags);
     }
 }
