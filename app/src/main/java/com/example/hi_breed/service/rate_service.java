@@ -1,12 +1,17 @@
-package com.example.hi_breed;
+package com.example.hi_breed.service;
+
+import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
@@ -20,10 +25,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -52,6 +57,18 @@ public class rate_service extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate_service);
 
+
+        Window window = getWindow();
+        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setStatusBarColor(Color.parseColor("#ffffff"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
+        }
+        else{
+            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            window.setStatusBarColor(Color.parseColor("#e28743"));
+        }
+
         title = findViewById(R.id.title);
         message = findViewById(R.id.message);
 
@@ -78,7 +95,6 @@ public class rate_service extends AppCompatActivity {
                             List<String> list = (List<String>) documentSnapshot.get("photos");
                             if(list!=null)
                             Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage).into(imageService);
-                            type = documentSnapshot.getString("serviceType");
                         }
                 }
             });
@@ -89,7 +105,7 @@ public class rate_service extends AppCompatActivity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                            message.setText("How was the "+type+" from "+documentSnapshot.getString("address"));
+                            message.setText("How was the "+appoint.getType()+" from "+documentSnapshot.getString("address"));
                         }
                     });
         }
@@ -106,6 +122,7 @@ public class rate_service extends AppCompatActivity {
                     map.put("customer_id",appoint.getCustomer_id());
                     map.put("seller_id",appoint.getSeller_id());
                     map.put("rating",userRate);
+                    map.put("type",appoint.getType());
                     map.put("comment",editText.getText().toString());
                     map.put("timestamp", Timestamp.now());
                     map.put("isRated",true);
@@ -149,6 +166,7 @@ public class rate_service extends AppCompatActivity {
                                                                                                 //message
                                                                                                 TextView message = view.findViewById(R.id.screen_custom_alert_message);
                                                                                                 title.setText("We appreciate your review and value your opinion.");
+                                                                                                title.setTextSize(14);
                                                                                                 message.setVisibility(View.GONE);
                                                                                                 //button
 
@@ -160,7 +178,9 @@ public class rate_service extends AppCompatActivity {
                                                                                                 new Handler().postDelayed(new Runnable() {
                                                                                                     @Override
                                                                                                     public void run() {
-                                                                                                        startActivity(new Intent(rate_service.this, appointment_user_side.class));
+                                                                                                        Intent i = new Intent(rate_service.this, appointment_user_side.class);
+                                                                                                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                                                        startActivity(i);
                                                                                                         finish();
                                                                                                         alert2.dismiss();
                                                                                                     }
@@ -183,10 +203,11 @@ public class rate_service extends AppCompatActivity {
             public void onClick(View v) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("id","");
-                map.put("service_id",appoint.getService_id());
+                map.put("serviceRate",appoint.getService_id());
                 map.put("customer_id",appoint.getCustomer_id());
                 map.put("seller_id",appoint.getSeller_id());
                 map.put("rating",null);
+                map.put("type",appoint.getType());
                 map.put("comment",null);
                 map.put("timestamp", Timestamp.now());
                 map.put("isRated",false);

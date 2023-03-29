@@ -1,4 +1,4 @@
-package com.example.hi_breed.shooter;
+package com.example.hi_breed.service;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/transparent"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".loginAndRegistration.fragment_registration_requirements">
 
@@ -602,10 +602,11 @@
                         android:layout_marginBottom="10dp"
                         android:scrollbarStyle="outsideInset"
                         android:scrollbars="vertical" />
+
                 </LinearLayout>
 
                 <LinearLayout
-                    android:visibility="gone"
+
                     android:id="@+id/vet_validation_linear_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -737,7 +738,7 @@
                     android:text="For how long have you been working in this field?"
                     android:textColor="@color/material_blue_grey_80"
                     android:textSize="15sp"
-                    android:visibility="gone"
+
                     tools:ignore="Experience,HardcodedText" />
                 //Experience
 
@@ -747,7 +748,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="5dp"
-                    android:visibility="gone"
+
                     app:counterEnabled="true"
                     app:counterMaxLength="2"
                     app:endIconMode="clear_text"
@@ -768,6 +769,49 @@
                         android:hint="Years of experience . . ."
                         android:inputType="number"
                         android:maxLength="2"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textSize="16sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/memberID"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/poppinsmedium"
+                    android:text="Organization/Club ID"
+                    android:textColor="@color/material_blue_grey_80"
+                    android:textSize="15sp"
+                    tools:ignore="Experience,HardcodedText" />
+                //Member ID
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/reg_memberID"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="6"
+                    app:endIconMode="clear_text"
+                    app:helperText="*Required"
+                    app:helperTextTextColor="@color/brownish"
+                    app:hintEnabled="false"
+                    app:startIconDrawable="@drawable/ic_person"
+                    app:startIconTint="@color/material_blue_grey_80"
+                    tools:ignore="ExtraText,HardcodedText,RtlHardcoded,RtlSymmetry">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/reg_memberID_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/dropshadow_eight"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:hint="Member ID . . ."
+                        android:inputType="number"
+                        android:maxLength="20"
                         android:maxLines="1"
                         android:singleLine="true"
                         android:textSize="16sp" />

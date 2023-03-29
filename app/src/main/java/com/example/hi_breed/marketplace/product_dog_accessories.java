@@ -1,9 +1,10 @@
-package com.example.hi_breed.order_breeder_side;
+package com.example.hi_breed.marketplace;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,16 +13,18 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.adapter.order_status_for_seller_buyer.cancelled_orderAdapter;
-import com.example.hi_breed.classesFile.appointment_order_class;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.hi_breed.adapter.product_adapter.productForSaleAdapter;
+import com.example.hi_breed.classesFile.product_class;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
-public class order_breeder_cancelled extends Fragment {
+import java.util.List;
+
+public class product_dog_accessories extends Fragment {
+
 
 
     @Override
@@ -34,41 +37,45 @@ public class order_breeder_cancelled extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_order_breeder_cancelled, container, false);
+        return inflater.inflate(R.layout.fragment_product_dog_accessories, container, false);
     }
-    RecyclerView cancelledRecycler;
-    cancelled_orderAdapter adapter;
-
+    private RecyclerView products_recycler;
+    private productForSaleAdapter adapter;
+    private TextView noOneTextView_pet_sale_card;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        cancelledRecycler = view.findViewById(R.id.cancelledRecycler);
-        cancelledRecycler.setLayoutManager(new GridLayoutManager(getActivity(),1));
-        adapter = new cancelled_orderAdapter(getActivity(), FirebaseAuth.getInstance().getCurrentUser().getUid(),"cancelled");
-        getCancelled();
-    }
+        products_recycler = view.findViewById(R.id.products_recycler);
+        adapter = new productForSaleAdapter(getContext());
+        products_recycler.setLayoutManager(new GridLayoutManager(getContext(),2));
+        products_recycler.setAdapter(adapter);
+        getProducts();
 
-    private void getCancelled() {
-        FirebaseFirestore.getInstance().collection("Appointments")
-                .whereEqualTo("seller_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .whereEqualTo("order_status","cancelled").addSnapshotListener(new EventListener<QuerySnapshot>() {
+    }
+    private void getProducts() {
+        FirebaseFirestore.getInstance().collection("Pet")
+                .whereEqualTo("displayFor","forProducts")
+                .whereEqualTo("prod_category","Dog Accessories")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(error!=null){
+                        if(error!=null)
+                        {
                             return;
                         }
-
                         if(value!=null){
                             adapter.clearList();
-
-                            for(DocumentSnapshot s: value){
-                                appointment_order_class appointment = s.toObject(appointment_order_class.class);
-                                adapter.addServiceDisplay(appointment);
+                            List<DocumentSnapshot> list = value.getDocuments();
+                            for(DocumentSnapshot s: list){
+                                product_class p = s.toObject(product_class.class);
+                                adapter.addPetDisplay(p);
                             }
-                            cancelledRecycler.setAdapter(adapter);
                         }
                     }
                 });
+
     }
+
+
 }

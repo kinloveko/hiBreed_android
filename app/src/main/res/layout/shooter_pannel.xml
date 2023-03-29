@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fbWhite"
-    tools:context=".shooter.shooter_vet_panel">
+    tools:context=".service.service_panel">
 
     <RelativeLayout
         android:id="@+id/toolbarID"
@@ -241,11 +241,11 @@
                 android:id="@+id/show_service_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/textView21"
+                android:layout_below="@id/serviceLayout"
                 android:layout_marginTop="10dp" />
 
             <RelativeLayout
-                android:visibility="gone"
+
                 android:id="@+id/serviceLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -267,29 +267,29 @@
                     android:id="@+id/text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
-                    android:layout_marginBottom="5dp"
-
+                    android:layout_alignParentEnd="true"
                     android:layout_toEndOf="@id/image"
-                    android:fontFamily="@font/poppinsmedium"
+                    android:fontFamily="@font/poppinsregular"
                     android:text="Fill up some details to show case your service online."
                     android:textColor="@color/material_blue_grey_90"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
+                    android:textSize="13sp"
+
                     tools:ignore="HardcodedText" />
 
                 <Button
                     android:id="@+id/shooter_verifyButton"
-                    android:layout_width="179dp"
+                    android:layout_width="match_parent"
                     android:layout_height="37dp"
                     android:layout_below="@id/text"
-                    android:layout_marginStart="30dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="30dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:layout_toEndOf="@id/image"
-                    android:background="@drawable/dropshadow_button"
-                    android:text="Click here"
+                    android:background="@drawable/dropshadow_button_five"
+                    android:text="Add service"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="12sp"

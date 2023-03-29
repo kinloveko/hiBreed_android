@@ -28,7 +28,7 @@ import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.order_breeder_side.order_breeder_side;
 import com.example.hi_breed.product.product_add_activity;
 import com.example.hi_breed.product.product_my_product;
-import com.example.hi_breed.shooter.shooter_vet_panel;
+import com.example.hi_breed.service.service_panel;
 import com.example.hi_breed.userFile.dashboard.user_dashboard;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -148,66 +148,35 @@ public class user_breeder_shop_panel extends BaseActivity {
                                     if (arrayList != null) {
                                         role.addAll(arrayList);
 
-                                        if(role.contains("Pet Owner") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
+                                        if(role.contains("Pet Breeder") || role.contains("Pet Shooter") || role.contains("Veterinarian")){
                                             viewShop.setVisibility(View.VISIBLE);
                                             textView15.setText("MY SHOP");
-                                            owner.setVisibility(View.VISIBLE);
-                                            activityStatus.setVisibility(View.VISIBLE);
-                                        }else
-                                        if(role.contains("Pet Owner") && role.contains("Pet Breeder")){
-                                            viewShop.setVisibility(View.VISIBLE);
-                                            textView15.setText("MY SHOP");
-                                            owner.setVisibility(View.VISIBLE);
-                                            activityStatus.setVisibility(View.VISIBLE);
-                                        }else
-                                        if(role.contains("Pet Shooter") && role.contains("Pet Owner")){
-                                            viewShop.setVisibility(View.GONE);
-                                            textView15.setText("MY SHOP");
-                                            owner.setVisibility(View.VISIBLE);
-                                            activityStatus.setVisibility(View.GONE);
-                                        }else
-                                        if(role.contains("Pet Shooter")){
-                                            viewShop.setVisibility(View.VISIBLE);
-                                            textView15.setText("MY SHOP");
-                                            owner.setVisibility(View.VISIBLE);
-                                            activityStatus.setVisibility(View.GONE);
-                                        }else
-                                        if(role.contains("Pet Owner")){
-                                            viewShop.setVisibility(View.GONE);
-                                            textView15.setText("MY PET");
-                                            owner.setVisibility(View.VISIBLE);
-                                            activityStatus.setVisibility(View.GONE);
-                                        }else
-                                        if(role.contains("Veterinarian")){
-                                            viewShop.setVisibility(View.VISIBLE);
-                                            textView15.setText("MY CLINIC");
-                                            owner.setVisibility(View.VISIBLE);
-                                            activityStatus.setVisibility(View.VISIBLE);
-                                            myProducts.setVisibility(View.VISIBLE);
-                                            textViewLabel.setText("Products and Services");
-                                            textViewSellPetName.setText("Sell products");
-                                        }
+                                                owner.setVisibility(View.VISIBLE);
 
-                                        if(role.contains("Pet Breeder")){
-                                            FirebaseFirestore.getInstance().collection("Appointments")
-                                                    .whereEqualTo("seller_id",FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                                        @Override
-                                                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                            if(error!=null){
-                                                                return;
+                                            if(role.contains("Pet Breeder") || role.contains("Veterinarian")){
+
+                                                activityStatus.setVisibility(View.VISIBLE);
+                                                FirebaseFirestore.getInstance().collection("Appointments")
+                                                        .whereEqualTo("seller_id",FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .whereEqualTo("order_status","pending")
+                                                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                                                if(error!=null){
+                                                                    return;
+                                                                }
+                                                                if(value.size()!=0){
+                                                                    IDNumberPending.setText(String.valueOf(value.size()));
+                                                                }
                                                             }
-                                                            if(value.size()!=0){
-                                                                IDNumberPending.setText(String.valueOf(value.size()));
-                                                            }
-                                                        }
-                                         });
-                                            pending.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    startActivity(new Intent(user_breeder_shop_panel.this, order_breeder_side.class));
-                                                }
-                                            });
+                                                        });
+                                                pending.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        startActivity(new Intent(user_breeder_shop_panel.this, order_breeder_side.class));
+                                                    }
+                                                });
+                                            }
                                         }
 
                                     }
@@ -225,49 +194,29 @@ public class user_breeder_shop_panel extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                if(role.contains("Veterinarian") && role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
-                    return;
+                if(role.contains("Veterinarian")){
+                    FirebaseFirestore.getInstance().collection("User")
+                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .collection("security")
+                                                    .document("security_doc")
+                                                            .get()
+                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                            if(documentSnapshot.exists()){
+                                                                                if(documentSnapshot.getString("contactNumber").equals("")){
+                                                                                    Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                                                                }
+                                                                                else{
+                                                                                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    });
+                     
                 }
-                if(role.contains("Veterinarian") && role.contains("Pet Breeder")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
-                    return;
-                }
-                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
-                    return;
-                }
-                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
-                    return;
-                }
-                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Shooter") && role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
-                    return;
-                }
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
+                else{
                     Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder")){
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(role.contains("Pet Shooter") && role.contains("Pet Owner")){
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(role.contains("Pet Shooter")){
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(role.contains("Pet Owner")){
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
-                    return;
                 }
             }
         });
@@ -276,33 +225,28 @@ public class user_breeder_shop_panel extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_my_pets_panel.class));
-                    return;
-
+                if(role.contains("Pet Owner") || role.contains("Veterinarian")){
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .collection("security")
+                            .document("security_doc")
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.exists()){
+                                        if(documentSnapshot.getString("contactNumber").equals("")){
+                                            Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else{
+                                            startActivity(new Intent(user_breeder_shop_panel.this, pet_my_pets_panel.class));              
+                                        }
+                                    }
+                                }
+                            });
                 }
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_my_pets_panel.class));
-                    return;
-                }
-
-                if(role.contains("Pet Shooter") && role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_my_pets_panel.class));
-                    return;
-                }
-
-                if(role.contains("Pet Shooter")){
-                    Toast.makeText(user_breeder_shop_panel.this, "You must be an Owner or Breeder or both", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_my_pets_panel.class));
-                    return;
-                }
-                if(role.contains("Veterinarian")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_my_pets_panel.class));
-                    return;
+                else{
+                    Toast.makeText(user_breeder_shop_panel.this, "You must be a Pet owner", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -318,79 +262,61 @@ public class user_breeder_shop_panel extends BaseActivity {
         sellPetCardView8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
-                    return;
-
+                if(role.contains("Pet Breeder")){
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .collection("security")
+                            .document("security_doc")
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.exists()){
+                                        if(documentSnapshot.getString("contactNumber").equals("")){
+                                            Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else{
+                                            startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
+                                        }
+                                    }
+                                }
+                            });
                 }
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
-                    return;
-                }
-
-                if(role.contains("Pet Shooter") && role.contains("Pet Owner")){
+                else{
                     Toast.makeText(user_breeder_shop_panel.this, "Only a breeder can sell a pet", Toast.LENGTH_SHORT).show();
-                    return;
                 }
 
-                if(role.contains("Pet Shooter")){
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a breeder can sell a pet", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(role.contains("Pet Owner")){
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a breeder can sell a pet", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(role.contains("Veterinarian") && role.contains("Pet Breeder")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
-                    return;
-                }
-                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
-                    return;
-                }
-                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
-                    return;
-                }
-                if(role.contains("Veterinarian") && role.contains("Pet Breeder") && role.contains("Pet Shooter") && role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
-                    return;
-                }
             }
         });
+
         serviceCardView8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_vet_panel.class));
-                    return;
+                if(role.contains("Veterinarian") || role.contains("Pet Shooter")){
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .collection("security")
+                            .document("security_doc")
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.exists()){
+                                        if(documentSnapshot.getString("contactNumber").equals("")){
+                                            Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else{
+                                            startActivity(new Intent(user_breeder_shop_panel.this, service_panel.class));
+                                        }
+                                    }
+                                }
+                            });
 
                 }
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder")){
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a dog shooter can access", Toast.LENGTH_SHORT).show();
-
-                    return;
+                else{
+                    Toast.makeText(user_breeder_shop_panel.this, "Only a dog shooter or veterinarian can access", Toast.LENGTH_SHORT).show();
                 }
 
-                if(role.contains("Pet Shooter") && role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_vet_panel.class));
-                    return;
-                }
-
-                if(role.contains("Pet Shooter")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_vet_panel.class));
-                    return;
-                }
-                if(role.contains("Veterinarian")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, shooter_vet_panel.class));
-                    return;
-                }
-                if(role.contains("Pet Owner")){
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a dog shooter can access", Toast.LENGTH_SHORT).show();
-                    return;
-                }
             }
         });
         viewShop.setOnClickListener(new View.OnClickListener() {
@@ -403,38 +329,41 @@ public class user_breeder_shop_panel extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder") && role.contains("Pet Shooter")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_dating.class));
-                    return;
+                if(role.contains("Pet Owner") || role.contains("Veterinarian")){
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .collection("security")
+                            .document("security_doc")
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.exists()){
+                                        if(documentSnapshot.getString("contactNumber").equals("")){
+                                            Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else{
+                                            startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_dating.class));
+                                        }
+                                    }
+                                }
+                            });
                 }
-                if(role.contains("Pet Owner") && role.contains("Pet Breeder")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_dating.class));
-                    return;
+                else{
+                    Toast.makeText(user_breeder_shop_panel.this, "You must be a Pet owner", Toast.LENGTH_SHORT).show();
                 }
-
-                if(role.contains("Pet Shooter") && role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_dating.class));
-                    return;
-                }
-                if(role.contains("Pet Shooter")){
-                    Toast.makeText(user_breeder_shop_panel.this, "You must be an Owner to add a pet", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(role.contains("Pet Owner")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_dating.class));
-                    return;
-                }
-                if(role.contains("Veterinarian")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_dating.class));
-                    return;
-                }
-
             }
         });
         myProducts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(user_breeder_shop_panel.this, product_my_product.class));
+                if(role.contains("Veterinarian")){
+                    startActivity(new Intent(user_breeder_shop_panel.this, product_my_product.class));
+                }
+                else{
+                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 

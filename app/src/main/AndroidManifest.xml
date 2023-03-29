@@ -37,10 +37,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".shop.rate_shop"
+            android:exported="false" />
+        <activity
+            android:name=".message.acquired_order_accepted_message"
+            android:exported="false" />
+        <activity
             android:name=".order_breeder_side.order_breeder_side"
             android:exported="false" />
         <activity
-            android:name=".order_details_activity"
+            android:name=".details.order_details_activity"
             android:exported="false"
             android:label="@string/title_activity_order_details"
             android:theme="@style/Theme.HiBreed.NoActionBar" />
@@ -48,13 +54,13 @@
             android:name=".order_user_side.order_user_side"
             android:exported="false" />
         <activity
-            android:name=".rate_service"
+            android:name=".service.rate_service"
             android:exported="false" />
         <activity
             android:name=".message.acquired_service_accepted_message"
             android:exported="false" />
         <activity
-            android:name=".acquired_service_details"
+            android:name=".details.acquired_service_details"
             android:exported="false"
             android:label="@string/title_activity_acquired_service_details"
             android:theme="@style/Theme.HiBreed.NoActionBar" />
@@ -65,15 +71,15 @@
             android:name=".service_status_for_seller.service_status"
             android:exported="false" />
         <activity
-            android:name=".shooter.filter_search"
+            android:name=".service.filter_search"
             android:exported="false" />
         <activity
-            android:name=".current_address"
+            android:name=".userFile.profile.current_address"
             android:exported="false"
             android:label="@string/title_activity_current_address"
             android:theme="@style/Theme.HiBreed.NoActionBar" />
         <activity
-            android:name=".shooter.service_set_appointment"
+            android:name=".service.service_set_appointment"
             android:exported="false" />
         <activity
             android:name=".checkout.checkout_thankyou"
@@ -121,13 +127,13 @@
             android:name=".ask_a_professional.ask_a_professional"
             android:exported="false" />
         <activity
-            android:name=".shooter.shooter_vet_edit_service"
+            android:name=".service.service_edit_service"
             android:exported="false" />
         <activity
-            android:name=".shooter.shooter_vet_display_details"
+            android:name=".service.service_display_details"
             android:exported="false" />
         <activity
-            android:name=".shooter.shooter_vet_add_service"
+            android:name=".service.service_add_service"
             android:exported="false" />
         <activity
             android:name=".shop.view_breeder_shop"
@@ -151,7 +157,7 @@
             android:name=".Pet.pet_for_sale_details"
             android:exported="false" />
         <activity
-            android:name=".shooter.shooter_vet_panel"
+            android:name=".service.service_panel"
             android:exported="false" />
         <activity
             android:name=".Pet.pet_add_for_dating"

@@ -1,4 +1,4 @@
-package com.example.hi_breed.shooter;
+package com.example.hi_breed.service;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -46,7 +46,6 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.shooterAdapter.service_edit_adapter;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.service_class;
-import com.example.hi_breed.product.product_add_activity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -72,7 +71,7 @@ import java.util.Map;
 
 import pl.droidsonroids.gif.GifImageView;
 
-public class shooter_vet_edit_service extends BaseActivity implements service_edit_adapter.CountOfImagesCurrent,service_edit_adapter.itemCurrentClickListenerPet
+public class service_edit_service extends BaseActivity implements service_edit_adapter.CountOfImagesCurrent,service_edit_adapter.itemCurrentClickListenerPet
                {
 
     RecyclerView service_images_view;
@@ -130,9 +129,9 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
             @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
             @Override
             public void onClick(View v) {
-                androidx.appcompat.app.AlertDialog.Builder builder2 = new androidx.appcompat.app.AlertDialog.Builder(shooter_vet_edit_service.this);
+                androidx.appcompat.app.AlertDialog.Builder builder2 = new androidx.appcompat.app.AlertDialog.Builder(service_edit_service.this);
                 builder2.setCancelable(false);
-                View view = View.inflate(shooter_vet_edit_service.this, R.layout.screen_custom_alert, null);
+                View view = View.inflate(service_edit_service.this, R.layout.screen_custom_alert, null);
                 //title
                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                 //loading text
@@ -170,9 +169,9 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                     @Override
                     public void onClick(View v) {
                         alert2.dismiss();
-                        AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_edit_service.this);
+                        AlertDialog.Builder builder2 = new AlertDialog.Builder(service_edit_service.this);
                         builder2.setCancelable(false);
-                        View view = View.inflate(shooter_vet_edit_service.this, R.layout.screen_custom_alert, null);
+                        View view = View.inflate(service_edit_service.this, R.layout.screen_custom_alert, null);
                         //title
                         TextView title = view.findViewById(R.id.screen_custom_alert_title);
                         //loading text
@@ -228,9 +227,9 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                                                                                                     }
                                                                                                     storageReference.delete();
                                                                                                     alert2.show();
-                                                                                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_edit_service.this);
+                                                                                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(service_edit_service.this);
                                                                                                     builder2.setCancelable(false);
-                                                                                                    View view = View.inflate(shooter_vet_edit_service.this, R.layout.screen_custom_alert, null);
+                                                                                                    View view = View.inflate(service_edit_service.this, R.layout.screen_custom_alert, null);
                                                                                                     //title
                                                                                                     TextView title = view.findViewById(R.id.screen_custom_alert_title);
                                                                                                     //loading text
@@ -262,7 +261,7 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                                                                                                     okay.setOnClickListener(new View.OnClickListener() {
                                                                                                         @Override
                                                                                                         public void onClick(View v) {
-                                                                                                            startActivity(new Intent(shooter_vet_edit_service.this, shooter_vet_panel.class));
+                                                                                                            startActivity(new Intent(service_edit_service.this, service_panel.class));
                                                                                                             finish();
                                                                                                         }
                                                                                                     });
@@ -319,7 +318,7 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
         backLayoutService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shooter_vet_edit_service.this.onBackPressed();
+                service_edit_service.this.onBackPressed();
                 finish();
             }
         });
@@ -358,7 +357,7 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                     if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                             != PackageManager.PERMISSION_GRANTED) {
                         // Permission is not granted, request it
-                        ActivityCompat.requestPermissions(shooter_vet_edit_service.this,
+                        ActivityCompat.requestPermissions(service_edit_service.this,
                                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                                 30);
                     }
@@ -496,7 +495,7 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                                     Map<String,Object> data = new HashMap<>();
                                     data.put("schedule",widget.getSelectedDaysText());
                                     if(widget.noDaySelected()){
-                                        Toast.makeText(shooter_vet_edit_service.this, "Schedule must not be empty.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(service_edit_service.this, "Schedule must not be empty.", Toast.LENGTH_SHORT).show();
                                     }else{
                                         FirebaseFirestore.getInstance().collection("Services")
                                                 .document(id)
@@ -513,7 +512,7 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                                                                         @Override
                                                                         public void onComplete(@NonNull Task<Void> task) {
                                                                             if(task.isSuccessful()){
-                                                                                Toast.makeText(shooter_vet_edit_service.this, "Successfully updated", Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(service_edit_service.this, "Successfully updated", Toast.LENGTH_SHORT).show();
                                                                                 saveChanges.setVisibility(View.GONE);
                                                                                 cancelChanges.setVisibility(View.GONE);
 
@@ -572,9 +571,9 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                 Toast.makeText(this, "Please upload one at a time", Toast.LENGTH_SHORT).show();
             }
             else{
-                AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_edit_service.this);
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(service_edit_service.this);
                 builder2.setCancelable(false);
-                View view = View.inflate(shooter_vet_edit_service.this,R.layout.screen_custom_alert,null);
+                View view = View.inflate(service_edit_service.this,R.layout.screen_custom_alert,null);
                 //title
                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                 //loading text
@@ -725,14 +724,14 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                     servicePriceTextView.setText("₱ "+text.getText().toString()+".0");
                     price =text.getText().toString();
                     UpdateInfo("service_fee",price);
-                    Toast.makeText(shooter_vet_edit_service.this, "₱ "+text.getText().toString()+".0", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(service_edit_service.this, "₱ "+text.getText().toString()+".0", Toast.LENGTH_SHORT).show();
                     counter = 1;
                 }
                 if(counter !=0){
                     alert.dismiss();
                 }
                 else{
-                    Toast.makeText(shooter_vet_edit_service.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(service_edit_service.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -933,7 +932,7 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if(task.isSuccessful()){
-                                                            Toast.makeText(shooter_vet_edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(service_edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
                                                             dialog.dismiss();
                                                         }
                                                     }
@@ -992,13 +991,13 @@ public class shooter_vet_edit_service extends BaseActivity implements service_ed
                                                                                     @Override
                                                                                     public void onComplete(@NonNull Task<Void> task) {
                                                                                             if(task.isSuccessful()){
-                                                                                                Toast.makeText(shooter_vet_edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
+                                                                                                Toast.makeText(service_edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
                                                                                             }
                                                                                     }
                                                                                 });
                                                                     }
                                                                     else{
-                                                                        Toast.makeText(shooter_vet_edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
+                                                                        Toast.makeText(service_edit_service.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
                                                                     }
                                                                   }
                                                             });

@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.hi_breed.Pet.pet_for_sale_details;
 import com.example.hi_breed.R;
 import com.example.hi_breed.product.product_details;
-import com.example.hi_breed.shooter.shooter_vet_display_details;
+import com.example.hi_breed.service.service_display_details;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -175,7 +175,7 @@ public class likes_adapter extends RecyclerView.Adapter<likes_adapter.ViewHolder
                                     @Override
                                     public void onSuccess(DocumentSnapshot s) {
                                         service_class a = s.toObject(service_class.class);
-                                        Intent i = new Intent(context, shooter_vet_display_details.class);
+                                        Intent i = new Intent(context, service_display_details.class);
                                         i.putExtra("mode",(Serializable) a);
                                         context.startActivity(i);
                                     }

@@ -1,4 +1,4 @@
-package com.example.hi_breed.shooter;
+package com.example.hi_breed.service;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -20,12 +21,16 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,6 +59,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -74,7 +80,7 @@ import java.util.UUID;
 
 import pl.droidsonroids.gif.GifImageView;
 
-public class shooter_vet_add_service extends BaseActivity implements petImagesRecyclerAdapter.CountOfImagesWhenRemovedPet,
+public class service_add_service extends BaseActivity implements petImagesRecyclerAdapter.CountOfImagesWhenRemovedPet,
         petImagesRecyclerAdapter.itemClickListenerPet{
 
     private RecyclerView service_images_view;
@@ -96,10 +102,15 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
     private String price;
     private String name;
     private String picture;
-    private TextView petNamecountID;
+    private TextView petNamecountID, typeTextView;
 
     private TextInputEditText petNameEdit;
-    private RelativeLayout serviceNameLayout;
+
+    private RelativeLayout photoLayout, typeLayout,
+            serviceNameLayout,
+            descLayout,
+            scheduleLayout;
+
     private ImageView petNameclearButton;
     private List<String> roles = new ArrayList<>();
     @Override
@@ -120,6 +131,18 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
 
+        Intent i = getIntent();
+        List<String> list = i.getStringArrayListExtra("list");
+
+
+
+
+
+        photoLayout = findViewById(R.id.photoLayout);
+        typeLayout = findViewById(R.id.typeLayout);
+        descLayout = findViewById(R.id.descLayout);
+        scheduleLayout = findViewById(R.id.scheduleLayout);
+        typeTextView = findViewById(R.id.typeTextView);
         //relative layout
         serviceNameLayout = findViewById(R.id.serviceNameLayout);
         priceLayout = findViewById(R.id.priceLayout);
@@ -154,7 +177,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
         backLayoutService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shooter_vet_add_service.this.onBackPressed();
+                service_add_service.this.onBackPressed();
                 finish();
             }
         });
@@ -162,6 +185,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
 
         FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                              if(task.isSuccessful()){
@@ -170,12 +194,75 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                                  name = s.getString("firstName") +" " +s.getString("middleName")+" "+s.getString("lastName");
                                  picture = s.getString("image");
                                    roles.addAll((List<String>)s.get("role"));
-                                 if(roles.contains("Veterinarian")){
-                                     serviceNameLayout.setVisibility(View.VISIBLE);
-                                 }
-                                 else{
-                                     serviceNameLayout.setVisibility(View.GONE);
-                                 }
+
+                                  if(list.contains("Veterinarian Service")){
+
+                                      photoLayout.setVisibility(View.VISIBLE);
+                                      descLayout.setVisibility(View.VISIBLE);
+                                      availabilityLayout.setVisibility(View.VISIBLE);
+                                      scheduleLayout.setVisibility(View.VISIBLE);
+                                      serviceNameLayout.setVisibility(View.GONE);
+                                      priceLayout.setVisibility(View.VISIBLE);
+                                      typeLayout.setVisibility(View.VISIBLE);
+                                      typeTextView.setText("Shooter Service");
+                                      typeLayout.setEnabled(false);
+                                  }
+                                  else if(list.contains("Shooter Service")){
+                                      photoLayout.setVisibility(View.VISIBLE);
+                                      descLayout.setVisibility(View.VISIBLE);
+                                      availabilityLayout.setVisibility(View.VISIBLE);
+                                      scheduleLayout.setVisibility(View.VISIBLE);
+                                      serviceNameLayout.setVisibility(View.GONE);
+                                      priceLayout.setVisibility(View.VISIBLE);
+                                      typeLayout.setVisibility(View.VISIBLE);
+                                      typeLayout.setEnabled(false);
+                                      typeTextView.setText("Veterinarian Service");
+                                  }
+                                  else{
+                                      if(roles.contains("Veterinarian") && roles.contains("Pet Shooter")){
+                                          typeLayout.setVisibility(View.VISIBLE);
+                                          typeLayout.setOnClickListener(new View.OnClickListener() {
+                                              @Override
+                                              public void onClick(View v) {
+                                                  showCategoryDialog();
+                                              }
+                                          });
+                                      }
+                                  }
+                                   if(roles.contains("Veterinarian") && roles.contains("Pet Shooter")){
+                                       typeLayout.setVisibility(View.VISIBLE);
+                                        typeLayout.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                showCategoryDialog();
+                                            }
+                                        });
+                                   }
+                                   else if(roles.contains("Veterinarian")){
+                                       photoLayout.setVisibility(View.VISIBLE);
+                                       descLayout.setVisibility(View.VISIBLE);
+                                       availabilityLayout.setVisibility(View.VISIBLE);
+                                       scheduleLayout.setVisibility(View.VISIBLE);
+                                       serviceNameLayout.setVisibility(View.VISIBLE);
+                                       priceLayout.setVisibility(View.VISIBLE);
+                                       typeTextView.setText("Veterinarian Service");
+                                       typeLayout.setEnabled(false);
+                                    }
+                                    else if(roles.contains("Pet Shooter")){
+                                       photoLayout.setVisibility(View.VISIBLE);
+                                       serviceNameLayout.setVisibility(View.GONE);
+                                       descLayout.setVisibility(View.VISIBLE);
+                                       availabilityLayout.setVisibility(View.VISIBLE);
+                                       scheduleLayout.setVisibility(View.VISIBLE);
+                                       priceLayout.setVisibility(View.VISIBLE);
+                                       typeTextView.setText("Shooter Service");
+                                       typeLayout.setEnabled(false);
+                                    }
+
+
+
+
+
                              }
                     }
                 });
@@ -227,7 +314,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                     if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                             != PackageManager.PERMISSION_GRANTED) {
                         // Permission is not granted, request it
-                        ActivityCompat.requestPermissions(shooter_vet_add_service.this,
+                        ActivityCompat.requestPermissions(service_add_service.this,
                                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                                 30);
                     }
@@ -237,11 +324,111 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
         Service_add_create_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 checkInput();
             }
         });
 
     }
+
+
+    ListView listView;
+    EditText editText;
+    RelativeLayout addCustom;
+    ArrayAdapter<String> arrayAdapter;
+    private void showCategoryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View pop = View.inflate(service_add_service.this,R.layout.pet_add_search_dialog,null);
+        AppCompatImageView appCompatImageView = pop.findViewById(R.id.appCompatImageView);
+        appCompatImageView.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.dialog_product_borders));
+        TextView textView = pop.findViewById(R.id.textView);
+        textView.setVisibility(View.VISIBLE);
+        addCustom = pop.findViewById(R.id.search_customBreedID);
+        addCustom.setVisibility(View.GONE);
+        editText = pop.findViewById(R.id.search_searchEditID);
+        editText.setVisibility(View.GONE);
+        TextInputLayout input = pop.findViewById(R.id.input);
+        input.setVisibility(View.GONE);
+        listView = pop.findViewById(R.id.search_breedListView);
+        MaterialButton cancel;
+        cancel = pop.findViewById(R.id.search_dialog_btn_cancel);
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Arrays.asList("Veterinarian Service","Shooter Service"));
+        listView.setAdapter(arrayAdapter);
+        listView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        builder.setView(pop);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        if(editText.getText()!=null || editText.getText().equals("")) {
+            editText.addTextChangedListener(filterTextWatcher);
+        }
+
+        if(listView.getCount() == 0 || listView == null){
+            listView.setVisibility(View.GONE);
+            listView.setCacheColorHint(Color.TRANSPARENT);
+            listView.setBackground(new ColorDrawable(Color.TRANSPARENT));
+            listView.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        }
+        else{
+            listView.setBackground(getDrawable(R.drawable.shape));
+            listView.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+            listView.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = 400;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+        }
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String holder = listView.getItemAtPosition(position).toString();
+                if(holder.equals("Veterinarian Service")){
+
+                    photoLayout.setVisibility(View.VISIBLE);
+                    descLayout.setVisibility(View.VISIBLE);
+                    availabilityLayout.setVisibility(View.VISIBLE);
+                    scheduleLayout.setVisibility(View.VISIBLE);
+                    serviceNameLayout.setVisibility(View.VISIBLE);
+                    priceLayout.setVisibility(View.VISIBLE);
+
+                }else{
+                    photoLayout.setVisibility(View.VISIBLE);
+                    descLayout.setVisibility(View.VISIBLE);
+                    availabilityLayout.setVisibility(View.VISIBLE);
+                    scheduleLayout.setVisibility(View.VISIBLE);
+                    priceLayout.setVisibility(View.VISIBLE);
+                }
+                typeTextView.setText(holder);
+
+                Toast.makeText(service_add_service.this, holder, Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private final TextWatcher filterTextWatcher = new TextWatcher() {
+
+        public void afterTextChanged(Editable s) {
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                                      int after) {
+        }
+        public void onTextChanged(CharSequence s, int start, int before,
+                                  int count) {
+            arrayAdapter.getFilter().filter(s);
+        }
+    };
+
+
     private boolean checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             return Environment.isExternalStorageManager();
@@ -320,6 +507,15 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
             return;
         }
 
+        if(roles.contains("Veterinarian") && roles.contains("Pet Shooter")){
+
+            if(typeTextView.getText().toString().equals("Type")){
+                Toast.makeText(this, "Please select type of your service", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+        }
+
         if(roles.contains("Veterinarian")){
             if(name.isEmpty()){
                 Toast.makeText(this, "Please input a specific name of your service", Toast.LENGTH_SHORT).show();
@@ -383,7 +579,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String id = UUID.randomUUID().toString();
 
-        if(roles.contains("Veterinarian")){
+        if(typeTextView.getText().toString().contains("Veterinarian")){
             service_class service = new service_class(id,name,description,schedule,avails,address,price,null,user.getUid(),"Veterinarian Service","Service", Timestamp.now(),true);
             FirebaseFirestore.getInstance().collection("User").document(user.getUid())
                     .collection("Services")
@@ -528,9 +724,9 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                                 alertDialog.dismiss();
-                                                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_add_service.this);
+                                                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(service_add_service.this);
                                                                                 builder2.setCancelable(false);
-                                                                                View view = View.inflate(shooter_vet_add_service.this,R.layout.screen_custom_alert,null);
+                                                                                View view = View.inflate(service_add_service.this,R.layout.screen_custom_alert,null);
                                                                                 //title
                                                                                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                                                                                 //loading text
@@ -577,9 +773,9 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                                 alertDialog.dismiss();
-                                                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(shooter_vet_add_service.this);
+                                                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(service_add_service.this);
                                                                                 builder2.setCancelable(false);
-                                                                                View view = View.inflate(shooter_vet_add_service.this,R.layout.screen_custom_alert,null);
+                                                                                View view = View.inflate(service_add_service.this,R.layout.screen_custom_alert,null);
                                                                                 //title
                                                                                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                                                                                 //loading text
@@ -633,7 +829,7 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
             public void run() {
                 Intent intent = new Intent();
                 intent.setClass(getApplication(), user_breeder_shop_panel.class);
-                shooter_vet_add_service.this.overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out);
+                service_add_service.this.overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out);
                 startActivity(intent);
                 finish();
             }
@@ -868,14 +1064,14 @@ public class shooter_vet_add_service extends BaseActivity implements petImagesRe
                 } else {
                     servicePriceTextView.setText("₱ "+text.getText().toString()+".0");
                     price =text.getText().toString();
-                    Toast.makeText(shooter_vet_add_service.this, "₱ "+text.getText().toString()+".0", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(service_add_service.this, "₱ "+text.getText().toString()+".0", Toast.LENGTH_SHORT).show();
                     counter = 1;
                 }
                 if(counter !=0){
                     alert.dismiss();
                 }
                 else{
-                    Toast.makeText(shooter_vet_add_service.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(service_add_service.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
                 }
             }
         });

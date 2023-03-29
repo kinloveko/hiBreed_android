@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightWhite"
-    tools:context=".order_details_activity">
+    tools:context=".details.order_details_activity">
     <RelativeLayout
         android:id="@+id/toolbarID"
         android:layout_width="match_parent"

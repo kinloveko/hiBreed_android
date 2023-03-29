@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fbWhite"
-    tools:context=".current_address">
+    tools:context=".userFile.profile.current_address">
     <RelativeLayout
         android:id="@+id/toolbarID"
         android:layout_width="match_parent"

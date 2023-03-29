@@ -20,7 +20,7 @@ import com.example.hi_breed.classesFile.item;
 import com.example.hi_breed.classesFile.product_class;
 import com.example.hi_breed.classesFile.service_class;
 import com.example.hi_breed.product.product_details;
-import com.example.hi_breed.shooter.shooter_vet_display_details;
+import com.example.hi_breed.service.service_display_details;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -143,7 +143,7 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                                         if(task.isSuccessful()){
                                             DocumentSnapshot s = task.getResult();
                                             service_class ser = s.toObject(service_class.class);
-                                            Intent intent = new Intent(context, shooter_vet_display_details.class);
+                                            Intent intent = new Intent(context, service_display_details.class);
                                             intent.putExtra("mode", (Serializable) ser);
                                             context.startActivity(intent);
 

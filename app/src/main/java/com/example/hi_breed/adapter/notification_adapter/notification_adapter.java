@@ -15,7 +15,7 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.acquired_service_details;
+import com.example.hi_breed.details.acquired_service_details;
 import com.example.hi_breed.classesFile.TimeStampClass;
 import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.appointment_class;

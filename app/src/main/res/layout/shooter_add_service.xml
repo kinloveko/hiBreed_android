@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".shooter.shooter_vet_add_service">
+    tools:context=".service.service_add_service">
 
 
     <RelativeLayout
@@ -14,7 +14,6 @@
         android:layout_height="55dp"
         android:background="@color/white"
         android:elevation="3dp"
-        android:layout_marginBottom="10dp"
         android:layout_alignParentTop="true"
 
         tools:context=".loginAndRegistration.container_fragment_registration_users"
@@ -57,32 +56,44 @@
                 tools:layout_editor_absoluteX="339dp"
                 tools:layout_editor_absoluteY="122dp" />
 
-
         </LinearLayout>
-
+        <Button
+            android:layout_marginEnd="5dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/Service_add_create_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/transparent"
+            android:text="Create"
+            android:textColor="@color/brown"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
     </RelativeLayout>
 
     <ScrollView
+        android:layout_below="@id/toolbarID"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/fbWhite"
         android:orientation="vertical"
-
         android:scrollbars="none"
         tools:context=".shop.shop_view_profile"
         tools:ignore="ExtraText,UselessParent">
 
         <RelativeLayout
+            android:layout_marginTop="10dp"
             android:id="@+id/mainLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/photoLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="65dp"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/dropshadow_two"
                 android:elevation="3dp">
@@ -230,7 +241,9 @@
                     android:src="@drawable/cancel"
                     android:visibility="gone" />
             </RelativeLayout>
+
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/descLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -305,7 +318,7 @@
             </RelativeLayout>
 
             <RelativeLayout
-
+                android:visibility="gone"
                 android:id="@+id/scheduleLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -354,6 +367,7 @@
 
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/availabilityLayout"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -426,6 +440,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/priceLayout"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -433,7 +448,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="3dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/dropshadow_two"
                 android:elevation="3dp"
 
@@ -487,25 +502,80 @@
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:translationZ="90dp"
+                    android:src="@drawable/profile_arrowright"
+                    tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/typeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/priceLayout"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp"
+                tools:ignore="OnClick,UsingOnClickInXml">
+
+                <ImageView
+                    android:id="@+id/image0"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/icon_category_product" />
+
+                <TextView
+                    android:id="@+id/typeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_toEndOf="@id/image0"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Service type"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/typeLabel"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="*"
+                    android:textColor="@color/brown"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/typeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_toStartOf="@id/image12"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Type"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/image12"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
 
                     android:src="@drawable/profile_arrowright"
                     tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
 
             </RelativeLayout>
-            <Button
-                android:id="@+id/Service_add_create_Button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/priceLayout"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/dropshadow_button"
-                android:text="SUBMIT"
-                android:textColor="@android:color/white"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                tools:ignore="HardcodedText" />
+
         </RelativeLayout>
     </ScrollView>
 

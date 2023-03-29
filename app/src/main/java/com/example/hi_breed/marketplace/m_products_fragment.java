@@ -9,25 +9,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.adapter.product_adapter.productForSaleAdapter;
-import com.example.hi_breed.classesFile.product_class;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class m_products_fragment extends Fragment {
-    private RecyclerView products_recycler;
-    private productForSaleAdapter adapter;
-    private TextView noOneTextView_pet_sale_card;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,37 +38,65 @@ public class m_products_fragment extends Fragment {
         return inflater.inflate(R.layout.m_products_fragment, container, false);
     }
 
+    ViewPager2 viewPager;
+    ViewPagerAdapter adapterV;
+    TabLayout tabLayout;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        products_recycler = view.findViewById(R.id.products_recycler);
-        adapter = new productForSaleAdapter(getContext());
-        products_recycler.setLayoutManager(new GridLayoutManager(getContext(),2));
-        products_recycler.setAdapter(adapter);
-        getProducts();
+        tabLayout = view.findViewById(R.id.tabLayout);
+        viewPager = view.findViewById(R.id.viewPager);
+        initView();
     }
 
-    private void getProducts() {
-     FirebaseFirestore.getInstance().collection("Pet")
-             .whereEqualTo("displayFor","forProducts").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                 @Override
-                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(error!=null)
-                        {
-                            return;
-                        }
-                        if(value!=null){
-                            adapter.clearList();
-                            List<DocumentSnapshot> list = value.getDocuments();
-                            for(DocumentSnapshot s: list){
-                                product_class p = s.toObject(product_class.class);
-                                adapter.addPetDisplay(p);
-                            }
-                        }
-                 }
-             });
+
+    private void initView() {
+        adapterV = new ViewPagerAdapter(getChildFragmentManager(),
+                getViewLifecycleOwner().getLifecycle());
+        adapterV.addFragment(new product_dog_accessories(),"Dog Accessories");
+        adapterV.addFragment(new product_medicine(),"Medicine");
+
+
+        viewPager.setAdapter(adapterV);
+        viewPager.setOffscreenPageLimit(1);
+
+        new TabLayoutMediator(tabLayout,viewPager,
+                (tab,position)->{
+                    tab.setText(adapterV.fragmentTitle.get(position));
+                }).attach();
+
+        for(int i =0; i<tabLayout.getTabCount();i++){
+            TextView tv = (TextView) LayoutInflater.from(getContext())
+                    .inflate(R.layout.shop_custom_tab,null);
+            tabLayout.getTabAt(i).setCustomView(tv);
+        }
 
     }
+    class ViewPagerAdapter extends FragmentStateAdapter {
+        private final List<Fragment> fragmentList = new ArrayList<>();
+        private final List<String> fragmentTitle = new ArrayList<>();
+
+        public ViewPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+            super(fragmentManager, lifecycle);
+        }
+
+        public void addFragment(Fragment fragment, String title){
+            fragmentList.add(fragment);
+            fragmentTitle.add(title);
+        }
+
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            return fragmentList.get(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            return fragmentList.size();
+        }
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.example.hi_breed.shooter;
+package com.example.hi_breed.service;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
@@ -42,7 +42,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class shooter_vet_display_details extends BaseActivity {
+public class service_display_details extends BaseActivity {
     ImageView heart_like,share_to_messenger;
    LinearLayout backLayout;
    ImageSlider imageSliderDetails;
@@ -109,7 +109,7 @@ public class shooter_vet_display_details extends BaseActivity {
         backLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shooter_vet_display_details.this.onBackPressed();
+                service_display_details.this.onBackPressed();
                 finish();
             }
         });
@@ -217,11 +217,11 @@ public class shooter_vet_display_details extends BaseActivity {
                                     DocumentSnapshot s = task.getResult();
 
                                     if(s.getString("contactNumber")== null || s.getString("contactNumber").equals("")){
-                                        Toast.makeText(shooter_vet_display_details.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(service_display_details.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
 
                                     }
                                     else{
-                                        Intent intent = new Intent(shooter_vet_display_details.this, service_set_appointment.class);
+                                        Intent intent = new Intent(service_display_details.this, service_set_appointment.class);
                                         intent.putExtra("model", (Serializable) service);
                                         startActivity(intent);
                                          }
@@ -257,7 +257,7 @@ public class shooter_vet_display_details extends BaseActivity {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if(task.isSuccessful()){
-                                                                        Toast.makeText(shooter_vet_display_details.this, "Successfully removed from your liked pets", Toast.LENGTH_SHORT).show();
+                                                                        Toast.makeText(service_display_details.this, "Successfully removed from your liked pets", Toast.LENGTH_SHORT).show();
 
                                                                         heart_like.setEnabled(true);
                                                                     }
@@ -308,7 +308,7 @@ public class shooter_vet_display_details extends BaseActivity {
                                                                         @Override
                                                                         public void onComplete(@NonNull Task<Void> task) {
                                                                             if(task.isSuccessful()){
-                                                                                Toast.makeText(shooter_vet_display_details.this, "Successfully added to your likes", Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(service_display_details.this, "Successfully added to your likes", Toast.LENGTH_SHORT).show();
                                                                                 heart_like.setEnabled(true);
                                                                             }
                                                                         }

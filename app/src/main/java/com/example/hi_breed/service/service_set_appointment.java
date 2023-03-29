@@ -1,4 +1,4 @@
-package com.example.hi_breed.shooter;
+package com.example.hi_breed.service;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
@@ -30,7 +30,7 @@ import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.pushNotification;
 import com.example.hi_breed.classesFile.service_class;
-import com.example.hi_breed.current_address;
+import com.example.hi_breed.userFile.profile.current_address;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -315,6 +315,7 @@ public class service_set_appointment extends BaseActivity {
                                         map.put("appointment_date",date); // date selected
                                         map.put("timestamp", Timestamp.now()); //date created
                                         map.put("appointment_time",time); // time selected
+                                        map.put("type", service.getServiceType());
                                         map.put("service_price",service.getService_fee()); // Service fee
                                         map.put("service_id",service.getId()); //Service ID FK
                                         map.put("appointment_status","pending");

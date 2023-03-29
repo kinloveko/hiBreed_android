@@ -3,32 +3,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".marketplace.m_services">
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:background="@color/fbWhite"
-        android:layout_height="match_parent">
-    <!-- TODO: Update blank fragment layout -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/services_recycler"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="fixed"
+            app:tabRippleColor="@null"
+            android:background="@drawable/rect_back"
+            app:tabSelectedTextColor="@color/purple_500"
+            app:tabTextAppearance="@style/TabLayout"
+            app:tabTextColor="@color/black"
+            />
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none" />
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/noOneTextView_pet_sale_card"
-        android:fontFamily="@font/poppinsmedium"
-        android:textSize="20sp"
-        android:textAlignment="center"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_centerInParent="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No one is selling at this point"
-        android:layout_below="@id/services_recycler"
-        tools:ignore="HardcodedText" />
-    </RelativeLayout>
+            android:background="@color/lightWhite"
+            android:scrollbars="none">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+
+                    android:id="@+id/linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/lightWhite"
+                    android:orientation="vertical">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="10dp"
+                         />
+
+
+                </LinearLayout>
+
+            </RelativeLayout>
+        </ScrollView>
+    </LinearLayout>
+
 </FrameLayout>

@@ -61,7 +61,7 @@ public class appointment_user_side extends BaseActivity {
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
 
-        viewPagerAdapter = new appointment_user_side.ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new pending_user_side(), "Pending");
         viewPagerAdapter.addFragment(new accepted_user_side(), "Accepted");
         viewPagerAdapter.addFragment(new completed_user_side(), "Completed");

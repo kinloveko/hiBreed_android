@@ -41,7 +41,7 @@ import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.BreedClass;
 import com.example.hi_breed.classesFile.item;
 import com.example.hi_breed.classesFile.size_class;
-import com.example.hi_breed.shooter.filter_search;
+import com.example.hi_breed.service.filter_search;
 import com.example.hi_breed.search.search_dashboard_home;
 import com.example.hi_breed.userFile.cart.add_to_cart;
 import com.example.hi_breed.userFile.dashboard.user_dashboard;

@@ -33,7 +33,7 @@ import com.example.hi_breed.classesFile.checkout_adapter;
 import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.priceFormat;
 import com.example.hi_breed.classesFile.pushNotification;
-import com.example.hi_breed.current_address;
+import com.example.hi_breed.userFile.profile.current_address;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.appointment_order_class;
-import com.example.hi_breed.order_details_activity;
+import com.example.hi_breed.details.order_details_activity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;

@@ -14,10 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.message.acquired_order_accepted_message;
 import com.example.hi_breed.classesFile.appointment_order_class;
 import com.example.hi_breed.classesFile.matches_class;
-import com.example.hi_breed.message.acquired_service_accepted_message;
-import com.example.hi_breed.order_details_activity;
+import com.example.hi_breed.details.order_details_activity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -150,7 +150,7 @@ public class accepted_orderAdapter extends RecyclerView.Adapter<accepted_orderAd
         holder.buttonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, acquired_service_accepted_message.class);
+                Intent intent = new Intent(context, acquired_order_accepted_message.class);
                 intent.putExtra("model", (Serializable) match);
                 context.startActivity(intent);
             }

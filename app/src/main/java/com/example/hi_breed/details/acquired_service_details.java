@@ -1,4 +1,4 @@
-package com.example.hi_breed;
+package com.example.hi_breed.details;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
@@ -24,19 +24,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.ApiUtilities;
+import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.TimestampConverter;
-import com.example.hi_breed.classesFile.appointment_order_class;
+import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
-import com.example.hi_breed.classesFile.priceFormat;
 import com.example.hi_breed.classesFile.pushNotification;
 import com.example.hi_breed.message.acquired_service_accepted_message;
-import com.example.hi_breed.order_breeder_side.order_breeder_side;
-import com.example.hi_breed.order_user_side.order_user_side;
+import com.example.hi_breed.service.rate_service;
+import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
+import com.example.hi_breed.service_status_for_seller.service_status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -48,21 +49,19 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
-import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class order_details_activity extends AppCompatActivity {
+public class acquired_service_details extends BaseActivity {
 
-    TextView check_out_name,text1,pet_text,
+    TextView check_out_name,text1,
             checkout_number,transactionLabel,transactionMessage,
             checkout_address,
             checkout_zip;
@@ -70,22 +69,20 @@ public class order_details_activity extends AppCompatActivity {
     TextView statusLabel,status, transactionEndLabel ,transactionEnd ,transactionPaymentLabel,
             transactionPayment,subTotalLabel,subTotal,totalLabel,total,
             serviceFeeLabel,serviceFee;
-    ImageView imageView;
-    TextView product_name,breed,product_price,shop_name;
 
+    TextView dateTextView,pet_text,check_out_service_acquired,
+            itemSlot,appointment_id;
     Button cancelButton,messageButton,rateButton;
     RelativeLayout toolbarID,currentAddress,timeLayout,dateLayout,transactionLayout;
     LinearLayout buttonLayout,buttonContact,buttonDelete;
     String notCurrentUser;
-
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_order_details);
-        priceFormat price = new priceFormat();
+        setContentView(R.layout.acquired_service_details);
+
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
@@ -96,21 +93,7 @@ public class order_details_activity extends AppCompatActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
-        imageView = findViewById(R.id.imageView);
-        messageButton = findViewById(R.id.messageButton);
-        transactionLayout = findViewById(R.id.transactionLayout);
-        transactionMessage = findViewById(R.id.transactionMessage);
-        transactionLabel = findViewById(R.id.transactionLabel);
-        currentAddress =findViewById(R.id.currentAddress);
-        timeLayout = findViewById(R.id.timeLayout);
-        dateLayout = findViewById(R.id.dateLayout);
-        check_out_name = findViewById(R.id.check_out_name);
-        checkout_number = findViewById(R.id.checkout_number);
-        checkout_address = findViewById(R.id.checkout_address);
-        checkout_zip = findViewById(R.id.checkout_zip);
-        buttonLayout = findViewById(R.id.buttonLayout);
-        text1 = findViewById(R.id.text1);
-        pet_text= findViewById(R.id.pet_text);
+
         statusLabel = findViewById(R.id.statusLabel);
         status = findViewById(R.id.status);
         transactionEndLabel = findViewById(R.id.transactionEndLabel);
@@ -124,52 +107,107 @@ public class order_details_activity extends AppCompatActivity {
         serviceFeeLabel = findViewById(R.id.serviceFeeLabel);
         serviceFee = findViewById(R.id.serviceFee);
 
-        product_name = findViewById(R.id.product_name);
-                breed = findViewById(R.id.breed);
-        product_price = findViewById(R.id.product_price);
 
         rateButton = findViewById(R.id.rateButton);
         buttonContact = findViewById(R.id.buttonContact);
         buttonDelete = findViewById(R.id.buttonDelete);
         cancelButton= findViewById(R.id.cancelButton);
         toolbarID= findViewById(R.id.toolbarID);
-        shop_name = findViewById(R.id.shop_name);
 
         toolbarID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                order_details_activity.this.onBackPressed();
+                acquired_service_details.this.onBackPressed();
                 finish();
             }
         });
+        appointment_id  = findViewById(R.id.appointment_id);
+        messageButton = findViewById(R.id.messageButton);
+        transactionLayout = findViewById(R.id.transactionLayout);
+        transactionMessage = findViewById(R.id.transactionMessage);
+        transactionLabel = findViewById(R.id.transactionLabel);
+        check_out_service_acquired = findViewById(R.id.check_out_service_acquired);
+        pet_text = findViewById(R.id.pet_text);
+        currentAddress =findViewById(R.id.currentAddress);
+        timeLayout = findViewById(R.id.timeLayout);
+        dateLayout = findViewById(R.id.dateLayout);
+        dateTextView = findViewById(R.id.dateTextView);
+        itemSlot = findViewById(R.id.itemSlot);
+        check_out_name = findViewById(R.id.check_out_name);
+        checkout_number = findViewById(R.id.checkout_number);
+        checkout_address = findViewById(R.id.checkout_address);
+        checkout_zip = findViewById(R.id.checkout_zip);
+        buttonLayout = findViewById(R.id.buttonLayout);
+        text1 = findViewById(R.id.text1);
 
-        Intent i = getIntent();
-        appointment_order_class appointment = (appointment_order_class) i.getSerializableExtra("mode");
+        Intent intent = getIntent();
+
+        appointment_class appointment = (appointment_class) intent.getSerializableExtra("mode");
 
         if(appointment!=null) {
 
-            if (!appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            if(!appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                 notCurrentUser = appointment.getCustomer_id();
-            } else if (!appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            }
+            else if (!appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                 notCurrentUser = appointment.getSeller_id();
             }
 
-            if(appointment.getOrder_status().equals("pending")){
+            FirebaseFirestore.getInstance().collection("Appointments")
+                            .document(appointment.getId())
+                                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
+                                            if(error!=null){
+                                                return;
+                                            }
+                                            if(documentSnapshot.exists()){
+
+                                                if(documentSnapshot.getString("appointment_status").equals("cancelled")){
+
+                                                    if(documentSnapshot.getString("customer_id") .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                                        cancelButton.setVisibility(View.GONE);
+                                                    }
+                                                    if(documentSnapshot.getString("seller_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                                        buttonLayout.setVisibility(View.GONE);
+
+                                                    }
+
+                                                }
+                                                else if(documentSnapshot.getString("appointment_status").equals("accepted")){
+                                                       messageButton.setVisibility(View.VISIBLE);
+                                                    buttonLayout.setVisibility(View.GONE);
+                                                    cancelButton.setVisibility(View.GONE);
+                                                }
+                                                else if(documentSnapshot.getString("appointment_status").equals("completed")){
+                                                    messageButton.setVisibility(View.GONE);
+                                                    buttonLayout.setVisibility(View.GONE);
+                                                    cancelButton.setVisibility(View.GONE);
+                                                }
+                                            }
+
+                                        }
+                                    });
+
+            appointment_id.setText(appointment.getId());
+            dateTextView.setText(appointment.getAppointment_date());
+            itemSlot.setText(appointment.getAppointment_time());
+
+            if(appointment.getAppointment_status().equals("pending")){
                 transactionLayout.setVisibility(View.VISIBLE);
                 transactionLabel.setVisibility(View.GONE);
                 transactionMessage.setVisibility(View.GONE);
 
-                status.setText(appointment.getOrder_status());
+                status.setText(appointment.getAppointment_status());
                 transactionPayment.setText("on-site");
-
-                subTotal.setText("₱ "+price.priceFormatString(appointment.getItem_price()));
-                total.setText("₱ "+price.priceFormatString(appointment.getItem_price())+".0");
-                serviceFee.setText("₱ "+price.priceFormatString(appointment.getItem_price()));
+                subTotal.setText("₱ "+appointment.getService_price());
+                total.setText("₱ "+appointment.getService_price()+".0");
+                serviceFee.setText("₱ "+appointment.getService_price());
 
                 transactionEnd.setVisibility(View.GONE);
                 transactionEndLabel.setVisibility(View.GONE);
 
-                text1.setText("Order pending");
+                text1.setText("Appointment pending");
                 if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     cancelButton.setVisibility(View.VISIBLE);
                     cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -200,10 +238,10 @@ public class order_details_activity extends AppCompatActivity {
                                                 Map<String,Object> map = new HashMap<>();
                                                 map.put("send_to_id", appointment.getCustomer_id());
                                                 map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                                map.put("title","Order confirmed");
-                                                map.put("message","Your order was confirmed by the seller");
+                                                map.put("title","Accepted appointment");
+                                                map.put("message","Your request appointment has been accepted");
                                                 map.put("timestamp", Timestamp.now());
-                                                map.put("type","order");
+                                                map.put("type","appointment");
                                                 map.put("id",appointment.getId());
 
                                                 Map<String,Object> maps = new HashMap<>();
@@ -213,7 +251,7 @@ public class order_details_activity extends AppCompatActivity {
 
                                                 FirebaseFirestore.getInstance().collection("Appointments")
                                                         .document(appointment.getId())
-                                                        .update("order_status","accepted")
+                                                        .update("appointment_status","accepted")
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void unused) {
@@ -254,10 +292,10 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                                                             .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                                                 @Override
                                                                                                                                                 public void onSuccess(Void unused) {
-                                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your order has been confirmed by the seller",
-                                                                                                                                                            "Order confirmed",appointment.getId(),appointment.getCustomer_id(),"order","buyer","accepted"), token);
+                                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                                                                            "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
                                                                                                                                                     sendNotif(notification,"accepted","buyer");
-                                                                                                                                                    }
+                                                                                                                                                   }
                                                                                                                                             });
                                                                                                                                 }
                                                                                                                             });
@@ -277,6 +315,7 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                                                 @Override
                                                                                                                                 public void onSuccess(Void unused) {
 
+
                                                                                                                                     Map<String, Object> connection = new HashMap<>();
                                                                                                                                     connection.put("matchID", appointment.getId());
                                                                                                                                     connection.put("matchFor","forAppointments");
@@ -293,13 +332,17 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                                                                             .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                                                                 @Override
                                                                                                                                                                 public void onSuccess(Void unused) {
-                                                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your order has been confirmed by the seller",
-                                                                                                                                                                            "Order confirmed",appointment.getId(),appointment.getCustomer_id(),"order","buyer","accepted"), token);
+                                                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                                                                                            "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
                                                                                                                                                                     sendNotif(notification,"accepted","buyer");
-                                                                                                                                                                  }
+                                                                                                                                                                    Toast.makeText(acquired_service_details.this, "Message ID created 1", Toast.LENGTH_SHORT).show();
+                                                                                                                                                                }
                                                                                                                                                             });
                                                                                                                                                 }
                                                                                                                                             });
+
+
+
                                                                                                                                 }
                                                                                                                             });
                                                                                                                 }
@@ -332,19 +375,18 @@ public class order_details_activity extends AppCompatActivity {
 
                 }
             }
-            else if(appointment.getOrder_status().equals("accepted")){
-                text1.setText("Order ongoing");
+            else if(appointment.getAppointment_status().equals("accepted")){
+                text1.setText("Appointment ongoing");
 
                 transactionLayout.setVisibility(View.VISIBLE);
                 transactionLabel.setVisibility(View.GONE);
                 transactionMessage.setVisibility(View.GONE);
 
-                status.setText(appointment.getOrder_status());
+                status.setText(appointment.getAppointment_status());
                 transactionPayment.setText("on-site");
-
-                subTotal.setText("₱ "+price.priceFormatString(appointment.getItem_price()));
-                total.setText("₱ "+price.priceFormatString(appointment.getItem_price())+".0");
-                serviceFee.setText("₱ "+price.priceFormatString(appointment.getItem_price()));
+                subTotal.setText("₱ "+appointment.getService_price());
+                total.setText("₱ "+appointment.getService_price()+".0");
+                serviceFee.setText("₱ "+appointment.getService_price());
 
                 transactionEnd.setVisibility(View.GONE);
                 transactionEndLabel.setVisibility(View.GONE);
@@ -359,29 +401,28 @@ public class order_details_activity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         matches_class match = documentSnapshot.toObject(matches_class.class);
-                                        Intent intent = new Intent(order_details_activity.this, acquired_service_accepted_message.class);
+                                        Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
                                         intent.putExtra("model",  (Serializable) match);
                                         startActivity(intent);
                                     }
                                 });
                     }
                 });
+
             }
-            else if(appointment.getOrder_status().equals("completed")){
-                text1.setText("Order completed");
+            else if(appointment.getAppointment_status().equals("completed")){
+                text1.setText("Appointment completed");
                 transactionLayout.setVisibility(View.VISIBLE);
                 transactionLabel.setVisibility(View.GONE);
                 transactionMessage.setVisibility(View.GONE);
 
-                status.setText(appointment.getOrder_status());
+                status.setText(appointment.getAppointment_status());
                 transactionPayment.setText("on-site");
+                subTotal.setText("₱ "+appointment.getService_price());
+                total.setText("₱ "+appointment.getService_price()+".0");
+                serviceFee.setText("₱ "+appointment.getService_price());
 
-                subTotal.setText("₱ "+price.priceFormatString(appointment.getItem_price()));
-                total.setText("₱ "+price.priceFormatString(appointment.getItem_price())+".0");
-                serviceFee.setText("₱ "+price.priceFormatString(appointment.getItem_price()));
-
-
-                String formattedTime = TimestampConverter.exactDateTime(appointment.getOder_date_end());
+                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
                 transactionEnd.setText(formattedTime);
 
                 if(appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
@@ -398,7 +439,7 @@ public class order_details_activity extends AppCompatActivity {
                                         rateButton.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                Intent i = new Intent(order_details_activity.this,rate_service.class);
+                                                Intent i = new Intent(acquired_service_details.this, rate_service.class);
                                                 i.putExtra("model", (Serializable) appointment);
                                                 startActivity(i);
                                             }
@@ -408,131 +449,88 @@ public class order_details_activity extends AppCompatActivity {
                             });
 
                 }
-
             }
-            else if(appointment.getOrder_status().equals("cancelled")){
-                text1.setText("Order cancelled");
+            else if(appointment.getAppointment_status().equals("cancelled")){
+                text1.setText("Appointment cancelled");
                 transactionLabel.setText("Cancellation reason :");
-                transactionMessage.setText(appointment.getOrder_cancelled_message());
+                transactionMessage.setText(appointment.getAppointment_end_message());
                 messageButton.setVisibility(View.GONE);
                 buttonLayout.setVisibility(View.GONE);
                 cancelButton.setVisibility(View.GONE);
                 transactionLayout.setVisibility(View.VISIBLE);
 
-                status.setText(appointment.getOrder_status());
+                status.setText(appointment.getAppointment_status());
                 transactionPayment.setText("on-site");
-                subTotal.setText("₱ "+appointment.getItem_price());
-                total.setText("₱ "+appointment.getItem_price());
-                serviceFee.setText("₱ "+appointment.getItem_price());
+                subTotal.setText("₱ "+appointment.getService_price());
+                total.setText("₱ "+appointment.getService_price());
+                serviceFee.setText("₱ "+appointment.getService_price());
 
-                String formattedTime = TimestampConverter.exactDateTime(appointment.getOder_date_end());
+                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
                 transactionEnd.setText(formattedTime);
 
             }
 
-            /**
-              For visibility of buttons
-             **/
-            FirebaseFirestore.getInstance().collection("Appointments")
-                    .document(appointment.getId())
-                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+                pet_text.setText("Service details");
+
+                FirebaseFirestore.getInstance().collection("Shop")
+                        .document(appointment.getSeller_id())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onSuccess(DocumentSnapshot s) {
+                                check_out_service_acquired.setVisibility(View.VISIBLE);
+                                check_out_name.setText(s.getString("shopName"));
+
+                                FirebaseFirestore.getInstance().collection("User")
+                                        .document(s.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                checkout_address.setText(documentSnapshot.getString("address"));
+                                                checkout_zip.setText(documentSnapshot.getString("zipCode"));
+
+                                                FirebaseFirestore.getInstance().collection("User")
+                                                        .document(s.getId()).collection("security")
+                                                        .document("security_doc").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                checkout_number.setText(documentSnapshot.getString("contactNumber"));
+
+                                                                FirebaseFirestore.getInstance().collection("Services").document(appointment.getService_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                    @Override
+                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+
+                                                                        check_out_service_acquired.setText(documentSnapshot.getString("name"));
+
+
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                            }
+                                        });
+
+                            }
+                        });
+
+            }
+
+            FirebaseFirestore.getInstance().collection("User")
+                    .document(appointment.getCustomer_id())
+                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @SuppressLint("SetTextI18n")
                         @Override
-                        public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
-                            if (error != null) {
-                                return;
-                            }
-                            if (documentSnapshot.exists()) {
+                        public void onSuccess(DocumentSnapshot s) {
 
-                                if (documentSnapshot.getString("order_status").equals("cancelled")) {
-
-                                    if (documentSnapshot.getString("customer_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                                        cancelButton.setVisibility(View.GONE);
-                                    }
-                                    if (documentSnapshot.getString("seller_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                                        buttonLayout.setVisibility(View.GONE);
-
-                                    }
-
-                                } else if (documentSnapshot.getString("order_status").equals("accepted")) {
-                                    messageButton.setVisibility(View.VISIBLE);
-                                    buttonLayout.setVisibility(View.GONE);
-                                    cancelButton.setVisibility(View.GONE);
-                                } else if (documentSnapshot.getString("order_status").equals("completed")) {
-                                    messageButton.setVisibility(View.GONE);
-                                    buttonLayout.setVisibility(View.GONE);
-                                    cancelButton.setVisibility(View.GONE);
-
-                                }
-                            }
+                            check_out_name.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
+                            checkout_address.setText(s.getString("address"));
+                            checkout_zip.setText(s.getString("zipCode"));
 
                         }
                     });
-
-            /**
-             To check if the current user is the buyer
-             **/
-            if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-
-                pet_text.setText("Shop details");
-
-                FirebaseFirestore.getInstance().collection("Shop")
-                        .document(appointment.getSeller_id())
-                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @SuppressLint("SetTextI18n")
-                            @Override
-                            public void onSuccess(DocumentSnapshot s) {
-                                shop_name.setText(s.getString("shopName"));
-                                check_out_name.setText(s.getString("shopName"));
-
-                            }
-                        });
-                FirebaseFirestore.getInstance().collection("User")
-                        .document(appointment.getSeller_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                                checkout_address.setText(documentSnapshot.getString("address"));
-                                checkout_zip.setText(documentSnapshot.getString("zipCode"));
-
-                                FirebaseFirestore.getInstance().collection("User")
-                                        .document(appointment.getSeller_id()).collection("security")
-                                        .document("security_doc").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                checkout_number.setText(documentSnapshot.getString("contactNumber"));
-                                            }
-                                        });
-                            }
-                        });
-
-            }
-            else {
-                /**
-                 Getting the users name and phone number
-                 **/
-                FirebaseFirestore.getInstance().collection("Shop")
-                        .document(appointment.getSeller_id())
-                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @SuppressLint("SetTextI18n")
-                            @Override
-                            public void onSuccess(DocumentSnapshot s) {
-                                shop_name.setText(s.getString("shopName"));
-                            }
-                        });
-                FirebaseFirestore.getInstance().collection("User")
-                        .document(appointment.getCustomer_id())
-                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @SuppressLint("SetTextI18n")
-                            @Override
-                            public void onSuccess(DocumentSnapshot s) {
-
-                                check_out_name.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
-                                checkout_address.setText(s.getString("address"));
-                                checkout_zip.setText(s.getString("zipCode"));
-
-                            }
-                        });
-            }
 
             FirebaseFirestore.getInstance().collection("User")
                     .document(appointment.getCustomer_id())
@@ -548,30 +546,6 @@ public class order_details_activity extends AppCompatActivity {
                             }
                         }
                     });
-
-            /**
-                Check if what type of product is this to get the data
-             **/
-            if(appointment.getType().equals("pet")){
-                FirebaseFirestore.getInstance().collection("Pet")
-                        .document(appointment.getItem_id())
-                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                               if(documentSnapshot.exists()){
-                                   List<String> list = (List<String>) documentSnapshot.get("photos");
-                                   if (list != null) {
-                                       Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage)
-                                               .into(imageView);
-                                   }
-                                   product_name.setText(documentSnapshot.getString("pet_breed"));
-                                   product_price.setText(price.priceFormatString(documentSnapshot.getString("pet_price")));
-                                   breed.setText(documentSnapshot.getString("pet_gender"));
-                               }
-                            }
-                     });
-            }
-
         }
     }
 
@@ -581,8 +555,8 @@ public class order_details_activity extends AppCompatActivity {
         Map<String,Object> map = new HashMap<>();
         map.put("dateCompleted",Timestamp.now());
 
-        AlertDialog.Builder builder2 = new  AlertDialog.Builder(order_details_activity.this);
-        View view = View.inflate(order_details_activity.this,R.layout.appointment_settings_cancell_options,null);
+        AlertDialog.Builder builder2 = new  AlertDialog.Builder(acquired_service_details.this);
+        View view = View.inflate(acquired_service_details.this,R.layout.appointment_settings_cancell_options,null);
         TextView oneText = view.findViewById(R.id.oneButtonText);
         TextView twoText = view.findViewById(R.id.twoButtonText);
 
@@ -649,7 +623,7 @@ public class order_details_activity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if(customReasonEdit.getText().toString().isEmpty()){
-                            Toast.makeText(order_details_activity.this, "Please write your reason in the provided text box", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(acquired_service_details.this, "Please write your reason in the provided text box", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         cancelDialog(sendTo,appointmentId,role,customReasonEdit.getText().toString(),transactionID,from);
@@ -671,10 +645,10 @@ public class order_details_activity extends AppCompatActivity {
                             Map<String,Object> map = new HashMap<>();
                             map.put("send_to_id", sendTo);
                             map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            map.put("title","Cancelled order");
-                            map.put("message","Your order has been cancelled");
+                            map.put("title","Cancelled appointment");
+                            map.put("message","Requested appointment has been cancelled");
                             map.put("timestamp", Timestamp.now());
-                            map.put("type","order");
+                            map.put("type","appointment");
                             map.put("id",appointmentId);
 
 
@@ -682,7 +656,6 @@ public class order_details_activity extends AppCompatActivity {
 
                             maps.put("latestNotification",map);
                             maps.put("notification", Arrays.asList(map));
-
                             FirebaseFirestore.getInstance().collection("Transaction")
                                     .document(transactionID)
                                     .update("status","cancelled").addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -690,14 +663,14 @@ public class order_details_activity extends AppCompatActivity {
                                         public void onSuccess(Void unused) {
                                             FirebaseFirestore.getInstance().collection("Appointments")
                                                     .document(appointmentId)
-                                                    .update("order_status","cancelled")
+                                                    .update("appointment_status","cancelled")
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void unused) {
 
                                                             Map<String,Object> map1 = new HashMap<>();
-                                                            map1.put("order_end_date",Timestamp.now());
-                                                            map1.put("order_end_message",text);
+                                                            map1.put("appointment_end_date",Timestamp.now());
+                                                            map1.put("appointment_end_message",text);
                                                             map1.put("cancelled_by",from);
                                                             FirebaseFirestore.getInstance().collection("Appointments")
                                                                     .document(appointmentId).set(map1, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -714,12 +687,10 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                         .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void unused) {
-
-                                                                                                                pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled",
-                                                                                                                        "Cancelled order",appointmentId,sendTo,"order",role,"cancelled"), token);
+                                                                                                                pushNotification notification = new pushNotification(new notificationData("Requested appointment has been cancelled",
+                                                                                                                        "Cancelled appointment",appointmentId,sendTo,"appointment",role,"cancelled"), token);
                                                                                                                 sendNotif(notification,"cancelled",role);
                                                                                                                 Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
-
                                                                                                             }
                                                                                                         });
                                                                                             }
@@ -728,10 +699,10 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                         .document(sendTo).set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void unused) {
-                                                                                                                pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled",
-                                                                                                                        "Cancelled order",appointmentId,sendTo,"order",role,"cancelled"), token);
-                                                                                                                sendNotif(notification,"cancelled",role);
+                                                                                                                pushNotification notification = new pushNotification(new notificationData("Requested appointment has been cancelled",
+                                                                                                                        "Cancelled appointment",appointmentId,sendTo,"appointment",role,"cancelled"), token);
                                                                                                                 Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
+                                                                                                                sendNotif(notification,"cancelled",role);
                                                                                                             }
                                                                                                         });
                                                                                             }
@@ -749,7 +720,6 @@ public class order_details_activity extends AppCompatActivity {
                 });
     }
 
-
     private void sendNotif(pushNotification notification,String from,String notificationFor) {
 
         ApiUtilities.getClient().sendNotification(notification).enqueue(new Callback<pushNotification>() {
@@ -761,21 +731,21 @@ public class order_details_activity extends AppCompatActivity {
 
                         if(notificationFor.equals("buyer")){
 
-                            Intent i = new Intent(order_details_activity.this, order_breeder_side.class);
+                            Intent i = new Intent(acquired_service_details.this, service_status.class);
                             i.putExtra("SELECTED_TAB",from);
                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
-                            Toast.makeText(order_details_activity.this, "Your order successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
                             finish();
 
                         }
                         else{
 
-                            Intent i = new Intent(order_details_activity.this, order_user_side.class);
+                            Intent i = new Intent(acquired_service_details.this, appointment_user_side.class);
                             i.putExtra("SELECTED_TAB",from);
                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
-                            Toast.makeText(order_details_activity.this, "Your order successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
                             finish();
 
                         }
@@ -783,20 +753,20 @@ public class order_details_activity extends AppCompatActivity {
                     else  if(from.equals("cancelled")){
 
                         if(notificationFor.equals("buyer")){
-                            Intent i = new Intent(order_details_activity.this, order_breeder_side.class);
+                            Intent i = new Intent(acquired_service_details.this, service_status.class);
                             i.putExtra("SELECTED_TAB",from);
                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
-                            Toast.makeText(order_details_activity.this, "Your order successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
                             finish();
 
                         }
                         else{
-                            Intent i = new Intent(order_details_activity.this, order_user_side.class);
+                            Intent i = new Intent(acquired_service_details.this, appointment_user_side.class);
                             i.putExtra("SELECTED_TAB",from);
                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
-                            Toast.makeText(order_details_activity.this, "Your order successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(acquired_service_details.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     }
@@ -810,7 +780,7 @@ public class order_details_activity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<pushNotification> call, Throwable t) {
-                Toast.makeText(order_details_activity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(acquired_service_details.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
         });

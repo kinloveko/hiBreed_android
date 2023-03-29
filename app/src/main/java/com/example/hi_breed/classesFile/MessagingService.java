@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.message.acquired_order_accepted_message;
 import com.example.hi_breed.message.acquired_service_accepted_message;
 import com.example.hi_breed.message.message_activity;
 import com.example.hi_breed.message.message_conversation_activity;
@@ -179,7 +180,7 @@ public class MessagingService extends FirebaseMessagingService {
 
                     Notification.Builder builder = new Notification.Builder(MessagingService.this, "Order")
                             .setSmallIcon(R.drawable.hibreedlogo)
-                            .setContentTitle("Order Notification!")
+                            .setContentTitle("Order Notification")
                             .setContentText(text)
                             .setPriority(Notification.PRIORITY_HIGH)
                             .setAutoCancel(true)
@@ -197,7 +198,7 @@ public class MessagingService extends FirebaseMessagingService {
 
                     Notification.Builder builder = new Notification.Builder(MessagingService.this, "Order")
                             .setSmallIcon(R.drawable.hibreedlogo)
-                            .setContentTitle("Order Notification!")
+                            .setContentTitle("Order Notification")
                             .setContentText(text)
                             .setPriority(Notification.PRIORITY_HIGH)
                             .setAutoCancel(true)
@@ -225,7 +226,7 @@ public class MessagingService extends FirebaseMessagingService {
 
                     Notification.Builder builder = new Notification.Builder(MessagingService.this, "Order")
                             .setSmallIcon(R.drawable.hibreedlogo)
-                            .setContentTitle("Order Notification!")
+                            .setContentTitle("Order Notification")
                             .setContentText(text)
                             .setPriority(Notification.PRIORITY_HIGH)
                             .setAutoCancel(true)
@@ -243,7 +244,7 @@ public class MessagingService extends FirebaseMessagingService {
 
                     Notification.Builder builder = new Notification.Builder(MessagingService.this, "Order")
                             .setSmallIcon(R.drawable.hibreedlogo)
-                            .setContentTitle("Order Notification!")
+                            .setContentTitle("Order Notification")
                             .setContentText(text)
                             .setPriority(Notification.PRIORITY_HIGH)
                             .setAutoCancel(true)
@@ -284,6 +285,53 @@ public class MessagingService extends FirebaseMessagingService {
                                         } else {
                                         pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                                      }
+
+                                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                    createNotificationManager(manager);
+
+                                    Notification.Builder builder = new Notification.Builder(MessagingService.this, CHANNEL_ID)
+                                            .setSmallIcon(R.drawable.hibreedlogo)
+                                            .setContentTitle("New message from: "+sender)
+                                            .setContentText(text)
+                                            .setPriority(Notification.PRIORITY_HIGH)
+                                            .setAutoCancel(true)
+                                            .setContentIntent(pendingIntent)
+                                            .setColor(Color.WHITE)
+                                            .setGroup(match);
+
+                                    Notification notification = builder.build();
+                                    manager.notify(notificationId, notification);
+                                }
+                            }
+                        }
+                    });
+
+        }
+        else if(type.equals("messageOrder")){
+
+            FirebaseFirestore.getInstance().collection("Matches")
+                    .document(match).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                DocumentSnapshot s = task.getResult();
+                                if(s.exists()){
+                                    List<String> user = (List<String>) s.get("participants");
+                                    Timestamp time = (Timestamp) s.get("time");
+                                    timestamp = time;
+                                    int notificationId = (int) System.currentTimeMillis();
+                                    matches_class m = new matches_class(user,match,true,timestamp);
+                                    Intent intent = new Intent(getApplicationContext(), acquired_order_accepted_message.class);
+                                    intent.putExtra("model",(Serializable) m);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                                    PendingIntent pendingIntent;
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
+
+                                    } else {
+                                        pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    }
 
                                     NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                                     createNotificationManager(manager);

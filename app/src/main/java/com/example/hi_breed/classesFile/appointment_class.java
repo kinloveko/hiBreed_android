@@ -16,21 +16,25 @@ public class appointment_class implements Serializable, Parcelable {
     String appointment_date;
     String appointment_time;
     String service_price;
+    String type;
     String service_id;
     String appointment_status;
     String appointment_end_message;
     Timestamp timestamp,appointment_end_date;
     String cancelled_by;
     Boolean isRated;
+
+
     public appointment_class(){
 
     }
 
-    public appointment_class(String id,String customer_id ,String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status,String appointment_end_message ,String cancelled_by,Timestamp timestamp,Timestamp appointment_end_date,Boolean isRated) {
+    public appointment_class(String id,String customer_id ,String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status,String appointment_end_message, String type ,String cancelled_by,Timestamp timestamp,Timestamp appointment_end_date,Boolean isRated) {
         this.appointment_end_date = appointment_end_date;
         this.appointment_end_message = appointment_end_message;
         this.cancelled_by = cancelled_by;
         this.id = id;
+        this.type = type;
         this.isRated = isRated;
         this.customer_id = customer_id;
         this.seller_id = seller_id;
@@ -51,6 +55,7 @@ public class appointment_class implements Serializable, Parcelable {
         appointment_date = in.readString();
         appointment_time = in.readString();
         service_price = in.readString();
+        type = in.readString();
         service_id = in.readString();
         appointment_status = in.readString();
         appointment_end_message = in.readString();
@@ -72,6 +77,10 @@ public class appointment_class implements Serializable, Parcelable {
             return new appointment_class[size];
         }
     };
+
+    public String getType() {
+        return type;
+    }
 
     public Boolean getRated() {
         return isRated;
@@ -130,7 +139,6 @@ public class appointment_class implements Serializable, Parcelable {
         return timestamp;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -145,6 +153,7 @@ public class appointment_class implements Serializable, Parcelable {
         dest.writeString(appointment_date);
         dest.writeString(appointment_time);
         dest.writeString(service_price);
+        dest.writeString(type);
         dest.writeString(service_id);
         dest.writeString(appointment_status);
         dest.writeString(appointment_end_message);

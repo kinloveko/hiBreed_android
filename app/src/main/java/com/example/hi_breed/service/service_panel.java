@@ -1,7 +1,8 @@
-package com.example.hi_breed.shooter;
+package com.example.hi_breed.service;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -35,19 +36,22 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class shooter_vet_panel extends BaseActivity {
+public class service_panel extends BaseActivity {
 
     RelativeLayout backLayoutPet;
     Button shooter_verifyButton;
     RelativeLayout serviceLayout,show_serviceLayout;
     RecyclerView show_service_recycler;
     s_p_serviceAdapter adapter;
-    TextView acquiredNumber;
+    TextView acquiredNumber,text;
     CardView acquiredCardView;
     String number;
 
+    ArrayList<String> roles = new ArrayList<>();
+    int count = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +67,7 @@ public class shooter_vet_panel extends BaseActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
-
+        text = findViewById(R.id.text);
         acquiredCardView = findViewById(R.id.acquiredCardView);
         backLayoutPet = findViewById(R.id.toolbarID);
         shooter_verifyButton = findViewById(R.id.shooter_verifyButton);
@@ -72,10 +76,11 @@ public class shooter_vet_panel extends BaseActivity {
         backLayoutPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shooter_vet_panel.this.onBackPressed();
+                service_panel.this.onBackPressed();
                 finish();
             }
         });
+
         shooter_verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,16 +93,16 @@ public class shooter_vet_panel extends BaseActivity {
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if(documentSnapshot.getString("contactNumber")==null ||
                                          documentSnapshot.getString("contactNumber").equals("")){
-                                    Toast.makeText(shooter_vet_panel.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(service_panel.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 else{
-                                    startActivity(new Intent(shooter_vet_panel.this, shooter_vet_add_service.class));
+                                    Intent i = new Intent(service_panel.this, service_add_service.class);
+                                    i.putStringArrayListExtra("list", (ArrayList<String>) roles);
+                                    startActivity(i);
                                    }
                             }
                         });
-              
-                
             }
         });
         acquiredNumber = findViewById(R.id.acquiredNumber);
@@ -107,18 +112,22 @@ public class shooter_vet_panel extends BaseActivity {
         show_service_recycler.setAdapter(adapter);
 
         FirebaseFirestore.getInstance().collection("User")
-                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             DocumentSnapshot s = task.getResult();
                             List<DocumentSnapshot> list = (List<DocumentSnapshot>) s.get("role");
-                            if(list.contains("Veterinarian")){
-                                getVeterinarianService();
-                            }
-                            else{
-                                getService();
+                            if (list != null) {
+                                if (list.contains("Veterinarian") && list.contains("Pet Shooter")) {
+                                    handleVeterinarianAndPetShooterServices();
+                                } else if (list.contains("Veterinarian")) {
+                                    getVeterinarianService();
+                                } else {
+                                    getService();
+                                }
                             }
                         }
                     }
@@ -142,15 +151,97 @@ public class shooter_vet_panel extends BaseActivity {
         acquiredCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    startActivity(new Intent(shooter_vet_panel.this, service_status.class));
+                    startActivity(new Intent(service_panel.this, service_status.class));
             }
         });
-
     }
+
+    private void handleVeterinarianAndPetShooterServices() {
+        FirebaseFirestore.getInstance()
+                .collection("Services")
+                .whereEqualTo("shooter_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("serviceType", "Veterinarian Service")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                        int count = list.size();
+                        if (count != 0) {
+                            serviceLayout.setVisibility(View.GONE);
+                            for (DocumentSnapshot s : list) {
+                                roles.add("Veterinarian Service");
+                                service_class service_class = s.toObject(service_class.class);
+                                adapter.addServiceDisplay(service_class);
+                            }
+                        }
+                        if (!roles.contains("Shooter Service")) {
+
+                            text.setText("You can still add a service for Dog Shooting Service just click the button below");
+                         }
+                        else if (!roles.contains("Veterinarian Service")) {
+                            text.setText("You can still add a Dog Veterinarian Service for  just click the button below");
+                        }
+                        else{
+                            serviceLayout.setVisibility(View.GONE);
+                        }
+                        updateServiceLayout(count);
+                    }
+                });
+
+        FirebaseFirestore.getInstance()
+                .collection("Services")
+                .whereEqualTo("serviceType", "Shooter Service")
+                .whereEqualTo("shooter_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                        int count = list.size();
+                        if (count != 0) {
+                            for (DocumentSnapshot s : list) {
+                                roles.add("Shooter Service");
+                                service_class service_class = s.toObject(service_class.class);
+                                adapter.addServiceDisplay(service_class);
+                            }
+
+                        }
+                        if (!roles.contains("Shooter Service")) {
+
+                            text.setText("You can still add a service for Dog Shooting Service just click the button below");
+                        }
+                        else if (!roles.contains("Veterinarian Service")) {
+                            text.setText("You can still add a Dog Veterinarian Service for  just click the button below");
+                        }
+                        else{
+                            serviceLayout.setVisibility(View.GONE);
+                        }
+                        updateServiceLayout(count);
+                    }
+                });
+    }
+
+    private void updateServiceLayout(int count) {
+        switch (count) {
+            case 0:
+            case 1:
+                serviceLayout.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                serviceLayout.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+
     private void getVeterinarianService(){
         FirebaseFirestore.getInstance()
                 .collection("Services")
                 .whereEqualTo("shooter_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("serviceType","Veterinarian Service")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -158,6 +249,7 @@ public class shooter_vet_panel extends BaseActivity {
                         if(list.size() !=0){
                             serviceLayout.setVisibility(View.GONE);
                             for (DocumentSnapshot s:list){
+
                                 service_class service_class = s.toObject(service_class.class);
                                 adapter.addServiceDisplay(service_class);
                             }
@@ -168,6 +260,7 @@ public class shooter_vet_panel extends BaseActivity {
                     }
                 });
     }
+
     private void getService() {
         FirebaseFirestore.getInstance()
                 .collection("Services")

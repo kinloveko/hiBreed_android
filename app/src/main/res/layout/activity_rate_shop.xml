@@ -3,18 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".service.rate_service">
-
+    android:layout_height="match_parent"
+    tools:context=".shop.rate_shop">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <LinearLayout
                 android:id="@+id/linear"
                 android:layout_width="match_parent"
@@ -42,13 +39,13 @@
 
                 <TextView
                     android:id="@+id/title"
+                    android:layout_marginBottom="-20dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="20dp"
-                    android:layout_marginBottom="-20dp"
                     android:fontFamily="@font/poppinsemibold"
                     android:gravity="center"
-                    android:text="Let's rate the service"
+                    android:text="Let's rate the shop"
                     android:textColor="@color/material_blue_grey_90"
                     android:textSize="20sp"
                     tools:ignore="HardcodedText" />
@@ -60,7 +57,7 @@
                     android:layout_margin="20dp"
                     android:fontFamily="@font/poppinsregular"
                     android:gravity="center"
-                    android:text="How was the service of your Shooter from Ibingay Masbate City?"
+                    android:text="How was the seller of your pet from Ibingay Masbate City?"
                     android:textSize="15sp"
                     tools:ignore="HardcodedText" />
 
@@ -68,8 +65,8 @@
                     android:id="@+id/image"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_gravity="center"
                     android:layout_marginTop="-15dp"
+                    android:layout_gravity="center"
                     android:adjustViewBounds="true"
                     android:padding="5dp" />
 
@@ -84,19 +81,18 @@
 
 
                 <TextView
+                    android:layout_marginBottom="-10dp"
+                    android:layout_marginStart="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginBottom="-10dp"
                     android:text="Add a feedback"
                     tools:ignore="HardcodedText" />
-
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:padding="10dp"
                     android:layout_margin="15dp"
                     android:background="@drawable/stlye_border_relative_two"
-                    android:padding="10dp">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <EditText
                         android:id="@+id/editText"
@@ -110,52 +106,50 @@
                 </RelativeLayout>
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="-10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="(Optional)"
                     tools:ignore="HardcodedText" />
 
             </LinearLayout>
-
             <LinearLayout
+                android:layout_below="@id/linear"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/linear"
-                android:layout_marginTop="20dp"
+                android:padding="10dp"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:layout_marginTop="20dp">
 
                 <Button
                     android:id="@+id/rateLater"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:layout_marginEnd="50dp"
                     android:background="@drawable/dropshadow_button_cancelled"
                     android:padding="15dp"
-                    android:text="Maybe Later"
-                    android:textColor="@color/material_blue_grey_90"
                     android:textSize="12sp"
+                    android:layout_marginEnd="50dp"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:text="Maybe Later"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     tools:ignore="HardcodedText" />
 
                 <Button
                     android:id="@+id/rateNow"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
                     android:background="@drawable/dropshadow_button"
                     android:padding="15dp"
-                    android:text="Submit"
-                    android:textColor="@color/white"
                     android:textSize="12sp"
+                    android:layout_margin="10dp"
+                    android:textColor="@color/white"
+                    android:text="Submit"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
                     tools:ignore="HardcodedText" />
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
-
 
 
 </RelativeLayout>

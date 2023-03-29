@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
 import com.example.hi_breed.message.acquired_service_accepted_message;
-import com.example.hi_breed.acquired_service_details;
+import com.example.hi_breed.details.acquired_service_details;
 import com.example.hi_breed.classesFile.appointment_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -68,7 +68,6 @@ public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_servi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         appointment_class productModel = list.get(position);
-
 
         if(!productModel.getSeller_id().equals(userID)){
             notCurrentUser = productModel.getSeller_id();
@@ -145,8 +144,6 @@ public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_servi
                 context.startActivity(intent);
             }
         });
-
-
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
