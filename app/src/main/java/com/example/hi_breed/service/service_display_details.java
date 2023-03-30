@@ -19,13 +19,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.hi_breed.R;
+import com.example.hi_breed.adapter.review_order_adapter;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.likes_class;
+import com.example.hi_breed.classesFile.rating_class;
 import com.example.hi_breed.classesFile.service_class;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,8 +39,10 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -43,6 +50,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class service_display_details extends BaseActivity {
+
+    ImageView ratingBar;
+    review_order_adapter adapter;
+    RecyclerView reviewsService;
     ImageView heart_like,share_to_messenger;
    LinearLayout backLayout;
    ImageSlider imageSliderDetails;
@@ -63,7 +74,7 @@ public class service_display_details extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.shooter_display_details);
+        setContentView(R.layout.service_display_details);
 
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -75,7 +86,10 @@ public class service_display_details extends BaseActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
-
+        ratingBar = findViewById(R.id.ratingBar);
+        reviewsService = findViewById(R.id.reviewsShop);
+        reviewsService.setLayoutManager(new GridLayoutManager(this,1));
+        adapter = new review_order_adapter(this);
 
         heart_like = findViewById(R.id.heart_like);
         backLayout = findViewById(R.id.backLayout);
@@ -120,6 +134,9 @@ public class service_display_details extends BaseActivity {
         //shooter image
             id = service.getId();
             shooter_id = service.getShooter_id();
+
+            getReviews(service.getShooter_id());
+
             FirebaseFirestore.getInstance().collection("Likes")
                     .whereEqualTo("likedBy", FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .whereEqualTo("product_id",service.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -234,6 +251,61 @@ public class service_display_details extends BaseActivity {
 
 
     }
+
+    private void getReviews(String shooter_id) {
+        FirebaseFirestore.getInstance().collection("Reviews")
+                .whereEqualTo("seller_id",shooter_id)
+                .whereEqualTo("rateFor","Service")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @SuppressLint({"DefaultLocale", "SetTextI18n"})
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null){
+                            return;
+                        }
+                        if (value != null && !value.isEmpty()) {
+                            float totalRating = 0;
+                            int numRatings = 0;
+                            adapter.clearList();
+                            for (DocumentSnapshot s : value) {
+                                if (s.getDouble("rating") != null && !Double.isNaN(s.getDouble("rating"))) {
+                                    totalRating += s.getDouble("rating").floatValue();
+                                    numRatings++;
+                                    rating_class rate = s.toObject(rating_class.class);
+                                    adapter.addServiceDisplay(rate);
+                                }
+                            }
+                            if (numRatings > 0) {
+                                int totalReviews = value.size();
+                                float averageRating = totalRating / numRatings;
+                                TextView ratingTextView = findViewById(R.id.ratingTextView);
+                                TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
+                                TextView ratingValue = findViewById(R.id.ratingValue);
+                                ratingValue.setText(String.format("%.1f /5 ", averageRating));
+                                ratingTextView.setText("Successful Rate : " + String.format("%.0f%%", Math.min(averageRating / 5 * 100, 100)));
+                                numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
+
+                                reviewsService.setAdapter(adapter);
+                            } else {
+                                TextView ratingTextView = findViewById(R.id.ratingTextView);
+                                TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
+                                ratingTextView.setText("No ratings yet");
+                                numberOfReviewsTextView.setText("");
+
+                                reviewsService.setAdapter(adapter);
+                            }
+                        } else {
+                            TextView ratingTextView = findViewById(R.id.ratingTextView);
+                            TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
+                            ratingTextView.setText("No ratings yet");
+                            numberOfReviewsTextView.setText("");
+
+                            reviewsService.setAdapter(adapter);
+                        }
+                    }
+                });
+    }
+
 
     private void removeLike() {
 

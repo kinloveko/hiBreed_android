@@ -1,11 +1,14 @@
 package com.example.hi_breed.loginAndRegistration;
 
+import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -16,6 +19,8 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,6 +41,7 @@ import com.example.hi_breed.classesFile.singlePhotoClass;
 import com.example.hi_breed.screenLoading.screen_WelcomeToHiBreed;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -49,6 +55,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
@@ -110,6 +117,10 @@ public class fragment_registration_email_password extends Fragment {
     String lastTransaction;
     String kennel;
 
+    String prc;
+    String memberID;
+    String dateOfRegistration;
+
     String vet_image;
     Button submit_application;
     TextInputLayout reg_email,reg_password;
@@ -119,6 +130,17 @@ public class fragment_registration_email_password extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        Window window = getActivity().getWindow();
+        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setStatusBarColor(Color.parseColor("#ffffff"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getActivity().getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
+        }
+        else{
+            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            window.setStatusBarColor(Color.parseColor("#e28743"));
+        }
 
         //Firebase authentication
         mAuth = FirebaseAuth.getInstance();
@@ -154,11 +176,16 @@ public class fragment_registration_email_password extends Fragment {
         gender = bundle.getString("gender");
         address = bundle.getString("address");
         zip = bundle.getString("zip");
+        prc = bundle.getString("prcNo");
+        dateOfRegistration = bundle.getString("dateOfRegistration");
+        memberID = bundle.getString("memberID");
+
 
         if(role.contains("Pet Breeder") || role.contains("Pet Shooter")|| role.contains("Veterinarian")){
 
             if(role.contains("Veterinarian")){
                 vet_image = bundle.getString("vet_image");
+
             }
 
             if(role.contains("Pet Breeder")){
@@ -195,7 +222,6 @@ public class fragment_registration_email_password extends Fragment {
             }
         });
     }
-
 
     private void uploadToFirebase() {
 
@@ -238,6 +264,7 @@ public class fragment_registration_email_password extends Fragment {
             reg_passwordEdit.requestFocus();
             return;
         }
+        submit_application.setEnabled(false);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View view = View.inflate(getContext(),R.layout.screen_custom_alert,null);
@@ -254,6 +281,7 @@ public class fragment_registration_email_password extends Fragment {
         AlertDialog alert = builder.create();
         alert.show();
         alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
            mAuth.fetchSignInMethodsForEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
@@ -282,123 +310,1169 @@ public class fragment_registration_email_password extends Fragment {
 
                                                 Uri image = Uri.parse("android.resource://"+ getActivity().getPackageName()+"/"+R.drawable.noimage);
                                                 Uri imageCover= Uri.parse("android.resource://"+ getActivity().getPackageName()+"/"+R.drawable.nobackground);
-                                                UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"pending");
-                                                EmailPassClass security = new EmailPassClass(email,password,"");
-                                                DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
-                                                documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                if(role.contains("Veterinarian") || role.contains("Pet Shooter") || role.contains("Pet Breeder")){
+
+
+                                                   if(role.contains("Veterinarian") && role.contains("Pet Breeder")){
+
+                                                        FirebaseFirestore.getInstance().collection("Members")
+                                                                .whereEqualTo("memberId",memberID)
+                                                                .whereEqualTo("dateOfRegistration",dateOfRegistration)
+                                                                .whereEqualTo("prc_id_no",prc)
+                                                                .whereEqualTo("kennelName",kennel)
+                                                                .whereEqualTo("birthday",birth)
+                                                                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                                    @Override
+                                                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                                        if(!queryDocumentSnapshots.isEmpty()){
+                                                                            UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"verified");
+
+                                                                            EmailPassClass security = new EmailPassClass(email,password,"");
+                                                                            DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
+                                                                            documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task) {
+
+
+                                                                                    if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
+
+                                                                                        if (role.contains("Pet Breeder")) {
+                                                                                            uploadToStorageBreeder(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("kennel",kennel);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                        }
+                                                                                        if (role.contains("Pet Shooter")) {
+                                                                                            if(uriShooter_converted.size() == 0){
+                                                                                                Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
+                                                                                                return;
+                                                                                            }
+                                                                                            uploadToStorageShooter(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("last_transaction",lastTransaction);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                        }
+                                                                                        if(role.contains("Veterinarian")){
+                                                                                            uploadToStorageVet(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("license_image",vet_image);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                        }
+                                                                                        Map<String,Object> data = new HashMap<>();
+                                                                                        data.put("experience",exp);
+                                                                                        documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                        //for creation of shop data
+
+                                                                                        ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
+                                                                                        DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
+                                                                                        documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                            }
+                                                                                        });
+                                                                                    }
+
+                                                                                    save_role(user);
+                                                                                    //for security emails and stuffs
+                                                                                    DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
+                                                                                    securityRef.collection("security")
+                                                                                            .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                                                    new Handler().postDelayed(new Runnable() {
+                                                                                                        @Override
+                                                                                                        public void run() {
+                                                                                                            alert.dismiss();
+                                                                                                            AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                                                                                                            builder2.setCancelable(false);
+                                                                                                            View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
+                                                                                                            //title
+                                                                                                            TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                                            //loading text
+                                                                                                            TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                                            loadingText.setVisibility(View.GONE);
+                                                                                                            //gif
+                                                                                                            GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                                            gif.setVisibility(View.GONE);
+                                                                                                            //header image
+                                                                                                            AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                                            imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                                            imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                                            //message
+                                                                                                            TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                                            title.setText("Account Registered");
+                                                                                                            message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
+                                                                                                            //button
+                                                                                                            LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                                            buttonLayout.setVisibility(View.VISIBLE);
+                                                                                                            //button cancel,okay
+                                                                                                            MaterialButton cancel, okay;
+                                                                                                            cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                                            okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                                            cancel.setVisibility(View.GONE);
+                                                                                                            builder2.setView(view);
+                                                                                                            AlertDialog alert2 = builder2.create();
+                                                                                                            alert2.show();
+                                                                                                            alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                            okay.setOnClickListener(new View.OnClickListener() {
+                                                                                                                @Override
+                                                                                                                public void onClick(View v) {
+                                                                                                                    alert2.dismiss();
+                                                                                                                    reg_email.setError("");
+                                                                                                                    reg_password.setError("");
+                                                                                                                    reg_emailEdit.getText().clear();
+                                                                                                                    FirebaseAuth.getInstance().signOut();
+                                                                                                                    startActivity(new Intent(getContext(), Login.class));
+                                                                                                                    getActivity().finish();
+                                                                                                                }
+                                                                                                            });
+                                                                                                        }
+                                                                                                    }, 2000);
+                                                                                                }
+                                                                                            });
+
+
+                                                                                }
+                                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    Log.d("NoApp",e.getMessage());
+                                                                                    alert.dismiss();
+                                                                                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                                                }
+                                                                            });
+
+                                                                            Toast.makeText(getContext(), "User status is verified", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                        else{
+
+                                                                            UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"pending");
+                                                                            EmailPassClass security = new EmailPassClass(email,password,"");
+                                                                            DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
+
+                                                                            documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task) {
 
 
 
-                                                        if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
+                                                                                    if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
 
-                                                            if (role.contains("Pet Breeder")) {
-                                                                uploadToStorageBreeder(user);
-                                                                Map<String,Object> data = new HashMap<>();
-                                                                data.put("kennel",kennel);
-                                                                documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
-                                                            }
-                                                            if (role.contains("Pet Shooter")) {
-                                                                if(uriShooter_converted.size() == 0){
-                                                                    Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
-                                                                    return;
+                                                                                        if (role.contains("Pet Breeder")) {
+                                                                                            uploadToStorageBreeder(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("kennel",kennel);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                        }
+                                                                                        if (role.contains("Pet Shooter")) {
+                                                                                            if(uriShooter_converted.size() == 0){
+                                                                                                Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
+                                                                                                return;
+                                                                                            }
+                                                                                            uploadToStorageShooter(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("last_transaction",lastTransaction);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                        }
+                                                                                        if(role.contains("Veterinarian")){
+                                                                                            uploadToStorageVet(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("license_image",vet_image);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                        }
+                                                                                        Map<String,Object> data = new HashMap<>();
+                                                                                        data.put("experience",exp);
+                                                                                        documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                        //for creation of shop data
+
+                                                                                        ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
+                                                                                        DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
+                                                                                        documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                            }
+                                                                                        });
+
+                                                                                    }
+
+                                                                                    save_role(user);
+                                                                                    //for security emails and stuffs
+                                                                                    DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
+                                                                                    securityRef.collection("security")
+                                                                                            .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                                                    new Handler().postDelayed(new Runnable() {
+                                                                                                        @Override
+                                                                                                        public void run() {
+                                                                                                            alert.dismiss();
+                                                                                                            AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                                                                                                            builder2.setCancelable(false);
+                                                                                                            View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
+                                                                                                            //title
+                                                                                                            TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                                            //loading text
+                                                                                                            TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                                            loadingText.setVisibility(View.GONE);
+                                                                                                            //gif
+                                                                                                            GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                                            gif.setVisibility(View.GONE);
+                                                                                                            //header image
+                                                                                                            AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                                            imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                                            imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                                            //message
+                                                                                                            TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                                            title.setText("Account Registered");
+                                                                                                            message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
+                                                                                                            //button
+                                                                                                            LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                                            buttonLayout.setVisibility(View.VISIBLE);
+                                                                                                            //button cancel,okay
+                                                                                                            MaterialButton cancel, okay;
+                                                                                                            cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                                            okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                                            cancel.setVisibility(View.GONE);
+                                                                                                            builder2.setView(view);
+                                                                                                            AlertDialog alert2 = builder2.create();
+                                                                                                            alert2.show();
+                                                                                                            alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                            okay.setOnClickListener(new View.OnClickListener() {
+                                                                                                                @Override
+                                                                                                                public void onClick(View v) {
+                                                                                                                    alert2.dismiss();
+                                                                                                                    reg_email.setError("");
+                                                                                                                    reg_password.setError("");
+                                                                                                                    reg_emailEdit.getText().clear();
+                                                                                                                    FirebaseAuth.getInstance().signOut();
+                                                                                                                    startActivity(new Intent(getContext(), Login.class));
+                                                                                                                    getActivity().finish();
+                                                                                                                }
+                                                                                                            });
+                                                                                                        }
+                                                                                                    }, 2000);
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                                                }
+                                                                            });
+
+                                                                            Toast.makeText(getContext(), "User status is pending", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    }
+                                                                });
+                                                    }
+                                                   else  if(role.contains("Veterinarian")){
+                                                       FirebaseFirestore.getInstance().collection("Members")
+                                                               .whereEqualTo("memberId",memberID)
+                                                               .whereEqualTo("dateOfRegistration",dateOfRegistration)
+                                                               .whereEqualTo("prc_id_no",prc)
+                                                               .whereEqualTo("birthday",birth)
+                                                               .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                                   @Override
+                                                                   public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                                       if(!queryDocumentSnapshots.isEmpty()){
+                                                                           UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"verified");
+
+                                                                           EmailPassClass security = new EmailPassClass(email,password,"");
+                                                                           DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
+                                                                           documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                               @Override
+                                                                               public void onComplete(@NonNull Task<Void> task) {
+
+
+
+                                                                                   if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
+
+                                                                                       if (role.contains("Pet Breeder")) {
+                                                                                           uploadToStorageBreeder(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("kennel",kennel);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                       }
+                                                                                       if (role.contains("Pet Shooter")) {
+                                                                                           if(uriShooter_converted.size() == 0){
+                                                                                               Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
+                                                                                               return;
+                                                                                           }
+                                                                                           uploadToStorageShooter(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("last_transaction",lastTransaction);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                       }
+                                                                                       if(role.contains("Veterinarian")){
+                                                                                           uploadToStorageVet(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("license_image",vet_image);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                       }
+                                                                                       Map<String,Object> data = new HashMap<>();
+                                                                                       data.put("experience",exp);
+                                                                                       documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                       //for creation of shop data
+
+                                                                                       ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
+                                                                                       DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
+                                                                                       documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                           @Override
+                                                                                           public void onComplete(@NonNull Task<Void> task) {
+                                                                                           }
+                                                                                       });
+
+                                                                                   }
+
+                                                                                   save_role(user);
+                                                                                   //for security emails and stuffs
+                                                                                   DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
+                                                                                   securityRef.collection("security")
+                                                                                           .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                               @Override
+                                                                                               public void onComplete(@NonNull Task<Void> task) {
+                                                                                                   new Handler().postDelayed(new Runnable() {
+                                                                                                       @Override
+                                                                                                       public void run() {
+                                                                                                           alert.dismiss();
+                                                                                                           AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                                                                                                           builder2.setCancelable(false);
+                                                                                                           View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
+                                                                                                           //title
+                                                                                                           TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                                           //loading text
+                                                                                                           TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                                           loadingText.setVisibility(View.GONE);
+                                                                                                           //gif
+                                                                                                           GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                                           gif.setVisibility(View.GONE);
+                                                                                                           //header image
+                                                                                                           AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                                           imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                                           imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                                           //message
+                                                                                                           TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                                           title.setText("Account Registered");
+                                                                                                           message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
+                                                                                                           //button
+                                                                                                           LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                                           buttonLayout.setVisibility(View.VISIBLE);
+                                                                                                           //button cancel,okay
+                                                                                                           MaterialButton cancel, okay;
+                                                                                                           cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                                           okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                                           cancel.setVisibility(View.GONE);
+                                                                                                           builder2.setView(view);
+                                                                                                           AlertDialog alert2 = builder2.create();
+                                                                                                           alert2.show();
+                                                                                                           alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                           okay.setOnClickListener(new View.OnClickListener() {
+                                                                                                               @Override
+                                                                                                               public void onClick(View v) {
+                                                                                                                   alert2.dismiss();
+                                                                                                                   reg_email.setError("");
+                                                                                                                   reg_password.setError("");
+                                                                                                                   reg_emailEdit.getText().clear();
+                                                                                                                   FirebaseAuth.getInstance().signOut();
+                                                                                                                   startActivity(new Intent(getContext(), Login.class));
+                                                                                                                   getActivity().finish();
+                                                                                                               }
+                                                                                                           });
+                                                                                                       }
+                                                                                                   }, 2000);
+                                                                                               }
+                                                                                           });
+
+
+                                                                               }
+                                                                           }).addOnFailureListener(new OnFailureListener() {
+                                                                               @Override
+                                                                               public void onFailure(@NonNull Exception e) {
+                                                                                   Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                                               }
+                                                                           });
+
+
+                                                                           Toast.makeText(getContext(), "User status is verified", Toast.LENGTH_SHORT).show();
+                                                                       }
+                                                                       else{
+
+                                                                           UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"pending");
+
+                                                                           EmailPassClass security = new EmailPassClass(email,password,"");
+                                                                           DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
+
+
+                                                                           documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                               @Override
+                                                                               public void onComplete(@NonNull Task<Void> task) {
+
+
+
+                                                                                   if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
+
+                                                                                       if (role.contains("Pet Breeder")) {
+                                                                                           uploadToStorageBreeder(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("kennel",kennel);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                       }
+                                                                                       if (role.contains("Pet Shooter")) {
+                                                                                           if(uriShooter_converted.size() == 0){
+                                                                                               Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
+                                                                                               return;
+                                                                                           }
+                                                                                           uploadToStorageShooter(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("last_transaction",lastTransaction);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                       }
+                                                                                       if(role.contains("Veterinarian")){
+                                                                                           uploadToStorageVet(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("license_image",vet_image);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                       }
+                                                                                       Map<String,Object> data = new HashMap<>();
+                                                                                       data.put("experience",exp);
+                                                                                       documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                       //for creation of shop data
+
+                                                                                       ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
+                                                                                       DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
+                                                                                       documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                           @Override
+                                                                                           public void onComplete(@NonNull Task<Void> task) {
+                                                                                           }
+                                                                                       });
+
+                                                                                   }
+
+                                                                                   save_role(user);
+                                                                                   //for security emails and stuffs
+                                                                                   DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
+                                                                                   securityRef.collection("security")
+                                                                                           .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                               @Override
+                                                                                               public void onComplete(@NonNull Task<Void> task) {
+                                                                                                   new Handler().postDelayed(new Runnable() {
+                                                                                                       @Override
+                                                                                                       public void run() {
+                                                                                                           alert.dismiss();
+                                                                                                           AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                                                                                                           builder2.setCancelable(false);
+                                                                                                           View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
+                                                                                                           //title
+                                                                                                           TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                                           //loading text
+                                                                                                           TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                                           loadingText.setVisibility(View.GONE);
+                                                                                                           //gif
+                                                                                                           GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                                           gif.setVisibility(View.GONE);
+                                                                                                           //header image
+                                                                                                           AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                                           imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                                           imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                                           //message
+                                                                                                           TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                                           title.setText("Account Registered");
+                                                                                                           message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
+                                                                                                           //button
+                                                                                                           LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                                           buttonLayout.setVisibility(View.VISIBLE);
+                                                                                                           //button cancel,okay
+                                                                                                           MaterialButton cancel, okay;
+                                                                                                           cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                                           okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                                           cancel.setVisibility(View.GONE);
+                                                                                                           builder2.setView(view);
+                                                                                                           AlertDialog alert2 = builder2.create();
+                                                                                                           alert2.show();
+                                                                                                           alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                           okay.setOnClickListener(new View.OnClickListener() {
+                                                                                                               @Override
+                                                                                                               public void onClick(View v) {
+                                                                                                                   alert2.dismiss();
+                                                                                                                   reg_email.setError("");
+                                                                                                                   reg_password.setError("");
+                                                                                                                   reg_emailEdit.getText().clear();
+                                                                                                                   FirebaseAuth.getInstance().signOut();
+                                                                                                                   startActivity(new Intent(getContext(), Login.class));
+                                                                                                                   getActivity().finish();
+                                                                                                               }
+                                                                                                           });
+                                                                                                       }
+                                                                                                   }, 2000);
+                                                                                               }
+                                                                                           });
+
+
+                                                                               }
+                                                                           }).addOnFailureListener(new OnFailureListener() {
+                                                                               @Override
+                                                                               public void onFailure(@NonNull Exception e) {
+                                                                                   Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                                               }
+                                                                           });
+
+                                                                           Toast.makeText(getContext(), "User status is pending", Toast.LENGTH_SHORT).show();
+                                                                       }
+                                                                   }
+                                                               });
+                                                   }
+                                                   else  if(role.contains("Pet Breeder")){
+                                                       FirebaseFirestore.getInstance().collection("Members")
+                                                               .whereEqualTo("memberId",memberID)
+                                                               .whereEqualTo("dateOfRegistration",dateOfRegistration)
+                                                               .whereEqualTo("kennelName",kennel)
+                                                               .whereEqualTo("birthday",birth)
+                                                               .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                                   @Override
+                                                                   public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                                       if(!queryDocumentSnapshots.isEmpty()){
+                                                                           UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"verified");
+
+                                                                           EmailPassClass security = new EmailPassClass(email,password,"");
+                                                                           DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
+                                                                           documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                               @Override
+                                                                               public void onComplete(@NonNull Task<Void> task) {
+
+
+
+                                                                                   if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
+
+                                                                                       if (role.contains("Pet Breeder")) {
+                                                                                           uploadToStorageBreeder(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("kennel",kennel);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                       }
+                                                                                       if (role.contains("Pet Shooter")) {
+                                                                                           if(uriShooter_converted.size() == 0){
+                                                                                               Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
+                                                                                               return;
+                                                                                           }
+                                                                                           uploadToStorageShooter(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("last_transaction",lastTransaction);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                       }
+                                                                                       if(role.contains("Veterinarian")){
+                                                                                           uploadToStorageVet(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("license_image",vet_image);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                       }
+                                                                                       Map<String,Object> data = new HashMap<>();
+                                                                                       data.put("experience",exp);
+                                                                                       documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                       //for creation of shop data
+
+                                                                                       ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
+                                                                                       DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
+                                                                                       documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                           @Override
+                                                                                           public void onComplete(@NonNull Task<Void> task) {
+                                                                                           }
+                                                                                       });
+
+                                                                                   }
+
+                                                                                   save_role(user);
+                                                                                   //for security emails and stuffs
+                                                                                   DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
+                                                                                   securityRef.collection("security")
+                                                                                           .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                               @Override
+                                                                                               public void onComplete(@NonNull Task<Void> task) {
+                                                                                                   new Handler().postDelayed(new Runnable() {
+                                                                                                       @Override
+                                                                                                       public void run() {
+                                                                                                           alert.dismiss();
+                                                                                                           AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                                                                                                           builder2.setCancelable(false);
+                                                                                                           View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
+                                                                                                           //title
+                                                                                                           TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                                           //loading text
+                                                                                                           TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                                           loadingText.setVisibility(View.GONE);
+                                                                                                           //gif
+                                                                                                           GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                                           gif.setVisibility(View.GONE);
+                                                                                                           //header image
+                                                                                                           AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                                           imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                                           imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                                           //message
+                                                                                                           TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                                           title.setText("Account Registered");
+                                                                                                           message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
+                                                                                                           //button
+                                                                                                           LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                                           buttonLayout.setVisibility(View.VISIBLE);
+                                                                                                           //button cancel,okay
+                                                                                                           MaterialButton cancel, okay;
+                                                                                                           cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                                           okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                                           cancel.setVisibility(View.GONE);
+                                                                                                           builder2.setView(view);
+                                                                                                           AlertDialog alert2 = builder2.create();
+                                                                                                           alert2.show();
+                                                                                                           alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                           okay.setOnClickListener(new View.OnClickListener() {
+                                                                                                               @Override
+                                                                                                               public void onClick(View v) {
+                                                                                                                   alert2.dismiss();
+                                                                                                                   reg_email.setError("");
+                                                                                                                   reg_password.setError("");
+                                                                                                                   reg_emailEdit.getText().clear();
+                                                                                                                   FirebaseAuth.getInstance().signOut();
+                                                                                                                   startActivity(new Intent(getContext(), Login.class));
+                                                                                                                   getActivity().finish();
+                                                                                                               }
+                                                                                                           });
+                                                                                                       }
+                                                                                                   }, 2000);
+                                                                                               }
+                                                                                           });
+
+
+                                                                               }
+                                                                           }).addOnFailureListener(new OnFailureListener() {
+                                                                               @Override
+                                                                               public void onFailure(@NonNull Exception e) {
+                                                                                   Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                                               }
+                                                                           });
+
+
+                                                                           Toast.makeText(getContext(), "User status is verified", Toast.LENGTH_SHORT).show();
+                                                                       }
+                                                                       else{
+
+                                                                           UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"pending");
+
+                                                                           EmailPassClass security = new EmailPassClass(email,password,"");
+                                                                           DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
+
+
+                                                                           documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                               @Override
+                                                                               public void onComplete(@NonNull Task<Void> task) {
+
+
+
+                                                                                   if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
+
+                                                                                       if (role.contains("Pet Breeder")) {
+                                                                                           uploadToStorageBreeder(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("kennel",kennel);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                       }
+                                                                                       if (role.contains("Pet Shooter")) {
+                                                                                           if(uriShooter_converted.size() == 0){
+                                                                                               Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
+                                                                                               return;
+                                                                                           }
+                                                                                           uploadToStorageShooter(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("last_transaction",lastTransaction);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                       }
+                                                                                       if(role.contains("Veterinarian")){
+                                                                                           uploadToStorageVet(user);
+                                                                                           Map<String,Object> data = new HashMap<>();
+                                                                                           data.put("license_image",vet_image);
+                                                                                           documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                       }
+                                                                                       Map<String,Object> data = new HashMap<>();
+                                                                                       data.put("experience",exp);
+                                                                                       documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                       //for creation of shop data
+
+                                                                                       ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
+                                                                                       DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
+                                                                                       documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                           @Override
+                                                                                           public void onComplete(@NonNull Task<Void> task) {
+                                                                                           }
+                                                                                       });
+
+                                                                                   }
+
+                                                                                   save_role(user);
+                                                                                   //for security emails and stuffs
+                                                                                   DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
+                                                                                   securityRef.collection("security")
+                                                                                           .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                               @Override
+                                                                                               public void onComplete(@NonNull Task<Void> task) {
+                                                                                                   new Handler().postDelayed(new Runnable() {
+                                                                                                       @Override
+                                                                                                       public void run() {
+                                                                                                           alert.dismiss();
+                                                                                                           AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                                                                                                           builder2.setCancelable(false);
+                                                                                                           View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
+                                                                                                           //title
+                                                                                                           TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                                           //loading text
+                                                                                                           TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                                           loadingText.setVisibility(View.GONE);
+                                                                                                           //gif
+                                                                                                           GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                                           gif.setVisibility(View.GONE);
+                                                                                                           //header image
+                                                                                                           AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                                           imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                                           imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                                           //message
+                                                                                                           TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                                           title.setText("Account Registered");
+                                                                                                           message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
+                                                                                                           //button
+                                                                                                           LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                                           buttonLayout.setVisibility(View.VISIBLE);
+                                                                                                           //button cancel,okay
+                                                                                                           MaterialButton cancel, okay;
+                                                                                                           cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                                           okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                                           cancel.setVisibility(View.GONE);
+                                                                                                           builder2.setView(view);
+                                                                                                           AlertDialog alert2 = builder2.create();
+                                                                                                           alert2.show();
+                                                                                                           alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                           okay.setOnClickListener(new View.OnClickListener() {
+                                                                                                               @Override
+                                                                                                               public void onClick(View v) {
+                                                                                                                   alert2.dismiss();
+                                                                                                                   reg_email.setError("");
+                                                                                                                   reg_password.setError("");
+                                                                                                                   reg_emailEdit.getText().clear();
+                                                                                                                   FirebaseAuth.getInstance().signOut();
+                                                                                                                   startActivity(new Intent(getContext(), Login.class));
+                                                                                                                   getActivity().finish();
+                                                                                                               }
+                                                                                                           });
+                                                                                                       }
+                                                                                                   }, 2000);
+                                                                                               }
+                                                                                           });
+
+
+                                                                               }
+                                                                           }).addOnFailureListener(new OnFailureListener() {
+                                                                               @Override
+                                                                               public void onFailure(@NonNull Exception e) {
+                                                                                   Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                                               }
+                                                                           });
+
+                                                                           Toast.makeText(getContext(), "User status is pending", Toast.LENGTH_SHORT).show();
+                                                                       }
+                                                                   }
+                                                               });
+                                                   }
+                                                    else{
+                                                        FirebaseFirestore.getInstance().collection("Members")
+                                                                .whereEqualTo("memberId",memberID)
+                                                                .whereEqualTo("dateOfRegistration",dateOfRegistration)
+                                                                .whereEqualTo("birthday",birth)
+                                                                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                                    @Override
+                                                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                                        if(!queryDocumentSnapshots.isEmpty()){
+                                                                            UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"verified");
+
+                                                                            EmailPassClass security = new EmailPassClass(email,password,"");
+                                                                            DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
+                                                                            documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task) {
+
+
+
+                                                                                    if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
+
+                                                                                        if (role.contains("Pet Breeder")) {
+                                                                                            uploadToStorageBreeder(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("kennel",kennel);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                        }
+                                                                                        if (role.contains("Pet Shooter")) {
+                                                                                            if(uriShooter_converted.size() == 0){
+                                                                                                Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
+                                                                                                return;
+                                                                                            }
+                                                                                            uploadToStorageShooter(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("last_transaction",lastTransaction);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                        }
+                                                                                        if(role.contains("Veterinarian")){
+                                                                                            uploadToStorageVet(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("license_image",vet_image);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                        }
+                                                                                        Map<String,Object> data = new HashMap<>();
+                                                                                        data.put("experience",exp);
+                                                                                        documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                        //for creation of shop data
+
+                                                                                        ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
+                                                                                        DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
+                                                                                        documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                            }
+                                                                                        });
+
+                                                                                    }
+
+                                                                                    save_role(user);
+                                                                                    //for security emails and stuffs
+                                                                                    DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
+                                                                                    securityRef.collection("security")
+                                                                                            .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                                                    new Handler().postDelayed(new Runnable() {
+                                                                                                        @Override
+                                                                                                        public void run() {
+                                                                                                            alert.dismiss();
+                                                                                                            AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                                                                                                            builder2.setCancelable(false);
+                                                                                                            View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
+                                                                                                            //title
+                                                                                                            TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                                            //loading text
+                                                                                                            TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                                            loadingText.setVisibility(View.GONE);
+                                                                                                            //gif
+                                                                                                            GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                                            gif.setVisibility(View.GONE);
+                                                                                                            //header image
+                                                                                                            AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                                            imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                                            imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                                            //message
+                                                                                                            TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                                            title.setText("Account Registered");
+                                                                                                            message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
+                                                                                                            //button
+                                                                                                            LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                                            buttonLayout.setVisibility(View.VISIBLE);
+                                                                                                            //button cancel,okay
+                                                                                                            MaterialButton cancel, okay;
+                                                                                                            cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                                            okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                                            cancel.setVisibility(View.GONE);
+                                                                                                            builder2.setView(view);
+                                                                                                            AlertDialog alert2 = builder2.create();
+                                                                                                            alert2.show();
+                                                                                                            alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                            okay.setOnClickListener(new View.OnClickListener() {
+                                                                                                                @Override
+                                                                                                                public void onClick(View v) {
+                                                                                                                    alert2.dismiss();
+                                                                                                                    reg_email.setError("");
+                                                                                                                    reg_password.setError("");
+                                                                                                                    reg_emailEdit.getText().clear();
+                                                                                                                    FirebaseAuth.getInstance().signOut();
+                                                                                                                    startActivity(new Intent(getContext(), Login.class));
+                                                                                                                    getActivity().finish();
+                                                                                                                }
+                                                                                                            });
+                                                                                                        }
+                                                                                                    }, 2000);
+                                                                                                }
+                                                                                            });
+
+
+                                                                                }
+                                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                                                }
+                                                                            });
+
+
+                                                                            Toast.makeText(getContext(), "User status is verified", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                        else{
+
+                                                                            UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"pending");
+
+                                                                            EmailPassClass security = new EmailPassClass(email,password,"");
+                                                                            DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
+
+
+                                                                            documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task) {
+
+
+
+                                                                                    if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
+
+                                                                                        if (role.contains("Pet Breeder")) {
+                                                                                            uploadToStorageBreeder(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("kennel",kennel);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                        }
+                                                                                        if (role.contains("Pet Shooter")) {
+                                                                                            if(uriShooter_converted.size() == 0){
+                                                                                                Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
+                                                                                                return;
+                                                                                            }
+                                                                                            uploadToStorageShooter(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("last_transaction",lastTransaction);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+                                                                                        }
+                                                                                        if(role.contains("Veterinarian")){
+                                                                                            uploadToStorageVet(user);
+                                                                                            Map<String,Object> data = new HashMap<>();
+                                                                                            data.put("license_image",vet_image);
+                                                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                        }
+                                                                                        Map<String,Object> data = new HashMap<>();
+                                                                                        data.put("experience",exp);
+                                                                                        documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
+
+                                                                                        //for creation of shop data
+
+                                                                                        ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
+                                                                                        DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
+                                                                                        documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                            }
+                                                                                        });
+
+                                                                                    }
+
+                                                                                    save_role(user);
+                                                                                    //for security emails and stuffs
+                                                                                    DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
+                                                                                    securityRef.collection("security")
+                                                                                            .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                                                    new Handler().postDelayed(new Runnable() {
+                                                                                                        @Override
+                                                                                                        public void run() {
+                                                                                                            alert.dismiss();
+                                                                                                            AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                                                                                                            builder2.setCancelable(false);
+                                                                                                            View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
+                                                                                                            //title
+                                                                                                            TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                                            //loading text
+                                                                                                            TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                                            loadingText.setVisibility(View.GONE);
+                                                                                                            //gif
+                                                                                                            GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                                            gif.setVisibility(View.GONE);
+                                                                                                            //header image
+                                                                                                            AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                                            imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                                            imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                                            //message
+                                                                                                            TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                                            title.setText("Account Registered");
+                                                                                                            message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
+                                                                                                            //button
+                                                                                                            LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                                            buttonLayout.setVisibility(View.VISIBLE);
+                                                                                                            //button cancel,okay
+                                                                                                            MaterialButton cancel, okay;
+                                                                                                            cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                                            okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                                            cancel.setVisibility(View.GONE);
+                                                                                                            builder2.setView(view);
+                                                                                                            AlertDialog alert2 = builder2.create();
+                                                                                                            alert2.show();
+                                                                                                            alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                            okay.setOnClickListener(new View.OnClickListener() {
+                                                                                                                @Override
+                                                                                                                public void onClick(View v) {
+                                                                                                                    alert2.dismiss();
+                                                                                                                    reg_email.setError("");
+                                                                                                                    reg_password.setError("");
+                                                                                                                    reg_emailEdit.getText().clear();
+                                                                                                                    FirebaseAuth.getInstance().signOut();
+                                                                                                                    startActivity(new Intent(getContext(), Login.class));
+                                                                                                                    getActivity().finish();
+                                                                                                                }
+                                                                                                            });
+                                                                                                        }
+                                                                                                    }, 2000);
+                                                                                                }
+                                                                                            });
+
+
+                                                                                }
+                                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                                                }
+                                                                            });
+
+                                                                            Toast.makeText(getContext(), "User status is pending", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    }
+                                                                });
+                                                    }
+
+                                                }
+                                                else{
+                                                    //for owner
+                                                    UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"verified");
+                                                    EmailPassClass security = new EmailPassClass(email,password,"");
+                                                    DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
+
+                                                    documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+
+
+
+                                                            if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
+
+                                                                if (role.contains("Pet Breeder")) {
+                                                                    uploadToStorageBreeder(user);
+                                                                    Map<String,Object> data = new HashMap<>();
+                                                                    data.put("kennel",kennel);
+                                                                    documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
                                                                 }
-                                                                uploadToStorageShooter(user);
-                                                                Map<String,Object> data = new HashMap<>();
-                                                                data.put("last_transaction",lastTransaction);
-                                                                documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
-                                                            }
-                                                            if(role.contains("Veterinarian")){
-                                                                uploadToStorageVet(user);
-                                                                Map<String,Object> data = new HashMap<>();
-                                                                data.put("license_image",vet_image);
-                                                                documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
-
-                                                            }
-                                                            Map<String,Object> data = new HashMap<>();
-                                                            data.put("experience",exp);
-                                                            documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
-
-                                                            //for creation of shop data
-
-                                                            ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
-                                                            DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
-                                                            documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                if (role.contains("Pet Shooter")) {
+                                                                    if(uriShooter_converted.size() == 0){
+                                                                        Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
+                                                                        return;
+                                                                    }
+                                                                    uploadToStorageShooter(user);
+                                                                    Map<String,Object> data = new HashMap<>();
+                                                                    data.put("last_transaction",lastTransaction);
+                                                                    documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
                                                                 }
-                                                            });
+                                                                if(role.contains("Veterinarian")){
+                                                                    uploadToStorageVet(user);
+                                                                    Map<String,Object> data = new HashMap<>();
+                                                                    data.put("license_image",vet_image);
+                                                                    documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
 
-                                                        }
+                                                                }
+                                                                Map<String,Object> data = new HashMap<>();
+                                                                data.put("experience",exp);
+                                                                documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
 
-                                                        save_role(user);
-                                                        //for security emails and stuffs
-                                                        DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
-                                                        securityRef.collection("security")
-                                                                .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                //for creation of shop data
+
+                                                                ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
+                                                                DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
+                                                                documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                     @Override
                                                                     public void onComplete(@NonNull Task<Void> task) {
-                                                                        new Handler().postDelayed(new Runnable() {
-                                                                            @Override
-                                                                            public void run() {
-                                                                                alert.dismiss();
-                                                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
-                                                                                builder2.setCancelable(false);
-                                                                                View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
-                                                                                //title
-                                                                                TextView title = view.findViewById(R.id.screen_custom_alert_title);
-                                                                                //loading text
-                                                                                TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
-                                                                                loadingText.setVisibility(View.GONE);
-                                                                                //gif
-                                                                                GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
-                                                                                gif.setVisibility(View.GONE);
-                                                                                //header image
-                                                                                AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
-                                                                                imageViewCompat.setVisibility(View.VISIBLE);
-                                                                                imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
-                                                                                //message
-                                                                                TextView message = view.findViewById(R.id.screen_custom_alert_message);
-                                                                                title.setText("Account Registered");
-                                                                                message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
-                                                                                //button
-                                                                                LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
-                                                                                buttonLayout.setVisibility(View.VISIBLE);
-                                                                                //button cancel,okay
-                                                                                MaterialButton cancel, okay;
-                                                                                cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
-                                                                                okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
-                                                                                cancel.setVisibility(View.GONE);
-                                                                                builder2.setView(view);
-                                                                                AlertDialog alert2 = builder2.create();
-                                                                                alert2.show();
-                                                                                alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                                                                okay.setOnClickListener(new View.OnClickListener() {
-                                                                                    @Override
-                                                                                    public void onClick(View v) {
-                                                                                        alert2.dismiss();
-                                                                                        reg_email.setError("");
-                                                                                        reg_password.setError("");
-                                                                                        reg_emailEdit.getText().clear();
-                                                                                        FirebaseAuth.getInstance().signOut();
-                                                                                        startActivity(new Intent(getContext(), Login.class));
-                                                                                        getActivity().finish();
-                                                                                    }
-                                                                                });
-                                                                            }
-                                                                        }, 2000);
                                                                     }
                                                                 });
 
+                                                            }
 
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
+                                                            save_role(user);
+                                                            //for security emails and stuffs
+                                                            DocumentReference securityRef = fireStore.collection("User").document(user.getUid());
+                                                            securityRef.collection("security")
+                                                                    .document("security_doc").set(security).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                            new Handler().postDelayed(new Runnable() {
+                                                                                @Override
+                                                                                public void run() {
+                                                                                    alert.dismiss();
+                                                                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                                                                                    builder2.setCancelable(false);
+                                                                                    View view = View.inflate(getActivity(), R.layout.screen_custom_alert, null);
+                                                                                    //title
+                                                                                    TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                    //loading text
+                                                                                    TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                    loadingText.setVisibility(View.GONE);
+                                                                                    //gif
+                                                                                    GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                    gif.setVisibility(View.GONE);
+                                                                                    //header image
+                                                                                    AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                    imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                    imageViewCompat.setImageDrawable(getResources().getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                    //message
+                                                                                    TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                    title.setText("Account Registered");
+                                                                                    message.setText("Welcome to hiBreed application. You can now showcase all your pets and services online.");
+                                                                                    //button
+                                                                                    LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                    buttonLayout.setVisibility(View.VISIBLE);
+                                                                                    //button cancel,okay
+                                                                                    MaterialButton cancel, okay;
+                                                                                    cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                    okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                    cancel.setVisibility(View.GONE);
+                                                                                    builder2.setView(view);
+                                                                                    AlertDialog alert2 = builder2.create();
+                                                                                    alert2.show();
+                                                                                    alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                    okay.setOnClickListener(new View.OnClickListener() {
+                                                                                        @Override
+                                                                                        public void onClick(View v) {
+                                                                                            alert2.dismiss();
+                                                                                            reg_email.setError("");
+                                                                                            reg_password.setError("");
+                                                                                            reg_emailEdit.getText().clear();
+                                                                                            FirebaseAuth.getInstance().signOut();
+                                                                                            startActivity(new Intent(getContext(), Login.class));
+                                                                                            getActivity().finish();
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            }, 2000);
+                                                                        }
+                                                                    });
+
+
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.d("NoApp",e.getMessage()+" 5");
+                                                            Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                                }
                                             }
                                             else{
                                                 Toast.makeText(requireActivity(), "Something went wrong,Please try again!", Toast.LENGTH_SHORT).show();
@@ -409,13 +1483,11 @@ public class fragment_registration_email_password extends Fragment {
                         }
                         else
                         {
-
                             reg_email.setError("Email is already registered. Try another one!");
                             reg_emailEdit.getText().clear();
                             reg_passwordEdit.getText().clear();
-
+                            submit_application.setEnabled(true);
                         }
-
                     }
                 });
     }

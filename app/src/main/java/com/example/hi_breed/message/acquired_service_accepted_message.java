@@ -193,36 +193,39 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                         if (error != null) {
                             return;
                         }
+                        if(documentSnapshot!=null){
+                            transactionID = documentSnapshot.getString("transaction_id");
+                            if (documentSnapshot.exists() && documentSnapshot.getString("appointment_status").equals("completed")) {
+                                String customerId = documentSnapshot.getString("customer_id");
 
-                        if (documentSnapshot.exists() && documentSnapshot.getString("appointment_status").equals("completed")) {
-                            String customerId = documentSnapshot.getString("customer_id");
+                                if (customerId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    appointment_class appoint = documentSnapshot.toObject(appointment_class.class);
+                                    Intent i = new Intent(acquired_service_accepted_message.this, rate_service.class);
+                                    i.putExtra("model", (Serializable) appoint);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(i);
+                                    Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to completed tab", Toast.LENGTH_SHORT).show();
+                                    finish();
 
-                            if (customerId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                                appointment_class appoint = documentSnapshot.toObject(appointment_class.class);
-                                Intent i = new Intent(acquired_service_accepted_message.this, rate_service.class);
-                                i.putExtra("model", (Serializable) appoint);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(i);
-                                Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to completed tab", Toast.LENGTH_SHORT).show();
-                                finish();
+                                    // Remove the listener after starting the new activity
+                                    listenerRegistration.remove();
+                                }
+                            }  else
+                            if(documentSnapshot.getString("appointment_status").equals("cancelled")){
+                                if(documentSnapshot.getString("customer_id") .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                    Intent i = new Intent(acquired_service_accepted_message.this, appointment_user_side.class);
+                                    i.putExtra("SELECTED_TAB", "cancelled");
+                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(i);
+                                    Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                    listenerRegistration.remove();
+                                }
 
-                                // Remove the listener after starting the new activity
-                                listenerRegistration.remove();
-                            }
-                        }  else
-                        if(documentSnapshot.getString("appointment_status").equals("cancelled")){
-                            if(documentSnapshot.getString("customer_id") .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                Intent i = new Intent(acquired_service_accepted_message.this, appointment_user_side.class);
-                                i.putExtra("SELECTED_TAB", "cancelled");
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(i);
-                                Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
-                                finish();
-                                listenerRegistration.remove();
                             }
 
                         }
-                    }
+                       }
                 });
 
 

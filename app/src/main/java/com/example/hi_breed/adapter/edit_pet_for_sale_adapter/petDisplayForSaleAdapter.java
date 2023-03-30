@@ -31,6 +31,10 @@ public class petDisplayForSaleAdapter extends RecyclerView.Adapter<petDisplayFor
         Context context;
     private List<PetSaleClass> list;
 
+    public void clearList(){
+        this.list.clear();
+        notifyDataSetChanged();
+    }
     public petDisplayForSaleAdapter(Context context){
             this.context = context;
             this.list = new ArrayList<>();

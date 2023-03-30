@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -25,6 +26,7 @@ import com.example.hi_breed.Pet.pet_add_for_selling;
 import com.example.hi_breed.Pet.pet_my_pets_panel;
 import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
+import com.example.hi_breed.not_verified_activity;
 import com.example.hi_breed.order_breeder_side.order_breeder_side;
 import com.example.hi_breed.product.product_add_activity;
 import com.example.hi_breed.product.product_my_product;
@@ -36,11 +38,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -54,12 +58,12 @@ public class user_breeder_shop_panel extends BaseActivity {
     FirebaseUser firebaseUser;
     TextView viewShop;
     ArrayList<String> role = new ArrayList<>();
-    TextView breederName, breederLabel;
+    TextView breederName, breederLabel,IDReview;
     CircleImageView imageView;
     CardView createPetProfile,myPets,pending,ongoing,reviews,sellPetCardView8,serviceCardView8,myProducts,sellProductView8;
     CircleImageView cardView2;
-    TextView textView15,IDNumberPending,textViewSellPetName,textViewLabel;
-
+    TextView textView15,IDNumberPending,textViewSellPetName,IDNumberOngoing,textViewLabel,notVerified;
+            Boolean userNotVerified = false;
     LinearLayout owner,activityStatus;
     @SuppressLint("SetTextI18n")
     @Override
@@ -77,13 +81,15 @@ public class user_breeder_shop_panel extends BaseActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+        notVerified = findViewById(R.id.notVerified);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         fireStore = FirebaseFirestore.getInstance();
         databaseReference = fireStore.collection("User").document(firebaseUser.getUid());
         IDNumberPending = findViewById(R.id.IDNumberPending);
         textViewSellPetName = findViewById(R.id.textView22);
         textViewLabel = findViewById(R.id.textView19);
-
+        IDNumberOngoing = findViewById(R.id.IDNumberOngoing);
+        IDReview = findViewById(R.id.IDReview);
         myProducts = findViewById(R.id.myProducts);
         activityStatus = findViewById(R.id.activityStatus);
         owner = findViewById(R.id.owner);
@@ -147,7 +153,16 @@ public class user_breeder_shop_panel extends BaseActivity {
                                     List<String> arrayList = (List<String>) task.getResult().get("role");
                                     if (arrayList != null) {
                                         role.addAll(arrayList);
-
+                                        if(task.getResult().getString("status").equals("pending")){
+                                            notVerified.setVisibility(View.VISIBLE);
+                                            userNotVerified = true;
+                                            notVerified.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    startActivity(new Intent(user_breeder_shop_panel.this, not_verified_activity.class));
+                                                }
+                                            });
+                                        }
                                         if(role.contains("Pet Breeder") || role.contains("Pet Shooter") || role.contains("Veterinarian")){
                                             viewShop.setVisibility(View.VISIBLE);
                                             textView15.setText("MY SHOP");
@@ -176,6 +191,56 @@ public class user_breeder_shop_panel extends BaseActivity {
                                                         startActivity(new Intent(user_breeder_shop_panel.this, order_breeder_side.class));
                                                     }
                                                 });
+
+                                                FirebaseFirestore.getInstance().collection("Appointments")
+                                                        .whereEqualTo("seller_id",FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .whereEqualTo("order_status","accepted")
+                                                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                                                if(error!=null){
+                                                                    return;
+                                                                }
+                                                                if(value.size()!=0){
+                                                                    IDNumberOngoing.setText(String.valueOf(value.size()));
+                                                                }
+                                                            }
+                                                        });
+
+                                                ongoing.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        Intent i = new Intent(user_breeder_shop_panel.this, order_breeder_side.class);
+                                                        i.putExtra("SELECTED_TAB","accepted");
+                                                        startActivity(i);
+                                                    }
+                                                });
+
+                                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                                CollectionReference reviewsRef = db.collection("Reviews");
+                                                Query query = reviewsRef.whereEqualTo("seller_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .whereEqualTo("rateFor","Shop");
+                                                query.addSnapshotListener((value, error) -> {
+                                                    if (error != null) {
+                                                        Log.d("MyApp", "Error getting reviews: ", error);
+                                                        return;
+                                                    }
+                                                    if(value!=null){
+                                                        List<DocumentSnapshot> reviews = value.getDocuments();
+                                                        if(reviews.size()!=0){
+                                                            IDReview.setText(String.valueOf(reviews.size()));
+                                                        }
+                                                    }
+                                                    });
+                                                    reviews.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            Intent i = new Intent(user_breeder_shop_panel.this, order_breeder_side.class);
+                                                            i.putExtra("SELECTED_TAB","reviews");
+                                                            startActivity(i);
+                                                        }
+                                                    });
+
                                             }
                                         }
 
@@ -193,60 +258,67 @@ public class user_breeder_shop_panel extends BaseActivity {
         sellProductView8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(role.contains("Veterinarian")){
-                    FirebaseFirestore.getInstance().collection("User")
-                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                            .collection("security")
-                                                    .document("security_doc")
-                                                            .get()
-                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                        @Override
-                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                            if(documentSnapshot.exists()){
-                                                                                if(documentSnapshot.getString("contactNumber").equals("")){
-                                                                                    Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
-                                                                                }
-                                                                                else{
-                                                                                    startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    });
-                     
+                if(userNotVerified){
+                    Toast.makeText(user_breeder_shop_panel.this, "Verify your account first", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                    if(role.contains("Veterinarian")){
+                        FirebaseFirestore.getInstance().collection("User")
+                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .collection("security")
+                                .document("security_doc")
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if(documentSnapshot.exists()){
+                                            if(documentSnapshot.getString("contactNumber").equals("")){
+                                                Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else{
+                                                startActivity(new Intent(user_breeder_shop_panel.this, product_add_activity.class));
+                                            }
+                                        }
+                                    }
+                                });
+
+                    }
+                    else{
+                        Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
             }
         });
 
         myPets.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(role.contains("Pet Owner") || role.contains("Veterinarian")){
-                    FirebaseFirestore.getInstance().collection("User")
-                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .collection("security")
-                            .document("security_doc")
-                            .get()
-                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.exists()){
-                                        if(documentSnapshot.getString("contactNumber").equals("")){
-                                            Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else{
-                                            startActivity(new Intent(user_breeder_shop_panel.this, pet_my_pets_panel.class));              
+                if(userNotVerified){
+                    Toast.makeText(user_breeder_shop_panel.this, "Verify your account first", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    if (role.contains("Pet Owner") || role.contains("Veterinarian")) {
+                        FirebaseFirestore.getInstance().collection("User")
+                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .collection("security")
+                                .document("security_doc")
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if (documentSnapshot.exists()) {
+                                            if (documentSnapshot.getString("contactNumber").equals("")) {
+                                                Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                startActivity(new Intent(user_breeder_shop_panel.this, pet_my_pets_panel.class));
+                                            }
                                         }
                                     }
-                                }
-                            });
-                }
-                else{
-                    Toast.makeText(user_breeder_shop_panel.this, "You must be a Pet owner", Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        Toast.makeText(user_breeder_shop_panel.this, "You must be a Pet owner", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -262,28 +334,31 @@ public class user_breeder_shop_panel extends BaseActivity {
         sellPetCardView8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(role.contains("Pet Breeder")){
-                    FirebaseFirestore.getInstance().collection("User")
-                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .collection("security")
-                            .document("security_doc")
-                            .get()
-                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.exists()){
-                                        if(documentSnapshot.getString("contactNumber").equals("")){
-                                            Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else{
-                                            startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
+                if(userNotVerified){
+                    Toast.makeText(user_breeder_shop_panel.this, "Verify your account first", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    if (role.contains("Pet Breeder")) {
+                        FirebaseFirestore.getInstance().collection("User")
+                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .collection("security")
+                                .document("security_doc")
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if (documentSnapshot.exists()) {
+                                            if (documentSnapshot.getString("contactNumber").equals("")) {
+                                                Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_selling.class));
+                                            }
                                         }
                                     }
-                                }
-                            });
-                }
-                else{
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a breeder can sell a pet", Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        Toast.makeText(user_breeder_shop_panel.this, "Only a breeder can sell a pet", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }
@@ -292,29 +367,32 @@ public class user_breeder_shop_panel extends BaseActivity {
         serviceCardView8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(role.contains("Veterinarian") || role.contains("Pet Shooter")){
-                    FirebaseFirestore.getInstance().collection("User")
-                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .collection("security")
-                            .document("security_doc")
-                            .get()
-                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.exists()){
-                                        if(documentSnapshot.getString("contactNumber").equals("")){
-                                            Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else{
-                                            startActivity(new Intent(user_breeder_shop_panel.this, service_panel.class));
+                if(userNotVerified){
+                    Toast.makeText(user_breeder_shop_panel.this, "Verify your account first", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    if (role.contains("Veterinarian") || role.contains("Pet Shooter")) {
+                        FirebaseFirestore.getInstance().collection("User")
+                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .collection("security")
+                                .document("security_doc")
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if (documentSnapshot.exists()) {
+                                            if (documentSnapshot.getString("contactNumber").equals("")) {
+                                                Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                startActivity(new Intent(user_breeder_shop_panel.this, service_panel.class));
+                                            }
                                         }
                                     }
-                                }
-                            });
+                                });
 
-                }
-                else{
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a dog shooter or veterinarian can access", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(user_breeder_shop_panel.this, "Only a dog shooter or veterinarian can access", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }
@@ -322,46 +400,55 @@ public class user_breeder_shop_panel extends BaseActivity {
         viewShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(user_breeder_shop_panel.this,shop_view_profile.class));
+                if(userNotVerified){
+                    Toast.makeText(user_breeder_shop_panel.this, "Verify your account first", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    startActivity(new Intent(user_breeder_shop_panel.this, shop_view_profile.class));
+                }
             }
         });
         createPetProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(role.contains("Pet Owner") || role.contains("Veterinarian")){
-                    FirebaseFirestore.getInstance().collection("User")
-                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .collection("security")
-                            .document("security_doc")
-                            .get()
-                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.exists()){
-                                        if(documentSnapshot.getString("contactNumber").equals("")){
-                                            Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else{
-                                            startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_dating.class));
+                    if(role.contains("Pet Owner") || role.contains("Veterinarian")){
+                        FirebaseFirestore.getInstance().collection("User")
+                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .collection("security")
+                                .document("security_doc")
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if(documentSnapshot.exists()){
+                                            if(documentSnapshot.getString("contactNumber").equals("")){
+                                                Toast.makeText(user_breeder_shop_panel.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else{
+                                                startActivity(new Intent(user_breeder_shop_panel.this, pet_add_for_dating.class));
+                                            }
                                         }
                                     }
-                                }
-                            });
-                }
-                else{
-                    Toast.makeText(user_breeder_shop_panel.this, "You must be a Pet owner", Toast.LENGTH_SHORT).show();
-                }
+                                });
+                    }
+                    else{
+                        Toast.makeText(user_breeder_shop_panel.this, "You must be a Pet owner", Toast.LENGTH_SHORT).show();
+                    }
             }
         });
         myProducts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(role.contains("Veterinarian")){
-                    startActivity(new Intent(user_breeder_shop_panel.this, product_my_product.class));
+                if(userNotVerified){
+                    Toast.makeText(user_breeder_shop_panel.this, "Verify your account first", Toast.LENGTH_SHORT).show();
                 }
-                else{
-                    Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                else {
+                    if (role.contains("Veterinarian")) {
+                        startActivity(new Intent(user_breeder_shop_panel.this, product_my_product.class));
+                    } else {
+                        Toast.makeText(user_breeder_shop_panel.this, "Only a veterinarian can sell product", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }

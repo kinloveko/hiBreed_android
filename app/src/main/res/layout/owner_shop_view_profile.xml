@@ -7,12 +7,12 @@
     android:scrollbars="none"
     android:orientation="vertical"
     android:background="@color/fbWhite"
-
     tools:context=".shop.shop_view_profile"
     tools:ignore="ExtraText,UselessParent">
 
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -186,17 +186,64 @@
                 android:textColor="#FB8C00"
                 android:textSize="13sp"
                 tools:ignore="HardcodedText" />
-
-
         </RelativeLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/petForSale_view"
+        <LinearLayout
+            android:id="@+id/tabLayouts"
+            android:layout_below="@id/shopLink_relative"
+            android:layout_width="match_parent"
+            android:background="@color/brown"
+            android:layout_height="wrap_content">
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="3dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                app:tabMode="fixed"
+                app:tabRippleColor="@null"
+                app:tabSelectedTextColor="@color/purple_500"
+                app:tabTextAppearance="@style/TabLayout"
+                app:tabTextColor="@color/black" />
+        </LinearLayout>
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/shopLink_relative"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp" />
+            android:layout_below="@id/tabLayouts"
+            android:background="@color/fbWhite"
+            android:scrollbars="none">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+
+                    android:id="@+id/linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:background="@color/fbWhite"
+                    android:orientation="vertical">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+                </LinearLayout>
+            </RelativeLayout>
+        </ScrollView>
  </RelativeLayout>
 
 </ScrollView>

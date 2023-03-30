@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/float_transparent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".loginAndRegistration.fragment_registration_requirements">
 
@@ -41,6 +41,7 @@
             android:textColor="@color/material_blue_grey_90"
             android:textSize="15sp"
             tools:ignore="HardcodedText" />
+
 
         <ScrollView
             android:id="@+id/linear1"
@@ -354,12 +355,14 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
+
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/breeder_validation_linearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                     >
 
                     <TextView
                         android:layout_width="match_parent"
@@ -372,7 +375,41 @@
                         android:textColor="@color/material_blue_grey_90"
                         android:textSize="17sp"
                         tools:ignore="HardcodedText" />
+                    <RelativeLayout
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/validationLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
+                        <TextView
+                            android:id="@+id/texts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginEnd="10dp"
+                            android:fontFamily="@font/poppinsmedium"
+                            android:text="If you are not yet a member of the Philippine Canine Club Inc. Click the register button below."
+                            android:textAlignment="textStart"
+                            android:textSize="13sp"
+                            tools:ignore="HardcodedText" />
+
+                        <Button
+                            android:id="@+id/clickHere"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/texts"
+                            android:layout_marginTop="-10dp"
+                            android:background="@drawable/transparent"
+                            android:gravity="center"
+                            android:text="Register here"
+                            android:textAllCaps="false"
+                            android:textColor="@color/primaryButton"
+                            android:textSize="13sp"
+                            android:translationZ="3dp"
+                            tools:ignore="HardcodedText" />
+
+                    </RelativeLayout>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -606,12 +643,12 @@
                 </LinearLayout>
 
                 <LinearLayout
-
                     android:id="@+id/vet_validation_linear_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -647,8 +684,8 @@
                         android:fontFamily="@font/poppinsmedium"
                         android:text="Required*"
                         android:textColor="#F62800"
-                        android:visibility="gone"
                         android:textSize="14sp"
+                        android:visibility="gone"
                         tools:ignore="HardcodedText" />
 
                     <LinearLayout
@@ -727,96 +764,197 @@
                         android:textSize="13sp"
                         tools:ignore="HardcodedText" />
 
+                    <TextView
+                        android:id="@+id/prcLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:text="PRC ID No."
+                        android:textColor="@color/material_blue_grey_80"
+                        android:textSize="15sp"
+                        tools:ignore="Experience,HardcodedText" />
+                    //Member ID
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/reg_prc_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="7"
+                        app:endIconMode="clear_text"
+                        app:helperText="*Required"
+                        app:helperTextTextColor="@color/brownish"
+                        app:hintEnabled="false"
+                        app:startIconDrawable="@drawable/ic_person"
+                        app:startIconTint="@color/material_blue_grey_80"
+                        tools:ignore="ExtraText,HardcodedText,RtlHardcoded,RtlSymmetry">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/reg_prc_id_edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/dropshadow_eight"
+                            android:fontFamily="@font/poppinsmedium"
+                            android:hint="PRC id number . . ."
+                            android:inputType="number"
+                            android:maxLength="7"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/textViewExp"
+
+                //STARTTTT
+
+
+                <LinearLayout
+
+                    android:id="@+id/memberLayouts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/poppinsmedium"
-                    android:text="For how long have you been working in this field?"
-                    android:textColor="@color/material_blue_grey_80"
-                    android:textSize="15sp"
+                    android:orientation="vertical">
 
-                    tools:ignore="Experience,HardcodedText" />
-                //Experience
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/reg_experience"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="5dp"
-
-                    app:counterEnabled="true"
-                    app:counterMaxLength="2"
-                    app:endIconMode="clear_text"
-                    app:helperText="*Required"
-                    app:helperTextTextColor="@color/brownish"
-                    app:hintEnabled="false"
-                    app:startIconDrawable="@drawable/ic_person"
-                    app:startIconTint="@color/material_blue_grey_80"
-                    tools:ignore="ExtraText,HardcodedText,RtlHardcoded,RtlSymmetry">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/reg_experienceEdit"
+                    <TextView
+                        android:id="@+id/textViewExp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:background="@drawable/dropshadow_eight"
                         android:fontFamily="@font/poppinsmedium"
-                        android:hint="Years of experience . . ."
-                        android:inputType="number"
-                        android:maxLength="2"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textSize="16sp" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="For how long have you been working in this field?"
+                        android:textColor="@color/material_blue_grey_80"
+                        android:textSize="15sp"
+                        tools:ignore="Experience,HardcodedText" />
+                    //Experience
 
-                <TextView
-                    android:id="@+id/memberID"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/poppinsmedium"
-                    android:text="Organization/Club ID"
-                    android:textColor="@color/material_blue_grey_80"
-                    android:textSize="15sp"
-                    tools:ignore="Experience,HardcodedText" />
-                //Member ID
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/reg_memberID"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="5dp"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="6"
-                    app:endIconMode="clear_text"
-                    app:helperText="*Required"
-                    app:helperTextTextColor="@color/brownish"
-                    app:hintEnabled="false"
-                    app:startIconDrawable="@drawable/ic_person"
-                    app:startIconTint="@color/material_blue_grey_80"
-                    tools:ignore="ExtraText,HardcodedText,RtlHardcoded,RtlSymmetry">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/reg_memberID_edit"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/reg_experience"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:background="@drawable/dropshadow_eight"
-                        android:fontFamily="@font/poppinsmedium"
-                        android:hint="Member ID . . ."
-                        android:inputType="number"
-                        android:maxLength="20"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textSize="16sp" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginBottom="5dp"
 
+                        app:counterEnabled="true"
+                        app:counterMaxLength="2"
+                        app:endIconMode="clear_text"
+                        app:helperText="*Required (if below 1 year just put 1)"
+                        app:helperTextTextColor="@color/brownish"
+                        app:hintEnabled="false"
+                        app:startIconDrawable="@drawable/ic_person"
+                        app:startIconTint="@color/material_blue_grey_80"
+                        tools:ignore="ExtraText,HardcodedText,RtlHardcoded,RtlSymmetry">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/reg_experienceEdit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/dropshadow_eight"
+                            android:fontFamily="@font/poppinsmedium"
+                            android:hint="Years of experience . . ."
+                            android:inputType="number"
+                            android:maxLength="2"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/memberID"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:text="Organization/Club ID"
+                        android:textColor="@color/material_blue_grey_80"
+                        android:textSize="15sp"
+                        tools:ignore="Experience,HardcodedText" />
+                    //Member ID
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/reg_memberID"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="5"
+                        app:endIconMode="clear_text"
+                        app:helperText="*Required"
+                        app:helperTextTextColor="@color/brownish"
+                        app:hintEnabled="false"
+                        app:startIconDrawable="@drawable/ic_person"
+                        app:startIconTint="@color/material_blue_grey_80"
+                        tools:ignore="ExtraText,HardcodedText,RtlHardcoded,RtlSymmetry">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/reg_memberID_edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/dropshadow_eight"
+                            android:fontFamily="@font/poppinsmedium"
+                            android:hint="Member ID . . ."
+                            android:inputType="number"
+                            android:maxLength="5"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/dateOfRegistration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:text="Date of Registration"
+                        android:textColor="@color/material_blue_grey_80"
+                        android:textSize="15sp"
+                        tools:ignore="Experience,HardcodedText" />
+
+                    <RelativeLayout
+                        android:id="@+id/reg_date_registered"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/dropshadow_eight"
+                        android:elevation="3dp">
+
+                        <ImageView
+                            android:id="@+id/image"
+                            android:layout_width="25dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginStart="12dp"
+                            android:src="@drawable/ic_person" />
+
+                        <TextView
+                            android:id="@+id/reg_date_registered_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_toEndOf="@id/image"
+                            android:fontFamily="@font/poppinsmedium"
+                            android:gravity="center"
+                            android:hint="Select date . . ."
+                            android:textColor="@color/safe_grey"
+                            android:textSize="16sp"
+                            tools:ignore="HardcodedText" />
+
+                    </RelativeLayout>
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/submitButton"

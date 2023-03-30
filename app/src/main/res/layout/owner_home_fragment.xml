@@ -123,7 +123,19 @@
 
                 </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
-
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/notVerified"
+                android:textAlignment="center"
+                android:background="@color/red_btn_bg_pressed_color"
+                android:fontFamily="@font/poppinsregular"
+                android:textColor="@color/white"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="You are not verified click here to verify account!"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="HardcodedText" />
             <ScrollView
                 android:scrollbars="none"
                 android:layout_width="match_parent"

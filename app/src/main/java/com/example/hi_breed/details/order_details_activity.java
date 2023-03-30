@@ -178,7 +178,7 @@ public class order_details_activity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
 
-                            openDialog(appointment.getSeller_id(),appointment.getId(),"seller",appointment.getTransaction_id(),"buyer");
+                            openDialog(appointment,appointment.getSeller_id(),appointment.getId(),"seller",appointment.getTransaction_id(),"buyer");
 
                         }
                     });
@@ -256,9 +256,35 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                                                             .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                                                 @Override
                                                                                                                                                 public void onSuccess(Void unused) {
-                                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your order has been confirmed by the seller",
-                                                                                                                                                            "Order confirmed",appointment.getId(),appointment.getCustomer_id(),"order","buyer","accepted"), token);
-                                                                                                                                                    sendNotif(notification,"accepted","buyer");
+                                                                                                                                                    if(appointment.getType().equals("pet")){
+
+                                                                                                                                                        FirebaseFirestore.getInstance().collection("Pet").document(appointment.getItem_id())
+                                                                                                                                                                .update("show",false);
+                                                                                                                                                    }
+                                                                                                                                                    else{
+
+                                                                                                                                                        FirebaseFirestore.getInstance().collection("Pet").document(appointment.getItem_id())
+                                                                                                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                                                                                    @Override
+                                                                                                                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                                                                        int stocks = Integer.parseInt(documentSnapshot.getString("prod_stocks"));
+                                                                                                                                                                        if(stocks!=0){
+                                                                                                                                                                            int newStocks = stocks - 1;
+                                                                                                                                                                            FirebaseFirestore.getInstance().collection("Pet")
+                                                                                                                                                                                    .document(appointment.getItem_id())
+                                                                                                                                                                                    .update("prod_stocks",String.valueOf(newStocks));
+
+                                                                                                                                                                            pushNotification notification = new pushNotification(new notificationData("Your order has been confirmed by the seller",
+                                                                                                                                                                                    "Order confirmed",appointment.getId(),appointment.getCustomer_id(),"order","buyer","accepted"), token);
+                                                                                                                                                                            sendNotif(notification,"accepted","buyer");
+                                                                                                                                                                        }
+                                                                                                                                                                        else{
+                                                                                                                                                                            Toast.makeText(order_details_activity.this, "No more stocks", Toast.LENGTH_SHORT).show();
+                                                                                                                                                                            return;
+                                                                                                                                                                        }
+                                                                                                                                                                    }
+                                                                                                                                                                });
+                                                                                                                                                    }
                                                                                                                                                     }
                                                                                                                                             });
                                                                                                                                 }
@@ -268,11 +294,7 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                 }
                                                                                                 else
                                                                                                 {
-                                                                                                    FirebaseFirestore.getInstance().collection("Transaction")
-                                                                                                            .document(appointment.getTransaction_id())
-                                                                                                            .update("status","ongoing").addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                @Override
-                                                                                                                public void onSuccess(Void unused) {
+
                                                                                                                     FirebaseFirestore.getInstance().collection("Notifications")
                                                                                                                             .document(appointment.getCustomer_id())
                                                                                                                             .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -295,17 +317,46 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                                                                             .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                                                                 @Override
                                                                                                                                                                 public void onSuccess(Void unused) {
-                                                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your order has been confirmed by the seller",
-                                                                                                                                                                            "Order confirmed",appointment.getId(),appointment.getCustomer_id(),"order","buyer","accepted"), token);
-                                                                                                                                                                    sendNotif(notification,"accepted","buyer");
+                                                                                                                                                                    if(appointment.getType().equals("pet")){
+
+                                                                                                                                                                        FirebaseFirestore.getInstance().collection("Pet").document(appointment.getItem_id())
+                                                                                                                                                                                .update("show",false);
+                                                                                                                                                                        pushNotification notification = new pushNotification(new notificationData("Your order has been confirmed by the seller",
+                                                                                                                                                                                "Order confirmed",appointment.getId(),appointment.getCustomer_id(),"order","buyer","accepted"), token);
+                                                                                                                                                                        sendNotif(notification,"accepted","buyer");
+
+                                                                                                                                                                    }
+                                                                                                                                                                    else{
+
+                                                                                                                                                                        FirebaseFirestore.getInstance().collection("Pet").document(appointment.getItem_id())
+                                                                                                                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                                                                                                    @Override
+                                                                                                                                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                                                                                        int stocks = Integer.parseInt(documentSnapshot.getString("prod_stocks"));
+                                                                                                                                                                                        if(stocks!=0){
+                                                                                                                                                                                            int newStocks = stocks - 1;
+                                                                                                                                                                                            FirebaseFirestore.getInstance().collection("Pet")
+                                                                                                                                                                                                    .document(appointment.getItem_id())
+                                                                                                                                                                                                    .update("prod_stocks",String.valueOf(newStocks));
+
+                                                                                                                                                                                            pushNotification notification = new pushNotification(new notificationData("Your order has been confirmed by the seller",
+                                                                                                                                                                                                    "Order confirmed",appointment.getId(),appointment.getCustomer_id(),"order","buyer","accepted"), token);
+                                                                                                                                                                                            sendNotif(notification,"accepted","buyer");
+                                                                                                                                                                                        }
+                                                                                                                                                                                        else{
+                                                                                                                                                                                            Toast.makeText(order_details_activity.this, "No more stocks", Toast.LENGTH_SHORT).show();
+                                                                                                                                                                                            return;
+                                                                                                                                                                                        }
+                                                                                                                                                                                    }
+                                                                                                                                                                                });
+                                                                                                                                                                    }
                                                                                                                                                                   }
                                                                                                                                                             });
                                                                                                                                                 }
                                                                                                                                             });
                                                                                                                                 }
                                                                                                                             });
-                                                                                                                }
-                                                                                                            });
+
 
                                                                                                 }
                                                                                             }
@@ -328,7 +379,7 @@ public class order_details_activity extends AppCompatActivity {
                     buttonDelete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            openDialog(appointment.getCustomer_id(),appointment.getId(),"buyer",appointment.getTransaction_id(),"seller");
+                            openDialog(appointment,appointment.getCustomer_id(),appointment.getId(),"buyer",appointment.getTransaction_id(),"seller");
                         }
                     });
 
@@ -573,12 +624,31 @@ public class order_details_activity extends AppCompatActivity {
                             }
                      });
             }
+            else{
+                FirebaseFirestore.getInstance().collection("Pet")
+                        .document(appointment.getItem_id())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if(documentSnapshot.exists()){
+                                    List<String> list = (List<String>) documentSnapshot.get("photos");
+                                    if (list != null) {
+                                        Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage)
+                                                .into(imageView);
+                                    }
+                                    product_name.setText(documentSnapshot.getString("prod_name"));
+                                    product_price.setText(price.priceFormatString(documentSnapshot.getString("prod_price")));
+                                    breed.setText(documentSnapshot.getString("prod_category"));
+                                }
+                            }
+                        });
+            }
 
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private void openDialog(String sendTo, String appointmentId, String role,String transactionID,String from) {
+    private void openDialog(appointment_order_class appointment,String sendTo, String appointmentId, String role,String transactionID,String from) {
 
         Map<String,Object> map = new HashMap<>();
         map.put("dateCompleted",Timestamp.now());
@@ -606,7 +676,7 @@ public class order_details_activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                cancelDialog(sendTo,appointmentId,role,oneText.getText().toString(),transactionID,from,alert2);
+                cancelDialog(appointment,sendTo,appointmentId,role,oneText.getText().toString(),transactionID,from,alert2);
 
             }
         });
@@ -615,7 +685,7 @@ public class order_details_activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                cancelDialog(sendTo,appointmentId,role,twoText.getText().toString(),transactionID,from,alert2);
+                cancelDialog(appointment,sendTo,appointmentId,role,twoText.getText().toString(),transactionID,from,alert2);
 
             }
         });
@@ -654,7 +724,7 @@ public class order_details_activity extends AppCompatActivity {
                             Toast.makeText(order_details_activity.this, "Please write your reason in the provided text box", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        cancelDialog(sendTo,appointmentId,role,customReasonEdit.getText().toString(),transactionID,from,alert2);
+                        cancelDialog(appointment,sendTo,appointmentId,role,customReasonEdit.getText().toString(),transactionID,from,alert2);
                     }
                 });
 
@@ -662,7 +732,7 @@ public class order_details_activity extends AppCompatActivity {
         });
     }
 
-    private void cancelDialog(String sendTo, String appointmentId, String role,String text,String transactionID,String from,AlertDialog alertDialog) {
+    private void cancelDialog(appointment_order_class appointment,String sendTo, String appointmentId, String role,String text,String transactionID,String from,AlertDialog alertDialog) {
 
         FirebaseFirestore.getInstance().collection("User")
                 .document(sendTo).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -719,12 +789,45 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                         .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void unused) {
+                                                                                                                if(appointment.getType().equals("pet")){
 
-                                                                                                                pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled",
-                                                                                                                        "Cancelled order",appointmentId,sendTo,"order",role,"cancelled"), token);
-                                                                                                                sendNotif(notification,"cancelled",role);
-                                                                                                                Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
-                                                                                                                alertDialog.dismiss();
+                                                                                                                    FirebaseFirestore.getInstance().collection("Pet").document(appointment.getItem_id())
+                                                                                                                            .update("show",true);
+
+                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled",
+                                                                                                                            "Cancelled order",appointmentId,sendTo,"order",role,"cancelled"), token);
+                                                                                                                    sendNotif(notification,"cancelled",role);
+                                                                                                                    Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
+                                                                                                                    alertDialog.dismiss();
+
+                                                                                                                }
+                                                                                                                else{
+
+                                                                                                                    FirebaseFirestore.getInstance().collection("Pet").document(appointment.getItem_id())
+                                                                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                                                @Override
+                                                                                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                                    int stocks = Integer.parseInt(documentSnapshot.getString("prod_stocks"));
+                                                                                                                                    if(stocks!=0){
+                                                                                                                                        int newStocks = stocks + 1;
+                                                                                                                                        FirebaseFirestore.getInstance().collection("Pet")
+                                                                                                                                                .document(appointment.getItem_id())
+                                                                                                                                                .update("prod_stocks",String.valueOf(newStocks));
+
+                                                                                                                                        pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled",
+                                                                                                                                                "Cancelled order",appointmentId,sendTo,"order",role,"cancelled"), token);
+                                                                                                                                        sendNotif(notification,"cancelled",role);
+                                                                                                                                        Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
+                                                                                                                                        alertDialog.dismiss();
+                                                                                                                                    }
+                                                                                                                                    else{
+                                                                                                                                        Toast.makeText(order_details_activity.this, "No more stocks", Toast.LENGTH_SHORT).show();
+                                                                                                                                        return;
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            });
+                                                                                                                }
+
                                                                                                             }
                                                                                                         });
                                                                                             }
@@ -733,11 +836,45 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                         .document(sendTo).set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void unused) {
-                                                                                                                pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled",
-                                                                                                                        "Cancelled order",appointmentId,sendTo,"order",role,"cancelled"), token);
-                                                                                                                sendNotif(notification,"cancelled",role);
-                                                                                                                Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
-                                                                                                                alertDialog.dismiss();
+                                                                                                                if(appointment.getType().equals("pet")){
+
+                                                                                                                    FirebaseFirestore.getInstance().collection("Pet").document(appointment.getItem_id())
+                                                                                                                            .update("show",true);
+
+                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled",
+                                                                                                                            "Cancelled order",appointmentId,sendTo,"order",role,"cancelled"), token);
+                                                                                                                    sendNotif(notification,"cancelled",role);
+                                                                                                                    Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
+                                                                                                                    alertDialog.dismiss();
+
+                                                                                                                }
+                                                                                                                else{
+
+                                                                                                                    FirebaseFirestore.getInstance().collection("Pet").document(appointment.getItem_id())
+                                                                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                                                @Override
+                                                                                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                                    int stocks = Integer.parseInt(documentSnapshot.getString("prod_stocks"));
+                                                                                                                                    if(stocks!=0){
+                                                                                                                                        int newStocks = stocks + 1;
+                                                                                                                                        FirebaseFirestore.getInstance().collection("Pet")
+                                                                                                                                                .document(appointment.getItem_id())
+                                                                                                                                                .update("prod_stocks",String.valueOf(newStocks));
+
+                                                                                                                                        pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled",
+                                                                                                                                                "Cancelled order",appointmentId,sendTo,"order",role,"cancelled"), token);
+                                                                                                                                        sendNotif(notification,"cancelled",role);
+                                                                                                                                        Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
+                                                                                                                                        alertDialog.dismiss();
+                                                                                                                                    }
+                                                                                                                                    else{
+                                                                                                                                        Toast.makeText(order_details_activity.this, "No more stocks", Toast.LENGTH_SHORT).show();
+                                                                                                                                        return;
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            });
+                                                                                                                }
+
                                                                                                             }
                                                                                                         });
                                                                                             }

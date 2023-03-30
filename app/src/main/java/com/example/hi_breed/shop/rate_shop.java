@@ -121,6 +121,7 @@ public class rate_shop extends AppCompatActivity {
                     map.put("customer_id",appoint.getCustomer_id());
                     map.put("type",appoint.getType());
                     map.put("seller_id",appoint.getSeller_id());
+                    map.put("rateFor","Shop");
                     map.put("rating",userRate);
                     map.put("comment",editText.getText().toString());
                     map.put("timestamp", Timestamp.now());
@@ -207,6 +208,7 @@ public class rate_shop extends AppCompatActivity {
                 map.put("seller_id",appoint.getSeller_id());
                 map.put("type",appoint.getType());
                 map.put("rating",null);
+                map.put("rateFor","Shop");
                 map.put("comment",null);
                 map.put("timestamp", Timestamp.now());
                 map.put("isRated",false);

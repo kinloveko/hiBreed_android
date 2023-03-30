@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -30,10 +31,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -46,8 +49,8 @@ public class service_panel extends BaseActivity {
     RelativeLayout serviceLayout,show_serviceLayout;
     RecyclerView show_service_recycler;
     s_p_serviceAdapter adapter;
-    TextView acquiredNumber,text;
-    CardView acquiredCardView;
+    TextView acquiredNumber,text,onGoingTextView,IDReview;
+    CardView acquiredCardView,onGoing,reviews;
     String number;
 
     ArrayList<String> roles = new ArrayList<>();
@@ -67,12 +70,16 @@ public class service_panel extends BaseActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+
+        IDReview = findViewById(R.id.IDReview);
+        reviews = findViewById(R.id.reviews);
         text = findViewById(R.id.text);
         acquiredCardView = findViewById(R.id.acquiredCardView);
         backLayoutPet = findViewById(R.id.toolbarID);
         shooter_verifyButton = findViewById(R.id.shooter_verifyButton);
         serviceLayout = findViewById(R.id.serviceLayout);
-
+        onGoing = findViewById(R.id.onGoing);
+        onGoingTextView = findViewById(R.id.onGoingTextView);
         backLayoutPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,6 +87,32 @@ public class service_panel extends BaseActivity {
                 finish();
             }
         });
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference reviewsRef = db.collection("Reviews");
+        Query query = reviewsRef.whereEqualTo("seller_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.d("MyApp", "Error getting reviews: ", error);
+                return;
+            }
+            if(value!=null){
+                List<DocumentSnapshot> reviews = value.getDocuments();
+                if(reviews.size()!=0){
+                    IDReview.setText(String.valueOf(reviews.size()));
+                }
+            }
+        });
+        reviews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(service_panel.this, service_status.class);
+                i.putExtra("SELECTED_TAB","reviews");
+                startActivity(i);
+            }
+        });
+
 
         shooter_verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +138,9 @@ public class service_panel extends BaseActivity {
                         });
             }
         });
+
+
+
         acquiredNumber = findViewById(R.id.acquiredNumber);
         show_service_recycler = findViewById(R.id.show_service_recycler);
         adapter = new s_p_serviceAdapter(this);
@@ -134,6 +170,7 @@ public class service_panel extends BaseActivity {
                 });
         FirebaseFirestore.getInstance().collection("Appointments")
                 .whereEqualTo("seller_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("appointment_status","pending")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -154,6 +191,32 @@ public class service_panel extends BaseActivity {
                     startActivity(new Intent(service_panel.this, service_status.class));
             }
         });
+        FirebaseFirestore.getInstance().collection("Appointments")
+                .whereEqualTo("seller_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("appointment_status","accepted")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null){
+                            return;
+                        }
+                        if(value!=null){
+                            List<DocumentSnapshot> list = value.getDocuments();
+                            if(list!=null) {
+                                onGoingTextView.setText(Integer.toString(list.size())); // Convert int to string
+                            }
+                        }
+                    }
+                });
+        onGoing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(service_panel.this, service_status.class);
+                i.putExtra("SELECTED_TAB","accepted");
+                startActivity(i);
+            }
+        });
+
     }
 
     private void handleVeterinarianAndPetShooterServices() {

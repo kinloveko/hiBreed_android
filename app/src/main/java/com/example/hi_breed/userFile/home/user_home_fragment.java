@@ -25,15 +25,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
+import com.example.hi_breed.Pet.pet_date_swipe;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.edit_pet_for_sale_adapter.petDisplayForSaleAdapter;
 import com.example.hi_breed.ask_a_professional.ask_a_professional;
 import com.example.hi_breed.classesFile.PetSaleClass;
 import com.example.hi_breed.marketplace.m_market_place_container;
+import com.example.hi_breed.not_verified_activity;
 import com.example.hi_breed.search.search_dashboard_home;
-import com.example.hi_breed.userFile.profile.user_profile_account_edit;
-import com.example.hi_breed.Pet.pet_date_swipe;
 import com.example.hi_breed.shop.user_breeder_shop_panel;
+import com.example.hi_breed.userFile.profile.user_profile_account_edit;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,7 +45,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
@@ -81,7 +84,7 @@ public class user_home_fragment extends Fragment {
     TextView logoName;
     private FirebaseUser firebaseUser;
     FirebaseFirestore fireStore;
-
+    TextView notVerified;
     ImageView imageView;
     CardView profilePictureCard, searchcarddView,addPetCard,petSaleCardView9,findDateCardView9,myServicesCardView9;
   private  RecyclerView for_you_recycler;
@@ -94,6 +97,8 @@ public class user_home_fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        notVerified = view.findViewById(R.id.notVerified);
         logoName = view.findViewById(R.id.logoName);
         addPetCard = view.findViewById(R.id.addPetView);
         //arraylist
@@ -157,6 +162,16 @@ public class user_home_fragment extends Fragment {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if(task.isSuccessful()){
                                 if (task.isSuccessful()) {
+                                    if(task.getResult().getString("status").equals("pending")){
+                                        notVerified.setVisibility(View.VISIBLE);
+                                        notVerified.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                startActivity(new Intent(getContext(), not_verified_activity.class));
+                                            }
+                                        });
+                                    }
+
                                     ArrayList arrayList = (ArrayList) task.getResult().get("role");
                                     if (arrayList != null) {
                                         role.addAll(arrayList);
@@ -284,11 +299,16 @@ public class user_home_fragment extends Fragment {
 
       FirebaseFirestore.getInstance().collection("Pet")
                 .whereEqualTo("displayFor","forSale")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments();
+              .whereEqualTo("show",true)
+              .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                  @Override
+                  public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if(error!=null){
+                        return;
+                    }
+                    if(value!=null){
+                        adapter.clearList();
+                        List<DocumentSnapshot> dsList = value.getDocuments();
                         for(DocumentSnapshot ds:dsList){
                             if(ds!=null){
 
@@ -302,7 +322,8 @@ public class user_home_fragment extends Fragment {
                             for_you_layout.setVisibility(View.VISIBLE);
                         }
                     }
-                });
+                  }
+              });
     }
 
     @Override

@@ -139,6 +139,8 @@ public class checkout_activity extends BaseActivity {
             if(a.getProd_category().equals("Medicine") || a.getProd_category().equals("Dog Accessories")){
                 gcashLayout.setVisibility(View.VISIBLE);
                 codLayout.setVisibility(View.VISIBLE);
+                onSiteLayout.setVisibility(View.VISIBLE);
+                texts.setVisibility(View.VISIBLE);
             }
 
             adapter.add(a);
@@ -197,9 +199,9 @@ public class checkout_activity extends BaseActivity {
                 }
             }
         });*/
-
+/*          disabling it for future features
 // Set click listener for codLayout
-        codLayout.setOnClickListener(new View.OnClickListener() {
+/*        codLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get the current tag value for the check mark image
@@ -221,17 +223,17 @@ public class checkout_activity extends BaseActivity {
                     circleCod.setTag(false);
                 }
             }
-        });
+        });*/
 // Set click listener for place_order button
         place_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get the tag values for the check mark images
-                boolean gcashChecked = circleGcash.getTag() != null && (Boolean) circleGcash.getTag();
-                boolean codChecked = circleCod.getTag() != null && (Boolean) circleCod.getTag();
+          /*      boolean gcashChecked = circleGcash.getTag() != null && (Boolean) circleGcash.getTag();
+                boolean codChecked = circleCod.getTag() != null && (Boolean) circleCod.getTag();*/
                 // Check which image is checked and display appropriate message
-
-                if ((gcashLayout.isShown() || codLayout.isShown()) && onSiteLayout.isShown()) {
+                gotoAnotherActivity(list);
+              /*  if ((gcashLayout.isShown() || codLayout.isShown()) && onSiteLayout.isShown()) {
                     if (gcashChecked) {
                       gotoAnotherActivity(list);
 
@@ -254,7 +256,7 @@ public class checkout_activity extends BaseActivity {
                 else{
                     //Check from List getSerializable at the tom from their category if petforsale or product.
                     gotoAnotherActivity(list);
-                }
+                }*/
             }
         });
     }
@@ -264,11 +266,10 @@ public class checkout_activity extends BaseActivity {
         super.onBackPressed();
         finish();
     }
-
-    List<String> ids = new ArrayList<>();
-
+    int count = 0;
+    int size = 0;
     private void gotoAnotherActivity(List<add_to_cart_class> add) {
-
+        size = add.size();
         AlertDialog.Builder builder = new AlertDialog.Builder(checkout_activity.this);
         View view = View.inflate(checkout_activity.this,R.layout.screen_custom_alert,null);
         TextView title = view.findViewById(R.id.screen_custom_alert_title);
@@ -284,9 +285,6 @@ public class checkout_activity extends BaseActivity {
         AlertDialog alert = builder.create();
         alert.show();
         alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-
-
 
         Map<String,Object> trans = new HashMap<>();
         trans.put("id","");
@@ -313,6 +311,8 @@ public class checkout_activity extends BaseActivity {
                                     public void onSuccess(Void unused) {
 
                                         for (add_to_cart_class item : add) {
+
+
                                             FirebaseFirestore.getInstance().collection("User")
                                                     .document(item.getProd_seller())
                                                     .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -356,7 +356,7 @@ public class checkout_activity extends BaseActivity {
                                                                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void unused) {
-                                                                                                                ids.add(documentReference.getId());
+
 
                                                                                                                 Map<String,Object> map = new HashMap<>();
 
@@ -373,6 +373,7 @@ public class checkout_activity extends BaseActivity {
 
                                                                                                                 maps.put("latestNotification",map);
                                                                                                                 maps.put("notification", Arrays.asList(map));
+
                                                                                                                 FirebaseFirestore.getInstance().collection("Notifications").document(item.getProd_seller())
                                                                                                                         .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                                                                                             @Override
@@ -387,25 +388,25 @@ public class checkout_activity extends BaseActivity {
                                                                                                                                                     @Override
                                                                                                                                                     public void onSuccess(Void unused) {
 
-
+                                                                                                                                                            count++;
                                                                                                                                                         pushNotification notification = new pushNotification(new notificationData("You have pending order from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
                                                                                                                                                                 ,documentReference.getId(),item.getProd_seller(),"order","seller","pending"), userToken);
-                                                                                                                                                        sendNotif(notification,alert);
+                                                                                                                                                        sendNotif(notification,alert,item);
 
                                                                                                                                                     }
                                                                                                                                                 });
                                                                                                                                     }
                                                                                                                                     else{
+
                                                                                                                                         FirebaseFirestore.getInstance().collection("Notifications")
                                                                                                                                                 .document(item.getProd_seller())
                                                                                                                                                 .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                                                     @Override
                                                                                                                                                     public void onSuccess(Void unused) {
-
-
-                                                                                                                                                        pushNotification notification = new pushNotification(new notificationData("Appointment request from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
+                                                                                                                                                        count++;
+                                                                                                                                                        pushNotification notification = new pushNotification(new notificationData("You have pending order from:"+check_out_name.getText().toString(),check_out_name.getText().toString()
                                                                                                                                                                 ,documentReference.getId(),item.getProd_seller(),"order","seller","pending"), userToken);
-                                                                                                                                                        sendNotif(notification,alert);
+                                                                                                                                                        sendNotif(notification,alert,item);
                                                                                                                                                     }
                                                                                                                                                 });
                                                                                                                                     }
@@ -437,23 +438,26 @@ public class checkout_activity extends BaseActivity {
                                 });
                     }
                 });
-
-
-
     }
 
-    private void sendNotif(pushNotification notification,AlertDialog alertDialog) {
+    private void sendNotif(pushNotification notification,AlertDialog alertDialog,add_to_cart_class cart) {
         ApiUtilities.getClient().sendNotification(notification).enqueue(new Callback<pushNotification>() {
             @Override
             public void onResponse(Call<pushNotification> call, Response<pushNotification> response) {
                 if(response.isSuccessful()){
-                    alertDialog.dismiss();
-                    Intent i = new Intent(checkout_activity.this,checkout_thankyou.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    i.putExtra("from","Checkout");
-                    startActivity(i);
-                    startActivity(i);
-                    finish();
+
+                        FirebaseFirestore.getInstance().collection("Cart")
+                                .document(cart.getId()).delete();
+
+                    if(count == size){
+
+                        alertDialog.dismiss();
+                        Intent i = new Intent(checkout_activity.this,checkout_thankyou.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        i.putExtra("from","Checkout");
+                        startActivity(i);
+                        finish();
+                    }
                 }
                 else{
 
@@ -466,6 +470,5 @@ public class checkout_activity extends BaseActivity {
 
             }
         });
-
     }
 }

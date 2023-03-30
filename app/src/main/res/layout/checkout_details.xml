@@ -172,6 +172,7 @@
                 android:layout_marginBottom="5dp" />
 
             <RelativeLayout
+
                 android:id="@+id/paymentOptionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -201,16 +202,15 @@
                     tools:ignore="HardcodedText" />
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/gcashLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/text"
                     android:layout_marginTop="20dp"
-                    android:layout_marginBottom="5dp"
                     android:alpha="0.5"
                     android:background="@color/semiGrey"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/circleGcash"
@@ -242,14 +242,16 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/codLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/gcashLayout"
-                    android:layout_marginTop="5dp"
+
                     android:layout_marginBottom="5dp"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:alpha="0.5"
+                    android:background="@color/semiGrey"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/circleCod"
@@ -274,7 +276,7 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="15dp"
                         android:fontFamily="@font/poppinsregular"
-                        android:text="Cash on delivery"
+                        android:text="Cash on delivery (not available)"
                         android:textColor="@color/material_blue_grey_80"
                         android:textSize="11sp"
                         tools:ignore="HardcodedText,SmallSp" />

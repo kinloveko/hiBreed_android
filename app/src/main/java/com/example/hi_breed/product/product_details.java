@@ -17,19 +17,25 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.hi_breed.R;
+import com.example.hi_breed.adapter.review_order_adapter;
 import com.example.hi_breed.classesFile.likes_class;
 import com.example.hi_breed.classesFile.product_class;
+import com.example.hi_breed.classesFile.rating_class;
 import com.example.hi_breed.shop.view_breeder_shop;
 import com.example.hi_breed.userFile.cart.add_to_cart;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,8 +46,10 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
@@ -55,6 +63,10 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class product_details extends AppCompatActivity {
 
+
+    RatingBar ratingBar;
+    review_order_adapter adapter;
+    RecyclerView reviewsShop;
 
    ImageView heart_like;
    Button details_button_addToCard;
@@ -97,6 +109,12 @@ public class product_details extends AppCompatActivity {
 
             }
         });
+        ratingBar = findViewById(R.id.ratingBar);
+        reviewsShop = findViewById(R.id.reviewsShop);
+        reviewsShop.setLayoutManager(new GridLayoutManager(this,1));
+        adapter = new review_order_adapter(this);
+
+
         heart_like = findViewById(R.id.heart_like);
         cartLayout = findViewById(R.id.cartLayout);
         cartLayout.setOnClickListener(new View.OnClickListener() {
@@ -146,6 +164,9 @@ public class product_details extends AppCompatActivity {
 
         id = p.getId();
         vet_id = p.getVet_id();
+
+        getReviews(p.getVet_id());
+
         if(p.getProd_category().equals("Medicine")){
             treatLabel.setVisibility(View.VISIBLE);
             expLabel.setVisibility(View.VISIBLE);
@@ -247,6 +268,62 @@ public class product_details extends AppCompatActivity {
         });
     }
 
+
+
+    private void getReviews(String pet_breeder) {
+        FirebaseFirestore.getInstance().collection("Reviews")
+                .whereEqualTo("seller_id",pet_breeder)
+                .whereEqualTo("rateFor","Shop")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @SuppressLint({"DefaultLocale", "SetTextI18n"})
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null){
+                            return;
+                        }
+                        if (value != null && !value.isEmpty()) {
+                            float totalRating = 0;
+                            int numRatings = 0;
+                            adapter.clearList();
+                            for (DocumentSnapshot s : value) {
+                                if (s.getDouble("rating") != null && !Double.isNaN(s.getDouble("rating"))) {
+                                    totalRating += s.getDouble("rating").floatValue();
+                                    numRatings++;
+                                    rating_class rate = s.toObject(rating_class.class);
+                                    adapter.addServiceDisplay(rate);
+                                }
+                            }
+                            if (numRatings > 0) {
+                                int totalReviews = value.size();
+                                float averageRating = totalRating / numRatings;
+                                TextView ratingTextView = findViewById(R.id.ratingTextView);
+                                TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
+                                ratingTextView.setText(String.format("%.1f /5 ", averageRating));
+                                numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
+                                ratingBar.setRating(averageRating);
+                                reviewsShop.setAdapter(adapter);
+                            } else {
+                                TextView ratingTextView = findViewById(R.id.ratingTextView);
+                                TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
+                                ratingTextView.setText("No ratings yet");
+                                numberOfReviewsTextView.setText("");
+                                ratingBar.setRating(0);
+                                reviewsShop.setAdapter(adapter);
+                            }
+                        } else {
+                            TextView ratingTextView = findViewById(R.id.ratingTextView);
+                            TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
+                            ratingTextView.setText("No ratings yet");
+                            numberOfReviewsTextView.setText("");
+                            ratingBar.setRating(0);
+                            reviewsShop.setAdapter(adapter);
+                        }
+                    }
+                });
+    }
+
+
+
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void addToCart(product_class p) {
         Map<String, Object> objectMap = new HashMap<>();
@@ -257,7 +334,6 @@ public class product_details extends AppCompatActivity {
         objectMap.put("prod_price",p.getProd_price());
         objectMap.put("id","");
         objectMap.put("type",p.getProd_category());
-        objectMap.put("isChecked",false);
         objectMap.put("addBy",FirebaseAuth.getInstance().getCurrentUser().getUid());
         objectMap.put("timestamp",Timestamp.now());
 

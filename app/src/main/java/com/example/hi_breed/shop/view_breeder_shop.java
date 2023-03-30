@@ -98,14 +98,8 @@ public class view_breeder_shop  extends BaseActivity {
                             if(firebaseUser.isEmailVerified()){
                                 viewShopVerified.setText("Verified");
                             }
-                            Picasso.get().load(shopName.getProfImage()).into(imageShopProfile);
-
-                            if(shopName.getBackgroundImage().equals("") || shopName.getBackgroundImage() == null) {
-                                Picasso.get().load(shopName.getProfImage()).into(imageShopBackground);
-                            }
-                            else {
-                                Picasso.get().load(shopName.getBackgroundImage()).into(imageShopBackground);
-                            }
+                            Picasso.get().load(shopName.getProfImage()).placeholder(R.drawable.noimage).into(imageShopProfile);
+                            Picasso.get().load(shopName.getBackgroundImage()).placeholder(R.drawable.nobackground).into(imageShopBackground);
                         }
                     }
                 });

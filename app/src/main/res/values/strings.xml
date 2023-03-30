@@ -19,4 +19,5 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_acquired_service_details">acquired_service_details</string>
     <string name="title_activity_order_details">order_details_activity</string>
+    <string name="title_activity_change_role">changeRole</string>
 </resources>

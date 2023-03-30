@@ -68,7 +68,7 @@ public class service_status extends BaseActivity {
         viewPagerAdapter.addFragment(new AcceptedFragment(), "Accepted");
         viewPagerAdapter.addFragment(new CompletedFragment(), "Completed");
         viewPagerAdapter.addFragment(new CancelledFragment(), "Cancelled");
-
+        viewPagerAdapter.addFragment(new reviews_service(), "Reviews");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -97,6 +97,11 @@ public class service_status extends BaseActivity {
                 }else
                 if (selectedTab.equals("cancelled")) {
                     viewPager.setCurrentItem(3, true);
+                    return;
+                }
+                else
+                if (selectedTab.equals("reviews")) {
+                    viewPager.setCurrentItem(4, true);
                     return;
                 }
 

@@ -21,7 +21,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.userFile.dashboard.user_dashboard;
+import com.example.hi_breed.shop.user_breeder_shop_panel;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class order_breeder_side extends AppCompatActivity {
         toolbarID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(order_breeder_side.this, user_dashboard.class));
+                startActivity(new Intent(order_breeder_side.this, user_breeder_shop_panel.class));
                 finish();
             }
         });
@@ -68,6 +68,7 @@ public class order_breeder_side extends AppCompatActivity {
         viewPagerAdapter.addFragment(new order_breeder_accepted(), "Accepted");
         viewPagerAdapter.addFragment(new order_breeder_completed(), "Completed");
         viewPagerAdapter.addFragment(new order_breeder_cancelled(), "Cancelled");
+        viewPagerAdapter.addFragment(new reviews_shop_fragment(), "Reviews");
 
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -94,6 +95,11 @@ public class order_breeder_side extends AppCompatActivity {
                 }else
                 if (selectedTab.equals("cancelled")) {
                     viewPager.setCurrentItem(3, true);
+                    return;
+                }
+                else
+                if (selectedTab.equals("reviews")) {
+                    viewPager.setCurrentItem(4, true);
                     return;
                 }
             }

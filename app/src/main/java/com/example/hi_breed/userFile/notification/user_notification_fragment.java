@@ -85,7 +85,6 @@ public class user_notification_fragment extends Fragment implements notification
                                    return o2.getTimestamp().compareTo(o1.getTimestamp());
                                }
                            });
-
                            adapter.add(notifications, value.getString("id"));
                            notification_recycler.setAdapter(adapter);
                         }

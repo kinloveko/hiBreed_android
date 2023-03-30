@@ -37,11 +37,12 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.message_adapter.message_conversation_reply_adapter;
 import com.example.hi_breed.classesFile.ApiUtilities;
 import com.example.hi_breed.classesFile.TimestampConverter;
-import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.appointment_order_class;
 import com.example.hi_breed.classesFile.chat_conversation_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.pushNotification;
+import com.example.hi_breed.details.order_details_activity;
 import com.example.hi_breed.order_breeder_side.order_breeder_side;
 import com.example.hi_breed.order_user_side.order_user_side;
 import com.example.hi_breed.shop.rate_shop;
@@ -98,6 +99,7 @@ public class acquired_order_accepted_message extends AppCompatActivity {
     String images;
     String transactionID;
     ListenerRegistration listenerRegistration;
+    appointment_order_class order_class;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,33 +198,38 @@ public class acquired_order_accepted_message extends AppCompatActivity {
                         if (error != null) {
                             return;
                         }
+                        if (documentSnapshot != null) {
 
-                        if (documentSnapshot.exists() && documentSnapshot.getString("order_status").equals("completed")) {
-                            String customerId = documentSnapshot.getString("customer_id");
+                           if( documentSnapshot.getString("transaction_id")!=null)
+                            transactionID = documentSnapshot.getString("transaction_id");
 
-                            if (customerId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                                appointment_class appoint = documentSnapshot.toObject(appointment_class.class);
-                                Intent i = new Intent(acquired_order_accepted_message.this, rate_shop.class);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                i.putExtra("model", (Serializable) appoint);
-                                startActivity(i);
-                                Toast.makeText(acquired_order_accepted_message.this, "Order successfully moved to completed tab", Toast.LENGTH_SHORT).show();
-                                finish();
+                            if (documentSnapshot.exists() && documentSnapshot.getString("order_status").equals("completed")) {
+                                String customerId = documentSnapshot.getString("customer_id");
 
-                                // Remove the listener after starting the new activity
-                                listenerRegistration.remove();
-                            }
-                        }
-                        else
-                        if(documentSnapshot.getString("order_status").equals("cancelled")){
-                            if(documentSnapshot.getString("customer_id") .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                Intent i = new Intent(acquired_order_accepted_message.this, order_user_side.class);
-                                i.putExtra("SELECTED_TAB", "cancelled");
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(i);
-                                Toast.makeText(acquired_order_accepted_message.this, "Order successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
-                                finish();
-                                listenerRegistration.remove();
+
+                                if (customerId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    appointment_order_class appoint = documentSnapshot.toObject(appointment_order_class.class);
+                                    Intent i = new Intent(acquired_order_accepted_message.this, rate_shop.class);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    i.putExtra("model", (Serializable) appoint);
+                                    startActivity(i);
+                                    Toast.makeText(acquired_order_accepted_message.this, "Order successfully moved to completed tab", Toast.LENGTH_SHORT).show();
+                                    finish();
+
+                                    // Remove the listener after starting the new activity
+                                    listenerRegistration.remove();
+                                }
+                            } else if (documentSnapshot.getString("order_status").equals("cancelled")) {
+                                if (documentSnapshot.getString("customer_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    Intent i = new Intent(acquired_order_accepted_message.this, order_user_side.class);
+                                    i.putExtra("SELECTED_TAB", "cancelled");
+                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(i);
+                                    Toast.makeText(acquired_order_accepted_message.this, "Order successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                    listenerRegistration.remove();
+                                }
+
                             }
 
                         }
@@ -238,6 +245,8 @@ public class acquired_order_accepted_message extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()){
+                            order_class = documentSnapshot.toObject(appointment_order_class.class);
+
                             if(documentSnapshot.getString("seller_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
 
                                 complete.setVisibility(View.VISIBLE);
@@ -541,10 +550,39 @@ public class acquired_order_accepted_message extends AppCompatActivity {
                                                                                     .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                         @Override
                                                                                         public void onSuccess(Void unused) {
+                                                                                            if(order_class.getType().equals("pet")){
 
-                                                                                            pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled by the seller",
-                                                                                                    "Order cancelled",match,notCurrentUser,"order","buyer","cancelled"), userToken);
-                                                                                            sendNotif(notification,"cancelled","buyer");
+                                                                                                FirebaseFirestore.getInstance().collection("Pet").document(order_class.getItem_id())
+                                                                                                        .update("show",true);
+                                                                                                pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled by the seller",
+                                                                                                        "Order cancelled",match,notCurrentUser,"order","buyer","cancelled"), userToken);
+                                                                                                sendNotif(notification,"cancelled","buyer");
+                                                                                            }
+                                                                                            else{
+
+                                                                                                FirebaseFirestore.getInstance().collection("Pet").document(order_class.getItem_id())
+                                                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                            @Override
+                                                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                int stocks = Integer.parseInt(documentSnapshot.getString("prod_stocks"));
+                                                                                                                if(stocks!=0){
+                                                                                                                    int newStocks = stocks + 1;
+                                                                                                                    FirebaseFirestore.getInstance().collection("Pet")
+                                                                                                                            .document(order_class.getItem_id())
+                                                                                                                            .update("prod_stocks",String.valueOf(newStocks));
+
+                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled by the seller",
+                                                                                                                            "Order cancelled",match,notCurrentUser,"order","buyer","cancelled"), userToken);
+                                                                                                                    sendNotif(notification,"cancelled","buyer");
+                                                                                                                }
+                                                                                                                else{
+                                                                                                                    Toast.makeText(acquired_order_accepted_message.this, "No more stocks", Toast.LENGTH_SHORT).show();
+                                                                                                                    return;
+                                                                                                                }
+                                                                                                            }
+                                                                                                        });
+                                                                                            }
+
                                                                                         }
                                                                                     });
                                                                         }
@@ -553,10 +591,38 @@ public class acquired_order_accepted_message extends AppCompatActivity {
                                                                                     .document(notCurrentUser).set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                         @Override
                                                                                         public void onSuccess(Void unused) {
-                                                                                            pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled by the seller",
-                                                                                                    "Order cancelled",match,notCurrentUser,"order","buyer","cancelled"), userToken);
-                                                                                            sendNotif(notification,"cancelled","buyer");
+                                                                                            if(order_class.getType().equals("pet")){
 
+                                                                                                FirebaseFirestore.getInstance().collection("Pet").document(order_class.getItem_id())
+                                                                                                        .update("show",true);
+                                                                                                pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled by the seller",
+                                                                                                        "Order cancelled",match,notCurrentUser,"order","buyer","cancelled"), userToken);
+                                                                                                sendNotif(notification,"cancelled","buyer");
+                                                                                            }
+                                                                                            else{
+
+                                                                                                FirebaseFirestore.getInstance().collection("Pet").document(order_class.getItem_id())
+                                                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                            @Override
+                                                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                int stocks = Integer.parseInt(documentSnapshot.getString("prod_stocks"));
+                                                                                                                if(stocks!=0){
+                                                                                                                    int newStocks = stocks + 1;
+                                                                                                                    FirebaseFirestore.getInstance().collection("Pet")
+                                                                                                                            .document(order_class.getItem_id())
+                                                                                                                            .update("prod_stocks",String.valueOf(newStocks));
+
+                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your order has been cancelled by the seller",
+                                                                                                                            "Order cancelled",match,notCurrentUser,"order","buyer","cancelled"), userToken);
+                                                                                                                    sendNotif(notification,"cancelled","buyer");
+                                                                                                                }
+                                                                                                                else{
+                                                                                                                    Toast.makeText(acquired_order_accepted_message.this, "No more stocks", Toast.LENGTH_SHORT).show();
+                                                                                                                    return;
+                                                                                                                }
+                                                                                                            }
+                                                                                                        });
+                                                                                            }
                                                                                         }
                                                                                     });
                                                                         }
@@ -655,7 +721,7 @@ public class acquired_order_accepted_message extends AppCompatActivity {
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if(task.isSuccessful()){
 
-                                                                        pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"messageAppointment","","" ), userToken);
+                                                                        pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"messageOrder","","" ), userToken);
                                                                         sendNotif(notification,"","");
                                                                         scrollView.post(new Runnable() {
                                                                             @Override

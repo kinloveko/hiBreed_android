@@ -37,6 +37,14 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".change_role"
+            android:exported="false"
+            android:label="@string/title_activity_change_role"
+            android:theme="@style/Theme.HiBreed.NoActionBar" />
+        <activity
+            android:name=".not_verified_activity"
+            android:exported="false" />
+        <activity
             android:name=".shop.rate_shop"
             android:exported="false" />
         <activity

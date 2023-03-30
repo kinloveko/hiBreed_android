@@ -15,11 +15,13 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hi_breed.R;
-import com.example.hi_breed.details.acquired_service_details;
 import com.example.hi_breed.classesFile.TimeStampClass;
 import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.appointment_order_class;
 import com.example.hi_breed.classesFile.notification_data_class;
+import com.example.hi_breed.details.acquired_service_details;
+import com.example.hi_breed.details.order_details_activity;
 import com.example.hi_breed.message.message_activity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -171,15 +173,35 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
                                                     });
                                     }
                                     else if(user.equals(documentSnapshot.getString("customer_id"))){
-                                        List<String> list = (List<String>) documentSnapshot.get("photos");
-                                        if(list!=null)
-                                        Picasso.get().load(list.get(0))
-                                                .placeholder(R.drawable.noimage)
-                                                .into(v.imageView);
+
+                                            FirebaseFirestore.getInstance().collection("Appointments")
+                                                    .document(add.getId())
+                                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            if(documentSnapshot.exists()){
+                                                                FirebaseFirestore.getInstance().collection("Pet")
+                                                                        .document(documentSnapshot.getString("item_id"))
+                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                            @Override
+                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                     if(documentSnapshot.exists()){
+                                                                                         List<String> list = (List<String>) documentSnapshot.get("photos");
+                                                                                         if(list!=null)
+                                                                                             Picasso.get().load(list.get(0))
+                                                                                                     .placeholder(R.drawable.noimage)
+                                                                                                     .into(v.imageView);
+                                                                                     }
+                                                                            }
+                                                                        });
+                                                            }
+                                                        }
+                                                    });
                                     }
                                 }
                             }
                         });
+
 
             }
         }
@@ -203,8 +225,17 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
                     Intent i = new Intent(context.getApplicationContext(), message_activity.class);
                     context.startActivity(i);
                 }
-                else{
-
+                else if(add.getType().equals("order")){
+                    FirebaseFirestore.getInstance().collection("Appointments")
+                            .document(add.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    appointment_order_class appointment = documentSnapshot.toObject(appointment_order_class.class);
+                                    Intent i = new Intent(context.getApplicationContext(), order_details_activity.class);
+                                    i.putExtra("mode",(Serializable) appointment);
+                                    context.startActivity(i);
+                                }
+                            });
                 }
             }
         });

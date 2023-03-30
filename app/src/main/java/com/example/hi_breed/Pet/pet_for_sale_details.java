@@ -17,24 +17,30 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.hi_breed.R;
+import com.example.hi_breed.adapter.review_order_adapter;
 import com.example.hi_breed.checkout.checkout_activity;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.PetSaleClass;
 import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.likes_class;
 import com.example.hi_breed.classesFile.priceFormat;
+import com.example.hi_breed.classesFile.rating_class;
 import com.example.hi_breed.shop.view_breeder_shop;
 import com.example.hi_breed.userFile.cart.add_to_cart;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,8 +51,10 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
@@ -61,7 +69,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import pl.droidsonroids.gif.GifImageView;
 
 public class pet_for_sale_details extends BaseActivity {
-
+    RatingBar ratingBar;
+    review_order_adapter adapter;
+    RecyclerView reviewsShop;
     ImageView heart_like;
     LinearLayout backLayout,cartLayout;
     ImageSlider imageSliderDetails;
@@ -111,6 +121,11 @@ public class pet_for_sale_details extends BaseActivity {
                 startActivity(new Intent(pet_for_sale_details.this, add_to_cart.class));
             }
         });
+
+        ratingBar = findViewById(R.id.ratingBar);
+        reviewsShop = findViewById(R.id.reviewsShop);
+        reviewsShop.setLayoutManager(new GridLayoutManager(this,1));
+        adapter = new review_order_adapter(this);
 
         backLayout = findViewById(R.id.backLayout);
         backLayout.setOnClickListener(new View.OnClickListener() {
@@ -178,8 +193,8 @@ public class pet_for_sale_details extends BaseActivity {
             id = pet.getId();
             breeder = pet.getPet_breeder();
 
+            getReviews(pet.getPet_breeder());
 
-       
             
             details_button_buyNow.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -329,6 +344,58 @@ public class pet_for_sale_details extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void getReviews(String pet_breeder) {
+        FirebaseFirestore.getInstance().collection("Reviews")
+                .whereEqualTo("seller_id",pet_breeder)
+                .whereEqualTo("rateFor","Shop")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @SuppressLint({"DefaultLocale", "SetTextI18n"})
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null){
+                            return;
+                        }
+                        if (value != null && !value.isEmpty()) {
+                            float totalRating = 0;
+                            int numRatings = 0;
+                            adapter.clearList();
+                            for (DocumentSnapshot s : value) {
+                                if (s.getDouble("rating") != null && !Double.isNaN(s.getDouble("rating"))) {
+                                    totalRating += s.getDouble("rating").floatValue();
+                                    numRatings++;
+                                    rating_class rate = s.toObject(rating_class.class);
+                                    adapter.addServiceDisplay(rate);
+                                }
+                            }
+                            if (numRatings > 0) {
+                                int totalReviews = value.size();
+                                float averageRating = totalRating / numRatings;
+                                TextView ratingTextView = findViewById(R.id.ratingTextView);
+                                TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
+                                ratingTextView.setText(String.format("%.1f /5 ", averageRating));
+                                numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
+                                ratingBar.setRating(averageRating);
+                                reviewsShop.setAdapter(adapter);
+                            } else {
+                                TextView ratingTextView = findViewById(R.id.ratingTextView);
+                                TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
+                                ratingTextView.setText("No ratings yet");
+                                numberOfReviewsTextView.setText("");
+                                ratingBar.setRating(0);
+                                reviewsShop.setAdapter(adapter);
+                            }
+                        } else {
+                            TextView ratingTextView = findViewById(R.id.ratingTextView);
+                            TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
+                            ratingTextView.setText("No ratings yet");
+                            numberOfReviewsTextView.setText("");
+                            ratingBar.setRating(0);
+                            reviewsShop.setAdapter(adapter);
+                        }
+                    }
+                });
     }
 
     private void removeLike() {

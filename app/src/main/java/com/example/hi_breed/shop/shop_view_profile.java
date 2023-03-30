@@ -3,6 +3,7 @@ package com.example.hi_breed.shop;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -11,32 +12,36 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.example.hi_breed.R;
-import com.example.hi_breed.adapter.edit_pet_for_sale_adapter.petDisplayForSaleAdapter;
 import com.example.hi_breed.classesFile.BaseActivity;
-import com.example.hi_breed.classesFile.PetSaleClass;
 import com.example.hi_breed.classesFile.ShopClass;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class shop_view_profile extends BaseActivity {
 
 
     FirebaseUser firebaseUser;
-    RecyclerView petForSale_view;
-    petDisplayForSaleAdapter adapter;
+
+
     TextView viewShopName,viewShopVerified,viewShopReviews,viewShopLink,editShop;
     ImageView imageShopProfile,imageShopBackground;
     LinearLayout backLayoutShop;
@@ -122,40 +127,162 @@ public class shop_view_profile extends BaseActivity {
     });
 
 
-        //RecyclerView
-        petForSale_view = findViewById(R.id.petForSale_view);
-        adapter = new petDisplayForSaleAdapter(this);
-        petForSale_view.setLayoutManager(new GridLayoutManager(this,2));
-        petForSale_view.setAdapter(adapter);
-        getPetForSale();
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.viewPager);
 
-
-
+        display(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
     }
 
-
-    private void getPetForSale() {
-        FirebaseFirestore.getInstance().collection("Pet")
-                .whereEqualTo("pet_breeder",firebaseUser.getUid()).whereEqualTo("displayFor","forSale")
+    private void display(String id) {
+        List<String> fragment = new ArrayList<>();
+        FirebaseFirestore.getInstance().collection("Shop")
+                .document(id)
                 .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @SuppressLint("SetTextI18n")
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(!queryDocumentSnapshots.isEmpty()){
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                            if(list!=null){
-                              for(DocumentSnapshot s: list){
-                                  PetSaleClass pet = s.toObject(PetSaleClass.class);
-                                  adapter.addPetDisplay(pet);
-                              }
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot snapshot = task.getResult();
+                            ShopClass shopName = snapshot.toObject(ShopClass.class);
+                            viewShopName.setText(shopName.getShopName());
+
+                            viewShopReviews.setTextSize(11);
+                            if(firebaseUser.isEmailVerified()){
+                                viewShopVerified.setText("Verified");
                             }
+                            Picasso.get().load(shopName.getProfImage()).placeholder(R.drawable.noimage).into(imageShopProfile);
+                            Picasso.get().load(shopName.getBackgroundImage()).placeholder(R.drawable.nobackground).into(imageShopBackground);
                         }
+                    }
+                });
+
+        FirebaseFirestore.getInstance().collection("Pet")
+                .whereEqualTo("pet_breeder",id)
+                .whereEqualTo("displayFor","forSale")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            List<DocumentSnapshot> list = task.getResult().getDocuments();
+                            if(list.size() !=0){
+                                fragment.add("Pet");
+                            }
+                            initView(id,fragment);
+                        }
+                    }
+                });
+
+        FirebaseFirestore.getInstance().collection("Pet")
+                .whereEqualTo("vet_id",id)
+                .whereEqualTo("displayFor","forProducts")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            List<DocumentSnapshot> list = task.getResult().getDocuments();
+                            if(list.size() !=0){
+                                fragment.add("Products");
+                            }
+                            initView(id,fragment);
+                        }
+                    }
+                });
+
+        FirebaseFirestore.getInstance().collection("Services")
+                .whereEqualTo("shooter_id",id)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            List<DocumentSnapshot> list = task.getResult().getDocuments();
+                            if(list.size() !=0){
+                                fragment.add("Shooter");
+                            }
+                            initView(id,fragment);
+                        }
+
                     }
                 });
 
 
 
     }
+
+    TabLayout tabLayout;
+    ViewPager2 viewPager;
+    ViewPagerAdapter adapterV;
+    private String id;
+    private void initView(String breeder,List<String> fragmentList) {
+
+
+        adapterV = new ViewPagerAdapter(this.getSupportFragmentManager(),
+                this.getLifecycle());
+
+        Bundle args = new Bundle();
+        args.putString("breeder", breeder);
+
+        if(fragmentList.contains("Pet"))
+        {
+            shop_pet_for_sale_fragment pet  = new shop_pet_for_sale_fragment();
+            pet.setArguments(args);
+            adapterV.addFragment(pet,"PET FOR SALE");
+        }
+        if(fragmentList.contains("Products")){
+            shop_product_fragment product = new shop_product_fragment();
+            product.setArguments(args);
+            adapterV.addFragment(product,"PRODUCTS FOR SALE");
+        }
+        if(fragmentList.contains("Shooter"))
+        {
+            shop_service_fragment shooter = new shop_service_fragment();
+            shooter.setArguments(args);
+            adapterV.addFragment(shooter,"SERVICE");
+        }
+        viewPager.setAdapter(adapterV);
+        viewPager.setOffscreenPageLimit(1);
+        new TabLayoutMediator(tabLayout,viewPager,
+                (tab,position)->{
+                    tab.setText(adapterV.fragmentTitle.get(position));
+                }).attach();
+
+        for(int i =0; i<tabLayout.getTabCount();i++){
+            TextView tv = (TextView) LayoutInflater.from(this)
+                    .inflate(R.layout.shop_custom_tab,null);
+            tabLayout.getTabAt(i).setCustomView(tv);
+        }
+
+    }
+
+
+    class ViewPagerAdapter extends FragmentStateAdapter {
+        private final List<Fragment> fragmentList = new ArrayList<>();
+        private final List<String> fragmentTitle = new ArrayList<>();
+
+        public ViewPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+            super(fragmentManager, lifecycle);
+        }
+
+        public void addFragment(Fragment fragment, String title){
+            fragmentList.add(fragment);
+            fragmentTitle.add(title);
+        }
+
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            return fragmentList.get(position);
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return fragmentList.size();
+        }
+
+    }
+
 
 }

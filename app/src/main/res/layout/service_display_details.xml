@@ -330,22 +330,106 @@
                         android:fontFamily="@font/poppinsregular"
                         android:text="Schedule"
                         android:textAlignment="center"
-                        android:textSize="12sp"
                         android:textColor="@color/material_blue_grey_80"
+                        android:textSize="12sp"
 
                         tools:ignore="HardcodedText" />
 
 
                 </RelativeLayout>
 
-                <LinearLayout
 
+                <LinearLayout
+                    android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginBottom="70dp"
-                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
+                    android:background="@drawable/style_border"/>
+
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="start"
+                    android:fontFamily="@font/poppinsmedium"
+                    android:gravity="center"
+                    android:inputType="none"
+                    android:paddingTop="5dp"
+                    android:text="Service Reviews"
+                    android:textColor="@color/material_blue_grey_80"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/ratingBar"
+                        android:layout_width="20dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/star_on"
+                         />
+                    <TextView
+                        android:id="@+id/ratingValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_toEndOf="@id/ratingBar"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:gravity="center"
+                        android:inputType="none"
+                        android:paddingTop="5dp"
+                        android:layout_marginStart="5dp"
+                        android:text=""
+                        android:textColor="@color/red_btn_bg_color"
+                        android:textSize="10sp"
+                        tools:ignore="HardcodedText,SmallSp" />
+                    <TextView
+                        android:id="@+id/ratingTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_toEndOf="@id/ratingValue"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:gravity="center"
+                        android:inputType="none"
+                        android:paddingTop="5dp"
+                        android:layout_marginStart="5dp"
+                        android:text=""
+                        android:textColor="@color/red_btn_bg_color"
+                        android:textSize="10sp"
+                        tools:ignore="HardcodedText,SmallSp" />
+                    <TextView
+                        android:id="@+id/numberOfReviewsTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_toEndOf="@id/ratingTextView"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:gravity="center"
+                        android:inputType="none"
+                        android:paddingTop="5dp"
+                        android:layout_marginStart="5dp"
+                        android:text=""
+                        android:textSize="10sp"
+                        tools:ignore="HardcodedText,SmallSp" />
+                </RelativeLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:id="@+id/reviewsShop"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="100dp"
                     android:background="@drawable/style_border"/>
 
             </LinearLayout>

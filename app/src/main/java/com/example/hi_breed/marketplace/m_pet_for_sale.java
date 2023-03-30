@@ -15,9 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.edit_pet_for_sale_adapter.petDisplayForSaleAdapter;
 import com.example.hi_breed.classesFile.PetSaleClass;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
@@ -57,26 +58,33 @@ public class m_pet_for_sale extends Fragment {
     }
 
     private void getProducts() {
-        FirebaseFirestore.getInstance()
-                .collection("Pet")
+        FirebaseFirestore.getInstance().collection("Pet")
                 .whereEqualTo("displayFor","forSale")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .whereEqualTo("show",true)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<DocumentSnapshot> dlist = queryDocumentSnapshots.getDocuments();
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null){
+                            return;
+                        }
+                        if(value!=null){
+                            adapter.clearList();
+                            List<DocumentSnapshot> dsList = value.getDocuments();
+                            for(DocumentSnapshot ds:dsList){
+                                if(ds!=null){
 
-                        for(DocumentSnapshot ds:dlist){
-                            PetSaleClass pet = ds.toObject(PetSaleClass.class);
-                            adapter.addPetDisplay(pet);
-                        }
-                        if(dlist.size() == 0) {
-                            pet_for_sale_recycler.setVisibility(View.GONE);
-                            noOneTextView_pet_sale_card.setVisibility(View.VISIBLE);
-                        }
-                        else{
-                            pet_for_sale_recycler.setVisibility(View.VISIBLE);
-                            noOneTextView_pet_sale_card.setVisibility(View.GONE);
+                                    PetSaleClass productModel = ds.toObject(PetSaleClass.class);
+                                    adapter.addPetDisplay(productModel);
+                                }
+                            }
+                            if(dsList.size() == 0) {
+                                pet_for_sale_recycler.setVisibility(View.GONE);
+                                noOneTextView_pet_sale_card.setVisibility(View.VISIBLE);
+                            }
+                            else{
+                                pet_for_sale_recycler.setVisibility(View.VISIBLE);
+                                noOneTextView_pet_sale_card.setVisibility(View.GONE);
+                            }
                         }
                     }
                 });
