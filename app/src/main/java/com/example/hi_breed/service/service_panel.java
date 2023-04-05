@@ -139,8 +139,6 @@ public class service_panel extends BaseActivity {
             }
         });
 
-
-
         acquiredNumber = findViewById(R.id.acquiredNumber);
         show_service_recycler = findViewById(R.id.show_service_recycler);
         adapter = new s_p_serviceAdapter(this);
@@ -159,9 +157,14 @@ public class service_panel extends BaseActivity {
                             if (list != null) {
                                 if (list.contains("Veterinarian") && list.contains("Pet Shooter")) {
                                     handleVeterinarianAndPetShooterServices();
+                                    Toast.makeText(service_panel.this, "VET SHOOT", Toast.LENGTH_SHORT).show();
                                 } else if (list.contains("Veterinarian")) {
                                     getVeterinarianService();
+                                    Toast.makeText(service_panel.this, "VET", Toast.LENGTH_SHORT).show();
+
                                 } else {
+                                    Toast.makeText(service_panel.this, " SHOOT", Toast.LENGTH_SHORT).show();
+
                                     getService();
                                 }
                             }
@@ -219,6 +222,7 @@ public class service_panel extends BaseActivity {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void handleVeterinarianAndPetShooterServices() {
         FirebaseFirestore.getInstance()
                 .collection("Services")
@@ -230,73 +234,64 @@ public class service_panel extends BaseActivity {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                        int count = list.size();
-                        if (count != 0) {
-                            serviceLayout.setVisibility(View.GONE);
                             for (DocumentSnapshot s : list) {
                                 roles.add("Veterinarian Service");
                                 service_class service_class = s.toObject(service_class.class);
                                 adapter.addServiceDisplay(service_class);
-                            }
-                        }
-                        if (!roles.contains("Shooter Service")) {
 
-                            text.setText("You can still add a service for Dog Shooting Service just click the button below");
-                         }
-                        else if (!roles.contains("Veterinarian Service")) {
-                            text.setText("You can still add a Dog Veterinarian Service for  just click the button below");
-                        }
-                        else{
-                            serviceLayout.setVisibility(View.GONE);
-                        }
-                        updateServiceLayout(count);
+                                if(roles.size() == 2){
+                                    serviceLayout.setVisibility(View.GONE);
+                                }
+                                else{
+                                    if(!roles.contains("Veterinarian")){
+                                        serviceLayout.setVisibility(View.VISIBLE);
+                                    }
+                                    else if(roles.contains("Shooter Service")){
+                                        serviceLayout.setVisibility(View.VISIBLE);
+                                    }
+                                    else{
+                                        serviceLayout.setVisibility(View.VISIBLE);
+                                    }
+                                }
+
+                            }
                     }
                 });
 
         FirebaseFirestore.getInstance()
                 .collection("Services")
-                .whereEqualTo("serviceType", "Shooter Service")
                 .whereEqualTo("shooter_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("serviceType", "Shooter Service")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                        int count = list.size();
-                        if (count != 0) {
+
                             for (DocumentSnapshot s : list) {
                                 roles.add("Shooter Service");
                                 service_class service_class = s.toObject(service_class.class);
                                 adapter.addServiceDisplay(service_class);
+
+                                if(roles.size() == 2){
+                                    serviceLayout.setVisibility(View.GONE);
+                                }
+                                else{
+                                    if(!roles.contains("Veterinarian")){
+                                        serviceLayout.setVisibility(View.VISIBLE);
+                                    }
+                                    else if(roles.contains("Shooter Service")){
+                                        serviceLayout.setVisibility(View.VISIBLE);
+                                    }
+                                    else{
+                                        serviceLayout.setVisibility(View.VISIBLE);
+                                    }
+                                }
+
                             }
-
-                        }
-                        if (!roles.contains("Shooter Service")) {
-
-                            text.setText("You can still add a service for Dog Shooting Service just click the button below");
-                        }
-                        else if (!roles.contains("Veterinarian Service")) {
-                            text.setText("You can still add a Dog Veterinarian Service for  just click the button below");
-                        }
-                        else{
-                            serviceLayout.setVisibility(View.GONE);
-                        }
-                        updateServiceLayout(count);
                     }
                 });
-    }
-
-    private void updateServiceLayout(int count) {
-        switch (count) {
-            case 0:
-            case 1:
-                serviceLayout.setVisibility(View.VISIBLE);
-                break;
-            case 2:
-                serviceLayout.setVisibility(View.GONE);
-                break;
-        }
     }
 
 
@@ -306,20 +301,15 @@ public class service_panel extends BaseActivity {
                 .whereEqualTo("shooter_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .whereEqualTo("serviceType","Veterinarian Service")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                        if(list.size() !=0){
-                            serviceLayout.setVisibility(View.GONE);
-                            for (DocumentSnapshot s:list){
 
+                            for (DocumentSnapshot s : list) {
                                 service_class service_class = s.toObject(service_class.class);
                                 adapter.addServiceDisplay(service_class);
                             }
-                        }else
-                        {
-                            serviceLayout.setVisibility(View.VISIBLE);
-                        }
                     }
                 });
     }
@@ -330,19 +320,16 @@ public class service_panel extends BaseActivity {
                 .whereEqualTo("serviceType","Shooter Service")
                 .whereEqualTo("shooter_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                        if(list.size() !=0){
-                            serviceLayout.setVisibility(View.GONE);
-                            for (DocumentSnapshot s:list){
+                            for (DocumentSnapshot s : list) {
                                 service_class service_class = s.toObject(service_class.class);
                                 adapter.addServiceDisplay(service_class);
-                            }
-                        }else
-                        {
-                            serviceLayout.setVisibility(View.VISIBLE);
+                                serviceLayout.setVisibility(View.GONE);
                         }
+
                     }
                 });
     }

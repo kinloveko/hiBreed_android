@@ -20,4 +20,5 @@
     <string name="title_activity_acquired_service_details">acquired_service_details</string>
     <string name="title_activity_order_details">order_details_activity</string>
     <string name="title_activity_change_role">changeRole</string>
+    <string name="title_activity_image">Image</string>
 </resources>

@@ -252,9 +252,9 @@ public class product_details extends AppCompatActivity {
                 if (tag == null || !((Boolean) tag)) {
                     heart_like.setImageResource(R.drawable.icon_clicked_like);
                     heart_like.setTag(true);
-                    saveLike();
+                    saveLike(p);
                 } else {
-                    removeLike();
+                    removeLike(p);
                     heart_like.setImageResource(R.drawable.icon_heart_likes);
                     heart_like.setTag(false);
                 }
@@ -437,7 +437,7 @@ public class product_details extends AppCompatActivity {
         });
     }
 
-    private void removeLike() {
+    private void removeLike(product_class p) {
 
         FirebaseFirestore.getInstance().collection("Likes").whereEqualTo("likedBy",FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .whereEqualTo("product_id",id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -478,8 +478,8 @@ public class product_details extends AppCompatActivity {
 
     }
 
-    private void saveLike() {
-        likes_class like = new likes_class("",FirebaseAuth.getInstance().getCurrentUser().getUid(),id,vet_id,"Medicine", Timestamp.now());
+    private void saveLike(product_class p) {
+        likes_class like = new likes_class("",FirebaseAuth.getInstance().getCurrentUser().getUid(),id,vet_id,p.getProd_category(), Timestamp.now());
 
         FirebaseFirestore.getInstance().collection("User")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())

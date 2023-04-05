@@ -1,13 +1,13 @@
 package com.example.hi_breed.screenLoading;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.hi_breed.loginAndRegistration.Login;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.hi_breed.R;
+import com.example.hi_breed.loginAndRegistration.Login;
 import com.example.hi_breed.loginAndRegistration.container_fragment_registration_users;
 
 public class screen_WelcomeToHiBreed extends AppCompatActivity {
@@ -30,7 +30,8 @@ public class screen_WelcomeToHiBreed extends AppCompatActivity {
 
     public void createAccount_Onclick(View view) {
         {
-            startActivity(new Intent(this, container_fragment_registration_users.class));
+        /*    startActivity(new Intent(this, image_activity.class));*/
+        startActivity(new Intent(this, container_fragment_registration_users.class));
         }
 
     }

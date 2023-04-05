@@ -103,7 +103,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-
+                    <com.ramijemli.percentagechartview.PercentageChartView
+                        android:id="@+id/view_id"
+                        android:visibility="gone"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="20dp"
+                        app:pcv_animDuration="800"
+                        app:pcv_animInterpolator="anticipate_overshoot"
+                        app:pcv_backgroundBarColor="@color/semiWhite"
+                        app:pcv_backgroundBarThickness="6dp"
+                        app:pcv_mode="ring"
+                        app:pcv_orientation="counter_clockwise"
+                        app:pcv_progress="0"
+                        app:pcv_progressBarThickness="6dp"
+                        app:pcv_progressColor="@color/mustard"
+                        app:pcv_startAngle="90"
+                        app:pcv_textColor="@color/material_blue_grey_80" />
                     <TextView
                         android:id="@+id/details_shooter_name"
                         android:layout_width="wrap_content"
@@ -111,8 +128,7 @@
                         android:layout_marginStart="15dp"
                         android:layout_marginEnd="15dp"
                         android:layout_marginTop="20dp"
-                        android:layout_toEndOf="@+id/details_shop_profile_cardView"
-                        android:ellipsize="end"
+                          android:ellipsize="end"
                         android:fontFamily="@font/poppinsmedium"
                         android:text="Shooter name"
                         android:textColor="@color/material_blue_grey_90"
@@ -138,7 +154,7 @@
                         android:layout_height="30dp"
                         android:layout_below="@id/details_service_type"
                         android:layout_marginStart="15dp"
-                        android:layout_marginTop="-5dp"
+                        android:layout_marginTop="-4dp"
                         android:src="@drawable/icon_peso"
                         tools:ignore="HardcodedText" />
 
@@ -146,6 +162,7 @@
                         android:id="@+id/heart_like"
                         android:layout_width="33dp"
                         android:layout_height="43dp"
+
                         android:layout_alignParentBottom="true"
                         android:layout_marginEnd="10dp"
                         android:layout_toStartOf="@id/share_to_messenger"
@@ -153,13 +170,13 @@
 
                     <ImageView
                         android:id="@+id/share_to_messenger"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentBottom="true"
                         android:layout_marginEnd="15dp"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/icon_share_messenger"
-                        />
+                        android:src="@drawable/icon_share_messenger" />
 
                     <TextView
                         android:id="@+id/details_shooter_price"
@@ -169,6 +186,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="-7dp"
                         android:layout_toEndOf="@+id/peso"
+                        android:layout_marginBottom="10dp"
                         android:ellipsize="end"
                         android:fontFamily="@font/poppinsemibold"
                         android:text="Price"
@@ -387,17 +405,18 @@
                         android:textColor="@color/red_btn_bg_color"
                         android:textSize="10sp"
                         tools:ignore="HardcodedText,SmallSp" />
+
                     <TextView
                         android:id="@+id/ratingTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
+                        android:layout_marginStart="5dp"
                         android:layout_toEndOf="@id/ratingValue"
                         android:fontFamily="@font/poppinsmedium"
                         android:gravity="center"
                         android:inputType="none"
                         android:paddingTop="5dp"
-                        android:layout_marginStart="5dp"
                         android:text=""
                         android:textColor="@color/red_btn_bg_color"
                         android:textSize="10sp"

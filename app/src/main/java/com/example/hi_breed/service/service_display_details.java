@@ -45,11 +45,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.ramijemli.percentagechartview.PercentageChartView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class service_display_details extends BaseActivity {
+
 
     ImageView ratingBar;
     review_order_adapter adapter;
@@ -68,7 +70,7 @@ public class service_display_details extends BaseActivity {
      Button details_button_hireNow;
     String id,shooter_id;
     String sched="";
-
+    PercentageChartView view_id;
 
     @SuppressLint({"ObsoleteSdkInt", "SetTextI18n"})
     @Override
@@ -90,6 +92,7 @@ public class service_display_details extends BaseActivity {
         reviewsService = findViewById(R.id.reviewsShop);
         reviewsService.setLayoutManager(new GridLayoutManager(this,1));
         adapter = new review_order_adapter(this);
+       view_id = findViewById(R.id.view_id);
 
         heart_like = findViewById(R.id.heart_like);
         backLayout = findViewById(R.id.backLayout);
@@ -134,7 +137,9 @@ public class service_display_details extends BaseActivity {
         //shooter image
             id = service.getId();
             shooter_id = service.getShooter_id();
-
+           if(!service.getServiceType().equals("Veterinarian Service")){
+               view_id.setVisibility(View.VISIBLE);
+           }
             getReviews(service.getShooter_id());
 
             FirebaseFirestore.getInstance().collection("Likes")
@@ -248,8 +253,6 @@ public class service_display_details extends BaseActivity {
                         });
             }
         });
-
-
     }
 
     private void getReviews(String shooter_id) {
@@ -266,24 +269,35 @@ public class service_display_details extends BaseActivity {
                         if (value != null && !value.isEmpty()) {
                             float totalRating = 0;
                             int numRatings = 0;
+                            String type ="";
                             adapter.clearList();
                             for (DocumentSnapshot s : value) {
                                 if (s.getDouble("rating") != null && !Double.isNaN(s.getDouble("rating"))) {
                                     totalRating += s.getDouble("rating").floatValue();
                                     numRatings++;
+
                                     rating_class rate = s.toObject(rating_class.class);
+                                    type = rate.getType();
                                     adapter.addServiceDisplay(rate);
                                 }
                             }
                             if (numRatings > 0) {
+
                                 int totalReviews = value.size();
                                 float averageRating = totalRating / numRatings;
-                                TextView ratingTextView = findViewById(R.id.ratingTextView);
+
                                 TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
                                 TextView ratingValue = findViewById(R.id.ratingValue);
                                 ratingValue.setText(String.format("%.1f /5 ", averageRating));
-                                ratingTextView.setText("Successful Rate : " + String.format("%.0f%%", Math.min(averageRating / 5 * 100, 100)));
-                                numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
+                                float percent = Math.min(averageRating / 5 * 100, 100);
+                                if(type.equals("Veterinarian Service")){
+                                    numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
+                                    }
+                                else{
+
+                                    view_id.setProgress(percent,true);
+                                    numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
+                                }
 
                                 reviewsService.setAdapter(adapter);
                             } else {
@@ -393,4 +407,6 @@ public class service_display_details extends BaseActivity {
                     }
                 });
     }
+
+
 }

@@ -212,7 +212,7 @@ public class service_add_service extends BaseActivity implements petImagesRecycl
                                       descLayout.setVisibility(View.VISIBLE);
                                       availabilityLayout.setVisibility(View.VISIBLE);
                                       scheduleLayout.setVisibility(View.VISIBLE);
-                                      serviceNameLayout.setVisibility(View.GONE);
+                                      serviceNameLayout.setVisibility(View.VISIBLE);
                                       priceLayout.setVisibility(View.VISIBLE);
                                       typeLayout.setVisibility(View.VISIBLE);
                                       typeLayout.setEnabled(false);
@@ -516,7 +516,7 @@ public class service_add_service extends BaseActivity implements petImagesRecycl
 
         }
 
-        if(roles.contains("Veterinarian")){
+        if(serviceNameLayout.isShown()){
             if(name.isEmpty()){
                 Toast.makeText(this, "Please input a specific name of your service", Toast.LENGTH_SHORT).show();
                 petNameEdit.requestFocus();
@@ -579,7 +579,7 @@ public class service_add_service extends BaseActivity implements petImagesRecycl
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String id = UUID.randomUUID().toString();
 
-        if(typeTextView.getText().toString().contains("Veterinarian")){
+        if(typeTextView.getText().toString().contains("Veterinarian Service")){
             service_class service = new service_class(id,name,description,schedule,avails,address,price,null,user.getUid(),"Veterinarian Service","Service", Timestamp.now(),true);
             FirebaseFirestore.getInstance().collection("User").document(user.getUid())
                     .collection("Services")
@@ -715,7 +715,7 @@ public class service_add_service extends BaseActivity implements petImagesRecycl
                                                         @Override
                                                         public void onSuccess(Void unused) {
 
-                                                            if(roles.contains("Veterinarian")){
+                                                            if(typeTextView.getText().toString().equals("Veterinarian Service")){
                                                                 item item = new item(id,FirebaseAuth.getInstance().getCurrentUser().getUid(),
                                                                         price,"Veterinarian Service",petNameEdit.getText().toString(),address,true);
 
