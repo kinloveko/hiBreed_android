@@ -323,7 +323,7 @@ public class user_home_fragment extends Fragment {
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if(error!=null) return;
                         if(value!=null){
-                            maybeLayout.setVisibility(View.VISIBLE);
+
                             List<DocumentSnapshot> list = value.getDocuments();
                             List<RecommendedProduct> recommended = new ArrayList<>();
                             Set<String> likedProducts = new HashSet<>(); // create a set to store the liked products
@@ -429,9 +429,7 @@ public class user_home_fragment extends Fragment {
                                 }
                             }
                         }
-                        else{
-                            maybeLayout.setVisibility(View.GONE);
-                        }
+
                     }
                 });
 
@@ -439,58 +437,66 @@ public class user_home_fragment extends Fragment {
     likes_adapter adapters;
     private final Set<String> addedIds = new HashSet<>();
     private void displayProductsRecommended(List<RecommendedProduct> recommended) {
-        for (RecommendedProduct r : recommended) {
-            if (!addedIds.contains(r.getId())) {
-                addedIds.add(r.getId());
-                if (r.getType().equals("Veterinarian Service") || r.getType().equals("Shooter Service")) {
-                    FirebaseFirestore.getInstance().collection("Services")
-                            .document(r.getId())
-                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if (documentSnapshot.exists()) {
-                                        likes_class like = new likes_class(r.getId(), "", r.getId(),
-                                                documentSnapshot.getString("shooter_id"),
-                                                r.getType(), null);
-                                        adapters.add_to_cart(like);
-                                    }
-                                }
-                            });
+        if(recommended.size()!=0){
+            maybeLayout.setVisibility(View.VISIBLE);
+            for (RecommendedProduct r : recommended) {
 
-                }
-                else if (r.getType().equals("Dog Accessories") || r.getType().equals("Medicine")){
-                    FirebaseFirestore.getInstance().collection("Pet")
-                            .document(r.getId())
-                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.exists()){
-                                        likes_class  like = new likes_class(r.getId(),"",r.getId(),
-                                                documentSnapshot.getString("vet_id"),
-                                                r.getType(),null);
-                                        adapters.add_to_cart(like);
+                if (!addedIds.contains(r.getId())) {
+                    addedIds.add(r.getId());
+                    if (r.getType().equals("Veterinarian Service") || r.getType().equals("Shooter Service")) {
+                        FirebaseFirestore.getInstance().collection("Services")
+                                .document(r.getId())
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if (documentSnapshot.exists()) {
+                                            likes_class like = new likes_class(r.getId(), "", r.getId(),
+                                                    documentSnapshot.getString("shooter_id"),
+                                                    r.getType(), null);
+                                            adapters.add_to_cart(like);
+                                        }
                                     }
-                                }
-                            });
-                }
-                else if (r.getType().equals("forSale")){
-                    FirebaseFirestore.getInstance().collection("Pet")
-                            .document(r.getId())
-                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.exists()){
-                                        likes_class  like = new likes_class(r.getId(),"",r.getId(),
-                                                documentSnapshot.getString("pet_breeder"),
-                                                r.getType(),null);
-                                        adapters.add_to_cart(like);
+                                });
+
+                    }
+                    else if (r.getType().equals("Dog Accessories") || r.getType().equals("Medicine")){
+                        FirebaseFirestore.getInstance().collection("Pet")
+                                .document(r.getId())
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if(documentSnapshot.exists()){
+                                            likes_class  like = new likes_class(r.getId(),"",r.getId(),
+                                                    documentSnapshot.getString("vet_id"),
+                                                    r.getType(),null);
+                                            adapters.add_to_cart(like);
+                                        }
                                     }
-                                }
-                            });
+                                });
+                    }
+                    else if (r.getType().equals("forSale")){
+                        FirebaseFirestore.getInstance().collection("Pet")
+                                .document(r.getId())
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if(documentSnapshot.exists()){
+                                            likes_class  like = new likes_class(r.getId(),"",r.getId(),
+                                                    documentSnapshot.getString("pet_breeder"),
+                                                    r.getType(),null);
+                                            adapters.add_to_cart(like);
+                                        }
+                                    }
+                                });
+                    }
                 }
             }
+            youMayLike_recycler.setAdapter(adapters);
         }
-       youMayLike_recycler.setAdapter(adapters);
+        else{
+            maybeLayout.setVisibility(View.GONE);
+        }
+
     }
     private void getPetForYou() {
       FirebaseFirestore.getInstance().collection("Pet")

@@ -60,6 +60,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -101,7 +102,7 @@ public class not_verified_activity extends AppCompatActivity implements breeder_
     TextInputLayout reg_memberID,reg_prc_id,reg_kennelName;
     TextInputEditText reg_memberID_edit,reg_prc_id_edit,reg_experienceEdit,reg_kennelNameEdit;
     TextView reg_date_registered_edit,prc_required_error,add_photo_vet,dropImageTextVIew,reg_transactionEdit,textViewExp,changeRole;
-
+    String birth="";
     LinearLayout memberLayouts,shooter_validation_linearLayout,breeder_validation_linearLayout,vet_validation_linear_layout;
     TextInputLayout reg_experience;
     ArrayList<String> role;
@@ -228,7 +229,7 @@ public class not_verified_activity extends AppCompatActivity implements breeder_
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         role = (ArrayList<String>) documentSnapshot.get("role");
-
+                        birth = documentSnapshot.getString("birth");
                         changeRole.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -236,8 +237,6 @@ public class not_verified_activity extends AppCompatActivity implements breeder_
                                     finish();
                             }
                         });
-
-
 
                         if(role.contains("Pet Owner")){
                             saveRole.add("Pet Owner");
@@ -814,15 +813,106 @@ public class not_verified_activity extends AppCompatActivity implements breeder_
 
             bundle.putString("dateOfRegistration",date);
         }
+        Toast.makeText(this, date+" "+birth + " "+kennel, Toast.LENGTH_SHORT).show();
 
         //sending all the data to next fragment
         bundle.putStringArrayList("roles",saveRole);
-
-
-
-
-    }//end of check input method
-
+        if(role.contains("Veterinarian") || role.contains("Pet Shooter") || role.contains("Pet Breeder")) {
+            if (role.contains("Veterinarian") && role.contains("Pet Breeder")) {
+                FirebaseFirestore.getInstance().collection("Members")
+                        .whereEqualTo("memberId", memberID)
+                        .whereEqualTo("dateOfRegistration", date)
+                        .whereEqualTo("prc_id_no", prcID)
+                        .whereEqualTo("kennelName", kennel)
+                        .whereEqualTo("birthday", birth)
+                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                if (!queryDocumentSnapshots.isEmpty()) {
+                                    FirebaseFirestore.getInstance().collection("User")
+                                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .update("status","verified");
+                                    Toast.makeText(getApplicationContext(), "User status is verified", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(not_verified_activity.this,user_dashboard.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Some fields are not matched in your inputted", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                  });
+            }
+            else if (role.contains("Pet Breeder")) {
+                FirebaseFirestore.getInstance().collection("Members")
+                        .whereEqualTo("memberId", memberID)
+                        .whereEqualTo("dateOfRegistration", date)
+                        .whereEqualTo("kennelName", kennel)
+                        .whereEqualTo("birthday", birth)
+                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                if (!queryDocumentSnapshots.isEmpty()) {
+                                    FirebaseFirestore.getInstance().collection("User")
+                                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .update("status","verified");
+                                    Toast.makeText(getApplicationContext(), "User status is verified", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(not_verified_activity.this,user_dashboard.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Some fields are not matched in your inputted", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+            else  if (role.contains("Veterinarian")){
+                FirebaseFirestore.getInstance().collection("Members")
+                        .whereEqualTo("memberId", memberID)
+                        .whereEqualTo("dateOfRegistration", date)
+                        .whereEqualTo("prc_id_no", prcID)
+                        .whereEqualTo("birthday", birth)
+                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                if (!queryDocumentSnapshots.isEmpty()) {
+                                    FirebaseFirestore.getInstance().collection("User")
+                                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .update("status","verified");
+                                    Toast.makeText(getApplicationContext(), "User status is verified", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(not_verified_activity.this,user_dashboard.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Some fields are not matched in your inputted", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+            else if (role.contains("Pet Shooter")){
+                FirebaseFirestore.getInstance().collection("Members")
+                        .whereEqualTo("memberId", memberID)
+                        .whereEqualTo("dateOfRegistration", date)
+                        .whereEqualTo("birthday", birth)
+                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                if (!queryDocumentSnapshots.isEmpty()) {
+                                    FirebaseFirestore.getInstance().collection("User")
+                                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .update("status","verified");
+                                    Toast.makeText(getApplicationContext(), "User status is verified", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(not_verified_activity.this,user_dashboard.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Some fields are not matched in your inputted", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+            else if(role.size() == 1 && role.contains("Pet Owner")){
+                Toast.makeText(this, "Verify your phone number go to account settings", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(not_verified_activity.this,user_dashboard.class));
+                finish();
+            }
+        }
+   }//end of check input method
 
     @SuppressLint("SetTextI18n")
     private void openTransactionDialog() {

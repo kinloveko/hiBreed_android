@@ -462,6 +462,16 @@ public class checkout_activity extends BaseActivity {
                 else{
 
                 }
+                    FirebaseFirestore.getInstance().collection("Cart")
+                            .document(cart.getId()).delete();
+                    if(count == size){
+                        alertDialog.dismiss();
+                        Intent i = new Intent(checkout_activity.this,checkout_thankyou.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        i.putExtra("from","Checkout");
+                        startActivity(i);
+                        finish();
+                }
             }
 
             @Override

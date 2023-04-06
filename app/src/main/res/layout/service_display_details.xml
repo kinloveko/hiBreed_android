@@ -102,7 +102,17 @@
 
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
+                    <TextView
+                        android:visibility="gone"
+                        android:id="@+id/textsRate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="Success Rate"
+                        android:textSize="10sp"
+                        android:layout_marginEnd="18dp"
+                        android:layout_below="@id/view_id"
+                        tools:ignore="HardcodedText,SmallSp" />
                     <com.ramijemli.percentagechartview.PercentageChartView
                         android:id="@+id/view_id"
                         android:visibility="gone"
@@ -112,14 +122,14 @@
                         android:layout_marginTop="20dp"
                         app:pcv_animDuration="800"
                         app:pcv_animInterpolator="anticipate_overshoot"
-                        app:pcv_backgroundBarColor="@color/semiWhite"
-                        app:pcv_backgroundBarThickness="6dp"
+                        app:pcv_backgroundBarColor="@color/fbWhite"
+                        app:pcv_backgroundBarThickness="8dp"
                         app:pcv_mode="ring"
                         app:pcv_orientation="counter_clockwise"
                         app:pcv_progress="0"
-                        app:pcv_progressBarThickness="6dp"
+                        app:pcv_progressBarThickness="4.5dp"
                         app:pcv_progressColor="@color/mustard"
-                        app:pcv_startAngle="90"
+                        app:pcv_startAngle="300"
                         app:pcv_textColor="@color/material_blue_grey_80" />
                     <TextView
                         android:id="@+id/details_shooter_name"

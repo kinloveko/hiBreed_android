@@ -41,6 +41,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -747,7 +749,9 @@ user_profile_account_contact extends BaseActivity {
 
 
                         okay.setEnabled(false);
-                        // Remove leading "0" and replace with "+63"
+
+// This is your send verification code method
+// Remove leading "0" and replace with "+63"
                         phoneNumber = editText.getText().toString().trim();
                         if (phoneNumber.startsWith("0") && phoneNumber.length() == 11) {
                             phoneNumber = "+63" + phoneNumber.substring(1);
@@ -761,26 +765,25 @@ user_profile_account_contact extends BaseActivity {
                                     new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                                         @Override
                                         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-                                            holder = phoneAuthCredential.getSmsCode();
-
+                                           holder = phoneAuthCredential.getSmsCode();
+                                            Log.d("OTP1", holder);
                                         }
-
                                         @Override
                                         public void onVerificationFailed(@NonNull FirebaseException e) {
                                             Toast.makeText(user_profile_account_contact.this, "Verification failed", Toast.LENGTH_SHORT).show();
-                                            Log.d("ERROR",e.getLocalizedMessage());
+                                            Log.d("ERROR", e.getLocalizedMessage());
                                         }
-
                                         @Override
                                         public void onCodeSent(@NonNull String verification, @NonNull PhoneAuthProvider.ForceResendingToken token) {
                                             verificationID = verification;
                                             tokens = token;
-                                            getOtpFromMessage(verification,alert3);
+                                            getOtpFromMessage(verification, alert3); // use smsCode instead of holder
+                                            Log.d("OTP2", verification + "\n" + holder);
                                             Toast.makeText(user_profile_account_contact.this, "OTP sent", Toast.LENGTH_SHORT).show();
-
                                         }
                                     });
                         }
+
                         Toast.makeText(user_profile_account_contact.this, phoneNumber, Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -837,6 +840,7 @@ user_profile_account_contact extends BaseActivity {
         int maxLength = 6;
         editText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
         //valid
         ImageView valid = view2.findViewById(R.id.screen_custom_valid_icon);
         //clear text
@@ -883,35 +887,54 @@ user_profile_account_contact extends BaseActivity {
                     count = 0;
                 }
                 else{
-                        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(message,editText.getText().toString());
-                    if (phoneAuthCredential.getSmsCode().equals(editText.getText().toString())) {
-                        // OTP is valid
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("contactNumber", phoneNumber);
-                        contactInput.setText(phoneNumber);
-                        FirebaseFirestore.getInstance().collection("User")
-                                .document(user.getUid())
-                                .collection("security")
-                                .document("security_doc")
-                                .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        Toast.makeText(user_profile_account_contact.this, "Successfully Set", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                        Toast.makeText(user_profile_account_contact.this, "OTP success", Toast.LENGTH_SHORT).show();
-                        count = 1;
-                    } else {
-                        // Invalid OTP
-                        Toast.makeText(user_profile_account_contact.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                    PhoneAuthCredential credential = PhoneAuthProvider.getCredential(message, editText.getText().toString());
+                    FirebaseAuth.getInstance().signInWithCredential(credential)
+                            .addOnCompleteListener(user_profile_account_contact.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // OTP is valid
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("contactNumber", phoneNumber);
+                                        contactInput.setText(phoneNumber);
+                                        FirebaseFirestore.getInstance().collection("User")
+                                                .document(user.getUid())
+                                                .collection("security")
+                                                .document("security_doc")
+                                                .set(data, SetOptions.merge())
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+                                                        FirebaseUser user =  task.getResult().getUser();
+                                                        AuthCredential authCredential = PhoneAuthProvider.getCredential(message, Objects.requireNonNull(credential.getSmsCode()));
 
+                                                        assert user != null;
+
+                                                        user.reauthenticate(authCredential);
+                                                        FirebaseFirestore.getInstance().collection("User").document(user.getUid()).collection("security")
+                                                                        .document("security_doc").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void unused) {
+                                                                        user.delete();
+                                                                        Toast.makeText(user_profile_account_contact.this, "Successfully Set", Toast.LENGTH_SHORT).show();
+
+                                                                    }
+                                                                });
+                                                    }
+                                                });
+                                        Toast.makeText(user_profile_account_contact.this, "OTP success", Toast.LENGTH_SHORT).show();
+                                        count = 1;
+                                        alert3.dismiss();
+                                    } else {
+                                        // Invalid OTP
+                                        Toast.makeText(user_profile_account_contact.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
+                                        count = 0;
+                                    }
+                                }
+                            });
+                }
                 if(count != 0){
                     alert3.dismiss();
-                }
-                else{
-
                 }
             }
         });

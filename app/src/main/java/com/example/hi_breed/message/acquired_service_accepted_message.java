@@ -709,7 +709,29 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                         }
                 }
                 else{
-
+                    if(from.equals("completed")){
+                        if(notificationFor.equals("buyer")){
+                            Intent i = new Intent(acquired_service_accepted_message.this, service_status.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to completed tab", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                    else if (from.equals("cancelled")){
+                        if(notificationFor.equals("buyer")) {
+                            Intent i = new Intent(acquired_service_accepted_message.this, service_status.class);
+                            i.putExtra("SELECTED_TAB", from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                    else{
+                        //message only
+                    }
                 }
             }
             @Override

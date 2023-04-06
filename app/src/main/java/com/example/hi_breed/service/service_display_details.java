@@ -285,7 +285,7 @@ public class service_display_details extends BaseActivity {
 
                                 int totalReviews = value.size();
                                 float averageRating = totalRating / numRatings;
-
+                                TextView textsRate = findViewById(R.id.textsRate);
                                 TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
                                 TextView ratingValue = findViewById(R.id.ratingValue);
                                 ratingValue.setText(String.format("%.1f /5 ", averageRating));
@@ -294,18 +294,16 @@ public class service_display_details extends BaseActivity {
                                     numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
                                     }
                                 else{
-
+                                    textsRate.setVisibility(View.VISIBLE);
                                     view_id.setProgress(percent,true);
                                     numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
                                 }
-
                                 reviewsService.setAdapter(adapter);
                             } else {
                                 TextView ratingTextView = findViewById(R.id.ratingTextView);
                                 TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
                                 ratingTextView.setText("No ratings yet");
                                 numberOfReviewsTextView.setText("");
-
                                 reviewsService.setAdapter(adapter);
                             }
                         } else {
@@ -313,16 +311,12 @@ public class service_display_details extends BaseActivity {
                             TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
                             ratingTextView.setText("No ratings yet");
                             numberOfReviewsTextView.setText("");
-
                             reviewsService.setAdapter(adapter);
                         }
                     }
                 });
     }
-
-
     private void removeLike() {
-
         FirebaseFirestore.getInstance().collection("Likes").whereEqualTo("likedBy",FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .whereEqualTo("product_id",id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

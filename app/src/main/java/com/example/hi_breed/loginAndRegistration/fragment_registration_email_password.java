@@ -289,10 +289,9 @@ public class fragment_registration_email_password extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
 
-                        boolean isNewUser = Objects.requireNonNull(task.getResult().getSignInMethods()).isEmpty();
+                        boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
 
                         if (isNewUser) {
-
 
                             mAuth.createUserWithEmailAndPassword(email,password)
                                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -300,7 +299,6 @@ public class fragment_registration_email_password extends Fragment {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if(task.isSuccessful()){
-
 
                                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                                 AuthCredential authCredential = EmailAuthProvider
@@ -311,8 +309,6 @@ public class fragment_registration_email_password extends Fragment {
                                                 Uri image = Uri.parse("android.resource://"+ getActivity().getPackageName()+"/"+R.drawable.noimage);
                                                 Uri imageCover= Uri.parse("android.resource://"+ getActivity().getPackageName()+"/"+R.drawable.nobackground);
                                                 if(role.contains("Veterinarian") || role.contains("Pet Shooter") || role.contains("Pet Breeder")){
-
-
                                                    if(role.contains("Veterinarian") && role.contains("Pet Breeder")){
 
                                                         FirebaseFirestore.getInstance().collection("Members")
@@ -325,6 +321,7 @@ public class fragment_registration_email_password extends Fragment {
                                                                     @Override
                                                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                                         if(!queryDocumentSnapshots.isEmpty()){
+
                                                                             UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"verified");
 
                                                                             EmailPassClass security = new EmailPassClass(email,password,"");
@@ -332,7 +329,6 @@ public class fragment_registration_email_password extends Fragment {
                                                                             documentBreeder.set(breederClass).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                                 @Override
                                                                                 public void onComplete(@NonNull Task<Void> task) {
-
 
                                                                                     if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
 
@@ -370,6 +366,7 @@ public class fragment_registration_email_password extends Fragment {
                                                                                         documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                                             @Override
                                                                                             public void onComplete(@NonNull Task<Void> task) {
+
                                                                                             }
                                                                                         });
                                                                                     }
@@ -432,8 +429,6 @@ public class fragment_registration_email_password extends Fragment {
                                                                                                     }, 2000);
                                                                                                 }
                                                                                             });
-
-
                                                                                 }
                                                                             }).addOnFailureListener(new OnFailureListener() {
                                                                                 @Override
@@ -564,7 +559,6 @@ public class fragment_registration_email_password extends Fragment {
                                                                                     Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
                                                                                 }
                                                                             });
-
                                                                             Toast.makeText(getContext(), "User status is pending", Toast.LENGTH_SHORT).show();
                                                                         }
                                                                     }
@@ -1349,7 +1343,6 @@ public class fragment_registration_email_password extends Fragment {
                                                                     }
                                                                 });
                                                     }
-
                                                 }
                                                 else{
                                                     //for owner
@@ -1480,13 +1473,17 @@ public class fragment_registration_email_password extends Fragment {
                                             }
                                         }
                                     });
+
                         }
                         else
                         {
+                           alert.dismiss();
+                            Toast.makeText(getContext(), "Email is already registered. Try another one!", Toast.LENGTH_LONG).show();
                             reg_email.setError("Email is already registered. Try another one!");
                             reg_emailEdit.getText().clear();
                             reg_passwordEdit.getText().clear();
                             submit_application.setEnabled(true);
+                            return;
                         }
                     }
                 });

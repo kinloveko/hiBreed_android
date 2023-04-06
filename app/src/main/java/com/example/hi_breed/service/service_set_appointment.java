@@ -436,7 +436,10 @@ public class service_set_appointment extends BaseActivity {
                     finish();
                 }
                 else{
-
+                    Intent i = new Intent(service_set_appointment.this, checkout_thankyou.class);
+                    i.putExtra("from","Service");
+                    startActivity(i);
+                    finish();
                 }
             }
 
