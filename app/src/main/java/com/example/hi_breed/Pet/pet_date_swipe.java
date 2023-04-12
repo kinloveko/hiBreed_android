@@ -470,79 +470,6 @@ public class pet_date_swipe extends BaseActivity {
         });
     }
 
-/*
-    private void getAllPets() {
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DocumentReference userSwipes = firestore.collection("Swipes").document(userId);
-
-        firestore.collection("Pet")
-                .whereEqualTo("displayFor", "forDating")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error)  {
-                        if(error!=null){
-                            return;
-                        }
-                        if(value!=null){
-
-                            List<PetDateClass> allPets = new ArrayList<>();
-
-                            for (DocumentSnapshot petSnapshot : value) {
-                                PetDateClass pet = petSnapshot.toObject(PetDateClass.class);
-                                if(pet.getPet_breeder().equals(userId))
-                                    continue;
-                                allPets.add(pet);
-                            }
-                            userSwipes.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                    if(error!=null){
-                                        return;
-                                    }
-                                    if (value.exists())
-                                    {
-                                        List<Map<String, Object>> swipes = (List<Map<String, Object>>) value.get("swipe");
-                                        List<PetDateClass> notSwipedPets = new ArrayList<>();
-                                        for (PetDateClass pet : allPets) {
-                                            boolean isSwiped = false;
-                                            for (Map<String, Object> swipe : swipes) {
-                                                if (swipe.get("swipedUserId").equals(pet.getPet_breeder())) {
-                                                    isSwiped = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (!isSwiped) {
-                                                notSwipedPets.add(pet);
-                                            }
-                                        }
-                                        if (notSwipedPets.isEmpty()) {
-                                            // all pets have been swiped, hide the SwipeFlingAdapterView
-                                            flingContainer.setVisibility(View.GONE);
-                                            noOneTextView_pet_sale_card.setVisibility(View.VISIBLE);
-                                        } else {
-                                            // show the notSwipedPets in the SwipeFlingAdapterView
-                                            rowItems.clear();
-                                            rowItems.addAll(notSwipedPets);
-                                            arrayAdapter.notifyDataSetChanged();
-                                            flingContainer.setVisibility(View.VISIBLE);
-                                            noOneTextView_pet_sale_card.setVisibility(View.GONE);
-                                        }
-                                    } else {
-                                        // show all pets in the SwipeFlingAdapterView as this user has no swipes yet
-
-                                        rowItems.addAll(allPets);
-                                        arrayAdapter.notifyDataSetChanged();
-                                        flingContainer.setVisibility(View.VISIBLE);
-                                        noOneTextView_pet_sale_card.setVisibility(View.GONE);
-                                    }
-
-                                }
-                            });
-                        }
-                    }
-                });
-    }*/
    private  FirebaseFirestore firestore = FirebaseFirestore.getInstance();
    private  String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
    private  DocumentReference userSwipes = firestore.collection("Swipes").document(userId);
@@ -563,12 +490,13 @@ public class pet_date_swipe extends BaseActivity {
                             for (DocumentSnapshot d : value.getDocuments()) {
                                 count++;
                                 PetDateClass pet = d.toObject(PetDateClass.class);
+                                //only will add a pet if the pet is not your own pet
                                 if (pet.getPet_breeder().equals(userId))
                                     continue;
                                 allPets.add(pet);
-                                Log.d("petNames",pet.getPet_name()+":"+pet.getPet_breed());
+
                                 if(value.size() == count){
-                                    callSwipeFilter(allPets,value);
+                                    callSwipeFilter(allPets);
                                 }
                             }
                         }
@@ -576,7 +504,7 @@ public class pet_date_swipe extends BaseActivity {
                 });
     }
 
-    private void callSwipeFilter(List<PetDateClass> allPets,QuerySnapshot value) {
+    private void callSwipeFilter(List<PetDateClass> allPets) {
 
         userSwipes.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -584,7 +512,7 @@ public class pet_date_swipe extends BaseActivity {
             public void onSuccess(DocumentSnapshot d) {
                 if(d.exists()){
                     List<Map<String, Object>> swipes = (List<Map<String, Object>>) d.get("swipe");
-                    Toast.makeText(pet_date_swipe.this, String.valueOf(allPets.size()), Toast.LENGTH_SHORT).show();
+
                     if (swipes != null) {
                         // Get a list of all the pet breeds the user has swiped left
                         List<String> dislikedBreeds = new ArrayList<>();
@@ -595,19 +523,17 @@ public class pet_date_swipe extends BaseActivity {
                                 dislikedBreeds.add(breed);
                             }
                         }
-// Filter out the pets with the disliked breeds
+                        // Filter out the pets with the disliked breeds
                         List<PetDateClass> filteredPets = new ArrayList<>();
                         List<PetDateClass> removedPets = new ArrayList<>();
                         for (PetDateClass pet : allPets) {
                             if (!dislikedBreeds.contains(pet.getPet_breed())) {
                                 filteredPets.add(pet);
-                                Log.d("petNames1:", pet.getPet_name() + ":" + pet.getPet_breed());
-                            } else {
+                            }
+                            else {
                                 removedPets.add(pet);
                             }
                         }
-                        filteredPets.addAll(removedPets); // Add the removed pets to the end of the list
-
 // Find the breed the user has swiped right the most
 
                         Map<String, Integer> breedCount = new HashMap<>();
@@ -628,9 +554,8 @@ public class pet_date_swipe extends BaseActivity {
                                 maxCount = count;
                             }
                         }
-
 // Display the recommended pets to the user
-                        displayRecommendedPets(filteredPets, recommendedBreed);
+                        displayRecommendedPets(filteredPets,removedPets,recommendedBreed);
                     }
                 }
                 else{
@@ -707,32 +632,38 @@ public class pet_date_swipe extends BaseActivity {
    
     }
 
-    private void displayRecommendedPets(List<PetDateClass> pets, String recommendedBreed) {
+    private void displayRecommendedPets(List<PetDateClass> pets,List<PetDateClass> removedPets, String recommendedBreed) {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DocumentReference userSwipes = firestore.collection("Swipes").document(userId);
         Log.d("petNames:","breed:"+recommendedBreed);
-
+        Log.d("petNames5:",removedPets.toString());
         List<PetDateClass> recommendedPets = new ArrayList<>();
+        List<PetDateClass> filteredPet = new ArrayList<>();
         for (PetDateClass pet : pets) {
             if (recommendedBreed != null && !recommendedBreed.isEmpty()) {
                 // Add only pets with a matching breed to the recommendedPets list
                 if (pet.getPet_breed().equals(recommendedBreed)) {
-                    if (pet.getPet_breeder().equals(userId)) {
-                        continue;
-                    }
+
                     recommendedPets.add(pet);
+
                     Log.d("petNames", pet.getPet_name() + ":" + pet.getPet_breed());
+                }
+                else{
+                    filteredPet.add(pet);
                 }
             } else {
                 // Add only pets with a non-null and non-empty breed to the recommendedPets list
                 if (pet.getPet_breeder().equals(userId)) {
                     continue;
                 }
+
                 recommendedPets.add(pet);
                 Log.d("petNames", pet.getPet_name() + ":" + pet.getPet_breed());
             }
         }
+        recommendedPets.addAll(filteredPet);
+        recommendedPets.addAll(removedPets);
         userSwipes.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -746,6 +677,7 @@ public class pet_date_swipe extends BaseActivity {
                     List<PetDateClass> notSwipedPets = new ArrayList<>();
 
                     for (PetDateClass pet : recommendedPets) {
+
                         boolean isSwiped = false;
                         for (Map<String, Object> swipe : swipes) {
                             if (swipe.get("swipedUserId").equals(pet.getPet_breeder())) {
@@ -758,7 +690,6 @@ public class pet_date_swipe extends BaseActivity {
                             Log.d("petNames:",notSwipedPets.toString());
                         }
                     }
-
                     if (notSwipedPets.isEmpty()) {
                         // all pets have been swiped, hide the SwipeFlingAdapterView
                         flingContainer.setVisibility(View.GONE);
@@ -772,7 +703,6 @@ public class pet_date_swipe extends BaseActivity {
                         noOneTextView_pet_sale_card.setVisibility(View.GONE);
                     }
                 } else {
-
                     // show all pets in the SwipeFlingAdapterView as this user has no swipes yet
                     rowItems.addAll(recommendedPets);
                     arrayAdapter.notifyDataSetChanged();

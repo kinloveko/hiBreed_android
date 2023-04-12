@@ -68,7 +68,6 @@ public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_servi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         appointment_class productModel = list.get(position);
-
         if(!productModel.getSeller_id().equals(userID)){
             notCurrentUser = productModel.getSeller_id();
         }
@@ -83,6 +82,7 @@ public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_servi
                         match = documentSnapshot.toObject(matches_class.class);
                     }
                 });
+
         if(productModel.getCustomer_id().equals(userID))
         {
 
@@ -144,7 +144,6 @@ public class accepted_serviceAdapter extends RecyclerView.Adapter<accepted_servi
                 context.startActivity(intent);
             }
         });
-
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

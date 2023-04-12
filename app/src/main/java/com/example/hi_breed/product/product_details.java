@@ -33,6 +33,8 @@ import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.review_order_adapter;
+import com.example.hi_breed.checkout.checkout_activity;
+import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.likes_class;
 import com.example.hi_breed.classesFile.product_class;
 import com.example.hi_breed.classesFile.rating_class;
@@ -54,8 +56,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -69,7 +73,7 @@ public class product_details extends AppCompatActivity {
     RecyclerView reviewsShop;
 
    ImageView heart_like;
-   Button details_button_addToCard;
+   Button details_button_addToCard,details_button_buyNow;
    LinearLayout backLayout,
             cartLayout;
    ImageSlider imageSliderDetails;
@@ -85,6 +89,7 @@ public class product_details extends AppCompatActivity {
     address_details;
      CircleImageView seller_profile;
     String id,vet_id;
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +104,7 @@ public class product_details extends AppCompatActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
-
+        details_button_buyNow = findViewById(R.id.details_button_buyNow);
         backLayout = findViewById(R.id.backLayout);
         backLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +130,7 @@ public class product_details extends AppCompatActivity {
 
             }
         });
+
         details_button_addToCard = findViewById(R.id.details_button_addToCard);
         imageSliderDetails = findViewById(R.id.imageSliderDetails);
         details_product_name = findViewById(R.id.details_product_name);
@@ -164,7 +170,59 @@ public class product_details extends AppCompatActivity {
 
         id = p.getId();
         vet_id = p.getVet_id();
+        String prod_category= p.getProd_category();
 
+
+        if(p.getVet_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+            details_button_addToCard.setVisibility(View.GONE);
+            details_button_buyNow.setText("Edit your product");
+            details_button_buyNow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(product_details.this, product_my_product_edit.class);
+                    intent.putExtra("mode", (Serializable) p);
+                    startActivity(intent);
+                }
+            });
+        }
+        else{
+            details_button_buyNow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .collection("security")
+                            .document("security_doc")
+                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.getString("contactNumber") != null &&
+                                            !documentSnapshot.getString("contactNumber").equals("")){
+
+                                        add_to_cart_class buy = new add_to_cart_class("1",p.getId(),p
+                                                .getDisplayFor(),p.getProd_price(),FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                                p.getVet_id(),prod_category,Timestamp.now());
+                                        Intent i = new Intent(product_details.this, checkout_activity.class);
+                                        List<add_to_cart_class> add = new ArrayList<>();
+                                        add.add(buy);
+                                        i.putExtra("mode",(Serializable) add);
+                                        startActivity(i);
+                                    }
+                                    else{
+                                        Toast.makeText(product_details.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            });
+
+            details_button_addToCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addToCart(p);
+                }
+            });
+        }
         getReviews(p.getVet_id());
 
         if(p.getProd_category().equals("Medicine")){
@@ -260,12 +318,7 @@ public class product_details extends AppCompatActivity {
                 }
             }
         });
-        details_button_addToCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addToCart(p);
-            }
-        });
+
     }
 
 
@@ -321,8 +374,6 @@ public class product_details extends AppCompatActivity {
                     }
                 });
     }
-
-
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void addToCart(product_class p) {

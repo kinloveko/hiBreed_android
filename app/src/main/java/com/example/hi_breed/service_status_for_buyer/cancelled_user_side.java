@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.service_status_for_seller_buyer.cancelled_serviceAdapter;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.appointment_dating_class;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -65,6 +66,27 @@ public class cancelled_user_side extends Fragment {
                             for(DocumentSnapshot s: value){
                                 appointment_class appointment = s.toObject(appointment_class.class);
                                 adapter.addServiceDisplay(appointment);
+                            }
+                            cancelledRecycler.setAdapter(adapter);
+                        }
+                    }
+                });
+
+        FirebaseFirestore.getInstance().collection("Appointments")
+                .whereArrayContains("customer_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("appointment_status","cancelled").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null){
+                            return;
+                        }
+
+                        if(value!=null){
+                            adapter.clearList();
+
+                            for(DocumentSnapshot s: value){
+                                appointment_dating_class appointment = s.toObject(appointment_dating_class.class);
+                                adapter.dateList(appointment);
                             }
                             cancelledRecycler.setAdapter(adapter);
                         }

@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.hi_breed.R;
 import com.example.hi_breed.order_user_side.order_user_side;
@@ -23,6 +24,7 @@ import com.example.hi_breed.screenLoading.LoadingDialog;
 import com.example.hi_breed.screenLoading.screen_WelcomeToHiBreed;
 import com.example.hi_breed.service_status_for_buyer.appointment_user_side;
 import com.example.hi_breed.userFile.cart.add_to_cart;
+import com.example.hi_breed.userFile.home.user_home_fragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -235,7 +237,16 @@ public class user_profile_fragment extends Fragment {
             backArrowLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getActivity().onBackPressed();
+                    if (BreederBottomNavigation != null) {
+                        BreederBottomNavigation.getMenu().getItem(0).setChecked(true);
+                        BreederBottomNavigation.getMenu().getItem(0).setEnabled(false);
+                        BreederBottomNavigation.getMenu().getItem(0).setEnabled(true);
+                        user_home_fragment home_fragment = new user_home_fragment();
+                        FragmentTransaction fr = getFragmentManager().beginTransaction();
+                        fr.replace(R.id.fragment,home_fragment);
+                        fr.addToBackStack("name");
+                        fr.commit();
+                    }
                 }
             });
         }

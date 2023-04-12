@@ -32,10 +32,13 @@ import com.example.hi_breed.adapter.message_adapter.message_conversation_reply_a
 import com.example.hi_breed.classesFile.ApiUtilities;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.TimestampConverter;
+import com.example.hi_breed.classesFile.appointment_dating_class;
 import com.example.hi_breed.classesFile.chat_conversation_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.pushNotification;
+import com.example.hi_breed.details.acquired_service_details;
+import com.example.hi_breed.findShooters;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -51,6 +54,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -102,12 +106,7 @@ public class message_conversation_activity extends BaseActivity {
         }
 
         findShooter = findViewById(R.id.findShooter);
-        findShooter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
         userStatus = findViewById(R.id.userStatus);
         avail = findViewById(R.id.avail);
         scrollView = findViewById(R.id.scrollView);
@@ -132,6 +131,7 @@ public class message_conversation_activity extends BaseActivity {
         image = findViewById(R.id.image);
         intent = getIntent();
         matches_class m = (matches_class) intent.getSerializableExtra("model");
+
         if(m.getParticipants().size()!=0) {
             notCurrentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
             if (!notCurrentUser.equals(m.getParticipants().get(0))) {
@@ -141,7 +141,6 @@ public class message_conversation_activity extends BaseActivity {
                 notCurrentUser = m.getParticipants().get(1);
                 getReceiverInfo(notCurrentUser);
             }
-
         }
         else{
             FirebaseFirestore.getInstance().collection("Matches").document(m.getMatchID())
@@ -168,6 +167,38 @@ public class message_conversation_activity extends BaseActivity {
         match = m.getMatchID();
         getCurrent();
 
+        if(m.getStatus()!=null){
+           findShooter.setImageResource(R.drawable.bag);
+            findShooter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FirebaseFirestore.getInstance().collection("Appointments")
+                            .document(m.getAppointment_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.exists()){
+                                        appointment_dating_class appoint = documentSnapshot.toObject(appointment_dating_class.class);
+                                        Intent i = new Intent(message_conversation_activity.this, acquired_service_details.class);
+                                        i.putExtra("mode",(Serializable) appoint);
+                                        i.putExtra("from","petDating");
+                                        startActivity(i);
+                                    }
+                                }
+                            });
+
+                }
+            });
+        }
+        else{
+            findShooter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(message_conversation_activity.this, findShooters.class);
+                    i.putExtra("matchID",match);
+                    startActivity(i);
+                }
+            });
+        }
         replyEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

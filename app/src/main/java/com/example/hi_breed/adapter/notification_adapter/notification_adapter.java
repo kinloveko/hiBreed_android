@@ -18,6 +18,7 @@ import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.TimeStampClass;
 import com.example.hi_breed.classesFile.add_to_cart_class;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.appointment_dating_class;
 import com.example.hi_breed.classesFile.appointment_order_class;
 import com.example.hi_breed.classesFile.notification_data_class;
 import com.example.hi_breed.details.acquired_service_details;
@@ -214,10 +215,19 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
                             .document(add.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                   appointment_class appointment = documentSnapshot.toObject(appointment_class.class);
-                                    Intent i = new Intent(context.getApplicationContext(), acquired_service_details.class);
-                                    i.putExtra("mode",(Serializable) appointment);
-                                    context.startActivity(i);
+                                    if(documentSnapshot.getString("appointment_for")!=null){
+                                        appointment_dating_class appointment = documentSnapshot.toObject(appointment_dating_class.class);
+                                        Intent i = new Intent(context.getApplicationContext(), acquired_service_details.class);
+                                        i.putExtra("from","petDating");
+                                        i.putExtra("mode",(Serializable) appointment);
+                                        context.startActivity(i);
+                                    }
+                                    else{
+                                        appointment_class appointment = documentSnapshot.toObject(appointment_class.class);
+                                        Intent i = new Intent(context.getApplicationContext(), acquired_service_details.class);
+                                        i.putExtra("mode",(Serializable) appointment);
+                                        context.startActivity(i);
+                                    }
                                 }
                             });
                 }

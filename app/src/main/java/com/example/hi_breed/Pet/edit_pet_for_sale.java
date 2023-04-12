@@ -367,7 +367,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         //current papers
         pet_paper_current_adapter = new pet_papers_check_current(uriCurrentPapers,this,this,this,id,breederID);
         pet_papers_current.setLayoutManager(new GridLayoutManager(this,4));
-        pet_papers_current.setAdapter(pet_paper_current_adapter);
+
 
 
         deletePet_Layout.setOnClickListener(new View.OnClickListener() {
@@ -687,23 +687,17 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
 
             if (petSale.getPapers() != null) {
-
-                for (int i = 0; i < countOfPapers; i++) {
+                int  countOfImages = petSale.getPapers().size();
+                for (int i = 0; i < countOfImages; i++) {
                     String paperUri = petSale.getPapers().get(i);
                     if (paperUri != null && !paperUri.isEmpty()) {
                         imageUriPapers = Uri.parse(paperUri);
                             uriCurrentPapers.add(imageUriPapers);
-                            if (petSale.getPapers().size() == 0) {
-                                pet_papers_current.setVisibility(View.GONE);
-                            } else {
-                                pet_papers_current.setVisibility(View.VISIBLE);
-                            }
 
                         pet_paper_current_adapter = new pet_papers_check_current(uriCurrentPapers, getApplicationContext(), this, this, id, breederID);
+                        pet_papers_current.setAdapter(pet_paper_current_adapter);
                         pet_paper_current_adapter.notifyDataSetChanged();
                     }
-
-
                 }
             }
 

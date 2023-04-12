@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,16 +32,16 @@ import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.hi_breed.Pet.pet_date_swipe;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.edit_pet_for_sale_adapter.petDisplayForSaleAdapter;
+import com.example.hi_breed.adapter.may_you_like_adapter;
 import com.example.hi_breed.ask_a_professional.ask_a_professional;
 import com.example.hi_breed.classesFile.PetSaleClass;
 import com.example.hi_breed.classesFile.RecommendedProduct;
-import com.example.hi_breed.classesFile.likes_adapter;
 import com.example.hi_breed.classesFile.likes_class;
 import com.example.hi_breed.marketplace.m_market_place_container;
 import com.example.hi_breed.not_verified_activity;
 import com.example.hi_breed.search.search_dashboard_home;
 import com.example.hi_breed.shop.user_breeder_shop_panel;
-import com.example.hi_breed.userFile.profile.user_profile_account_edit;
+import com.example.hi_breed.userFile.profile.user_profile_fragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -109,10 +110,9 @@ public class user_home_fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         youMayLike_recycler = view.findViewById(R.id.youMayLike_recycler);
         youMayLike_recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        adapters = new likes_adapter(getContext());
+        adapters = new may_you_like_adapter(getContext());
         maybeLayout = view.findViewById(R.id.maybeLayout);
         notVerified = view.findViewById(R.id.notVerified);
         logoName = view.findViewById(R.id.logoName);
@@ -139,7 +139,6 @@ public class user_home_fragment extends Fragment {
         });
         //fireStore
         fireStore = FirebaseFirestore.getInstance();
-
 
         //image Slider
         imageSlider = view.findViewById(R.id.imageSlider);
@@ -295,7 +294,15 @@ public class user_home_fragment extends Fragment {
         profilePictureCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity().getApplicationContext(), user_profile_account_edit.class));
+                if (BreederBottomNavigation != null) {
+                    BreederBottomNavigation.getMenu().getItem(3).setChecked(false);
+                    BreederBottomNavigation.getMenu().getItem(0).setEnabled(true);
+                     user_profile_fragment profile_fragment = new user_profile_fragment();
+                    FragmentTransaction fr = getFragmentManager().beginTransaction();
+                    fr.replace(R.id.fragment,profile_fragment);
+                    fr.addToBackStack("name");
+                    fr.commit();
+                }
             }
         });
         addPetCard.setOnClickListener(new View.OnClickListener() {
@@ -304,7 +311,6 @@ public class user_home_fragment extends Fragment {
                 startActivity(new Intent(getContext(), user_breeder_shop_panel.class));
             }
         });
-
         recommendProducts();
 
     }
@@ -434,7 +440,7 @@ public class user_home_fragment extends Fragment {
                 });
 
     }
-    likes_adapter adapters;
+    may_you_like_adapter adapters;
     private final Set<String> addedIds = new HashSet<>();
     private void displayProductsRecommended(List<RecommendedProduct> recommended) {
         if(recommended.size()!=0){

@@ -31,6 +31,7 @@ import com.example.hi_breed.classesFile.ApiUtilities;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.TimestampConverter;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.appointment_dating_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.pushNotification;
@@ -51,8 +52,10 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -60,6 +63,17 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class acquired_service_details extends BaseActivity {
+
+
+    TextView first_user,
+            first_user_checkout_number,
+            first_address,
+            first_checkout_zip;
+
+    TextView second_user,
+            second_user_checkout_number,
+            second_address,
+            second_checkout_zip;
 
     TextView check_out_name,text1,
             checkout_number,transactionLabel,transactionMessage,
@@ -73,15 +87,17 @@ public class acquired_service_details extends BaseActivity {
     TextView dateTextView,pet_text,check_out_service_acquired,
             itemSlot,appointment_id;
     Button cancelButton,messageButton,rateButton;
-    RelativeLayout toolbarID,currentAddress,timeLayout,dateLayout,transactionLayout;
+    RelativeLayout toolbarID,currentAddress,timeLayout,dateLayout,transactionLayout,petDatingInfo;
     LinearLayout buttonLayout,buttonContact,buttonDelete;
     String notCurrentUser;
+    List<String> participants= new ArrayList<>();
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.acquired_service_details);
+        setContentView(R.layout.acquired_services_details);
 
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -93,6 +109,17 @@ public class acquired_service_details extends BaseActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+
+        petDatingInfo  = findViewById(R.id.petDatingInfo);
+        first_user = findViewById(R.id.first_user);
+        first_user_checkout_number = findViewById(R.id.first_user_checkout_number);
+        first_address = findViewById(R.id.first_address);
+        first_checkout_zip = findViewById(R.id.first_checkout_zip);
+
+        second_user = findViewById(R.id.second_user);
+        second_user_checkout_number = findViewById(R.id.second_user_checkout_number);
+        second_address = findViewById(R.id.second_address);
+        second_checkout_zip = findViewById(R.id.second_checkout_zip);
 
         statusLabel = findViewById(R.id.statusLabel);
         status = findViewById(R.id.status);
@@ -106,8 +133,6 @@ public class acquired_service_details extends BaseActivity {
         total = findViewById(R.id.total);
         serviceFeeLabel = findViewById(R.id.serviceFeeLabel);
         serviceFee = findViewById(R.id.serviceFee);
-
-
         rateButton = findViewById(R.id.rateButton);
         buttonContact = findViewById(R.id.buttonContact);
         buttonDelete = findViewById(R.id.buttonDelete);
@@ -141,412 +166,838 @@ public class acquired_service_details extends BaseActivity {
         text1 = findViewById(R.id.text1);
 
         Intent intent = getIntent();
+        String from = intent.getStringExtra("from");
+        if(from!=null && from.equals("petDating")){
+            appointment_dating_class appointment = (appointment_dating_class) intent.getSerializableExtra("mode");
+            if(appointment!=null){
 
-        appointment_class appointment = (appointment_class) intent.getSerializableExtra("mode");
+                participants = appointment.getCustomer_id();
+                appointment_id.setText(appointment.getId());
+                dateTextView.setText(appointment.getAppointment_date());
+                itemSlot.setText(appointment.getAppointment_time());
 
-        if(appointment!=null) {
+                if(participants.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    currentAddress.setVisibility(View.VISIBLE);
+                    pet_text.setText("Service details");
 
-            if(!appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                notCurrentUser = appointment.getCustomer_id();
-            }
-            else if (!appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                notCurrentUser = appointment.getSeller_id();
-            }
-
-            FirebaseFirestore.getInstance().collection("Appointments")
-                            .document(appointment.getId())
-                                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
-                                            if(error!=null){
-                                                return;
-                                            }
-                                            if(documentSnapshot.exists()){
-
-                                                if(documentSnapshot.getString("appointment_status").equals("cancelled")){
-
-                                                    if(documentSnapshot.getString("customer_id") .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                                        cancelButton.setVisibility(View.GONE);
-                                                    }
-                                                    if(documentSnapshot.getString("seller_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                                        buttonLayout.setVisibility(View.GONE);
-
-                                                    }
-
-                                                }
-                                                else if(documentSnapshot.getString("appointment_status").equals("accepted")){
-                                                       messageButton.setVisibility(View.VISIBLE);
-                                                    buttonLayout.setVisibility(View.GONE);
-                                                    cancelButton.setVisibility(View.GONE);
-                                                }
-                                                else if(documentSnapshot.getString("appointment_status").equals("completed")){
-                                                    messageButton.setVisibility(View.GONE);
-                                                    buttonLayout.setVisibility(View.GONE);
-                                                    cancelButton.setVisibility(View.GONE);
-                                                }
-                                            }
-
-                                        }
-                                    });
-
-            appointment_id.setText(appointment.getId());
-            dateTextView.setText(appointment.getAppointment_date());
-            itemSlot.setText(appointment.getAppointment_time());
-
-            if(appointment.getAppointment_status().equals("pending")){
-                transactionLayout.setVisibility(View.VISIBLE);
-                transactionLabel.setVisibility(View.GONE);
-                transactionMessage.setVisibility(View.GONE);
-
-                status.setText(appointment.getAppointment_status());
-                transactionPayment.setText("on-site");
-                subTotal.setText("₱ "+appointment.getService_price());
-                total.setText("₱ "+appointment.getService_price()+".0");
-                serviceFee.setText("₱ "+appointment.getService_price());
-
-                transactionEnd.setVisibility(View.GONE);
-                transactionEndLabel.setVisibility(View.GONE);
-
-                text1.setText("Appointment pending");
-                if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                    cancelButton.setVisibility(View.VISIBLE);
-                    cancelButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            openDialog(appointment.getSeller_id(),appointment.getId(),"seller",appointment.getTransaction_id(),"buyer");
-
-                        }
-                    });
-                }
-                else
-                if (appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-
-                    buttonLayout.setVisibility(View.VISIBLE);
-
-                    buttonContact.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            FirebaseFirestore.getInstance().collection("User")
-                                    .document(appointment.getCustomer_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onSuccess(DocumentSnapshot value) {
-                                            if(value.exists()){
-
-                                                String token= value.getString("fcmToken");
-                                                Map<String,Object> map = new HashMap<>();
-                                                map.put("send_to_id", appointment.getCustomer_id());
-                                                map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                                map.put("title","Accepted appointment");
-                                                map.put("message","Your request appointment has been accepted");
-                                                map.put("timestamp", Timestamp.now());
-                                                map.put("type","appointment");
-                                                map.put("id",appointment.getId());
-
-                                                Map<String,Object> maps = new HashMap<>();
-
-                                                maps.put("latestNotification",map);
-                                                maps.put("notification", Arrays.asList(map));
-
-                                                FirebaseFirestore.getInstance().collection("Appointments")
-                                                        .document(appointment.getId())
-                                                        .update("appointment_status","accepted")
-                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                            @Override
-                                                            public void onSuccess(Void unused) {
-
-                                                                FirebaseFirestore.getInstance().collection("Transaction")
-                                                                        .document(appointment.getTransaction_id())
-                                                                        .update("status","ongoing").addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                            @Override
-                                                                            public void onSuccess(Void unused) {
-
-                                                                                FirebaseFirestore.getInstance().collection("Notifications").document(appointment.getCustomer_id())
-                                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                                            @Override
-                                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                                                                                                if(documentSnapshot.exists()){
-
-                                                                                                    FirebaseFirestore.getInstance().collection("Notifications")
-                                                                                                            .document(appointment.getCustomer_id())
-                                                                                                            .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                @Override
-                                                                                                                public void onSuccess(Void unused) {
-
-
-                                                                                                                    Map<String, Object> connection = new HashMap<>();
-                                                                                                                    connection.put("matchID", appointment.getId());
-                                                                                                                    connection.put("participants", Arrays.asList(appointment.getCustomer_id(), appointment.getSeller_id()));
-                                                                                                                    connection.put("time", Timestamp.now());
-                                                                                                                    connection.put("show", true);
-                                                                                                                    connection.put("matchFor","forAppointments");
-                                                                                                                    FirebaseFirestore.getInstance().collection("Matches").document(appointment.getId()).set(connection)
-                                                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                                @Override
-                                                                                                                                public void onSuccess(Void unused) {
-
-                                                                                                                                    FirebaseFirestore.getInstance().collection("Matches")
-                                                                                                                                            .document(appointment.getId())
-                                                                                                                                            .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                                                @Override
-                                                                                                                                                public void onSuccess(Void unused) {
-                                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
-                                                                                                                                                            "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
-                                                                                                                                                    sendNotif(notification,"accepted","buyer");
-                                                                                                                                                   }
-                                                                                                                                            });
-                                                                                                                                }
-                                                                                                                            });
-                                                                                                                }
-                                                                                                            });
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    FirebaseFirestore.getInstance().collection("Transaction")
-                                                                                                            .document(appointment.getTransaction_id())
-                                                                                                            .update("status","ongoing").addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                @Override
-                                                                                                                public void onSuccess(Void unused) {
-                                                                                                                    FirebaseFirestore.getInstance().collection("Notifications")
-                                                                                                                            .document(appointment.getCustomer_id())
-                                                                                                                            .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                                @Override
-                                                                                                                                public void onSuccess(Void unused) {
-
-
-                                                                                                                                    Map<String, Object> connection = new HashMap<>();
-                                                                                                                                    connection.put("matchID", appointment.getId());
-                                                                                                                                    connection.put("matchFor","forAppointments");
-                                                                                                                                    connection.put("participants", Arrays.asList(appointment.getCustomer_id(), appointment.getSeller_id()));
-                                                                                                                                    connection.put("time", Timestamp.now());
-                                                                                                                                    connection.put("show", true);
-
-                                                                                                                                    FirebaseFirestore.getInstance().collection("Matches").document(appointment.getId()).set(connection)
-                                                                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                                                @Override
-                                                                                                                                                public void onSuccess(Void unused) {
-                                                                                                                                                    FirebaseFirestore.getInstance().collection("Matches")
-                                                                                                                                                            .document(appointment.getId())
-                                                                                                                                                            .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                                                                @Override
-                                                                                                                                                                public void onSuccess(Void unused) {
-                                                                                                                                                                    pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
-                                                                                                                                                                            "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
-                                                                                                                                                                    sendNotif(notification,"accepted","buyer");
-                                                                                                                                                                    Toast.makeText(acquired_service_details.this, "Message ID created 1", Toast.LENGTH_SHORT).show();
-                                                                                                                                                                }
-                                                                                                                                                            });
-                                                                                                                                                }
-                                                                                                                                            });
-
-
-
-                                                                                                                                }
-                                                                                                                            });
-                                                                                                                }
-                                                                                                            });
-
-                                                                                                }
-                                                                                            }
-                                                                                        });
-
-
-                                                                            }
-                                                                        });
-
-
-                                                            }
-                                                        });
-                                            }
-                                        }
-                                    });
-
-                        }
-                    });
-
-                    buttonDelete.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            openDialog(appointment.getCustomer_id(),appointment.getId(),"buyer",appointment.getTransaction_id(),"seller");
-                        }
-                    });
-
-                }
-            }
-            else if(appointment.getAppointment_status().equals("accepted")){
-                text1.setText("Appointment ongoing");
-
-                transactionLayout.setVisibility(View.VISIBLE);
-                transactionLabel.setVisibility(View.GONE);
-                transactionMessage.setVisibility(View.GONE);
-
-                status.setText(appointment.getAppointment_status());
-                transactionPayment.setText("on-site");
-                subTotal.setText("₱ "+appointment.getService_price());
-                total.setText("₱ "+appointment.getService_price()+".0");
-                serviceFee.setText("₱ "+appointment.getService_price());
-
-                transactionEnd.setVisibility(View.GONE);
-                transactionEndLabel.setVisibility(View.GONE);
-                messageButton.setVisibility(View.VISIBLE);
-                buttonLayout.setVisibility(View.GONE);
-                cancelButton.setVisibility(View.GONE);
-                messageButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        FirebaseFirestore.getInstance().collection("Matches")
-                                .document(appointment.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        matches_class match = documentSnapshot.toObject(matches_class.class);
-                                        Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
-                                        intent.putExtra("model",  (Serializable) match);
-                                        startActivity(intent);
-                                    }
-                                });
-                    }
-                });
-
-            }
-            else if(appointment.getAppointment_status().equals("completed")){
-                text1.setText("Appointment completed");
-                transactionLayout.setVisibility(View.VISIBLE);
-                transactionLabel.setVisibility(View.GONE);
-                transactionMessage.setVisibility(View.GONE);
-
-                status.setText(appointment.getAppointment_status());
-                transactionPayment.setText("on-site");
-                subTotal.setText("₱ "+appointment.getService_price());
-                total.setText("₱ "+appointment.getService_price()+".0");
-                serviceFee.setText("₱ "+appointment.getService_price());
-
-                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
-                transactionEnd.setText(formattedTime);
-
-                if(appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-
-                    FirebaseFirestore.getInstance().collection("Appointments")
-                            .document(appointment.getId())
+                    FirebaseFirestore.getInstance().collection("Shop")
+                            .document(appointment.getSeller_id())
                             .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @SuppressLint("SetTextI18n")
                                 @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    Boolean isTrue = (Boolean) documentSnapshot.get("isRated");
+                                public void onSuccess(DocumentSnapshot s) {
+                                    check_out_service_acquired.setVisibility(View.VISIBLE);
+                                    check_out_name.setText(s.getString("shopName"));
 
-                                    if(isTrue.equals(false)){
-                                        rateButton.setVisibility(View.VISIBLE);
-                                        rateButton.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Intent i = new Intent(acquired_service_details.this, rate_service.class);
-                                                i.putExtra("model", (Serializable) appointment);
-                                                startActivity(i);
-                                            }
-                                        });
-                                    }
+                                    FirebaseFirestore.getInstance().collection("User")
+                                            .document(s.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                    checkout_address.setText(documentSnapshot.getString("address"));
+                                                    checkout_zip.setText(documentSnapshot.getString("zipCode"));
+
+                                                    FirebaseFirestore.getInstance().collection("User")
+                                                            .document(s.getId()).collection("security")
+                                                            .document("security_doc").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                    checkout_number.setText(documentSnapshot.getString("contactNumber"));
+
+                                                                    FirebaseFirestore.getInstance().collection("Services").document(appointment.getService_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                                            check_out_service_acquired.setText(documentSnapshot.getString("name"));
+
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                }
+                                            });
                                 }
                             });
 
                 }
-            }
-            else if(appointment.getAppointment_status().equals("cancelled")){
-                text1.setText("Appointment cancelled");
-                transactionLabel.setText("Cancellation reason :");
-                transactionMessage.setText(appointment.getAppointment_end_message());
-                messageButton.setVisibility(View.GONE);
-                buttonLayout.setVisibility(View.GONE);
-                cancelButton.setVisibility(View.GONE);
-                transactionLayout.setVisibility(View.VISIBLE);
+                else{
+                    currentAddress.setVisibility(View.GONE);
+                    petDatingInfo.setVisibility(View.VISIBLE);
 
-                status.setText(appointment.getAppointment_status());
-                transactionPayment.setText("on-site");
-                subTotal.setText("₱ "+appointment.getService_price());
-                total.setText("₱ "+appointment.getService_price());
-                serviceFee.setText("₱ "+appointment.getService_price());
+                    if(participants !=null){
+                        for(int i = 0; i<participants.size();i++){
+                            int finalI = i;
+                            //for info
+                            FirebaseFirestore.getInstance().collection("User")
+                                    .document(participants.get(i)).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot s) {
+                                            if(s.exists()){
+                                                if(finalI == 0){
 
-                String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
-                transactionEnd.setText(formattedTime);
+                                                    first_user.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
+                                                    first_address.setText(s.getString("address"));
+                                                    first_checkout_zip.setText(s.getString("zipCode"));
+                                                }
+                                                else{
 
-            }
+                                                    second_user.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
+                                                    second_address.setText(s.getString("address"));
+                                                    second_checkout_zip.setText(s.getString("zipCode"));
+                                                }
+                                            }
+                                        }
+                                    });
+                            //for contact number
+                            FirebaseFirestore.getInstance().collection("User")
+                                    .document(participants.get(i)).collection("security")
+                                    .document("security_doc").get()
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot s) {
+                                            if (s.exists()) {
+                                                if (finalI == 0) {
+                                                    first_user_checkout_number.setText(s.getString("contactNumber"));
+                                                } else {
+                                                    second_user_checkout_number.setText(s.getString("contactNumber"));
+                                                }
+                                            }
+                                        }
+                                    });
+                        }
 
-            if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    }
+                }
 
-                pet_text.setText("Service details");
-
-                FirebaseFirestore.getInstance().collection("Shop")
-                        .document(appointment.getSeller_id())
-                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @SuppressLint("SetTextI18n")
+                //for status buttons
+                FirebaseFirestore.getInstance().collection("Appointments")
+                        .document(appointment.getId())
+                        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
-                            public void onSuccess(DocumentSnapshot s) {
-                                check_out_service_acquired.setVisibility(View.VISIBLE);
-                                check_out_name.setText(s.getString("shopName"));
+                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
+                                if(error!=null){
+                                    return;
+                                }
+                                if(documentSnapshot.exists()){
+                                    List<String> list = (List<String>)documentSnapshot.get("customer_id");
 
-                                FirebaseFirestore.getInstance().collection("User")
-                                        .document(s.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.getString("appointment_status").equals("pending")){
+                                        if(list.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                            cancelButton.setVisibility(View.VISIBLE);
+                                        }
+                                    }else
+                                    if(documentSnapshot.getString("appointment_status").equals("cancelled")){
 
-                                                checkout_address.setText(documentSnapshot.getString("address"));
-                                                checkout_zip.setText(documentSnapshot.getString("zipCode"));
+                                        if(list.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                            cancelButton.setVisibility(View.GONE);
+                                        }
+                                        if(documentSnapshot.getString("seller_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                            buttonLayout.setVisibility(View.GONE);
+                                        }
 
-                                                FirebaseFirestore.getInstance().collection("User")
-                                                        .document(s.getId()).collection("security")
-                                                        .document("security_doc").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                            @Override
-                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                checkout_number.setText(documentSnapshot.getString("contactNumber"));
+                                    }
+                                    else if(documentSnapshot.getString("appointment_status").equals("accepted")){
+                                        messageButton.setVisibility(View.VISIBLE);
+                                        buttonLayout.setVisibility(View.GONE);
+                                        cancelButton.setVisibility(View.GONE);
+                                    }
+                                    else if(documentSnapshot.getString("appointment_status").equals("completed")){
+                                        messageButton.setVisibility(View.GONE);
+                                        buttonLayout.setVisibility(View.GONE);
+                                        cancelButton.setVisibility(View.GONE);
+                                    }
+                                }
 
-                                                                FirebaseFirestore.getInstance().collection("Services").document(appointment.getService_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            }
+                        });
+                if(appointment.getAppointment_status().equals("pending")){
+                    transactionLayout.setVisibility(View.VISIBLE);
+                    transactionLabel.setVisibility(View.GONE);
+                    transactionMessage.setVisibility(View.GONE);
+                    status.setText(appointment.getAppointment_status());
+                    transactionPayment.setText("on-site");
+                    subTotal.setText("₱ "+appointment.getService_price());
+                    total.setText("₱ "+appointment.getService_price()+".0");
+                    serviceFee.setText("₱ "+appointment.getService_price());
+
+                    transactionEnd.setVisibility(View.GONE);
+                    transactionEndLabel.setVisibility(View.GONE);
+
+                    text1.setText("Appointment pending");
+                    if (appointment.getCustomer_id().contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        cancelButton.setVisibility(View.VISIBLE);
+                        cancelButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                openDialog(appointment.getSeller_id(),appointment.getId(),"seller",appointment.getTransaction_id(),"buyer");
+
+                            }
+                        });
+                    }
+                    else
+                    if (appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+                        buttonLayout.setVisibility(View.VISIBLE);
+
+                        buttonContact.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                for(int i = 0; i<participants.size();i++){
+                                    //for info
+                                    int finalI1 = i;
+                                    FirebaseFirestore.getInstance().collection("User")
+                                            .document(participants.get(i)).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot value) {
+                                                    if(value.exists()){
+
+                                                        String token= value.getString("fcmToken");
+                                                        Map<String,Object> map = new HashMap<>();
+                                                        map.put("send_to_id",participants.get(finalI1) );
+                                                        map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                        map.put("title","Accepted appointment");
+                                                        map.put("message","Your request appointment has been accepted");
+                                                        map.put("timestamp", Timestamp.now());
+                                                        map.put("type","appointment");
+                                                        map.put("id",appointment.getId());
+
+                                                        Map<String,Object> maps = new HashMap<>();
+
+                                                        maps.put("latestNotification",map);
+                                                        maps.put("notification", Arrays.asList(map));
+
+                                                        FirebaseFirestore.getInstance().collection("Appointments")
+                                                                .document(appointment.getId())
+                                                                .update("appointment_status","accepted")
+                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
-                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                    public void onSuccess(Void unused) {
+
+                                                                        FirebaseFirestore.getInstance().collection("Transaction")
+                                                                                .document(appointment.getTransaction_id())
+                                                                                .update("status","ongoing").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(Void unused) {
+
+                                                                                        FirebaseFirestore.getInstance().collection("Notifications").document()
+                                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                    @Override
+                                                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                                                                        if(documentSnapshot.exists()){
+
+                                                                                                            FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                                                    .document()
+                                                                                                                    .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                        @Override
+                                                                                                                        public void onSuccess(Void unused) {
+
+                                                                                                                            participants.add(appointment.getSeller_id());
+                                                                                                                            Map<String, Object> connection = new HashMap<>();
+                                                                                                                            connection.put("matchID", appointment.getId());
+                                                                                                                            connection.put("participants", participants);
+                                                                                                                            connection.put("time", Timestamp.now());
+                                                                                                                            connection.put("show", true);
+                                                                                                                            connection.put("matchFor","forAppointments");
+                                                                                                                            FirebaseFirestore.getInstance().collection("Matches").document(appointment.getId()).set(connection)
+                                                                                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                        @Override
+                                                                                                                                        public void onSuccess(Void unused) {
+
+                                                                                                                                            FirebaseFirestore.getInstance().collection("Matches")
+                                                                                                                                                    .document(appointment.getId())
+                                                                                                                                                    .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                                        @Override
+                                                                                                                                                        public void onSuccess(Void unused) {
+                                                                                                                                                            pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                                                                                    "Accepted appointment",appointment.getId(),participants.get(finalI1),"appointment","buyer","accepted"), token);
+                                                                                                                                                            sendNotif(notification,"accepted","buyer");
+                                                                                                                                                        }
+                                                                                                                                                    });
+                                                                                                                                        }
+                                                                                                                                    });
+                                                                                                                        }
+                                                                                                                    });
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            FirebaseFirestore.getInstance().collection("Transaction")
+                                                                                                                    .document(appointment.getTransaction_id())
+                                                                                                                    .update("status","ongoing").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                        @Override
+                                                                                                                        public void onSuccess(Void unused) {
+                                                                                                                            FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                                                                    .document()
+                                                                                                                                    .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                        @Override
+                                                                                                                                        public void onSuccess(Void unused) {
+
+                                                                                                                                            participants.add(appointment.getSeller_id());
+                                                                                                                                            Map<String, Object> connection = new HashMap<>();
+                                                                                                                                            connection.put("matchID", appointment.getId());
+                                                                                                                                            connection.put("participants", participants);
+                                                                                                                                            connection.put("time", Timestamp.now());
+                                                                                                                                            connection.put("show", true);
+                                                                                                                                            connection.put("matchFor","forAppointments");
+
+                                                                                                                                            FirebaseFirestore.getInstance().collection("Matches").document(appointment.getId()).set(connection)
+                                                                                                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                                        @Override
+                                                                                                                                                        public void onSuccess(Void unused) {
+                                                                                                                                                            FirebaseFirestore.getInstance().collection("Matches")
+                                                                                                                                                                    .document(appointment.getId())
+                                                                                                                                                                    .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                                                        @Override
+                                                                                                                                                                        public void onSuccess(Void unused) {
+                                                                                                                                                                            pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                                                                                                    "Accepted appointment",appointment.getId(),participants.get(finalI1),"appointment","buyer","accepted"), token);
+                                                                                                                                                                            sendNotif(notification,"accepted","buyer");
+                                                                                                                                                                            Toast.makeText(acquired_service_details.this, "Message ID created 1", Toast.LENGTH_SHORT).show();
+                                                                                                                                                                        }
+                                                                                                                                                                    });
+                                                                                                                                                        }
+                                                                                                                                                    });
 
 
-                                                                        check_out_service_acquired.setText(documentSnapshot.getString("name"));
+
+                                                                                                                                        }
+                                                                                                                                    });
+                                                                                                                        }
+                                                                                                                    });
+
+                                                                                                        }
+                                                                                                    }
+                                                                                                });
+
+
+                                                                                    }
+                                                                                });
 
 
                                                                     }
                                                                 });
-                                                            }
-                                                        });
+                                                    }
+                                                }
+                                            });
+                                }
+                            }
+                        });
+                        buttonDelete.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                for(int i = 0; i<participants.size();i++){
+                                    openDialog(participants.get(i),appointment.getId(),"buyer",appointment.getTransaction_id(),"seller");
+                                }
+                               }
+                        });
+                    }
+                }
+                else if(appointment.getAppointment_status().equals("accepted")){
+                    text1.setText("Appointment ongoing");
+
+                    transactionLayout.setVisibility(View.VISIBLE);
+                    transactionLabel.setVisibility(View.GONE);
+                    transactionMessage.setVisibility(View.GONE);
+
+                    status.setText(appointment.getAppointment_status());
+                    transactionPayment.setText("on-site");
+                    subTotal.setText("₱ "+appointment.getService_price());
+                    total.setText("₱ "+appointment.getService_price()+".0");
+                    serviceFee.setText("₱ "+appointment.getService_price());
+
+                    transactionEnd.setVisibility(View.GONE);
+                    transactionEndLabel.setVisibility(View.GONE);
+                    messageButton.setVisibility(View.VISIBLE);
+                    buttonLayout.setVisibility(View.GONE);
+                    cancelButton.setVisibility(View.GONE);
+                    messageButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            FirebaseFirestore.getInstance().collection("Matches")
+                                    .document(appointment.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            matches_class match = documentSnapshot.toObject(matches_class.class);
+                                            Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
+                                            intent.putExtra("model",  (Serializable) match);
+                                            startActivity(intent);
+                                        }
+                                    });
+                        }
+                    });
+
+                }
+                else if(appointment.getAppointment_status().equals("completed")){
+                    text1.setText("Appointment completed");
+                    transactionLayout.setVisibility(View.VISIBLE);
+                    transactionLabel.setVisibility(View.GONE);
+                    transactionMessage.setVisibility(View.GONE);
+
+                    status.setText(appointment.getAppointment_status());
+                    transactionPayment.setText("on-site");
+                    subTotal.setText("₱ "+appointment.getService_price());
+                    total.setText("₱ "+appointment.getService_price()+".0");
+                    serviceFee.setText("₱ "+appointment.getService_price());
+
+                    String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
+                    transactionEnd.setText(formattedTime);
+
+                    if(appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+
+                        FirebaseFirestore.getInstance().collection("Appointments")
+                                .document(appointment.getId())
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        Boolean isTrue = (Boolean) documentSnapshot.get("isRated");
+
+                                        if(isTrue.equals(false)){
+                                            rateButton.setVisibility(View.VISIBLE);
+                                            rateButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent i = new Intent(acquired_service_details.this, rate_service.class);
+                                                    i.putExtra("model", (Serializable) appointment);
+                                                    startActivity(i);
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+
+                    }
+                }
+                else if(appointment.getAppointment_status().equals("cancelled")){
+                    text1.setText("Appointment cancelled");
+                    transactionLabel.setText("Cancellation reason :");
+                    transactionMessage.setText(appointment.getAppointment_end_message());
+                    messageButton.setVisibility(View.GONE);
+                    buttonLayout.setVisibility(View.GONE);
+                    cancelButton.setVisibility(View.GONE);
+                    transactionLayout.setVisibility(View.VISIBLE);
+
+                    status.setText(appointment.getAppointment_status());
+                    transactionPayment.setText("on-site");
+                    subTotal.setText("₱ "+appointment.getService_price());
+                    total.setText("₱ "+appointment.getService_price());
+                    serviceFee.setText("₱ "+appointment.getService_price());
+
+                    String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
+                    transactionEnd.setText(formattedTime);
+
+                }
+
+            }
+        }
+        else{
+            currentAddress.setVisibility(View.VISIBLE);
+            appointment_class appointment = (appointment_class) intent.getSerializableExtra("mode");
+
+            if(appointment!=null) {
+
+                if(!appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    notCurrentUser = appointment.getCustomer_id();
+                }
+                else if (!appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    notCurrentUser = appointment.getSeller_id();
+                }
+
+                FirebaseFirestore.getInstance().collection("Appointments")
+                        .document(appointment.getId())
+                        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
+                                if(error!=null){
+                                    return;
+                                }
+                                if(documentSnapshot.exists()){
+
+                                    if(documentSnapshot.getString("appointment_status").equals("cancelled")){
+
+                                        if(documentSnapshot.getString("customer_id") .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                            cancelButton.setVisibility(View.GONE);
+                                        }
+                                        if(documentSnapshot.getString("seller_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                            buttonLayout.setVisibility(View.GONE);
+
+                                        }
+
+                                    }
+                                    else if(documentSnapshot.getString("appointment_status").equals("accepted")){
+                                        messageButton.setVisibility(View.VISIBLE);
+                                        buttonLayout.setVisibility(View.GONE);
+                                        cancelButton.setVisibility(View.GONE);
+                                    }
+                                    else if(documentSnapshot.getString("appointment_status").equals("completed")){
+                                        messageButton.setVisibility(View.GONE);
+                                        buttonLayout.setVisibility(View.GONE);
+                                        cancelButton.setVisibility(View.GONE);
+                                    }
+                                }
+
+                            }
+                        });
+
+                appointment_id.setText(appointment.getId());
+                dateTextView.setText(appointment.getAppointment_date());
+                itemSlot.setText(appointment.getAppointment_time());
+
+                if(appointment.getAppointment_status().equals("pending")){
+                    transactionLayout.setVisibility(View.VISIBLE);
+                    transactionLabel.setVisibility(View.GONE);
+                    transactionMessage.setVisibility(View.GONE);
+
+                    status.setText(appointment.getAppointment_status());
+                    transactionPayment.setText("on-site");
+                    subTotal.setText("₱ "+appointment.getService_price());
+                    total.setText("₱ "+appointment.getService_price()+".0");
+                    serviceFee.setText("₱ "+appointment.getService_price());
+
+                    transactionEnd.setVisibility(View.GONE);
+                    transactionEndLabel.setVisibility(View.GONE);
+
+                    text1.setText("Appointment pending");
+                    if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        cancelButton.setVisibility(View.VISIBLE);
+                        cancelButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                openDialog(appointment.getSeller_id(),appointment.getId(),"seller",appointment.getTransaction_id(),"buyer");
+
+                            }
+                        });
+                    }
+                    else
+                    if (appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+                        buttonLayout.setVisibility(View.VISIBLE);
+
+                        buttonContact.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                FirebaseFirestore.getInstance().collection("User")
+                                        .document(appointment.getCustomer_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot value) {
+                                                if(value.exists()){
+
+                                                    String token= value.getString("fcmToken");
+                                                    Map<String,Object> map = new HashMap<>();
+                                                    map.put("send_to_id", appointment.getCustomer_id());
+                                                    map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                    map.put("title","Accepted appointment");
+                                                    map.put("message","Your request appointment has been accepted");
+                                                    map.put("timestamp", Timestamp.now());
+                                                    map.put("type","appointment");
+                                                    map.put("id",appointment.getId());
+
+                                                    Map<String,Object> maps = new HashMap<>();
+
+                                                    maps.put("latestNotification",map);
+                                                    maps.put("notification", Arrays.asList(map));
+
+                                                    FirebaseFirestore.getInstance().collection("Appointments")
+                                                            .document(appointment.getId())
+                                                            .update("appointment_status","accepted")
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+
+                                                                    FirebaseFirestore.getInstance().collection("Transaction")
+                                                                            .document(appointment.getTransaction_id())
+                                                                            .update("status","ongoing").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void unused) {
+
+                                                                                    FirebaseFirestore.getInstance().collection("Notifications").document(appointment.getCustomer_id())
+                                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                                                                    if(documentSnapshot.exists()){
+
+                                                                                                        FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                                                .document(appointment.getCustomer_id())
+                                                                                                                .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                    @Override
+                                                                                                                    public void onSuccess(Void unused) {
+
+
+                                                                                                                        Map<String, Object> connection = new HashMap<>();
+                                                                                                                        connection.put("matchID", appointment.getId());
+                                                                                                                        connection.put("participants", Arrays.asList(appointment.getCustomer_id(), appointment.getSeller_id()));
+                                                                                                                        connection.put("time", Timestamp.now());
+                                                                                                                        connection.put("show", true);
+                                                                                                                        connection.put("matchFor","forAppointments");
+                                                                                                                        FirebaseFirestore.getInstance().collection("Matches").document(appointment.getId()).set(connection)
+                                                                                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                    @Override
+                                                                                                                                    public void onSuccess(Void unused) {
+
+                                                                                                                                        FirebaseFirestore.getInstance().collection("Matches")
+                                                                                                                                                .document(appointment.getId())
+                                                                                                                                                .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                                    @Override
+                                                                                                                                                    public void onSuccess(Void unused) {
+                                                                                                                                                        pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                                                                                "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
+                                                                                                                                                        sendNotif(notification,"accepted","buyer");
+                                                                                                                                                    }
+                                                                                                                                                });
+                                                                                                                                    }
+                                                                                                                                });
+                                                                                                                    }
+                                                                                                                });
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        FirebaseFirestore.getInstance().collection("Transaction")
+                                                                                                                .document(appointment.getTransaction_id())
+                                                                                                                .update("status","ongoing").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                    @Override
+                                                                                                                    public void onSuccess(Void unused) {
+                                                                                                                        FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                                                                .document(appointment.getCustomer_id())
+                                                                                                                                .set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                    @Override
+                                                                                                                                    public void onSuccess(Void unused) {
+
+
+                                                                                                                                        Map<String, Object> connection = new HashMap<>();
+                                                                                                                                        connection.put("matchID", appointment.getId());
+                                                                                                                                        connection.put("matchFor","forAppointments");
+                                                                                                                                        connection.put("participants", Arrays.asList(appointment.getCustomer_id(), appointment.getSeller_id()));
+                                                                                                                                        connection.put("time", Timestamp.now());
+                                                                                                                                        connection.put("show", true);
+
+                                                                                                                                        FirebaseFirestore.getInstance().collection("Matches").document(appointment.getId()).set(connection)
+                                                                                                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                                    @Override
+                                                                                                                                                    public void onSuccess(Void unused) {
+                                                                                                                                                        FirebaseFirestore.getInstance().collection("Matches")
+                                                                                                                                                                .document(appointment.getId())
+                                                                                                                                                                .update("time",FieldValue.serverTimestamp()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                                                    @Override
+                                                                                                                                                                    public void onSuccess(Void unused) {
+                                                                                                                                                                        pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
+                                                                                                                                                                                "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
+                                                                                                                                                                        sendNotif(notification,"accepted","buyer");
+                                                                                                                                                                        Toast.makeText(acquired_service_details.this, "Message ID created 1", Toast.LENGTH_SHORT).show();
+                                                                                                                                                                    }
+                                                                                                                                                                });
+                                                                                                                                                    }
+                                                                                                                                                });
+
+
+
+                                                                                                                                    }
+                                                                                                                                });
+                                                                                                                    }
+                                                                                                                });
+
+                                                                                                    }
+                                                                                                }
+                                                                                            });
+
+
+                                                                                }
+                                                                            });
+
+
+                                                                }
+                                                            });
+                                                }
                                             }
                                         });
 
                             }
                         });
 
-            }
-
-            FirebaseFirestore.getInstance().collection("User")
-                    .document(appointment.getCustomer_id())
-                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @SuppressLint("SetTextI18n")
-                        @Override
-                        public void onSuccess(DocumentSnapshot s) {
-
-                            check_out_name.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
-                            checkout_address.setText(s.getString("address"));
-                            checkout_zip.setText(s.getString("zipCode"));
-
-                        }
-                    });
-
-            FirebaseFirestore.getInstance().collection("User")
-                    .document(appointment.getCustomer_id())
-                    .collection("security")
-                    .document("security_doc")
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
-                                DocumentSnapshot s = task.getResult();
-                                checkout_number.setText(s.getString("contactNumber"));
+                        buttonDelete.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                openDialog(appointment.getCustomer_id(),appointment.getId(),"buyer",appointment.getTransaction_id(),"seller");
                             }
+                        });
+
+                    }
+                }
+                else if(appointment.getAppointment_status().equals("accepted")){
+                    text1.setText("Appointment ongoing");
+
+                    transactionLayout.setVisibility(View.VISIBLE);
+                    transactionLabel.setVisibility(View.GONE);
+                    transactionMessage.setVisibility(View.GONE);
+
+                    status.setText(appointment.getAppointment_status());
+                    transactionPayment.setText("on-site");
+                    subTotal.setText("₱ "+appointment.getService_price());
+                    total.setText("₱ "+appointment.getService_price()+".0");
+                    serviceFee.setText("₱ "+appointment.getService_price());
+
+                    transactionEnd.setVisibility(View.GONE);
+                    transactionEndLabel.setVisibility(View.GONE);
+                    messageButton.setVisibility(View.VISIBLE);
+                    buttonLayout.setVisibility(View.GONE);
+                    cancelButton.setVisibility(View.GONE);
+                    messageButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            FirebaseFirestore.getInstance().collection("Matches")
+                                    .document(appointment.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            matches_class match = documentSnapshot.toObject(matches_class.class);
+                                            Intent intent = new Intent(acquired_service_details.this, acquired_service_accepted_message.class);
+                                            intent.putExtra("model",  (Serializable) match);
+                                            startActivity(intent);
+                                        }
+                                    });
                         }
                     });
+
+                }
+                else if(appointment.getAppointment_status().equals("completed")){
+                    text1.setText("Appointment completed");
+                    transactionLayout.setVisibility(View.VISIBLE);
+                    transactionLabel.setVisibility(View.GONE);
+                    transactionMessage.setVisibility(View.GONE);
+
+                    status.setText(appointment.getAppointment_status());
+                    transactionPayment.setText("on-site");
+                    subTotal.setText("₱ "+appointment.getService_price());
+                    total.setText("₱ "+appointment.getService_price()+".0");
+                    serviceFee.setText("₱ "+appointment.getService_price());
+
+                    String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
+                    transactionEnd.setText(formattedTime);
+
+                    if(appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+
+                        FirebaseFirestore.getInstance().collection("Appointments")
+                                .document(appointment.getId())
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        Boolean isTrue = (Boolean) documentSnapshot.get("isRated");
+
+                                        if(isTrue.equals(false)){
+                                            rateButton.setVisibility(View.VISIBLE);
+                                            rateButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent i = new Intent(acquired_service_details.this, rate_service.class);
+                                                    i.putExtra("model", (Serializable) appointment);
+                                                    startActivity(i);
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+
+                    }
+                }
+                else if(appointment.getAppointment_status().equals("cancelled")){
+                    text1.setText("Appointment cancelled");
+                    transactionLabel.setText("Cancellation reason :");
+                    transactionMessage.setText(appointment.getAppointment_end_message());
+                    messageButton.setVisibility(View.GONE);
+                    buttonLayout.setVisibility(View.GONE);
+                    cancelButton.setVisibility(View.GONE);
+                    transactionLayout.setVisibility(View.VISIBLE);
+
+                    status.setText(appointment.getAppointment_status());
+                    transactionPayment.setText("on-site");
+                    subTotal.setText("₱ "+appointment.getService_price());
+                    total.setText("₱ "+appointment.getService_price());
+                    serviceFee.setText("₱ "+appointment.getService_price());
+
+                    String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
+                    transactionEnd.setText(formattedTime);
+
+                }
+
+                if (appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+                    pet_text.setText("Service details");
+
+                    FirebaseFirestore.getInstance().collection("Shop")
+                            .document(appointment.getSeller_id())
+                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @SuppressLint("SetTextI18n")
+                                @Override
+                                public void onSuccess(DocumentSnapshot s) {
+                                    check_out_service_acquired.setVisibility(View.VISIBLE);
+                                    check_out_name.setText(s.getString("shopName"));
+
+                                    FirebaseFirestore.getInstance().collection("User")
+                                            .document(s.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                    checkout_address.setText(documentSnapshot.getString("address"));
+                                                    checkout_zip.setText(documentSnapshot.getString("zipCode"));
+
+                                                    FirebaseFirestore.getInstance().collection("User")
+                                                            .document(s.getId()).collection("security")
+                                                            .document("security_doc").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                    checkout_number.setText(documentSnapshot.getString("contactNumber"));
+
+                                                                    FirebaseFirestore.getInstance().collection("Services").document(appointment.getService_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                                            check_out_service_acquired.setText(documentSnapshot.getString("name"));
+
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                }
+                                            });
+                                }
+                            });
+                }
+                else{
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(appointment.getCustomer_id())
+                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @SuppressLint("SetTextI18n")
+                                @Override
+                                public void onSuccess(DocumentSnapshot s) {
+
+                                    check_out_name.setText(s.getString("firstName") + " " + s.getString("middleName") + " " + s.getString("lastName"));
+                                    checkout_address.setText(s.getString("address"));
+                                    checkout_zip.setText(s.getString("zipCode"));
+
+                                }
+                            });
+
+                    FirebaseFirestore.getInstance().collection("User")
+                            .document(appointment.getCustomer_id())
+                            .collection("security")
+                            .document("security_doc")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()){
+                                        DocumentSnapshot s = task.getResult();
+                                        checkout_number.setText(s.getString("contactNumber"));
+                                    }
+                                }
+                            });
+                }
+
+
+            }
         }
+
     }
 
     @SuppressLint("SetTextI18n")

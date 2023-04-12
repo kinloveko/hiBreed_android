@@ -194,37 +194,56 @@ public class pet_for_sale_details extends BaseActivity {
             breeder = pet.getPet_breeder();
 
             getReviews(pet.getPet_breeder());
+            if(breeder.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
 
-            
-            details_button_buyNow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                details_button_buyNow.setText("Edit your pet");
+                details_button_buyNow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(pet_for_sale_details.this, edit_pet_for_sale.class);
+                        intent.putExtra("mode", (Serializable) pet);
+                        startActivity(intent);
+                    }
+                });
+                details_button_addToCard.setVisibility(View.GONE);
+            }
+            else{
+                details_button_addToCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addToCart(pet);
+                    }
+                });
+                details_button_buyNow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
 
-                    FirebaseFirestore.getInstance().collection("User")
-                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .collection("security")
-                            .document("security_doc")
-                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.getString("contactNumber") != null &&
-                                            !documentSnapshot.getString("contactNumber").equals("")){
-                                        add_to_cart_class buy = new add_to_cart_class("1",pet.getId(),pet.getDisplayFor(),pet.getPet_price(),FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                                pet.getPet_breeder(),"pet",Timestamp.now());
-                                        Intent i = new Intent(pet_for_sale_details.this, checkout_activity.class);
-                                        List<add_to_cart_class> add = new ArrayList<>();
-                                        add.add(buy);
-                                        i.putExtra("mode",(Serializable) add);
-                                        startActivity(i);
+                        FirebaseFirestore.getInstance().collection("User")
+                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .collection("security")
+                                .document("security_doc")
+                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if(documentSnapshot.getString("contactNumber") != null &&
+                                                !documentSnapshot.getString("contactNumber").equals("")){
+                                            add_to_cart_class buy = new add_to_cart_class("1",pet.getId(),pet.getDisplayFor(),pet.getPet_price(),FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                                    pet.getPet_breeder(),"pet",Timestamp.now());
+                                            Intent i = new Intent(pet_for_sale_details.this, checkout_activity.class);
+                                            List<add_to_cart_class> add = new ArrayList<>();
+                                            add.add(buy);
+                                            i.putExtra("mode",(Serializable) add);
+                                            startActivity(i);
+                                        }
+                                        else{
+                                            Toast.makeText(pet_for_sale_details.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                    else{
-                                        Toast.makeText(pet_for_sale_details.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                }
-            });
+                                });
+                    }
+                });
+            }
 
             FirebaseFirestore.getInstance().collection("Likes")
                     .whereEqualTo("likedBy",FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -313,12 +332,7 @@ public class pet_for_sale_details extends BaseActivity {
 
         }
 
-        details_button_addToCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addToCart(pet);
-            }
-        });
+
 
         details_shop_profile_Layout.setOnClickListener(new View.OnClickListener() {
             @Override

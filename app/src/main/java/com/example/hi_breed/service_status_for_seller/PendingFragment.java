@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.service_status_for_seller_buyer.pending_serviceAdapter;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.appointment_dating_class;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -65,8 +66,14 @@ public class PendingFragment extends Fragment {
                                 adapter.clearList();
 
                                 for(DocumentSnapshot s: value){
-                                    appointment_class appointment = s.toObject(appointment_class.class);
-                                    adapter.addServiceDisplay(appointment);
+                                    if(s.getString("appointment_for")!=null){
+                                        appointment_dating_class appointment = s.toObject(appointment_dating_class.class);
+                                        adapter.addDateList(appointment);
+                                    }
+                                    else{
+                                        appointment_class appointment = s.toObject(appointment_class.class);
+                                        adapter.addServiceDisplay(appointment);
+                                    }
                                 }
                                 pendingRecycler.setAdapter(adapter);
                             }

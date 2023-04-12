@@ -273,7 +273,7 @@ public class MessagingService extends FirebaseMessagingService {
                                     Timestamp time = (Timestamp) s.get("time");
                                     timestamp = time;
                                     int notificationId = (int) System.currentTimeMillis();
-                                    matches_class m = new matches_class(user,match,true,timestamp);
+                                    matches_class m = new matches_class(user,match,true,timestamp,"","");
                                     Intent intent = new Intent(getApplicationContext(), acquired_service_accepted_message.class);
                                     intent.putExtra("model",(Serializable) m);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -320,7 +320,7 @@ public class MessagingService extends FirebaseMessagingService {
                                     Timestamp time = (Timestamp) s.get("time");
                                     timestamp = time;
                                     int notificationId = (int) System.currentTimeMillis();
-                                    matches_class m = new matches_class(user,match,true,timestamp);
+                                    matches_class m = new matches_class(user,match,true,timestamp,"","");
                                     Intent intent = new Intent(getApplicationContext(), acquired_order_accepted_message.class);
                                     intent.putExtra("model",(Serializable) m);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -373,7 +373,7 @@ public class MessagingService extends FirebaseMessagingService {
                     });
 
             int notificationId = (int) System.currentTimeMillis();
-            matches_class m = new matches_class(participants,match,true,timestamp);
+            matches_class m = new matches_class(participants,match,true,timestamp,"","");
             Intent intent = new Intent(this, message_conversation_activity.class);
             intent.putExtra("model",(Serializable) m);
             intent.putExtra("notCurrentUser",notCurrentUser);
@@ -403,7 +403,6 @@ public class MessagingService extends FirebaseMessagingService {
 
             Intent intent = new Intent(this, message_activity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
             PendingIntent pendingIntent;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 pendingIntent = PendingIntent.getActivities(getApplicationContext(), 0, new Intent[]{intent}, PendingIntent.FLAG_MUTABLE);
@@ -422,7 +421,8 @@ public class MessagingService extends FirebaseMessagingService {
 
                 Notification notification = builder.build();
                 manager.notify(notificationId, notification);
-            } else {
+            }
+            else {
                 pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 createNotificationManagerMatches(manager);
@@ -440,7 +440,6 @@ public class MessagingService extends FirebaseMessagingService {
                 Notification notification = builder.build();
                 manager.notify(notificationId, notification);
             }
-
 
         }
     }

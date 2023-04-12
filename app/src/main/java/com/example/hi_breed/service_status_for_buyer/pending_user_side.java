@@ -51,8 +51,29 @@ public class pending_user_side extends Fragment {
 
     private void getPendingAppointment() {
 
+     FirebaseFirestore.getInstance().collection("Appointments")
+             .whereEqualTo("customer_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .whereEqualTo("appointment_status","pending").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null){
+                            return;
+                        }
+
+                        if(value!=null){
+                            adapter.clearList();
+
+                            for(DocumentSnapshot s: value){
+
+                                    appointment_class appointment = s.toObject(appointment_class.class);
+                                adapter.addServiceDisplay(appointment);
+                            }
+                            pendingRecycler.setAdapter(adapter);
+                        }
+                    }
+                });
         FirebaseFirestore.getInstance().collection("Appointments")
-                .whereEqualTo("customer_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereArrayContains("customer_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .whereEqualTo("appointment_status","pending").addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -64,6 +85,7 @@ public class pending_user_side extends Fragment {
                             adapter.clearList();
 
                             for(DocumentSnapshot s: value){
+
                                 appointment_class appointment = s.toObject(appointment_class.class);
                                 adapter.addServiceDisplay(appointment);
                             }

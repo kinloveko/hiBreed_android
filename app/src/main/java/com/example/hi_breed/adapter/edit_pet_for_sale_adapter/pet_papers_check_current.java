@@ -55,7 +55,6 @@ public class pet_papers_check_current extends RecyclerView.Adapter<pet_papers_ch
     @Override
     public void onBindViewHolder(@NonNull pet_papers_check_current.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
-
         Glide.with(holder.itemView.getContext())
                 .load(uriArrayLists.get(position))
                 .placeholder(R.drawable.noimage)

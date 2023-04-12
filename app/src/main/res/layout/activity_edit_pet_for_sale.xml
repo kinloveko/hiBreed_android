@@ -89,7 +89,6 @@ tools:ignore="ExtraText,UselessParent">
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <RelativeLayout
                 android:id="@+id/photoLayout"
                 android:layout_width="match_parent"
@@ -141,7 +140,7 @@ tools:ignore="ExtraText,UselessParent">
                         android:scrollbarStyle="outsideInset"
                         android:scrollbars="vertical"
                         android:translationZ="3dp"
-                        android:visibility="gone" />
+                      />
 
 
                 </LinearLayout>
@@ -225,8 +224,6 @@ tools:ignore="ExtraText,UselessParent">
                     android:layout_below="@+id/pet_text0"
                     android:orientation="vertical"
                     android:padding="10dp">
-
-
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/pet_papers_current"
                         android:layout_width="wrap_content"
@@ -235,7 +232,7 @@ tools:ignore="ExtraText,UselessParent">
                         android:layout_marginTop="7dp"
                         android:scrollbarStyle="outsideInset"
                         android:scrollbars="vertical"
-                        android:visibility="gone" />
+               />
                 </LinearLayout>
 
                 <androidx.cardview.widget.CardView

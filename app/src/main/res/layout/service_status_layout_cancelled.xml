@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:layout_height="120dp"
-            android:scaleType="centerCrop"
+            android:scaleType="fitXY"
             android:src="@drawable/noimage"
             />
     </androidx.cardview.widget.CardView>
@@ -73,6 +73,7 @@
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/card"
         android:src="@drawable/icon_date" />
+
     <ImageView
         android:id="@+id/nameImage"
         android:layout_width="20dp"

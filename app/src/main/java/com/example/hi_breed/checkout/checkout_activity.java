@@ -57,7 +57,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class checkout_activity extends BaseActivity {
-    TextView check_out_name,
+    private TextView check_out_name,
              checkout_number,
              checkout_address,
              checkout_zip,
@@ -126,7 +126,7 @@ public class checkout_activity extends BaseActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         adapter = new checkout_adapter(this);
         int total = 0;
-        Intent i = getIntent();
+         Intent i = getIntent();
         //Using this to upload na order
         List<add_to_cart_class> list = (List<add_to_cart_class>) i.getSerializableExtra("mode");
 
@@ -136,14 +136,15 @@ public class checkout_activity extends BaseActivity {
                 onSiteLayout.setVisibility(View.VISIBLE);
                 texts.setVisibility(View.VISIBLE);
             }
-            if(a.getProd_category().equals("Medicine") || a.getProd_category().equals("Dog Accessories")){
+            else
+           {
                 gcashLayout.setVisibility(View.VISIBLE);
                 codLayout.setVisibility(View.VISIBLE);
                 onSiteLayout.setVisibility(View.VISIBLE);
                 texts.setVisibility(View.VISIBLE);
             }
-
             adapter.add(a);
+
         }
         recyclerView.setAdapter(adapter);
         priceFormat format = new priceFormat();

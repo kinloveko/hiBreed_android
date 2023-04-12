@@ -57,7 +57,6 @@ public class review_order_adapter extends RecyclerView.Adapter<review_order_adap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         rating_class productModel = list.get(position);
-
         FirebaseFirestore.getInstance().collection("User")
                 .document(productModel.getCustomer_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override

@@ -7,9 +7,10 @@ import android.os.Parcelable;
 import com.google.firebase.Timestamp;
 
 import java.io.Serializable;
+import java.util.List;
 
-public class appointment_class implements Serializable, Parcelable {
-    String customer_id;
+public class appointment_dating_class implements Serializable, Parcelable {
+    List<String> customer_id;
     String id;
     String seller_id;
     String transaction_id;
@@ -26,11 +27,11 @@ public class appointment_class implements Serializable, Parcelable {
     Boolean isRated;
 
 
-    public appointment_class(){
+    public appointment_dating_class(){
 
     }
 
-    public appointment_class(String id,String customer_id ,String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status,String appointment_end_message, String type ,String cancelled_by,Timestamp timestamp,Timestamp appointment_end_date,Boolean isRated,String appointment_for) {
+    public appointment_dating_class(String id,  List<String> customer_id , String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status, String appointment_end_message, String type , String cancelled_by, Timestamp timestamp, Timestamp appointment_end_date, Boolean isRated, String appointment_for) {
         this.appointment_end_date = appointment_end_date;
         this.appointment_end_message = appointment_end_message;
         this.cancelled_by = cancelled_by;
@@ -50,8 +51,8 @@ public class appointment_class implements Serializable, Parcelable {
     }
 
 
-    protected appointment_class(Parcel in) {
-        customer_id = in.readString();
+    protected appointment_dating_class(Parcel in) {
+        customer_id = in.createStringArrayList();
         id = in.readString();
         seller_id = in.readString();
         transaction_id = in.readString();
@@ -70,17 +71,21 @@ public class appointment_class implements Serializable, Parcelable {
         isRated = tmpIsRated == 0 ? null : tmpIsRated == 1;
     }
 
-    public static final Creator<appointment_class> CREATOR = new Creator<appointment_class>() {
+    public static final Creator<appointment_dating_class> CREATOR = new Creator<appointment_dating_class>() {
         @Override
-        public appointment_class createFromParcel(Parcel in) {
-            return new appointment_class(in);
+        public appointment_dating_class createFromParcel(Parcel in) {
+            return new appointment_dating_class(in);
         }
 
         @Override
-        public appointment_class[] newArray(int size) {
-            return new appointment_class[size];
+        public appointment_dating_class[] newArray(int size) {
+            return new appointment_dating_class[size];
         }
     };
+
+    public List<String> getCustomer_id() {
+        return customer_id;
+    }
 
     public String getType() {
         return type;
@@ -103,9 +108,6 @@ public class appointment_class implements Serializable, Parcelable {
         return appointment_end_message;
     }
 
-    public String getCustomer_id() {
-        return customer_id;
-    }
 
     public String getId() {
         return id;
@@ -154,7 +156,7 @@ public class appointment_class implements Serializable, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(customer_id);
+        dest.writeStringList(customer_id);
         dest.writeString(id);
         dest.writeString(seller_id);
         dest.writeString(transaction_id);

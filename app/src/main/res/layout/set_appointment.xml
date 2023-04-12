@@ -57,13 +57,182 @@
     </RelativeLayout>
 
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbarID"
         android:layout_marginTop="30dp"
         android:orientation="vertical">
+
         <RelativeLayout
-            android:layout_margin="10dp"
+            android:visibility="gone"
+            android:id="@+id/petDatingInfo"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/dropshadow_button_zero"
+            android:backgroundTint="@color/white"
+            android:elevation="3dp">
+
+            <ImageView
+                android:id="@+id/imageDatings"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:src="@drawable/profile_arrowright" />
+
+            <TextView
+                android:id="@+id/petDateInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="13dp"
+                android:layout_toEndOf="@id/imageDating"
+                android:fontFamily="@font/poppinsmedium"
+                android:text="Pet dating details"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/imageDating"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/icon_location" />
+
+            <TextView
+                android:id="@+id/second_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/first_checkout_zip"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Kenneth Dela Cruz"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/second_user_checkout_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/first_checkout_zip"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/first_user"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:singleLine="true"
+                android:text="09318924806"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/second_address"
+                android:layout_width="365dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/second_user"
+                android:layout_marginStart="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:singleLine="true"
+                android:text="Ibingay Navarro, Masbate City"
+                android:textAlignment="textStart"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/second_checkout_zip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/second_address"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="5400"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/first_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/petDateInfo"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Kenneth Dela Cruz"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/first_user_checkout_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/petDateInfo"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/first_user"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:singleLine="true"
+                android:text="09318924806"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/first_address"
+                android:layout_width="365dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/first_user"
+                android:layout_marginStart="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:singleLine="true"
+                android:text="Ibingay Navarro, Masbate City"
+                android:textAlignment="textStart"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/first_checkout_zip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/first_address"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="5400"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+            <!--            <LinearLayout
+                android:layout_width="399dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/post_line"
+                android:translationZ="3dp" />-->
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:visibility="gone"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:elevation="3dp"
             android:id="@+id/currentAddress"
             android:layout_width="match_parent"
@@ -99,16 +268,19 @@
                 android:layout_below="@id/pet_text"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:fontFamily="@font/poppinsregular"
-                android:text="Kenneth Dela Cruz"
+                android:text=""
                 android:textColor="@color/material_blue_grey_80"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 tools:ignore="HardcodedText" />
 
             <TextView
                 android:id="@+id/checkout_number"
-                android:layout_width="wrap_content"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:layout_below="@id/pet_text"
                 android:layout_marginStart="10dp"
                 android:ellipsize="end"
@@ -116,17 +288,17 @@
                 android:layout_marginTop="10dp"
                 android:layout_toEndOf="@id/check_out_name"
                 android:fontFamily="@font/poppinsregular"
-                android:text="09318924806"
-                android:textSize="14sp"
+                android:text=""
+                android:textSize="13sp"
                 tools:ignore="HardcodedText" />
 
             <ImageView
+                android:id="@+id/images"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
-                android:layout_width="40dp"
-                android:layout_height="30dp"
-                android:src="@drawable/profile_arrowright"
-                />
+                android:src="@drawable/profile_arrowright" />
 
             <TextView
                 android:id="@+id/checkout_address"
@@ -138,8 +310,8 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/poppinsregular"
                 android:singleLine="true"
-                android:text="Ibingay Navarro, Masbate City"
-                android:textSize="14sp"
+                android:text=""
+                android:textSize="12sp"
                 tools:ignore="HardcodedText" />
 
 
@@ -151,11 +323,12 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/poppinsregular"
-                android:text="5400"
-                android:textSize="14sp"
+                android:text=""
+                android:textSize="12sp"
                 tools:ignore="HardcodedText" />
 
             <LinearLayout
+
                 android:layout_width="399dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentBottom="true"

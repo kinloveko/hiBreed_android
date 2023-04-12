@@ -201,7 +201,7 @@ public class addToCart_adapter extends RecyclerView.Adapter<addToCart_adapter.Vi
                                 if(task.isSuccessful()){
                                     DocumentSnapshot s = task.getResult();
                                     ArrayList<String> list = (ArrayList<String>) s.get("photos");
-                                    Picasso.get().load(list.get(0)).into(v.imageView);
+                                    Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage).into(v.imageView);
                                     v.pet_name.setText(s.getString("prod_name"));
                                     v.breed.setText(s.getString("prod_category"));
                                 }

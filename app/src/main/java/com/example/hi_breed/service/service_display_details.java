@@ -71,7 +71,8 @@ public class service_display_details extends BaseActivity {
     String id,shooter_id;
     String sched="";
     PercentageChartView view_id;
-
+    String from;
+    String matchID;
     @SuppressLint({"ObsoleteSdkInt", "SetTextI18n"})
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class service_display_details extends BaseActivity {
         reviewsService = findViewById(R.id.reviewsShop);
         reviewsService.setLayoutManager(new GridLayoutManager(this,1));
         adapter = new review_order_adapter(this);
-       view_id = findViewById(R.id.view_id);
+        view_id = findViewById(R.id.view_id);
 
         heart_like = findViewById(R.id.heart_like);
         backLayout = findViewById(R.id.backLayout);
@@ -133,6 +134,8 @@ public class service_display_details extends BaseActivity {
 
         Intent intent = getIntent();
         service_class service = (service_class) intent.getSerializableExtra("mode");
+        from = intent.getStringExtra("from");
+        matchID = intent.getStringExtra("matchID");
         if(service!=null){
         //shooter image
             id = service.getId();
@@ -144,7 +147,9 @@ public class service_display_details extends BaseActivity {
 
             FirebaseFirestore.getInstance().collection("Likes")
                     .whereEqualTo("likedBy", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .whereEqualTo("product_id",service.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    .whereEqualTo("product_id",service.getId())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if(task.isSuccessful()){
@@ -163,8 +168,6 @@ public class service_display_details extends BaseActivity {
                             }
                         }
                     });
-
-
 
             //slide
             if(service.getPhotos() !=null) {
@@ -194,7 +197,7 @@ public class service_display_details extends BaseActivity {
 
             details_service_availability.setText("From "+service.getAvailability().get(0)+"-"+service.getAvailability().get(1));
 
-                details_pet_description.setText(service.getService_description());
+            details_pet_description.setText(service.getService_description());
             if(service.getSchedule().size() !=0){
 
                 for(int i = 0; i < service.getSchedule().size();i++){
@@ -243,9 +246,18 @@ public class service_display_details extends BaseActivity {
 
                                     }
                                     else{
-                                        Intent intent = new Intent(service_display_details.this, service_set_appointment.class);
-                                        intent.putExtra("model", (Serializable) service);
-                                        startActivity(intent);
+                                        if(from!=null){
+                                            Intent intent = new Intent(service_display_details.this, service_set_appointment.class);
+                                            intent.putExtra("model", (Serializable) service);
+                                            intent.putExtra("from",from);
+                                            intent.putExtra("matchID",matchID);
+                                            startActivity(intent);
+                                        }else{
+                                            Intent intent = new Intent(service_display_details.this, service_set_appointment.class);
+                                            intent.putExtra("model", (Serializable) service);
+                                            startActivity(intent);
+                                        }
+
                                          }
 
                                 }
@@ -355,7 +367,6 @@ public class service_display_details extends BaseActivity {
                 });
 
     }
-
     private void saveLike() {
         likes_class like = new likes_class("",FirebaseAuth.getInstance().getCurrentUser().getUid(),id,shooter_id,"Service", Timestamp.now());
 

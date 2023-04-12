@@ -19,7 +19,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/BreederBottom_navigation"
         android:layout_width="match_parent"
-        android:visibility="gone"
+
         android:layout_height="wrap_content"
         android:background="@drawable/dropshadow_fouro"
         app:itemIconSize="28dp"

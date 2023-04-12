@@ -81,6 +81,7 @@ user_profile_account_contact extends BaseActivity {
     LinearLayout backLayout;
     CountDownTimer cTimer = null;
     String phoneNumber;
+
     final Pattern phonePattern = Pattern.compile("^(09)\\d{9}");
     final Pattern p = Pattern.compile("^" +
             "(?=.*[@#$%^&!+=])" +     // at least 1 special character
@@ -106,9 +107,10 @@ user_profile_account_contact extends BaseActivity {
         }
         mAuth = FirebaseAuth.getInstance();
         fireStore = FirebaseFirestore.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        user = mAuth.getCurrentUser();
 
         if(user!=null){
+
             documentReference = fireStore.collection("User").document(user.getUid())
                     .collection("security").document("security_doc");
             getUser(documentReference);
@@ -766,7 +768,7 @@ user_profile_account_contact extends BaseActivity {
                                         @Override
                                         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
                                            holder = phoneAuthCredential.getSmsCode();
-                                            Log.d("OTP1", holder);
+
                                         }
                                         @Override
                                         public void onVerificationFailed(@NonNull FirebaseException e) {
@@ -794,7 +796,6 @@ user_profile_account_contact extends BaseActivity {
 
 
     // method to verify OTP
-
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void getOtpFromMessage(String message,AlertDialog dialog) {
 
@@ -887,55 +888,63 @@ user_profile_account_contact extends BaseActivity {
                     count = 0;
                 }
                 else{
+
                     PhoneAuthCredential credential = PhoneAuthProvider.getCredential(message, editText.getText().toString());
                     FirebaseAuth.getInstance().signInWithCredential(credential)
                             .addOnCompleteListener(user_profile_account_contact.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+
                                         // OTP is valid
-                                        Map<String, Object> data = new HashMap<>();
-                                        data.put("contactNumber", phoneNumber);
                                         contactInput.setText(phoneNumber);
-                                        FirebaseFirestore.getInstance().collection("User")
-                                                .document(user.getUid())
-                                                .collection("security")
-                                                .document("security_doc")
-                                                .set(data, SetOptions.merge())
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        FirebaseUser user =  task.getResult().getUser();
+                                        AuthCredential authCredential = PhoneAuthProvider.getCredential(message, Objects.requireNonNull(credential.getSmsCode()));
+                                        assert user != null;
+                                        user.reauthenticate(authCredential);
+                                        FirebaseFirestore.getInstance().collection("User").document(user.getUid()).collection("security")
+                                                .document("security_doc").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void unused) {
-                                                        FirebaseUser user =  task.getResult().getUser();
-                                                        AuthCredential authCredential = PhoneAuthProvider.getCredential(message, Objects.requireNonNull(credential.getSmsCode()));
+                                                        user.delete();
+                                                        mAuth.signInWithEmailAndPassword(before_email, get_password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                                            @Override
+                                                            public void onSuccess(AuthResult authResult) {
+                                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                                FirebaseFirestore.getInstance().collection("User")
+                                                                        .document(user.getUid())
+                                                                        .collection("security")
+                                                                        .document("security_doc")
+                                                                        .update("contactNumber",phoneNumber).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void unused) {
+                                                                                Toast.makeText(user_profile_account_contact.this, "Successfully Set", Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(user_profile_account_contact.this, "OTP success", Toast.LENGTH_SHORT).show();
+                                                                                count=1;
 
-                                                        assert user != null;
+                                                                            }
+                                                                        });
 
-                                                        user.reauthenticate(authCredential);
-                                                        FirebaseFirestore.getInstance().collection("User").document(user.getUid()).collection("security")
-                                                                        .document("security_doc").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void unused) {
-                                                                        user.delete();
-                                                                        Toast.makeText(user_profile_account_contact.this, "Successfully Set", Toast.LENGTH_SHORT).show();
-
-                                                                    }
-                                                                });
+                                                            }
+                                                        });
                                                     }
                                                 });
-                                        Toast.makeText(user_profile_account_contact.this, "OTP success", Toast.LENGTH_SHORT).show();
-                                        count = 1;
-                                        alert3.dismiss();
                                     } else {
                                         // Invalid OTP
                                         Toast.makeText(user_profile_account_contact.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
                                         count = 0;
                                     }
+                                    if(count != 0){
+                                        alert3.dismiss();
+                                    } else {
+                                        Toast.makeText(user_profile_account_contact.this, "Error while saving, try again!", Toast.LENGTH_SHORT).show();
+                                        alert3.dismiss();
+                                    }
+
                                 }
                             });
                 }
-                if(count != 0){
-                    alert3.dismiss();
-                }
+                
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -964,7 +973,6 @@ user_profile_account_contact extends BaseActivity {
                             before_email = securityClass.getEmail();
 
                             get_password = securityClass.getPass();
-
 
                             if(securityClass.getEmail().equals("")){
                                 emailInput.setText("Set email address");

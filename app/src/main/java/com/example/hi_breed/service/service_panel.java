@@ -157,13 +157,13 @@ public class service_panel extends BaseActivity {
                             if (list != null) {
                                 if (list.contains("Veterinarian") && list.contains("Pet Shooter")) {
                                     handleVeterinarianAndPetShooterServices();
-                                    Toast.makeText(service_panel.this, "VET SHOOT", Toast.LENGTH_SHORT).show();
+
                                 } else if (list.contains("Veterinarian")) {
                                     getVeterinarianService();
-                                    Toast.makeText(service_panel.this, "VET", Toast.LENGTH_SHORT).show();
+
 
                                 } else {
-                                    Toast.makeText(service_panel.this, " SHOOT", Toast.LENGTH_SHORT).show();
+
 
                                     getService();
                                 }

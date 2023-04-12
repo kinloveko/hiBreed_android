@@ -145,7 +145,6 @@ public class Login extends AppCompatActivity {
             passEdit.requestFocus();
             return;
         }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
         View view = View.inflate(Login.this,R.layout.screen_custom_alert,null);
         TextView title = view.findViewById(R.id.screen_custom_alert_title);
