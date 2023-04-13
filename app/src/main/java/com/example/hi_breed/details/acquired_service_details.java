@@ -64,7 +64,6 @@ import retrofit2.Response;
 
 public class acquired_service_details extends BaseActivity {
 
-
     TextView first_user,
             first_user_checkout_number,
             first_address,
@@ -310,6 +309,9 @@ public class acquired_service_details extends BaseActivity {
 
                             }
                         });
+
+
+
                 if(appointment.getAppointment_status().equals("pending")){
                     transactionLayout.setVisibility(View.VISIBLE);
                     transactionLabel.setVisibility(View.GONE);
@@ -330,7 +332,7 @@ public class acquired_service_details extends BaseActivity {
                             @Override
                             public void onClick(View v) {
 
-                                openDialog(appointment.getSeller_id(),appointment.getId(),"seller",appointment.getTransaction_id(),"buyer");
+                                openDialog(appointment.getSeller_id(),appointment.getId(),"seller",appointment.getTransaction_id(),"buyer","dating");
 
                             }
                         });
@@ -343,9 +345,13 @@ public class acquired_service_details extends BaseActivity {
                         buttonContact.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+
+                                List<String> allParticipants = new ArrayList<>();
+                                allParticipants.addAll(participants);
+                                allParticipants.add(appointment.getSeller_id());
                                 for(int i = 0; i<participants.size();i++){
                                     //for info
-                                    int finalI1 = i;
+                                    final int finalI1 = i;
                                     FirebaseFirestore.getInstance().collection("User")
                                             .document(participants.get(i)).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                 @Override
@@ -354,7 +360,7 @@ public class acquired_service_details extends BaseActivity {
 
                                                         String token= value.getString("fcmToken");
                                                         Map<String,Object> map = new HashMap<>();
-                                                        map.put("send_to_id",participants.get(finalI1) );
+                                                        map.put("send_to_id",participants.get(finalI1));
                                                         map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
                                                         map.put("title","Accepted appointment");
                                                         map.put("message","Your request appointment has been accepted");
@@ -393,10 +399,10 @@ public class acquired_service_details extends BaseActivity {
                                                                                                                         @Override
                                                                                                                         public void onSuccess(Void unused) {
 
-                                                                                                                            participants.add(appointment.getSeller_id());
                                                                                                                             Map<String, Object> connection = new HashMap<>();
                                                                                                                             connection.put("matchID", appointment.getId());
-                                                                                                                            connection.put("participants", participants);
+                                                                                                                            connection.put("participants", allParticipants);
+
                                                                                                                             connection.put("time", Timestamp.now());
                                                                                                                             connection.put("show", true);
                                                                                                                             connection.put("matchFor","forAppointments");
@@ -412,7 +418,7 @@ public class acquired_service_details extends BaseActivity {
                                                                                                                                                         public void onSuccess(Void unused) {
                                                                                                                                                             pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
                                                                                                                                                                     "Accepted appointment",appointment.getId(),participants.get(finalI1),"appointment","buyer","accepted"), token);
-                                                                                                                                                            sendNotif(notification,"accepted","buyer");
+                                                                                                                                                            sendNotif(notification,"accepted","buyer","dating");
                                                                                                                                                         }
                                                                                                                                                     });
                                                                                                                                         }
@@ -433,10 +439,9 @@ public class acquired_service_details extends BaseActivity {
                                                                                                                                         @Override
                                                                                                                                         public void onSuccess(Void unused) {
 
-                                                                                                                                            participants.add(appointment.getSeller_id());
                                                                                                                                             Map<String, Object> connection = new HashMap<>();
                                                                                                                                             connection.put("matchID", appointment.getId());
-                                                                                                                                            connection.put("participants", participants);
+                                                                                                                                            connection.put("participants", allParticipants);
                                                                                                                                             connection.put("time", Timestamp.now());
                                                                                                                                             connection.put("show", true);
                                                                                                                                             connection.put("matchFor","forAppointments");
@@ -452,7 +457,7 @@ public class acquired_service_details extends BaseActivity {
                                                                                                                                                                         public void onSuccess(Void unused) {
                                                                                                                                                                             pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
                                                                                                                                                                                     "Accepted appointment",appointment.getId(),participants.get(finalI1),"appointment","buyer","accepted"), token);
-                                                                                                                                                                            sendNotif(notification,"accepted","buyer");
+                                                                                                                                                                            sendNotif(notification,"accepted","buyer","dating");
                                                                                                                                                                             Toast.makeText(acquired_service_details.this, "Message ID created 1", Toast.LENGTH_SHORT).show();
                                                                                                                                                                         }
                                                                                                                                                                     });
@@ -487,7 +492,7 @@ public class acquired_service_details extends BaseActivity {
                             @Override
                             public void onClick(View v) {
                                 for(int i = 0; i<participants.size();i++){
-                                    openDialog(participants.get(i),appointment.getId(),"buyer",appointment.getTransaction_id(),"seller");
+                                    openDialog(participants.get(i),appointment.getId(),"buyer",appointment.getTransaction_id(),"seller","dating");
                                 }
                                }
                         });
@@ -543,26 +548,32 @@ public class acquired_service_details extends BaseActivity {
                     String formattedTime = TimestampConverter.exactDateTime(appointment.getAppointment_end_date());
                     transactionEnd.setText(formattedTime);
 
-                    if(appointment.getCustomer_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    if(appointment.getCustomer_id().contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
 
                         FirebaseFirestore.getInstance().collection("Appointments")
                                 .document(appointment.getId())
                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        Boolean isTrue = (Boolean) documentSnapshot.get("isRated");
 
-                                        if(isTrue.equals(false)){
-                                            rateButton.setVisibility(View.VISIBLE);
-                                            rateButton.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    Intent i = new Intent(acquired_service_details.this, rate_service.class);
-                                                    i.putExtra("model", (Serializable) appointment);
-                                                    startActivity(i);
+                                        if (documentSnapshot.getString("appointment_for") != null) {
+                                            List<String> ratedList = (List<String>) documentSnapshot.get("isRatedBy");
+                                            if(ratedList!=null){
+                                                if(!ratedList.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                                    rateButton.setVisibility(View.VISIBLE);
+                                                    rateButton.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            Intent i = new Intent(acquired_service_details.this, rate_service.class);
+                                                            i.putExtra("model", (Serializable) appointment);
+                                                            i.putExtra("from","dating");
+                                                            startActivity(i);
+                                                        }
+                                                    });
                                                 }
-                                            });
+                                            }
                                         }
+
                                     }
                                 });
 
@@ -664,7 +675,7 @@ public class acquired_service_details extends BaseActivity {
                             @Override
                             public void onClick(View v) {
 
-                                openDialog(appointment.getSeller_id(),appointment.getId(),"seller",appointment.getTransaction_id(),"buyer");
+                                openDialog(appointment.getSeller_id(),appointment.getId(),"seller",appointment.getTransaction_id(),"buyer","solo");
 
                             }
                         });
@@ -744,7 +755,7 @@ public class acquired_service_details extends BaseActivity {
                                                                                                                                                     public void onSuccess(Void unused) {
                                                                                                                                                         pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
                                                                                                                                                                 "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
-                                                                                                                                                        sendNotif(notification,"accepted","buyer");
+                                                                                                                                                        sendNotif(notification,"accepted","buyer","solo");
                                                                                                                                                     }
                                                                                                                                                 });
                                                                                                                                     }
@@ -784,7 +795,7 @@ public class acquired_service_details extends BaseActivity {
                                                                                                                                                                     public void onSuccess(Void unused) {
                                                                                                                                                                         pushNotification notification = new pushNotification(new notificationData("Your request appointment has been accepted",
                                                                                                                                                                                 "Accepted appointment",appointment.getId(),appointment.getCustomer_id(),"appointment","buyer","accepted"), token);
-                                                                                                                                                                        sendNotif(notification,"accepted","buyer");
+                                                                                                                                                                        sendNotif(notification,"accepted","buyer","solo");
                                                                                                                                                                         Toast.makeText(acquired_service_details.this, "Message ID created 1", Toast.LENGTH_SHORT).show();
                                                                                                                                                                     }
                                                                                                                                                                 });
@@ -819,7 +830,7 @@ public class acquired_service_details extends BaseActivity {
                         buttonDelete.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                openDialog(appointment.getCustomer_id(),appointment.getId(),"buyer",appointment.getTransaction_id(),"seller");
+                                openDialog(appointment.getCustomer_id(),appointment.getId(),"buyer",appointment.getTransaction_id(),"seller","solo");
                             }
                         });
 
@@ -882,20 +893,28 @@ public class acquired_service_details extends BaseActivity {
                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        Boolean isTrue = (Boolean) documentSnapshot.get("isRated");
 
-                                        if(isTrue.equals(false)){
-                                            rateButton.setVisibility(View.VISIBLE);
-                                            rateButton.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    Intent i = new Intent(acquired_service_details.this, rate_service.class);
-                                                    i.putExtra("model", (Serializable) appointment);
-                                                    startActivity(i);
-                                                }
-                                            });
+                                            Boolean isTrue = (Boolean) documentSnapshot.get("isRated");
+
+                                            if(isTrue.equals(false)){
+                                                rateButton.setVisibility(View.VISIBLE);
+                                                rateButton.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        rateButton.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                Intent i = new Intent(acquired_service_details.this, rate_service.class);
+                                                                i.putExtra("model", (Serializable) appointment);
+                                                                startActivity(i);
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
                                         }
-                                    }
+
+
                                 });
 
                     }
@@ -993,15 +1012,13 @@ public class acquired_service_details extends BaseActivity {
                                 }
                             });
                 }
-
-
             }
         }
 
     }
 
     @SuppressLint("SetTextI18n")
-    private void openDialog(String sendTo, String appointmentId, String role,String transactionID,String from) {
+    private void openDialog(String sendTo, String appointmentId, String role,String transactionID,String from,String appointment_for) {
 
         Map<String,Object> map = new HashMap<>();
         map.put("dateCompleted",Timestamp.now());
@@ -1029,7 +1046,7 @@ public class acquired_service_details extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                cancelDialog(sendTo,appointmentId,role,oneText.getText().toString(),transactionID,from);
+                cancelDialog(sendTo,appointmentId,role,oneText.getText().toString(),transactionID,from,appointment_for);
 
             }
         });
@@ -1038,7 +1055,7 @@ public class acquired_service_details extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                cancelDialog(sendTo,appointmentId,role,twoText.getText().toString(),transactionID,from);
+                cancelDialog(sendTo,appointmentId,role,twoText.getText().toString(),transactionID,from,appointment_for);
 
             }
         });
@@ -1077,7 +1094,7 @@ public class acquired_service_details extends BaseActivity {
                             Toast.makeText(acquired_service_details.this, "Please write your reason in the provided text box", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        cancelDialog(sendTo,appointmentId,role,customReasonEdit.getText().toString(),transactionID,from);
+                        cancelDialog(sendTo,appointmentId,role,customReasonEdit.getText().toString(),transactionID,from,appointment_for);
                     }
                 });
 
@@ -1085,7 +1102,7 @@ public class acquired_service_details extends BaseActivity {
         });
     }
 
-    private void cancelDialog(String sendTo, String appointmentId, String role,String text,String transactionID,String from) {
+    private void cancelDialog(String sendTo, String appointmentId, String role,String text,String transactionID,String from,String appointment_for) {
 
         FirebaseFirestore.getInstance().collection("User")
                 .document(sendTo).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -1140,7 +1157,7 @@ public class acquired_service_details extends BaseActivity {
                                                                                                             public void onSuccess(Void unused) {
                                                                                                                 pushNotification notification = new pushNotification(new notificationData("Requested appointment has been cancelled",
                                                                                                                         "Cancelled appointment",appointmentId,sendTo,"appointment",role,"cancelled"), token);
-                                                                                                                sendNotif(notification,"cancelled",role);
+                                                                                                                sendNotif(notification,"cancelled",role,appointment_for);
                                                                                                                 Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
                                                                                                             }
                                                                                                         });
@@ -1153,7 +1170,7 @@ public class acquired_service_details extends BaseActivity {
                                                                                                                 pushNotification notification = new pushNotification(new notificationData("Requested appointment has been cancelled",
                                                                                                                         "Cancelled appointment",appointmentId,sendTo,"appointment",role,"cancelled"), token);
                                                                                                                 Log.d("selectedTAB", notification.getData().getSELECTED_TAB());
-                                                                                                                sendNotif(notification,"cancelled",role);
+                                                                                                                sendNotif(notification,"cancelled",role,appointment_for);
                                                                                                             }
                                                                                                         });
                                                                                             }
@@ -1171,7 +1188,7 @@ public class acquired_service_details extends BaseActivity {
                 });
     }
 
-    private void sendNotif(pushNotification notification,String from,String notificationFor) {
+    private void sendNotif(pushNotification notification,String from,String notificationFor,String appointment_for) {
 
         ApiUtilities.getClient().sendNotification(notification).enqueue(new Callback<pushNotification>() {
             @Override
@@ -1200,6 +1217,9 @@ public class acquired_service_details extends BaseActivity {
                             finish();
 
                         }
+
+
+
                     }
                     else  if(from.equals("cancelled")){
 

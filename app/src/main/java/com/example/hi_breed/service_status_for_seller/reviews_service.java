@@ -51,6 +51,7 @@ public class reviews_service extends Fragment {
     }
 
     private void getReviews() {
+
         FirebaseFirestore.getInstance().collection("Reviews")
                 .whereEqualTo("seller_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .whereEqualTo("rateFor","Service")
@@ -63,6 +64,7 @@ public class reviews_service extends Fragment {
                         if(value!=null){
                             adapter.clearList();
                             for(DocumentSnapshot s:value){
+
                                 rating_class rate = s.toObject(rating_class.class);
                                 adapter.addServiceDisplay(rate);
                             }

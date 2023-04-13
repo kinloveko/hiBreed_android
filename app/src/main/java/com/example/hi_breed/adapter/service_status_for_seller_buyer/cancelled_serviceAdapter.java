@@ -150,7 +150,6 @@ public class cancelled_serviceAdapter extends RecyclerView.Adapter<cancelled_ser
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, acquired_service_details.class);
-                    intent.putExtra("from","petDating");
                     intent.putExtra("mode", (Serializable) productModel);
                     context.startActivity(intent);
                 }

@@ -3,6 +3,9 @@ package com.example.hi_breed.adapter.service_status_for_seller_buyer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -63,7 +67,7 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
         return new ViewHolder(view);
     }
     String current ="";
-
+    String names="";
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
@@ -176,7 +180,10 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                 }
                 else{
                     holder.button_contact.setText("VIEW REQUEST");
+                    List<Bitmap> bitmaps = new ArrayList<>();
+                    String separator = " & ";
                     if(dating_class.getCustomer_id()!=null) {
+
                         for (int i = 0; i < dating_class.getCustomer_id().size(); i++) {
 
                             int finalI = i;
@@ -187,24 +194,49 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                                             if (task.isSuccessful()) {
 
                                                 DocumentSnapshot snapshot = task.getResult();
-                                                Picasso.get().load(snapshot.getString("image")).into(holder.imageView);
-                                                holder.descriptionRecycler.setText(dating_class.getAppointment_date() + " @ " + dating_class.getAppointment_time());
-                                                holder.nameRecycler.setText(snapshot.getString("firstName"));
-                                                FirebaseFirestore.getInstance().collection("User").document(dating_class.getCustomer_id().get(finalI)).collection("security")
-                                                        .document("security_doc")
-                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                if(snapshot.exists()){
+                                                    String imageUrl = snapshot.getString("image");
+                                                    if (imageUrl != null) {
+                                                        Picasso.get().load(imageUrl).into(new Target() {
                                                             @Override
-                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                holder.numberRecycler.setText(documentSnapshot.getString("contactNumber"));
+                                                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                                bitmaps.add(bitmap);
+                                                                if (bitmaps.size() == 2) {
+                                                                    // Merge the two bitmaps and set the merged bitmap to your ImageView
+                                                                    Bitmap mergedBitmap = mergeBitmaps(bitmaps.get(0), bitmaps.get(1));
+                                                                    holder.imageView.setImageBitmap(mergedBitmap);
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                                                                e.printStackTrace();
+                                                            }
+
+                                                            @Override
+                                                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
                                                             }
                                                         });
+                                                    }
+                                                    String name = snapshot.getString("firstName");
+                                                    if (names.isEmpty()) {
+                                                        names += name;
+                                                    } else {
+                                                        names += separator + name;
+                                                    }
+                                                    holder.nameRecycler.setText(names);
+                                                    holder.numberRecycler.setText("Pet dating");
+                                                    holder.callImage.setImageResource(R.drawable.icon_dog_breed);
+                                                }
                                             }
                                         }
                                     });
                         }
                     }
-
                 }
+                holder.descriptionRecycler.setText(dating_class.getAppointment_date() + " @ " + dating_class.getAppointment_time());
+
                 holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -218,7 +250,20 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
         }
     }
 
-
+    private Bitmap mergeBitmaps(Bitmap firstBitmap, Bitmap secondBitmap) {
+        // Resize smaller bitmap to match dimensions of larger bitmap
+        if (firstBitmap.getWidth() < secondBitmap.getWidth() || firstBitmap.getHeight() < secondBitmap.getHeight()) {
+            firstBitmap = Bitmap.createScaledBitmap(firstBitmap, secondBitmap.getWidth(), secondBitmap.getHeight(), false);
+        } else if (secondBitmap.getWidth() < firstBitmap.getWidth() || secondBitmap.getHeight() < firstBitmap.getHeight()) {
+            secondBitmap = Bitmap.createScaledBitmap(secondBitmap, firstBitmap.getWidth(), firstBitmap.getHeight(), false);
+        }
+        // Create merged bitmap
+        Bitmap mergedBitmap = Bitmap.createBitmap(firstBitmap.getWidth() + secondBitmap.getWidth(), firstBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(mergedBitmap);
+        canvas.drawBitmap(firstBitmap, 0f, 0f, null);
+        canvas.drawBitmap(secondBitmap, firstBitmap.getWidth(), 0f, null);
+        return mergedBitmap;
+    }
 
     @Override
     public int getItemCount() {
@@ -233,10 +278,11 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
         TextView label;
         RelativeLayout relativeLayout;
         LinearLayout  buttonContact ;
-        ImageView imageView;
+        ImageView imageView,callImage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            callImage= itemView.findViewById(R.id.callImage);
             imageView = itemView.findViewById(R.id.imageRecycler);
             relativeLayout = itemView.findViewById(R.id.relativeLayout);
             buttonContact = itemView.findViewById(R.id.buttonContact);

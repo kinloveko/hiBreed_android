@@ -6,8 +6,11 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -36,8 +39,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.message_adapter.message_conversation_reply_adapter;
 import com.example.hi_breed.classesFile.ApiUtilities;
+import com.example.hi_breed.classesFile.IDTokens;
 import com.example.hi_breed.classesFile.TimestampConverter;
 import com.example.hi_breed.classesFile.appointment_class;
+import com.example.hi_breed.classesFile.appointment_dating_class;
 import com.example.hi_breed.classesFile.chat_conversation_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
@@ -61,8 +66,10 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -78,25 +85,24 @@ public class acquired_service_accepted_message extends AppCompatActivity {
     LinearLayout backLayoutService;
     private TextView headerName;
     private RelativeLayout toolbarID,transactionLayout;
-    private CircleImageView image;
+    private ImageView image;
     private RecyclerView chat_recyclerview;
     private ImageView sendReplyImageView;
     private TextView userStatus,transactionLabel,transactionMessage;
     private TextInputEditText replyEdit;
     ImageView complete;
-    String notCurrentUser;
     message_conversation_reply_adapter adapter;
     ScrollView scrollView;
     FirebaseUser user;
     Intent intent;
     CircleImageView avail;
     Boolean available = true;
-    String userToken;
     String match;
     String name;
     String images;
     String transactionID;
     ListenerRegistration listenerRegistration;
+    private List<String> notCurrentUserList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -146,7 +152,6 @@ public class acquired_service_accepted_message extends AppCompatActivity {
 
             intent = getIntent();
 
-
                 matches_class m = (matches_class) intent.getSerializableExtra("model");
 
 
@@ -154,13 +159,22 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                     Log.d("myMessaging",m.getMatchID());
 
             if(m.getParticipants().size()!=0) {
-                notCurrentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                if (!notCurrentUser.equals(m.getParticipants().get(0))) {
-                    notCurrentUser = m.getParticipants().get(0);
-                    getReceiverInfo(notCurrentUser);
-                } else if (!notCurrentUser.equals(m.getParticipants().get(1))) {
-                    notCurrentUser = m.getParticipants().get(1);
-                    getReceiverInfo(notCurrentUser);
+
+                if(m.getParticipants().size() == 3){
+                    for (String participant : m.getParticipants()) {
+                        if (!participant.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            notCurrentUserList.add(participant);
+                        }
+                    }
+                    getReceiverInfo(notCurrentUserList);
+                }
+                else if(m.getParticipants().size() == 2){
+                    for (String participant : m.getParticipants()) {
+                        if (!participant.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            notCurrentUserList.add(participant);
+                        }
+                    }
+                    getReceiverInfo(notCurrentUserList);
                 }
             }
             else{
@@ -168,22 +182,17 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                         .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                List<String> list = (List<String>)  documentSnapshot.get("participants");
-                                if (list != null) {
-                                    if(!list.get(0).equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-
-                                        notCurrentUser = list.get(0);
-                                        getReceiverInfo(notCurrentUser);
-                                    }
-                                    else{
-                                        notCurrentUser = list.get(1);
-                                        getReceiverInfo(notCurrentUser);
+                                List<String> list = (List<String>) documentSnapshot.get("participants");
+                                List<String> notCurrentUserList = new ArrayList<>();
+                                if (list != null) for (String participant : list) {
+                                    if (!participant.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                        notCurrentUserList.add(participant);
                                     }
                                 }
+                                getReceiverInfo(notCurrentUserList);
                             }
                         });
             }
-
         listenerRegistration = FirebaseFirestore.getInstance()
                 .collection("Appointments")
                 .document(m.getMatchID())
@@ -194,40 +203,73 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                             return;
                         }
                         if(documentSnapshot!=null){
-                            transactionID = documentSnapshot.getString("transaction_id");
-                            if (documentSnapshot.exists() && documentSnapshot.getString("appointment_status").equals("completed")) {
-                                String customerId = documentSnapshot.getString("customer_id");
 
-                                if (customerId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                                    appointment_class appoint = documentSnapshot.toObject(appointment_class.class);
-                                    Intent i = new Intent(acquired_service_accepted_message.this, rate_service.class);
-                                    i.putExtra("model", (Serializable) appoint);
-                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(i);
-                                    Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to completed tab", Toast.LENGTH_SHORT).show();
-                                    finish();
 
-                                    // Remove the listener after starting the new activity
-                                    listenerRegistration.remove();
+                                transactionID = documentSnapshot.getString("transaction_id");
+                                if (documentSnapshot.exists() && documentSnapshot.getString("appointment_status").equals("completed")) {
+                                     if(documentSnapshot.getString("appointment_for")!=null){
+                                         List<String> customerId=(List<String>) documentSnapshot.get("customer_id");
+
+                                         if (customerId.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                             appointment_dating_class appoint = documentSnapshot.toObject(appointment_dating_class.class);
+                                             Intent i = new Intent(acquired_service_accepted_message.this, rate_service.class);
+                                             i.putExtra("model", (Serializable) appoint);
+                                             i.putExtra("from", "dating");
+                                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                             startActivity(i);
+                                             Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to completed tab", Toast.LENGTH_SHORT).show();
+                                             finish();
+                                             // Remove the listener after starting the new activity
+                                             listenerRegistration.remove();
+                                         }
+                                     }
+                                     else{
+                                         String customerId = documentSnapshot.getString("customer_id");
+                                         if (customerId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                             appointment_class appoint = documentSnapshot.toObject(appointment_class.class);
+                                             Intent i = new Intent(acquired_service_accepted_message.this, rate_service.class);
+                                             i.putExtra("model", (Serializable) appoint);
+                                             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                             startActivity(i);
+                                             Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to completed tab", Toast.LENGTH_SHORT).show();
+                                             finish();
+                                             // Remove the listener after starting the new activity
+                                             listenerRegistration.remove();
+                                         }
+                                     }
+
                                 }
-                            }  else
-                            if(documentSnapshot.getString("appointment_status").equals("cancelled")){
-                                if(documentSnapshot.getString("customer_id") .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                    Intent i = new Intent(acquired_service_accepted_message.this, appointment_user_side.class);
-                                    i.putExtra("SELECTED_TAB", "cancelled");
-                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(i);
-                                    Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                    listenerRegistration.remove();
+                                else
+                                if(documentSnapshot.getString("appointment_status").equals("cancelled")){
+
+                                    if(documentSnapshot.getString("appointment_for")!=null){
+                                        List<String> ids = (List<String>) documentSnapshot.get("customer_id");
+                                        if(ids.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                            Intent i = new Intent(acquired_service_accepted_message.this, appointment_user_side.class);
+                                            i.putExtra("SELECTED_TAB", "cancelled");
+                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(i);
+                                            Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                            listenerRegistration.remove();
+                                        }
+                                    }
+                                    else{
+                                        if(documentSnapshot.get("customer_id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                            Intent i = new Intent(acquired_service_accepted_message.this, appointment_user_side.class);
+                                            i.putExtra("SELECTED_TAB", "cancelled");
+                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(i);
+                                            Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                            listenerRegistration.remove();
+                                        }
+                                    }
+
                                 }
-
-                            }
-
                         }
                        }
                 });
-
 
         getConversation(m.getMatchID());
             match = m.getMatchID();
@@ -248,16 +290,14 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                             }
                         }
                     });
-
             complete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openDialog();
+                    openDialog(notCurrentUserList);
                 }
             });
 
             getCurrent();
-
             replyEdit.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -288,15 +328,14 @@ public class acquired_service_accepted_message extends AppCompatActivity {
             sendReplyImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    sendMessage(replyEdit.getText().toString(),m.getMatchID(),notCurrentUserList);
 
-                    sendMessage(replyEdit.getText().toString(),m.getMatchID(),notCurrentUser);
                 }
             });
-
     }
 
     @SuppressLint("SetTextI18n")
-    private void openDialog() {
+    private void openDialog(List<String> notCurrentUserList) {
 
         Map<String,Object> map = new HashMap<>();
         map.put("dateCompleted",Timestamp.now());
@@ -317,7 +356,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                saveCompleted();
+                saveCompleted(notCurrentUserList);
 
             }
         });
@@ -347,7 +386,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        saveChanges(oneText.getText().toString(),alert2);
+                        saveChanges(oneText.getText().toString(),alert2,notCurrentUserList);
                     }
                 });
 
@@ -355,7 +394,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        saveChanges(twoText.getText().toString(),alert2);
+                        saveChanges(twoText.getText().toString(),alert2,notCurrentUserList);
                     }
                 });
 
@@ -393,7 +432,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                     Toast.makeText(acquired_service_accepted_message.this, "Please write your reason in the provided text box", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                saveChanges(customReasonEdit.getText().toString(),alert2);
+                                saveChanges(customReasonEdit.getText().toString(),alert2,notCurrentUserList);
                             }
                         });
 
@@ -404,8 +443,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
 
     }
 
-    private void saveCompleted(){
-
+    private void saveCompleted(List<String> notCurrentUserList){
         FirebaseFirestore.getInstance().collection("Appointments")
                 .document(match).update("appointment_status","completed")
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -414,80 +452,88 @@ public class acquired_service_accepted_message extends AppCompatActivity {
 
                         Map<String,Object> map = new HashMap<>();
                         map.put("appointment_end_date",Timestamp.now());
-                        map.put("isRated",false);
+                        if(notCurrentUserList.size()==1){
+                            map.put("isRated",false);
+                        }
+                        else if(notCurrentUserList.size() == 2){
+                            map.put("isRatedBy",new ArrayList<String>());
+                            map.put("rated_id",new ArrayList<String>());
+                        }
+
                         FirebaseFirestore.getInstance().collection("Appointments")
                                 .document(match).set(map,SetOptions.merge())
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
 
-                                        Map<String,Object> map = new HashMap<>();
-                                        map.put("send_to_id", notCurrentUser);
-                                        map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                        map.put("title","Completed appointment");
-                                        map.put("message","Appointment has been completed");
-                                        map.put("timestamp", Timestamp.now());
-                                        map.put("type","appointment");
-                                        map.put("id",match);
+                                        for(IDTokens i : IdAndToken){
+                                            Map<String,Object> map = new HashMap<>();
+                                            map.put("send_to_id", i.getId());
+                                            map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                            map.put("title","Completed appointment");
+                                            map.put("message","Appointment has been completed");
+                                            map.put("timestamp", Timestamp.now());
+                                            map.put("type","appointment");
+                                            map.put("id",match);
 
-                                        Map<String,Object> maps = new HashMap<>();
+                                            Map<String,Object> maps = new HashMap<>();
 
-                                        maps.put("latestNotification",map);
-                                        maps.put("notification", Arrays.asList(map));
+                                            maps.put("latestNotification",map);
+                                            maps.put("notification", Arrays.asList(map));
 
-                                        FirebaseFirestore.getInstance().collection("Transaction")
-                                                .document(transactionID)
-                                                .update("status","completed","transaction_end",FieldValue.serverTimestamp())
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
+                                            FirebaseFirestore.getInstance().collection("Transaction")
+                                                    .document(transactionID)
+                                                    .update("status","completed","transaction_end",FieldValue.serverTimestamp())
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
 
-                                                        FirebaseFirestore.getInstance().collection("Notifications")
-                                                                .document(notCurrentUser)
-                                                                .get()
-                                                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                    @Override
-                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            FirebaseFirestore.getInstance().collection("Notifications")
+                                                                    .document(i.getId())
+                                                                    .get()
+                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                                                        if(documentSnapshot.exists()){
-                                                                            FirebaseFirestore.getInstance().collection("Notifications")
-                                                                                    .document(notCurrentUser)
-                                                                                    .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                        @Override
-                                                                                        public void onSuccess(Void unused) {
+                                                                            if(documentSnapshot.exists()){
+                                                                                FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                        .document(i.getId())
+                                                                                        .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void unused) {
 
-                                                                                            pushNotification notification = new pushNotification(new notificationData("Appointment has been completed",
-                                                                                                    "Completed appointment",match,notCurrentUser,"appointment","buyer","completed"), userToken);
-                                                                                            sendNotif(notification,"completed","buyer");
+                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment has been completed",
+                                                                                                        "Completed appointment",match,i.getId(),"appointment","buyer","completed"), i.getToken());
+                                                                                                sendNotif(notification,"completed","buyer");
 
-                                                                                        }
-                                                                                    });
+                                                                                            }
+                                                                                        });
+                                                                            }
+                                                                            else{
+
+                                                                                FirebaseFirestore.getInstance().collection("Notifications")
+                                                                                        .document(i.getId()).set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void unused) {
+
+                                                                                                pushNotification notification = new pushNotification(new notificationData("Appointment has been completed",
+                                                                                                        "Completed appointment",match,i.getId(),"appointment","buyer","completed"), i.getToken());
+                                                                                                sendNotif(notification,"completed","buyer");
+                                                                                            }
+                                                                                        });
+                                                                            }
                                                                         }
-                                                                        else{
-
-                                                                            FirebaseFirestore.getInstance().collection("Notifications")
-                                                                                    .document(notCurrentUser).set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                        @Override
-                                                                                        public void onSuccess(Void unused) {
-
-                                                                                            pushNotification notification = new pushNotification(new notificationData("Appointment has been completed",
-                                                                                                    "Completed appointment",match,notCurrentUser,"appointment","buyer","completed"), userToken);
-                                                                                            sendNotif(notification,"completed","buyer");
-
-                                                                                    }
-                                                                            });
-                                                                   }
-                                                             }
-                                                      });
-                                                }
-                                        });
+                                                                    });
+                                                        }
+                                                    });
+                                        }
                                     }
                           });
                     }
                 });
     }
 
-    private void saveChanges(String textEdit,AlertDialog alertDialog) {
+    private void saveChanges(String textEdit,AlertDialog alertDialog,List<String> notCurrentUserList) {
 
         FirebaseFirestore.getInstance().collection("Appointments")
                 .document(match)
@@ -505,16 +551,15 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Void unused) {
 
-
+                                    for(IDTokens i:IdAndToken){
                                         Map<String,Object> map = new HashMap<>();
                                         map.put("id",match);
-                                        map.put("send_to_id", notCurrentUser);
+                                        map.put("send_to_id", i.getId());
                                         map.put("sender",FirebaseAuth.getInstance().getCurrentUser().getUid());
                                         map.put("title","Cancelled appointment");
                                         map.put("message","Requested appointment has been cancelled");
                                         map.put("timestamp", Timestamp.now());
                                         map.put("type","appointment");
-
 
                                         Map<String,Object> maps = new HashMap<>();
 
@@ -529,7 +574,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                                     @Override
                                                     public void onSuccess(Void unused) {
 
-                                                        FirebaseFirestore.getInstance().collection("Notifications").document(notCurrentUser)
+                                                        FirebaseFirestore.getInstance().collection("Notifications").document(i.getId())
                                                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                                     @Override
                                                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -537,25 +582,25 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                                                         if(documentSnapshot.exists()){
 
                                                                             FirebaseFirestore.getInstance().collection("Notifications")
-                                                                                    .document(notCurrentUser)
+                                                                                    .document(i.getId())
                                                                                     .update("latestNotification",map,"notification", FieldValue.arrayUnion(map)).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                         @Override
                                                                                         public void onSuccess(Void unused) {
 
                                                                                             pushNotification notification = new pushNotification(new notificationData("Requested appointment has been cancelled",
-                                                                                                    "Cancelled appointment",match,notCurrentUser,"appointment","buyer","cancelled"), userToken);
+                                                                                                    "Cancelled appointment",match,i.getId(),"appointment","buyer","cancelled"), i.getToken());
                                                                                             sendNotif(notification,"cancelled","buyer");
                                                                                         }
                                                                                     });
                                                                         }
                                                                         else{
                                                                             FirebaseFirestore.getInstance().collection("Notifications")
-                                                                                    .document(notCurrentUser).set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                    .document(i.getId()).set(maps).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                         @Override
                                                                                         public void onSuccess(Void unused) {
 
                                                                                             pushNotification notification = new pushNotification(new notificationData("Requested appointment has been cancelled",
-                                                                                                    "Cancelled appointment",match,notCurrentUser,"appointment","buyer","cancelled"), userToken);
+                                                                                                    "Cancelled appointment",match,i.getId(),"appointment","buyer","cancelled"), i.getToken());
                                                                                             sendNotif(notification,"cancelled","buyer");
 
                                                                                         }
@@ -567,7 +612,11 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                                     }
                                                 });
 
+                                    }
+
                                         Toast.makeText(acquired_service_accepted_message.this, "Successfully Cancelled", Toast.LENGTH_SHORT).show();
+
+
 
                                     }
                                 });
@@ -577,6 +626,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
     }
 
     private void getCurrent() {
+
         FirebaseFirestore.getInstance().collection("User")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -596,7 +646,11 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                 });
     }
 
-    private void sendMessage(String text,String matchID,String notCurrentUser) {
+    private void sendMessage(String text,String matchID,List<String> notCurrentUser) {
+        List<String> addAllParticipants = new ArrayList<>();
+        addAllParticipants.addAll(notCurrentUser);
+        addAllParticipants.add(user.getUid());
+
 
         FieldValue serverTimestamp = FieldValue.serverTimestamp();
         Map<String, Object> latestMessage = new HashMap<>();
@@ -605,30 +659,32 @@ public class acquired_service_accepted_message extends AppCompatActivity {
         latestMessage.put("timestamp", Timestamp.now());
 
         Map<String, Object> conversation = new HashMap<>();
-        conversation.put("participants", Arrays.asList(user.getUid(),notCurrentUser));
+        conversation.put("participants", addAllParticipants);
         conversation.put("latestMessage", latestMessage);
         conversation.put("messages", Arrays.asList(latestMessage));
         conversation.put("matchID",matchID);
         conversation.put("chatFor","forAppointments");
 
-        FirebaseFirestore.getInstance().collection("Chat").document(matchID)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            DocumentSnapshot s = task.getResult();
-                            if(s.exists()){
+        for(IDTokens i : IdAndToken){
 
-                                FirebaseFirestore.getInstance()
-                                        .collection("Chat")
-                                        .document(matchID)
-                                        .update("latestMessage", latestMessage, "messages", FieldValue.arrayUnion(latestMessage))
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
+            FirebaseFirestore.getInstance().collection("Chat").document(matchID)
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                DocumentSnapshot s = task.getResult();
+                                if(s.exists()){
 
-                                                        pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"messageAppointment","",""),userToken);
+                                    FirebaseFirestore.getInstance()
+                                            .collection("Chat")
+                                            .document(matchID)
+                                            .update("latestMessage", latestMessage, "messages", FieldValue.arrayUnion(latestMessage))
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+
+                                                        pushNotification notification = new pushNotification(new notificationData(text,name,matchID,i.getId(),"messageAppointment","",""),i.getToken());
                                                         sendNotif(notification,"","");
                                                         scrollView.post(new Runnable() {
                                                             @Override
@@ -637,26 +693,26 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                                             }
                                                         });
 
+                                                    }
                                                 }
-                                            }
-                                        });
-                            }
-                            else{
-                                FirebaseFirestore.getInstance()
-                                        .collection("Chat")
-                                        .document(matchID)
-                                        .set(conversation, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
-                                                    FirebaseFirestore.getInstance().collection("Chat")
-                                                            .document(matchID)
-                                                            .update("latestMessage.timestamp", serverTimestamp).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
-                                                                    if(task.isSuccessful()){
+                                            });
+                                }
+                                else{
+                                    FirebaseFirestore.getInstance()
+                                            .collection("Chat")
+                                            .document(matchID)
+                                            .set(conversation, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        FirebaseFirestore.getInstance().collection("Chat")
+                                                                .document(matchID)
+                                                                .update("latestMessage.timestamp", serverTimestamp).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if(task.isSuccessful()){
 
-                                                                            pushNotification notification = new pushNotification(new notificationData(text,name,matchID,notCurrentUser,"messageAppointment","","" ), userToken);
+                                                                            pushNotification notification = new pushNotification(new notificationData(text,name,matchID,i.getId(),"messageAppointment","",""),i.getToken());
                                                                             sendNotif(notification,"","");
                                                                             scrollView.post(new Runnable() {
                                                                                 @Override
@@ -665,17 +721,17 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                                                                 }
                                                                             });
                                                                         }
-                                                                }
-                                                            });
+                                                                    }
+                                                                });
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
+                                }
                             }
                         }
-                    }
-                });
-        replyEdit.getText().clear();
-
+                    });
+            replyEdit.getText().clear();
+        }
     }
 
     private void sendNotif(pushNotification notification,String from,String notificationFor) {
@@ -690,8 +746,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                 i.putExtra("SELECTED_TAB",from);
                                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(i);
-                                Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to completed tab", Toast.LENGTH_SHORT).show();
-                                finish();
+                                 finish();
                             }
                         }
                         else if (from.equals("cancelled")){
@@ -700,7 +755,6 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                                 i.putExtra("SELECTED_TAB", from);
                                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(i);
-                                Toast.makeText(acquired_service_accepted_message.this, "Appointment successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
                                 finish();
                             }
                         }
@@ -730,7 +784,7 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                         }
                     }
                     else{
-                        //message only
+
                     }
                 }
             }
@@ -798,47 +852,141 @@ public class acquired_service_accepted_message extends AppCompatActivity {
         finish();
     }
 
-    private void getReceiverInfo(String id){
-
-        FirebaseFirestore.getInstance().collection("User")
-                .document(id)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @RequiresApi(api = Build.VERSION_CODES.O)
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-
-                            DocumentSnapshot s = task.getResult();
-                            if(s.getString("fcmToken") !=null){
-                                userToken = s.getString("fcmToken");
-                            }
-
-                            Picasso.get().load(s.getString("image")).placeholder(R.drawable.noimage)
+    String names="";
+    private List<IDTokens> IdAndToken = new ArrayList<>();
+    private void getReceiverInfo(List<String> id){
+        List<Bitmap> bitmaps = new ArrayList<>();
+        String separator = " & ";
+        for(int i = 0; i< id.size();i++){
+            if(id.size() == 1){
+                int finalI = i;
+                FirebaseFirestore.getInstance().collection("User")
+                        .document(id.get(i))
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @RequiresApi(api = Build.VERSION_CODES.O)
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()){
+                                    DocumentSnapshot s = task.getResult();
+                                    if(s.getString("fcmToken") !=null){
+                                       String userToken = s.getString("fcmToken");
+                                        IdAndToken.add(new IDTokens(id.get(finalI),userToken));
+                                    }
+                                    Picasso.get().load(s.getString("image")).placeholder(R.drawable.noimage)
                                             .into(image);
 
-                            headerName.setText(s.getString("firstName"));
+                                    headerName.setText(s.getString("firstName"));
 
-                            if(s.get("online")!=null){
+                                    if(s.get("online")!=null){
 
-                                if(s.get("online").equals("true")) {
-                                    avail.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5CCD08")));
-                                    userStatus.setText("Active now");
-                                    available = true;
+                                        if(s.get("online").equals("true")) {
+                                            avail.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5CCD08")));
+                                            userStatus.setText("Active now");
+                                            available = true;
+                                        }
+                                        else {
+                                            String formattedTime = TimestampConverter.timestamp((Timestamp) s.get("online"));
+                                            avail.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFADB6C4")));
+                                            userStatus.setText("Active "+formattedTime);
+                                            available = false;
+                                        }
+
+                                    }else{
+
+                                    }
                                 }
-                                else {
-                                    String formattedTime = TimestampConverter.timestamp((Timestamp) s.get("online"));
-                                    avail.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFADB6C4")));
-                                    userStatus.setText("Active "+formattedTime);
-                                    available = false;
-                                }
-
-                            }else{
-
                             }
-                        }
-                    }
-                });
+                        });
+            }
+            else if (id.size() == 2){
+                int finalI = i;
+
+                FirebaseFirestore.getInstance().collection("User")
+                        .document(id.get(i))
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @RequiresApi(api = Build.VERSION_CODES.O)
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()){
+                                    DocumentSnapshot s = task.getResult();
+                                    if(s.getString("fcmToken") !=null){
+                                        String userToken = s.getString("fcmToken");
+                                        IdAndToken.add(new IDTokens(id.get(finalI),userToken));
+                                    }
+                                    else{
+                                        IdAndToken.add(new IDTokens(id.get(finalI),""));
+                                    }
+
+                                    String imageUrl = s.getString("image");
+                                    if (imageUrl != null) {
+                                        Picasso.get().load(imageUrl).into(new Target() {
+                                            @Override
+                                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                bitmaps.add(bitmap);
+                                                if (bitmaps.size() == 2) {
+                                                    // Merge the two bitmaps and set the merged bitmap to your ImageView
+                                                    Bitmap mergedBitmap = mergeBitmaps(bitmaps.get(0), bitmaps.get(1));
+                                                   image.setImageBitmap(mergedBitmap);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                                                e.printStackTrace();
+                                            }
+
+                                            @Override
+                                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                                            }
+                                        });
+                                    }
+                                    String name = s.getString("firstName");
+                                    if (names.isEmpty()) {
+                                        names += name;
+                                    } else {
+                                        names += separator + name;
+                                    }
+                                    headerName.setText(names);
+                                    if(s.get("online")!=null){
+
+                                        if(s.get("online").equals("true")) {
+                                            avail.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5CCD08")));
+                                            userStatus.setText("Active now");
+                                            available = true;
+                                        }
+                                        else {
+                                            String formattedTime = TimestampConverter.timestamp((Timestamp) s.get("online"));
+                                            avail.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFADB6C4")));
+                                            userStatus.setText("Active "+formattedTime);
+                                            available = false;
+                                        }
+
+                                    }else{
+
+                                    }
+                                }
+                            }
+                        });
+            }
+        }
+    }
+
+    private Bitmap mergeBitmaps(Bitmap firstBitmap, Bitmap secondBitmap) {
+        // Resize smaller bitmap to match dimensions of larger bitmap
+        if (firstBitmap.getWidth() < secondBitmap.getWidth() || firstBitmap.getHeight() < secondBitmap.getHeight()) {
+            firstBitmap = Bitmap.createScaledBitmap(firstBitmap, secondBitmap.getWidth(), secondBitmap.getHeight(), false);
+        } else if (secondBitmap.getWidth() < firstBitmap.getWidth() || secondBitmap.getHeight() < firstBitmap.getHeight()) {
+            secondBitmap = Bitmap.createScaledBitmap(secondBitmap, firstBitmap.getWidth(), firstBitmap.getHeight(), false);
+        }
+        // Create merged bitmap
+        Bitmap mergedBitmap = Bitmap.createBitmap(firstBitmap.getWidth() + secondBitmap.getWidth(), firstBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(mergedBitmap);
+        canvas.drawBitmap(firstBitmap, 0f, 0f, null);
+        canvas.drawBitmap(secondBitmap, firstBitmap.getWidth(), 0f, null);
+        return mergedBitmap;
     }
 
 }

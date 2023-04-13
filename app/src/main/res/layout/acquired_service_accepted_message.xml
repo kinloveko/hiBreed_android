@@ -69,11 +69,12 @@
             app:cardCornerRadius="300dp"
             tools:ignore="MissingConstraints">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:scaleType="fitXY"
                 android:contentDescription="Profile"
                 tools:ignore="HardcodedText" />
         </androidx.cardview.widget.CardView>
