@@ -1128,8 +1128,12 @@ public class pet_add_for_dating extends BaseActivity implements petImagesRecycle
             return;
         }
 
-        if(birthdayPet.equals("Birthday")){
-            Toast.makeText(this, "Please set the birthday of your pet", Toast.LENGTH_SHORT).show();
+        if(petSize.equals("Size")){
+            Toast.makeText(this, "Please choose size of your pet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(petKilo.equals("Kilogram")){
+            Toast.makeText(this, "Please set weight of your pet", Toast.LENGTH_SHORT).show();
             return;
         }
 

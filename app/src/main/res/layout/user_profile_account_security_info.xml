@@ -149,7 +149,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-
                 android:id="@+id/second_layout"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -159,7 +158,6 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/dropshadow_two"
                 android:elevation="3dp">
-
                 <ImageView
                     android:id="@+id/image1"
                     android:layout_width="35dp"
@@ -175,7 +173,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_toEndOf="@id/image1"
                     android:fontFamily="@font/poppinsemibold"
-                    android:text="When you're logged in"
+                    android:text="Account Management"
                     android:textColor="@color/material_blue_grey_90"
                     android:textSize="12sp"
                     tools:ignore="HardcodedText" />
@@ -190,7 +188,7 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/poppinsemibold"
                     android:maxLines="1"
-                    android:text="Login details"
+                    android:text="Delete account"
                     android:textAlignment="textEnd"
                     android:textSize="12sp"
                     tools:ignore="HardcodedText" />

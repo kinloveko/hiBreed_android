@@ -500,13 +500,6 @@ public class service_add_service extends BaseActivity implements petImagesRecycl
         String avail = availabilityTextView.getText().toString();
         List<String> avails = Arrays.asList(froms,tos);
         String name = petNameEdit.getText().toString();
-
-
-        if(uri.size() == 0){
-            Toast.makeText(this, "Please provide a picture of your successful service", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         if(roles.contains("Veterinarian") && roles.contains("Pet Shooter")){
 
             if(typeTextView.getText().toString().equals("Type")){
@@ -515,6 +508,13 @@ public class service_add_service extends BaseActivity implements petImagesRecycl
             }
 
         }
+
+        if(uri.size() == 0){
+            Toast.makeText(this, "Please provide a picture of your successful service", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
 
         if(serviceNameLayout.isShown()){
             if(name.isEmpty()){

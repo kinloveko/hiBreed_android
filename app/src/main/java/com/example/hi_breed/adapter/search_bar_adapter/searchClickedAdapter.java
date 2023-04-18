@@ -64,7 +64,6 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
         item result = searchResults.get(i);
-
         viewHolder.price.setText(result.getPrice());
         viewHolder.type.setText(result.getType());
 
@@ -91,7 +90,8 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot s = task.getResult();
                                     List<String> photos = (List<String>) s.get("photos");
-                                    Picasso.get().load(photos.get(0)).into(viewHolder.image);
+                                    if(photos!=null)
+                                    Picasso.get().load(photos.get(0)).placeholder(R.drawable.noimage).into(viewHolder.image);
                                 }
                             }
                         });
@@ -106,6 +106,7 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot s = task.getResult();
                                     List<String> list = (List<String>) s.get("photos");
+                                    if(list!=null)
                                     Glide.with(viewHolder.itemView.getContext())
                                             .load(list.get(0))
                                             .placeholder(R.drawable.noimage)
@@ -114,6 +115,7 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                             }
                         });
             } else {
+
                 FirebaseFirestore.getInstance().collection("Pet")
                         .document(result.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @SuppressLint("SetTextI18n")
@@ -131,6 +133,7 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                         });
             }
         }
+
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -151,6 +154,7 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                                     }
                                 });
                     }
+
                     else if(result.getCategory().equals("Medicine") || result.getCategory().equals("Dog Accessories")){
                         FirebaseFirestore.getInstance().collection("Pet")
                                 .document(result.getId())
@@ -181,8 +185,8 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                                             intent.putExtra("mode", (Serializable) sale);
                                             context.startActivity(intent);
                                         }
-                                    }
-                                });
+                              }
+                         });
                     }
                 }
             });

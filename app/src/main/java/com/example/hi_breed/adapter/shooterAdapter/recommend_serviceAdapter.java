@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.hi_breed.R;
-import com.example.hi_breed.classesFile.service_class;
+import com.example.hi_breed.classesFile.ServiceDisplay;
 import com.example.hi_breed.service.service_display_details;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,19 +28,18 @@ import java.util.List;
 
 public class recommend_serviceAdapter extends RecyclerView.Adapter<recommend_serviceAdapter.ViewHolder> {
         Context context;
-    private List<service_class> list;
-    private float percent;
+    private List<ServiceDisplay> list;
     private String matchID;
     public recommend_serviceAdapter(Context context,String matchID){
             this.context = context;
             this.matchID = matchID;
             this.list = new ArrayList<>();
     }
-    public void addServiceDisplay(service_class service_class,float percent){
+    public void addServiceDisplay(ServiceDisplay service_class ){
         list.add(service_class);
-        this.percent = percent;
         notifyDataSetChanged();
     }
+
     public void clearList(){
         this.list.clear();
         notifyDataSetChanged();
@@ -57,10 +56,10 @@ public class recommend_serviceAdapter extends RecyclerView.Adapter<recommend_ser
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        service_class productModel = list.get(position);
+        ServiceDisplay productModel = list.get(position);
 
-        holder.label.setText(productModel.getServiceType());
-        FirebaseFirestore.getInstance().collection("User").document(productModel.getShooter_id())
+        holder.label.setText(productModel.getService().getServiceType());
+        FirebaseFirestore.getInstance().collection("User").document(productModel.getService().getShooter_id())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -72,11 +71,11 @@ public class recommend_serviceAdapter extends RecyclerView.Adapter<recommend_ser
                     }
                 });
 
+        holder.servicePriceRecycler.setText(productModel.getService().getService_fee()+".0");
 
-        holder.servicePriceRecycler.setText(productModel.getService_fee()+".0");
-        holder.view_id.setProgress(percent,true);
+        holder.view_id.setProgress(productModel.getPercent(),true);
         Glide.with(holder.itemView.getContext())
-                .load(productModel.getPhotos().get(0))
+                .load(productModel.getService().getPhotos().get(0))
                 .placeholder(R.drawable.noimage)
                 .error(R.drawable.screen_alert_image_error_border)
                 .into(holder.imageRecycler);
@@ -85,7 +84,7 @@ public class recommend_serviceAdapter extends RecyclerView.Adapter<recommend_ser
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, service_display_details.class);
-                intent.putExtra("mode", (Serializable) productModel);
+                intent.putExtra("mode", (Serializable) productModel.getService());
                 intent.putExtra("from","messaging");
                 intent.putExtra("matchID",matchID);
                 context.startActivity(intent);

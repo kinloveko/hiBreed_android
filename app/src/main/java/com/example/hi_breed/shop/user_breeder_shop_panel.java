@@ -140,8 +140,6 @@ public class user_breeder_shop_panel extends BaseActivity {
             }
         });
 
-
-
             databaseReference = fireStore.collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
             databaseReference
                     .get()

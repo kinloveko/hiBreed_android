@@ -725,27 +725,29 @@ public class product_add_activity extends AppCompatActivity implements petImages
             Toast.makeText(this, "Product Description must have 20 characters and above", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if(brand.equals("Brand")){
+            Toast.makeText(this, "Please enter the brand for this product", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(stock.equals("Stocks")){
+            Toast.makeText(this, "Please enter the quantity for this product", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(product_price.equals("Price")){
+            Toast.makeText(this, "Please set the price for your pet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if(product_category.equals("Medicine")){
             if(product_treatment.isEmpty()){
                 Toast.makeText(this, "Product treatment should not be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
             if(product_expiration.equals("Expiration")){
-                Toast.makeText(this, "Please set the birthday of your pet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Expiration date should not be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
-        }
-        if(brand.equals("Brand")){
-            Toast.makeText(this, "Please enter the brand for this product", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if(stock.equals("Stocks")){
-            Toast.makeText(this, "Please enter the Stocks for this product", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if(product_price.equals("Price")){
-            Toast.makeText(this, "Please set the price for your pet", Toast.LENGTH_SHORT).show();
-            return;
         }
         if(uri.size() == 0){
             Toast.makeText(this, "Please provide a picture for your product", Toast.LENGTH_SHORT).show();

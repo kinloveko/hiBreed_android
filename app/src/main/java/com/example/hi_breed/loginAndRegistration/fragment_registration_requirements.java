@@ -236,7 +236,6 @@ public class fragment_registration_requirements extends Fragment implements bree
         Bundle bundle = this.getArguments();
         role = Objects.requireNonNull(bundle).getStringArrayList("key");
 
-
         //LinearLayout
         shooter_validation_linearLayout = view.findViewById(R.id.shooter_validation_linearLayout);
         breeder_validation_linearLayout = view.findViewById(R.id.breeder_validation_linearLayout);
@@ -898,7 +897,7 @@ public class fragment_registration_requirements extends Fragment implements bree
                 if(prcID.isEmpty()){
                     reg_prc_id_edit.setFocusable(true);
                     reg_prc_id_edit.setFocusableInTouchMode(true);
-                    Toast.makeText(getContext(), "PRC ID No. is empty it is required to fill in your ID No.", Toast.LENGTH_SHORT).show();
+                    reg_prc_id.setHelperText("PRC ID No. is required");
                     reg_prc_id_edit.requestFocus();
                     return;
                 }

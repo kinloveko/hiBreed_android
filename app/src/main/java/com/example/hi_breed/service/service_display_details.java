@@ -301,7 +301,7 @@ public class service_display_details extends BaseActivity {
                                 TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
                                 TextView ratingValue = findViewById(R.id.ratingValue);
                                 ratingValue.setText(String.format("%.1f /5 ", averageRating));
-                                float percent = Math.min(averageRating / 5 * 100, 100);
+                                float percent = Math.min(averageRating / 5 * 100,100);
                                 if(type.equals("Veterinarian Service")){
                                     numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
                                     }

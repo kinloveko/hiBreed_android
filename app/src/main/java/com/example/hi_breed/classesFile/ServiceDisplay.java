@@ -1,15 +1,27 @@
 package com.example.hi_breed.classesFile;
 
 public class ServiceDisplay {
-    private final service_class service;
-    private final float percent;
-    private final int numReviews;
+    private  service_class service;
+    private  float percent;
+    private  int numReviews;
 
     public ServiceDisplay(service_class service, float percent,int numReviews){
 
         this.service = service;
         this.percent = percent;
         this.numReviews = numReviews;
+    }
+
+    public void setNumReviews(int numReviews) {
+        this.numReviews = numReviews;
+    }
+
+    public void setPercent(float percent) {
+        this.percent = percent;
+    }
+
+    public void setService(service_class service) {
+        this.service = service;
     }
 
     public service_class getService() {
@@ -23,4 +35,5 @@ public class ServiceDisplay {
     public int getNumReviews() {
         return numReviews;
     }
+
 }
