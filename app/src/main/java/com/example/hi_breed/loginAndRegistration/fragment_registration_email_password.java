@@ -81,7 +81,7 @@ public class fragment_registration_email_password extends Fragment {
             ".{5,}" +                // at least 5 characters
             "$");
     final String passError = "Password must contains at least 1 special character[ex.@#$%!^&+],at least 5 characters and no white spaces ";
-
+    LinearLayout backLayoutService;
 
 
     @Override
@@ -120,6 +120,10 @@ public class fragment_registration_email_password extends Fragment {
     String prc;
     String memberID;
     String dateOfRegistration;
+    String age;
+    String user_valid_id;
+    String parent_valid_id;
+    String consent_image;
 
     String vet_image;
     Button submit_application;
@@ -141,7 +145,15 @@ public class fragment_registration_email_password extends Fragment {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+        backLayoutService = view.findViewById(R.id.backLayoutService);
+        backLayoutService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Simulate back button press
+                getActivity().onBackPressed();
 
+            }
+        });
         //Firebase authentication
         mAuth = FirebaseAuth.getInstance();
         fireStore = FirebaseFirestore.getInstance();
@@ -179,8 +191,13 @@ public class fragment_registration_email_password extends Fragment {
         prc = bundle.getString("prcNo");
         dateOfRegistration = bundle.getString("dateOfRegistration");
         memberID = bundle.getString("memberID");
+        age = bundle.getString("age");
+        if(role.size() == 1 && role.contains("Pet Owner")){
+            consent_image = bundle.getString("consent_image");
+            parent_valid_id = bundle.getString("parent_valid_id");
+            user_valid_id = bundle.getString("user_valid_id");
 
-
+        }else
         if(role.contains("Pet Breeder") || role.contains("Pet Shooter")|| role.contains("Veterinarian")){
 
             if(role.contains("Veterinarian")){
@@ -1346,7 +1363,7 @@ public class fragment_registration_email_password extends Fragment {
                                                 }
                                                 else{
                                                     //for owner
-                                                    UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"verified");
+                                                    UserClass breederClass= new UserClass(user.getUid(),first,middle,last,gender,birth,address,zip,image.toString(),imageCover.toString(), Timestamp.now(),"pending");
                                                     EmailPassClass security = new EmailPassClass(email,password,"");
                                                     DocumentReference documentBreeder = fireStore.collection("User").document(user.getUid());
 
@@ -1354,48 +1371,16 @@ public class fragment_registration_email_password extends Fragment {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
 
-
-
-                                                            if(role.contains("Pet Breeder") || role.contains("Pet Shooter")||role.contains("Veterinarian")) {
-
-                                                                if (role.contains("Pet Breeder")) {
-                                                                    uploadToStorageBreeder(user);
-                                                                    Map<String,Object> data = new HashMap<>();
-                                                                    data.put("kennel",kennel);
-                                                                    documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
-                                                                }
-                                                                if (role.contains("Pet Shooter")) {
-                                                                    if(uriShooter_converted.size() == 0){
-                                                                        Toast.makeText(getContext(), "shooter image is empty", Toast.LENGTH_SHORT).show();
-                                                                        return;
-                                                                    }
-                                                                    uploadToStorageShooter(user);
-                                                                    Map<String,Object> data = new HashMap<>();
-                                                                    data.put("last_transaction",lastTransaction);
-                                                                    documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
-                                                                }
-                                                                if(role.contains("Veterinarian")){
-                                                                    uploadToStorageVet(user);
-                                                                    Map<String,Object> data = new HashMap<>();
-                                                                    data.put("license_image",vet_image);
-                                                                    documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
-
-                                                                }
-                                                                Map<String,Object> data = new HashMap<>();
-                                                                data.put("experience",exp);
-                                                                documentBreeder.collection("validation").document("validation_doc").set(data,SetOptions.merge());
-
-                                                                //for creation of shop data
-
-                                                                ShopClass shopClass = new ShopClass(last + " Shop", "", gender, birth, image.toString(), imageCover.toString(), user.getUid(),true);
-                                                                DocumentReference documentShop = fireStore.collection("Shop").document(user.getUid());
-                                                                documentShop.set(shopClass).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                                    }
-                                                                });
-
+                                                            Map<String,Object> owner = new HashMap<>();
+                                                            int userAge = Integer.parseInt(age);
+                                                            if (userAge < 18 && userAge >= 12) {
+                                                                owner.put("parent_id_image",parent_valid_id);
+                                                                owner.put("consent_image",consent_image);
                                                             }
+                                                            owner.put("valid_id",user_valid_id);
+                                                            FirebaseFirestore.getInstance().collection("User")
+                                                                    .document(user.getUid())
+                                                                    .set(owner, SetOptions.merge());
 
                                                             save_role(user);
                                                             //for security emails and stuffs
@@ -1463,6 +1448,7 @@ public class fragment_registration_email_password extends Fragment {
                                                         public void onFailure(@NonNull Exception e) {
                                                             Log.d("NoApp",e.getMessage()+" 5");
                                                             Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                                                            startActivity(new Intent(getContext(), screen_WelcomeToHiBreed.class));
                                                         }
                                                     });
                                                 }

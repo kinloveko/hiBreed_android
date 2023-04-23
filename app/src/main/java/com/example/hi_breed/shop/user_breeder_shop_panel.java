@@ -92,6 +92,7 @@ public class user_breeder_shop_panel extends BaseActivity {
         IDReview = findViewById(R.id.IDReview);
         myProducts = findViewById(R.id.myProducts);
         activityStatus = findViewById(R.id.activityStatus);
+        notVerified.setSelected(true);
         owner = findViewById(R.id.owner);
         //Create Pet Profile
         createPetProfile = findViewById(R.id.myPetsCardView8);
@@ -152,14 +153,28 @@ public class user_breeder_shop_panel extends BaseActivity {
                                     if (arrayList != null) {
                                         role.addAll(arrayList);
                                         if(task.getResult().getString("status").equals("pending")){
+
                                             notVerified.setVisibility(View.VISIBLE);
-                                            userNotVerified = true;
-                                            notVerified.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    startActivity(new Intent(user_breeder_shop_panel.this, not_verified_activity.class));
-                                                }
-                                            });
+                                            if(!(role.contains("Pet Shooter") && role.contains("Pet Breeder") && role.contains("Veterinarian")  ) ){
+                                                notVerified.setText("We are still reviewing all of your submitted documentation; you have not yet been verified.");
+                                                createPetProfile.setEnabled(false);
+                                                sellPetCardView8.setEnabled(false);
+                                                sellProductView8.setEnabled(false);
+                                                myPets.setEnabled(false);
+                                                myProducts.setEnabled(false);
+                                                serviceCardView8.setEnabled(false);
+                                            }
+                                            else {
+
+                                                userNotVerified = true;
+                                                notVerified.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        startActivity(new Intent(user_breeder_shop_panel.this, not_verified_activity.class));
+                                                    }
+                                                });
+                                            }
+
                                         }
                                         if(role.contains("Pet Breeder") || role.contains("Pet Shooter") || role.contains("Veterinarian")){
                                             viewShop.setVisibility(View.VISIBLE);

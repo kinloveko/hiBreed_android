@@ -497,6 +497,7 @@ public class user_profile_account_security_info extends BaseActivity {
 
     private void shopDelete() {
         //shop
+
         FirebaseFirestore.getInstance().collection("Shop")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -529,11 +530,23 @@ public class user_profile_account_security_info extends BaseActivity {
                                                         .document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void unused) {
+                                                                FirebaseFirestore.getInstance().collection("User")
+                                                                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                        .collection("Pet")
+                                                                        .document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                FirebaseFirestore.getInstance().collection("Shop")
+                                                                                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                                        .collection("Pet").document(id).delete();
+                                                                            }
+                                                                        });
 
                                                             }
                                                         });
                                             }
                                         });
+
                             }
                         }
                     }
@@ -553,7 +566,15 @@ public class user_profile_account_security_info extends BaseActivity {
                                     String pet_id = s.getString("id");
                                     FirebaseFirestore.getInstance().collection("Pet")
                                             .document(pet_id)
-                                            .delete();
+                                            .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    FirebaseFirestore.getInstance().collection("User")
+                                                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .collection("Pet")
+                                                            .document(pet_id).delete();
+                                                }
+                                            });
                             }
                         }
                     }
@@ -587,6 +608,16 @@ public class user_profile_account_security_info extends BaseActivity {
                                                                         .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void unused) {
+                                                                                FirebaseFirestore.getInstance().collection("User")
+                                                                                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                                        .collection("Products").document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                                FirebaseFirestore.getInstance().collection("Shop")
+                                                                                                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                                                        .collection("Products").document(id).delete();
+                                                                                            }
+                                                                                        });
 
                                                                             }
                                                                         });
@@ -617,6 +648,15 @@ public class user_profile_account_security_info extends BaseActivity {
                                                 FirebaseFirestore.getInstance().collection("Search").document(service_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void unused) {
+                                                        FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                .collection("Services").document(service_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        FirebaseFirestore.getInstance().collection("Shop")
+                                                                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                                .collection("Services").document(service_id).delete();
+                                                                    }
+                                                                });
 
                                                     }
                                                 });

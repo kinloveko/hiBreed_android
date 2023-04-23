@@ -77,7 +77,6 @@ public class user_home_fragment extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
-
     BottomNavigationView BreederBottomNavigation;
 
     @Override
@@ -90,7 +89,6 @@ public class user_home_fragment extends Fragment {
         BreederBottomNavigation.getMenu().getItem(0).setEnabled(false);
         return view;
     }
-
     ImageSlider imageSlider;
     TextView logoName;
     private FirebaseUser firebaseUser;
@@ -109,7 +107,6 @@ public class user_home_fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         youMayLike_recycler = view.findViewById(R.id.youMayLike_recycler);
         youMayLike_recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         adapters = new may_you_like_adapter(getContext());
@@ -139,7 +136,7 @@ public class user_home_fragment extends Fragment {
         });
         //fireStore
         fireStore = FirebaseFirestore.getInstance();
-
+        notVerified.setSelected(true);
         //image Slider
         imageSlider = view.findViewById(R.id.imageSlider);
         ArrayList<SlideModel> slideModels = new ArrayList<>();
@@ -156,12 +153,9 @@ public class user_home_fragment extends Fragment {
         adapter = new petDisplayForSaleAdapter(getContext());
         for_you_recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         for_you_recycler.setAdapter(adapter);
-
         getPetForYou();
-
         //imageView
         imageView = view.findViewById(R.id.profileImage);
-
         //user
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String userID = "";
@@ -173,18 +167,29 @@ public class user_home_fragment extends Fragment {
             databaseReference
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @SuppressLint("SetTextI18n")
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
                                 if (task.isSuccessful()) {
+                                    List<String> ids = (List<String>) task.getResult().get("role");
+
                                     if (task.getResult().getString("status").equals("pending")) {
                                         notVerified.setVisibility(View.VISIBLE);
-                                        notVerified.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                startActivity(new Intent(getContext(), not_verified_activity.class));
-                                            }
-                                        });
+                                        if(!(role.contains("Pet Shooter") && role.contains("Pet Breeder") && role.contains("Veterinarian")  ) ){
+                                            notVerified.setText("We are still reviewing all of your submitted documentation; you have not yet been verified.");
+                                            myServicesCardView9.setEnabled(false);
+                                        }
+                                        else{
+                                            notVerified.setOnClickListener(new View.OnClickListener() {
+                                                @SuppressLint("SetTextI18n")
+                                                @Override
+                                                public void onClick(View v) {
+                                                        startActivity(new Intent(getContext(), not_verified_activity.class));
+                                                }
+                                            });
+                                        }
+
                                     }
 
                                     ArrayList arrayList = (ArrayList) task.getResult().get("role");
@@ -215,8 +220,6 @@ public class user_home_fragment extends Fragment {
                         }
                     });
         }
-
-
         findDateCardView9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

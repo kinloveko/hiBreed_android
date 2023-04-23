@@ -194,6 +194,7 @@ public class pet_for_sale_details extends BaseActivity {
             breeder = pet.getPet_breeder();
 
             getReviews(pet.getPet_breeder());
+
             if(breeder.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
 
                 details_button_buyNow.setText("Edit your pet");
@@ -214,11 +215,33 @@ public class pet_for_sale_details extends BaseActivity {
                         addToCart(pet);
                     }
                 });
+
+                FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()){
+                                    DocumentSnapshot value = task.getResult();
+                                    if(value.exists()){
+                                        if(value.getString("status").equals("pending")){
+                                            details_button_buyNow.setEnabled(false);
+                                            details_button_addToCard.setEnabled(false);
+                                            heart_like.setEnabled(false);
+                                        }
+                                        else if(value.getString("status").equals("verified")){
+                                            details_button_addToCard.setEnabled(true);
+                                            details_button_buyNow.setEnabled(true);
+                                            heart_like.setEnabled(true);
+                                        }
+                                    }
+
+                                }
+                            }
+                        });
+
                 details_button_buyNow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-
                         FirebaseFirestore.getInstance().collection("User")
                                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .collection("security")
@@ -241,6 +264,7 @@ public class pet_for_sale_details extends BaseActivity {
                                         }
                                     }
                                 });
+
                     }
                 });
             }

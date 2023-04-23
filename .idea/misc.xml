@@ -230,6 +230,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/a_pet_panel_owner.xml" value="0.136" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/acquired_service_accepted_message.xml" value="0.136" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/acquired_service_details.xml" value="0.2" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/acquired_services_details.xml" value="0.15789473684210525" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_acquired_order_accepted_message.xml" value="0.1" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_acquired_service_details.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/activity_add_to_cart.xml" value="0.264" />
@@ -423,8 +424,8 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/product_my_product_edit.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/product_product_layout_for_edit.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/recommend_shooter.xml" value="0.264" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/registration__details.xml" value="0.264" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/registration__requirements.xml" value="0.136" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/registration__details.xml" value="0.2" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/registration__requirements.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/registration_activity.xml" value="0.1791363830696879" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/registration_email_password.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/registration_for_breeder.xml" value="0.1" />
@@ -440,7 +441,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/screen_popupdialog.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/screen_registration_for_breeder.xml" value="0.20863616930312098" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/screen_registration_for_owner.xml" value="0.2" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/screen_welcome_to_hi_breed.xml" value="0.264" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/screen_welcome_to_hi_breed.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/search_breed.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/search_clicked.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/search_display.xml" value="0.4" />
@@ -466,6 +467,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_product_fragment.xml" value="0.13125" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_service_fragment.xml" value="0.13157894736842105" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/shop_shooter_fragment.xml" value="0.13125" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/testing.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/user_breeder_shop_panel.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/user_owner_panel_fragment.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/user_profile_account_contact_info.xml" value="0.176" />

@@ -987,7 +987,7 @@ public class user_profile_account_edit extends BaseActivity {
                                                                                                      count++;
                                                                                                      if(count==list.size()){
                                                                                                          if(roles.contains("Veterinarian")){
-                                                                                                             gotoAnotherUpdate(editText.getText().toString());
+
                                                                                                              before_address = editText.getText().toString();
                                                                                                          }
                                                                                                      }
@@ -1226,11 +1226,7 @@ public class user_profile_account_edit extends BaseActivity {
          
     }
 
-    private void gotoAnotherUpdate(String address) {
 
-
-
-    }
     private static final int REQUEST_CODE_PROFILE_IMAGE = 99;
     private static final int REQUEST_CODE_BACKGROUND_IMAGE = 100;
 

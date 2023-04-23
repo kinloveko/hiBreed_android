@@ -6,7 +6,32 @@
     android:background="@color/float_transparent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".loginAndRegistration.fragment_registration_requirements">
+    <LinearLayout
+        android:translationZ="3dp"
+        android:id="@+id/backLayoutService"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
 
+        <ImageView
+            android:id="@+id/shop_edit_backArrowImage"
+            android:layout_width="20dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/icon_arrowback"
+            android:tint="@color/black"
+            tools:ignore="ContentDescription,NestedWeights,UseAppTint"
+            tools:layout_editor_absoluteX="339dp"
+            tools:layout_editor_absoluteY="122dp" />
+
+    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         tools:context=".loginAndRegistration.fragment_registration_details"
@@ -17,12 +42,12 @@
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:fontFamily="@font/poppinsbold"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppinsemibold"
             android:text="Requirements"
             android:textAlignment="center"
             android:textColor="@color/material_blue_grey_90"
-            android:textSize="35sp"
+            android:textSize="25sp"
             tools:ignore="HardcodedText,MissingConstraints,SpUsage" />
 
 
@@ -32,13 +57,12 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textView8"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
             android:fontFamily="@font/poppinsmedium"
             android:text="Note: Fill in all the blank with the correct data being asked"
             android:textAlignment="center"
-            android:textColor="@color/material_blue_grey_90"
             android:textSize="15sp"
             tools:ignore="HardcodedText" />
 
@@ -355,6 +379,316 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
+                <LinearLayout
+                    android:id="@+id/userValidation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/poppinsemibold"
+                        android:text="Identification"
+                        android:textColor="@color/material_blue_grey_90"
+                        android:textSize="17sp"
+                        tools:ignore="HardcodedText" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:text="Valid ID"
+                        android:textColor="@color/material_blue_grey_90"
+                        android:textSize="16sp"
+                        tools:ignore="HardcodedText" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/userDropImage"
+                            android:layout_width="200dp"
+                            android:layout_height="150dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="11dp"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginBottom="10dp">
+
+                            <ImageView
+                                android:id="@+id/imageview_user_style"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/shape_dotted_two" />
+
+                            <ImageView
+                                android:id="@+id/user_dropImageViewVet"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="12dp"
+                                android:src="@drawable/icon_photo_two" />
+
+                            <ImageView
+                                android:id="@+id/user_image_upload"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/add_photo_user"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="5dp"
+                                android:gravity="center"
+                                android:text="+ Upload Photo"
+                                android:textColor="@color/material_blue_grey_90"
+                                android:textSize="11sp"
+                                tools:ignore="HardcodedText" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <ImageView
+                            android:id="@+id/user_example"
+                            android:layout_width="130dp"
+                            android:layout_height="150dp"
+                            android:layout_marginTop="20dp"
+                            android:src="@drawable/valid_id_photo"
+                            android:translationZ="3dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:text="Your ID information is required to verify your identity using the photo that you will be submitting to prevent others from impersonating your identity and to validate your real identity."
+                        android:textSize="13sp"
+                        tools:ignore="HardcodedText" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/parent_consent_layout"
+                    android:layout_marginBottom="30dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/poppinsemibold"
+                        android:text="Parent Consent"
+                        android:textColor="@color/material_blue_grey_90"
+                        android:textSize="17sp"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:text="Parent or Legal guardian valid id"
+                        android:textColor="@color/material_blue_grey_90"
+                        android:textSize="16sp"
+                        tools:ignore="HardcodedText" />
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/guardian"
+                            android:layout_width="200dp"
+                            android:layout_height="150dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="11dp"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginBottom="10dp">
+
+                            <ImageView
+                                android:id="@+id/guardian_img"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/shape_dotted_two" />
+
+                            <ImageView
+                                android:id="@+id/guardian_image_view"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="12dp"
+                                android:src="@drawable/icon_photo_two" />
+
+                            <ImageView
+                                android:id="@+id/guardian_valid_id"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/guardian_add_photo"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="5dp"
+                                android:gravity="center"
+                                android:text="+Upload Photo"
+                                android:textColor="@color/material_blue_grey_90"
+                                android:textSize="11sp"
+                                tools:ignore="HardcodedText" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <ImageView
+                            android:id="@+id/valid_id_example"
+                            android:layout_width="130dp"
+                            android:layout_height="150dp"
+                            android:layout_marginTop="20dp"
+                            android:src="@drawable/valid_id_photo"
+                            android:translationZ="3dp" />
+
+                    </LinearLayout>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:text="Parent Consent(Save it as photo as JPEG/PNG). You can refer from the example given."
+                        android:textSize="14sp"
+                        tools:ignore="HardcodedText" />
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/guardian_consent"
+                            android:layout_width="200dp"
+                            android:layout_height="150dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="11dp"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginBottom="10dp">
+
+                            <ImageView
+                                android:id="@+id/guardian_img_consent"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/shape_dotted_two" />
+
+                            <ImageView
+                                android:id="@+id/guardian_image_view_consent"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="12dp"
+                                android:src="@drawable/icon_photo_two" />
+
+                            <ImageView
+                                android:id="@+id/guardian_consent_submitted"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/guardian_add_photo_consent"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="5dp"
+                                android:gravity="center"
+                                android:text="+ Upload Consent as image"
+                                android:textColor="@color/material_blue_grey_90"
+                                android:textSize="11sp"
+                                tools:ignore="HardcodedText" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <ImageView
+                            android:id="@+id/valid_id_example_consent"
+                            android:layout_width="130dp"
+                            android:layout_height="150dp"
+                            android:layout_marginTop="20dp"
+                            android:background="@color/semiGrey"
+                            android:paddingTop="10dp"
+                            android:layout_marginBottom="20dp"
+                            android:paddingBottom="10dp"
+                            android:src="@drawable/example_consent"
+                            android:translationZ="3dp" />
+
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/poppinsregular"
+                        android:text="Click download here text below and fill in all the blank with the correct data."
+                        android:textSize="12sp"
+                        tools:ignore="HardcodedText" />
+
+                    <Button
+                        android:paddingStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:paddingEnd="10dp"
+                        android:layout_marginTop="-10dp"
+                        android:textColor="@color/primaryButton"
+                        android:background="@color/float_transparent"
+                        android:id="@+id/download_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Download Parent Consent Form HERE"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:visibility="gone"
@@ -402,7 +736,7 @@
                             android:layout_marginTop="-10dp"
                             android:background="@drawable/transparent"
                             android:gravity="center"
-                            android:text="Register here"
+                            android:text="Click here"
                             android:textAllCaps="false"
                             android:textColor="@color/primaryButton"
                             android:textSize="13sp"
@@ -459,7 +793,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/poppinsmedium"
-                        android:text="Certificate of Legitimacy Kennel (PCCI)"
+                        android:text="Certificate for Kennel Name and ID (PCCI)"
                         android:textAlignment="center"
                         android:textColor="@color/material_blue_grey_90"
                         android:textSize="16sp"
@@ -814,7 +1148,7 @@
 
 
                 <LinearLayout
-
+                    android:visibility="gone"
                     android:id="@+id/memberLayouts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -870,7 +1204,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/poppinsmedium"
-                        android:text="Organization/Club ID"
+                        android:text="Membership no."
                         android:textColor="@color/material_blue_grey_80"
                         android:textSize="15sp"
                         tools:ignore="Experience,HardcodedText" />
@@ -882,8 +1216,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="5dp"
-                        app:counterEnabled="true"
-                        app:counterMaxLength="5"
                         app:endIconMode="clear_text"
                         app:helperText="*Required"
                         app:helperTextTextColor="@color/brownish"
@@ -899,9 +1231,8 @@
                             android:layout_marginTop="10dp"
                             android:background="@drawable/dropshadow_eight"
                             android:fontFamily="@font/poppinsmedium"
-                            android:hint="Member ID . . ."
+                            android:hint="Membership no . . ."
                             android:inputType="number"
-                            android:maxLength="5"
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textSize="16sp" />

@@ -212,6 +212,28 @@ public class service_display_details extends BaseActivity {
             Toast.makeText(this, "no data has been fetch", Toast.LENGTH_SHORT).show();
             this.finish();
         }
+
+
+        FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot value = task.getResult();
+                            if(value.exists()){
+                                if(value.getString("status").equals("pending")){
+                                    details_button_hireNow.setEnabled(false);
+                                    heart_like.setEnabled(false);
+                                }
+                                else if(value.getString("status").equals("verified")){
+                                    details_button_hireNow.setEnabled(true);
+                                    heart_like.setEnabled(true);
+                                }
+                            }
+
+                        }
+                    }
+                });
         heart_like.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseCompatLoadingForDrawables")
             @Override

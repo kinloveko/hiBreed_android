@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,7 +44,11 @@ public class fragment_registration_details extends Fragment {
     Button nextButton;
     int count = 0;
 
-
+    TextView  veterinarianDescription,
+              shooterDescription,
+              breederDescription,
+              petOwnerDescription;
+    LinearLayout backLayoutService;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -57,7 +63,18 @@ public class fragment_registration_details extends Fragment {
         breeder = view.findViewById(R.id.breederID_checkBox);
         shooter = view.findViewById(R.id.shooterID_checkBox);
         vet = view.findViewById(R.id.vetID_checkBox);
-
+        veterinarianDescription= view.findViewById(R.id.veterinarianDescription);
+        shooterDescription= view.findViewById(R.id.shooterDescription);
+        breederDescription= view.findViewById(R.id.breederDescription);
+        petOwnerDescription= view.findViewById(R.id.petOwnerDescription);
+        backLayoutService = view.findViewById(R.id.backLayoutService);
+        backLayoutService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Simulate back button press
+                getActivity().onBackPressed();
+            }
+        });
     }
 
 
@@ -86,6 +103,7 @@ public class fragment_registration_details extends Fragment {
 
                     roleHolder.add(owner.getText().toString());
                     owner.setChipStartPadding(20);
+                    petOwnerDescription.setVisibility(View.VISIBLE);
                 }
                 else{
 
@@ -93,13 +111,13 @@ public class fragment_registration_details extends Fragment {
                         count--;
                         breeder.setChecked(false);
                         roleHolder.remove(breeder.getText().toString());
-
+                        breederDescription.setVisibility(View.GONE);
                     }
 
                     count--;
                     roleHolder.remove(owner.getText().toString());
                     owner.setChipStartPadding(0);
-
+                    petOwnerDescription.setVisibility(View.GONE);
                 }
             }
         });
@@ -114,6 +132,8 @@ public class fragment_registration_details extends Fragment {
                         count++;
                         roleHolder.add(breeder.getText().toString());
                         breeder.setChipStartPadding(20);
+                        breederDescription.setVisibility(View.VISIBLE);
+                        petOwnerDescription.setVisibility(View.VISIBLE);
                     }
                     else{
                         count+=2;
@@ -123,6 +143,8 @@ public class fragment_registration_details extends Fragment {
 
                         roleHolder.add(breeder.getText().toString());
                         breeder.setChipStartPadding(20);
+                        petOwnerDescription.setVisibility(View.VISIBLE);
+                        breederDescription.setVisibility(View.VISIBLE);
                     }
 
 
@@ -131,6 +153,7 @@ public class fragment_registration_details extends Fragment {
                     count--;
                     roleHolder.remove(breeder.getText().toString());
                     breeder.setChipStartPadding(0);
+                    breederDescription.setVisibility(View.GONE);
                 }
             }
         });
@@ -144,12 +167,13 @@ public class fragment_registration_details extends Fragment {
                        count++;
                        roleHolder.add(shooter.getText().toString());
                        shooter.setChipStartPadding(20);
-
+                       shooterDescription.setVisibility(View.VISIBLE);
                 }
                 else{
                     count--;
                     roleHolder.remove(shooter.getText().toString());
                     shooter.setChipStartPadding(0);
+                    shooterDescription.setVisibility(View.GONE);
                 }
             }
         });
@@ -161,11 +185,13 @@ public class fragment_registration_details extends Fragment {
                     count +=2;
                     roleHolder.add(vet.getText().toString());
                     vet.setChipStartPadding(15);
+                    veterinarianDescription.setVisibility(View.VISIBLE);
                 }
                 else{
                     count--;
                     roleHolder.remove(vet.getText().toString());
                     vet.setChipStartPadding(0);
+                    veterinarianDescription.setVisibility(View.GONE);
                 }
             }
         });

@@ -117,10 +117,10 @@
                 android:background="@drawable/stlye_border_relative_four"
                 android:fontFamily="sans-serif-condensed"
                 android:padding="10dp"
-                android:text="&quot;Finding a breeder and a wanted pet has never been so easy! With Hi-Breed, you can easily contact and hire a professional pet breeder with the services they offer and book appointments.&quot;"
+                android:text="&quot;An application for Pet Owners, Breeders, Shooters and Veterinarian. Connecting pet lovers and professionals for better animal care&quot;"
                 android:textAlignment="center"
                 android:textColor="#354259"
-                android:textSize="20dp"
+                android:textSize="21dp"
                 android:translationZ="3dp"
                 tools:ignore="HardcodedText,RtlHardcoded,SpUsage" />
 

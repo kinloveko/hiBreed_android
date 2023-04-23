@@ -8,6 +8,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -60,6 +62,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -85,10 +88,11 @@ public class fragment_registration_requirements extends Fragment implements bree
         return inflater.inflate(R.layout.registration__requirements, container, false);
     }
 
-
-    private static final int Read_Permission = 101;
+    private static final int REQUEST_PICK_IMAGE = 102;
+    private static final int REQUEST_PICK_USER_VALID_ID = 101;
+    private static final int REQUEST_PICK_PARENT_VALID_ID = 99;
+    private static final int REQUEST_PICK_CONSENT = 98;
     private static final int PICK_IMAGE = 1;
-    private static final int Read_PermissionShooter = 102;
     private static final int PICK_IMAGE_Shooter = 2;
     private int i = -1;
     private int countOfImages;
@@ -116,12 +120,44 @@ public class fragment_registration_requirements extends Fragment implements bree
     TextInputLayout reg_memberID,reg_prc_id,reg_first,reg_last,reg_middle,reg_address,reg_zip,reg_kennelName;
     TextInputEditText reg_memberID_edit,reg_prc_id_edit,reg_firstEdit,reg_lastEdit,reg_middleEdit,reg_addressEdit,reg_zipEdit,reg_experienceEdit,reg_kennelNameEdit;
     TextView reg_date_registered_edit,prc_required_error,add_photo_vet,dropImageTextVIew,reg_birthEdit,reg_genderEdit,reg_transactionEdit,textViewExp;
-
+    LinearLayout backLayoutService;
     LinearLayout memberLayouts,shooter_validation_linearLayout,breeder_validation_linearLayout,vet_validation_linear_layout;
     TextInputLayout reg_experience;
     ArrayList<String> role;
     ArrayList<String> saveRole;
     RelativeLayout validationLayout;
+
+
+    LinearLayout userValidation;
+
+    CardView  userDropImage;
+
+    ImageView imageview_user_style,
+            user_dropImageViewVet,
+            user_image_upload;
+
+    TextView add_photo_user;
+
+    LinearLayout parent_consent_layout;
+
+    CardView guardian;
+
+    ImageView guardian_img,
+            guardian_image_view,
+            guardian_valid_id;
+
+    TextView guardian_add_photo;
+
+    CardView guardian_consent;
+
+    ImageView guardian_img_consent,
+            guardian_image_view_consent,
+            guardian_consent_submitted;
+
+    TextView guardian_add_photo_consent;
+    Button downloadButton;
+    Uri user_valid_URI,parent_valid_URI,consent_URI;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -143,7 +179,15 @@ public class fragment_registration_requirements extends Fragment implements bree
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),4));
         recyclerView.setAdapter(adapter);
 
+        backLayoutService = view.findViewById(R.id.backLayoutService);
+        backLayoutService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Simulate back button press
+                getActivity().onBackPressed();
 
+            }
+        });
         validationLayout = view.findViewById(R.id.validationLayout);
         clickHere = view.findViewById(R.id.clickHere);
         clickHere.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +207,36 @@ public class fragment_registration_requirements extends Fragment implements bree
         reg_date_registered_edit= view.findViewById(R.id.reg_date_registered_edit);
 
 // variable initialized
-        //TextView
+
+
+        //Parent Consent
+        userValidation= view.findViewById(R.id.userValidation);
+        parent_consent_layout= view.findViewById(R.id.parent_consent_layout);
+
+        //cardView onclick
+        userDropImage= view.findViewById(R.id.userDropImage);
+        guardian= view.findViewById(R.id.guardian);
+        guardian_consent= view.findViewById(R.id.guardian_consent);
+
+
+        //ImageView upload image that needs to be visible when upload something
+        user_image_upload= view.findViewById(R.id.user_image_upload);
+        guardian_valid_id= view.findViewById(R.id.guardian_valid_id);
+        guardian_consent_submitted= view.findViewById(R.id.guardian_consent_submitted);
+
+        //Image and textView the needs to set the visibility to GONE
+        //UserValidation
+        imageview_user_style = view.findViewById(R.id.imageview_user_style);
+        user_dropImageViewVet = view.findViewById(R.id.user_dropImageViewVet);
+        add_photo_user= view.findViewById(R.id.add_photo_user);
+        //Parent Validation
+        guardian_img= view.findViewById(R.id.guardian_img);
+        guardian_image_view= view.findViewById(R.id.guardian_image_view);
+        guardian_add_photo= view.findViewById(R.id.guardian_add_photo);
+        //Consent Validation
+        guardian_img_consent= view.findViewById(R.id.guardian_img_consent);
+        guardian_image_view_consent= view.findViewById(R.id.guardian_image_view_consent);
+        guardian_add_photo_consent= view.findViewById(R.id.guardian_add_photo_consent);
 
         prc_required_error = view.findViewById(R.id.prc_required_error);
         add_photo_vet = view.findViewById(R.id.add_photo_vet);
@@ -186,6 +259,52 @@ public class fragment_registration_requirements extends Fragment implements bree
         reg_birth = view.findViewById(R.id.reg_birth);
         reg_gender = view.findViewById(R.id.reg_gender);
         reg_transaction = view.findViewById(R.id.reg_transaction);
+        downloadButton = view.findViewById(R.id.download_button);
+
+
+
+        //PDF download
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse("https://drive.google.com/uc?export=download&id=1u-j93Id1Z53urZcIX20YZR32NHqq_00Y"));
+                request.setTitle("Parent Consent");
+                request.setDescription("Downloading parent consent form");
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "parent_consent.pdf");
+                Toast.makeText(getContext(), "Downloading parent consent form . . .", Toast.LENGTH_SHORT).show();
+                DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                downloadManager.enqueue(request);
+            }
+        });
+
+        ImageView valid_id_example_consent = view.findViewById(R.id.valid_id_example_consent);
+        valid_id_example_consent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog dialog = new Dialog(getContext(),android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+
+                dialog.setContentView(R.layout.custom_dialog_zoom);
+
+                ImageView imageView = dialog.findViewById(R.id.image_view_dialog);
+                Button buttonClose = dialog.findViewById(R.id.button_close_dialog);
+
+                Picasso.get()
+                        .load(R.drawable.example_consent)
+                        .placeholder(R.drawable.noimage)
+                        .error(R.drawable.screen_alert_image_error_border)
+                        .into(imageView);
+
+                buttonClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();
+            }
+        });
 
         //button
         submit = view.findViewById(R.id.submitButton);
@@ -241,35 +360,42 @@ public class fragment_registration_requirements extends Fragment implements bree
         breeder_validation_linearLayout = view.findViewById(R.id.breeder_validation_linearLayout);
         vet_validation_linear_layout = view.findViewById(R.id.vet_validation_linear_layout);
 
-
-
-        if(role.contains("Pet Owner")){
+        if (role.size() == 1 && role.contains("Pet Owner")) {
+            // Only show this
+            userValidation.setVisibility(View.VISIBLE);
             saveRole.add("Pet Owner");
-        }
-        if(role.contains("Pet Breeder") || role.contains("Pet Shooter")|| role.contains("Veterinarian")){
-            memberLayouts.setVisibility(View.VISIBLE);
+        } else {
+            userValidation.setVisibility(View.GONE);
 
-            if(role.contains("Pet Breeder")){
-                saveRole.add("Pet Breeder");
-                breeder_validation_linearLayout.setVisibility(View.VISIBLE);
+            if(role.contains("Pet Owner")){
+                saveRole.add("Pet Owner");
             }
-            if(role.contains("Pet Shooter")){
-                saveRole.add("Pet Shooter");
-                shooter_validation_linearLayout.setVisibility(View.VISIBLE);
+            if(role.contains("Pet Breeder") || role.contains("Pet Shooter")|| role.contains("Veterinarian")){
+                memberLayouts.setVisibility(View.VISIBLE);
+
+                if(role.contains("Pet Breeder")){
+                    saveRole.add("Pet Breeder");
+                    breeder_validation_linearLayout.setVisibility(View.VISIBLE);
+                }
+                if(role.contains("Pet Shooter")){
+                    saveRole.add("Pet Shooter");
+                    shooter_validation_linearLayout.setVisibility(View.VISIBLE);
+                }
+
+                if(role.contains("Veterinarian")){
+                    saveRole.add("Veterinarian");
+                    vet_validation_linear_layout.setVisibility(View.VISIBLE);
+                }
+
             }
-
-            if(role.contains("Veterinarian")){
-                saveRole.add("Veterinarian");
-                vet_validation_linear_layout.setVisibility(View.VISIBLE);
+            else{
+                validationLayout.setVisibility(View.GONE);
+                memberLayouts.setVisibility(View.GONE);
             }
-
-        }
-        else{
-            validationLayout.setVisibility(View.GONE);
-            memberLayouts.setVisibility(View.GONE);
         }
 
-       activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
@@ -413,13 +539,65 @@ public class fragment_registration_requirements extends Fragment implements bree
                 openDateRegistered();
             }
         });
-
         reg_transaction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openTransactionDialog();
             }
         });
+
+        userDropImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( checkPermission()){
+                    imagePermissionUserValid();
+                }
+                else{
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Permission is not granted, request it
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                30);
+                    }
+                }
+            }
+          });
+        guardian.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                    public void onClick(View v) {
+                     if( checkPermission()){
+                         imagePermissionParentValid();
+                     }
+                     else{
+                         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                                 != PackageManager.PERMISSION_GRANTED) {
+                             // Permission is not granted, request it
+                             ActivityCompat.requestPermissions(getActivity(),
+                                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                     30);
+                         }
+                     }
+                    }
+                });
+        guardian_consent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( checkPermission()){
+                    imagePermissionConsent();
+                }
+                else{
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Permission is not granted, request it
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                30);
+                    }
+                }
+            }
+            });
+
 
         //button
         submit = view.findViewById(R.id.submitButton);
@@ -430,6 +608,7 @@ public class fragment_registration_requirements extends Fragment implements bree
             }
         });
     }
+    int userAge = 0;
     @SuppressLint("SetTextI18n")
     private void openBirthdayDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -453,22 +632,76 @@ public class fragment_registration_requirements extends Fragment implements bree
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-                int   day  = datePicker.getDayOfMonth();
-                int   month= datePicker.getMonth();
-                int   year = datePicker.getYear();
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(year, month, day);
+                int day = datePicker.getDayOfMonth();
+                int month = datePicker.getMonth();
+                int year = datePicker.getYear();
+                Calendar birthdate = Calendar.getInstance();
+                birthdate.set(year, month, day);
 
-                @SuppressLint("SimpleDateFormat")
-                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-                String formatedDate = sdf.format(calendar.getTime());
-                reg_birthEdit.setText(formatedDate);
-                reg_birthEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
-                Toast.makeText(getContext(), formatedDate, Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+                Calendar today = Calendar.getInstance();
+
+                int age = today.get(Calendar.YEAR) - birthdate.get(Calendar.YEAR);
+                if (today.get(Calendar.MONTH) < birthdate.get(Calendar.MONTH)) {
+                    age--;
+                } else if (today.get(Calendar.MONTH) == birthdate.get(Calendar.MONTH)
+                        && today.get(Calendar.DAY_OF_MONTH) < birthdate.get(Calendar.DAY_OF_MONTH)) {
+                    age--;
+                }
+                //Only owner will be check if the user is minor or not
+                if(role.size() == 1  && role.contains("Pet Owner")){
+                    if (age < 18 && age >= 12) {
+                        @SuppressLint("SimpleDateFormat")
+                        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+                        String formatedDate = sdf.format(birthdate.getTime());
+                        reg_birthEdit.setText(formatedDate);
+                        reg_birthEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
+                        Toast.makeText(getContext(), "Detected as minor", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Age:"+String.valueOf(age), Toast.LENGTH_SHORT).show();
+                        parent_consent_layout.setVisibility(View.VISIBLE);
+                        userAge = age;
+
+
+                        dialog.dismiss();
+                    } else if (age < 12) {
+
+                        Toast.makeText(getContext(), "Age restriction: 12 and above only", Toast.LENGTH_SHORT).show();
+
+                    }
+                    else {
+                        parent_consent_layout.setVisibility(View.GONE);
+                        @SuppressLint("SimpleDateFormat")
+                        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+                        String formatedDate = sdf.format(birthdate.getTime());
+                        reg_birthEdit.setText(formatedDate);
+                        reg_birthEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
+                        Toast.makeText(getContext(), formatedDate, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Age:"+String.valueOf(age), Toast.LENGTH_SHORT).show();
+
+                        userAge = age;
+                        dialog.dismiss();
+                    }
+                }
+                //If vet/shooter/breeder it must be 18 above
+                else{
+                    if (age < 18) {
+                        Toast.makeText(getContext(), "Age restriction: 18 and above only", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        @SuppressLint("SimpleDateFormat")
+                        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+                        String formatedDate = sdf.format(birthdate.getTime());
+                        reg_birthEdit.setText(formatedDate);
+                        reg_birthEdit.setTextColor(ColorStateList.valueOf(Color.BLACK));
+                        Toast.makeText(getContext(), formatedDate, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Age:"+String.valueOf(age), Toast.LENGTH_SHORT).show();
+
+                        userAge = age;
+                        dialog.dismiss();
+                    }
+                }
+
             }
         });
-
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -563,8 +796,19 @@ public class fragment_registration_requirements extends Fragment implements bree
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_PICK_IMAGE);
     }
+    private void imagePermissionUserValid() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_PICK_USER_VALID_ID);
+    }
+    private void imagePermissionParentValid() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_PICK_PARENT_VALID_ID);
+    }
+    private void imagePermissionConsent() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_PICK_CONSENT);
+    }
 
-    private static final int REQUEST_PICK_IMAGE = 102;
 
     private final String[] permissions = {READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE};
     private void requestPermission() {
@@ -636,7 +880,6 @@ public class fragment_registration_requirements extends Fragment implements bree
 
     }
 
-
     @SuppressLint("ObsoleteSdkInt")
     private void imagePermissionShooter() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -649,7 +892,6 @@ public class fragment_registration_requirements extends Fragment implements bree
 
     }
 
-    String resultsForCover="";
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -669,11 +911,13 @@ public class fragment_registration_requirements extends Fragment implements bree
                     }else{
                         Toast.makeText(getContext(),"Not allowed to pick more than 5 images",Toast.LENGTH_SHORT).show();
                     }
+
                 }
                 //then notify the adapter
                 adapter.notifyDataSetChanged();
                 Toast.makeText(getContext(),uri.size()+": selected",Toast.LENGTH_SHORT).show();
-            }else{
+            }
+            else{
                 //this is for to get the single images
                 if(uri.size() <5){
                     imageUri =data.getData();
@@ -715,23 +959,76 @@ public class fragment_registration_requirements extends Fragment implements bree
             shooter_adapter.notifyDataSetChanged();
             Toast.makeText(getContext(),uriShooter.size()+": selected",Toast.LENGTH_SHORT).show();
         }
-        else     if (resultCode == RESULT_OK && requestCode == REQUEST_PICK_IMAGE) {
+
+        else if (resultCode == RESULT_OK && requestCode == REQUEST_PICK_IMAGE) {
             Uri imageUri = data.getData();
-            cropImage(imageUri);
+            cropImage(imageUri,prc_image,"vet");
+        }
+        else if(resultCode == RESULT_OK && requestCode == REQUEST_PICK_USER_VALID_ID ){
+            Uri imageUri = data.getData();
+            cropImage(imageUri,user_image_upload,"user");
+        }
+        else if(resultCode == RESULT_OK && requestCode == REQUEST_PICK_PARENT_VALID_ID ){
+            Uri imageUri = data.getData();
+            cropImage(imageUri,guardian_valid_id,"parent");
+        }
+        else if(resultCode == RESULT_OK && requestCode == REQUEST_PICK_CONSENT ){
+            Uri imageUri = data.getData();
+            cropImage(imageUri,guardian_consent_submitted,"consent");
         }
         else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             Uri croppedUri = UCrop.getOutput(data);
             // Use the cropped image URI as needed
-            if(croppedUri!=null){
-                prc_image.setVisibility(View.VISIBLE);
-                imgVet = croppedUri;
-                Glide.with(getActivity())
-                        .load(croppedUri)
-                        .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                        .placeholder(R.drawable.noimage)
-                        .into(prc_image);
-                add_photo_vet.setVisibility(View.GONE);
-                dropImageViewVet.setVisibility(View.GONE);
+            if (croppedUri != null) {
+                if (currentImageView != null && types != null) {
+
+                   if(types.equals("vet")){
+                       prc_image.setVisibility(View.VISIBLE);
+                       imgVet = croppedUri;
+                       Glide.with(getActivity())
+                               .load(croppedUri)
+                               .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                               .placeholder(R.drawable.noimage)
+                               .into(prc_image);
+                       add_photo_vet.setVisibility(View.GONE);
+                       dropImageViewVet.setVisibility(View.GONE);
+                   }
+                   else if(types.equals("user")){
+                       user_image_upload.setVisibility(View.VISIBLE);
+                       user_valid_URI = croppedUri;
+                       Glide.with(getActivity())
+                               .load(croppedUri)
+                               .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                               .placeholder(R.drawable.noimage)
+                               .into(user_image_upload);
+
+                       user_dropImageViewVet.setVisibility(View.GONE);
+                       add_photo_user.setVisibility(View.GONE);
+                   }
+                   else if(types.equals("parent")){
+                       guardian_valid_id.setVisibility(View.VISIBLE);
+                       parent_valid_URI = croppedUri;
+                       Glide.with(getActivity())
+                               .load(croppedUri)
+                               .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                               .placeholder(R.drawable.noimage)
+                               .into(guardian_valid_id);
+                       guardian_img.setVisibility(View.GONE);
+                       guardian_add_photo.setVisibility(View.GONE);
+                   }
+                   else if(types.equals("consent")){
+                       guardian_consent_submitted.setVisibility(View.VISIBLE);
+                       consent_URI = croppedUri;
+                       Glide.with(getActivity())
+                               .load(croppedUri)
+                               .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                               .placeholder(R.drawable.noimage)
+                               .into(guardian_consent_submitted);
+                       guardian_img_consent.setVisibility(View.GONE);
+                       guardian_image_view_consent.setVisibility(View.GONE);
+                       guardian_add_photo_consent.setVisibility(View.GONE);
+                   }
+                }
             }
 
         } else if (resultCode == UCrop.RESULT_ERROR) {
@@ -744,13 +1041,15 @@ public class fragment_registration_requirements extends Fragment implements bree
         }
     }
 
-    private void cropImage(Uri sourceUri) {
-        File cacheDir = getActivity().getCacheDir();
-        Uri destinationUri = Uri.fromFile(new File(cacheDir, "cropped"));
+    private ImageView currentImageView;
+    private String types;
+    private void cropImage(Uri sourceUri, ImageView imageView,String type) {
+        currentImageView = imageView;
+        types =type;
+        Uri destinationUri = Uri.fromFile(new File(getContext().getCacheDir(), "cropped"));
         UCrop uCrop = UCrop.of(sourceUri, destinationUri);
-        uCrop.start(getContext(), this);
+        uCrop.start(getContext(),this);
     }
-
     private void checkInput() {
 
         String first = Objects.requireNonNull(reg_firstEdit.getText()).toString().trim();
@@ -780,10 +1079,10 @@ public class fragment_registration_requirements extends Fragment implements bree
             reg_firstEdit.requestFocus();
             return;
         } //end of firstname
-//last condition
+           //last condition
         if (last.isEmpty()) {
             reg_last.setHelperText("Please enter your last name");
-            reg_last.setHelperTextColor(ColorStateList.valueOf(Color.parseColor("#5CCD08")));
+            reg_last.setHelperTextColor(ColorStateList.valueOf(Color.parseColor("#F4511E")));
             reg_lastEdit.requestFocus();
             return;
         }
@@ -811,7 +1110,6 @@ public class fragment_registration_requirements extends Fragment implements bree
             Toast.makeText(getContext(), "Birthday is empty", Toast.LENGTH_SHORT).show();
             return;
         }
-
 
 //address
         if(address.isEmpty()){
@@ -842,11 +1140,30 @@ public class fragment_registration_requirements extends Fragment implements bree
 
         }//end of zip
 
-
-
         Bundle bundle = new Bundle();
 
         // to check if what is the role of the user
+
+        if (role.size() == 1 && role.contains("Pet Owner")) {
+            if(user_valid_URI==null){
+                Toast.makeText(this.getContext(), "Please Upload your valid id", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            bundle.putString("user_valid_id",user_valid_URI.toString());
+
+            if (userAge < 18 && userAge >= 12) {
+                if(parent_valid_URI == null){
+                    Toast.makeText(this.getContext(), "Parent or Guardian valid id is needed", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                bundle.putString("parent_valid_id",parent_valid_URI.toString());
+                if(consent_URI == null){
+                    Toast.makeText(this.getContext(), "Please upload your parent consent form as an image", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                bundle.putString("consent_image",consent_URI.toString());
+            }
+        } else
         if(role.contains("Pet Breeder") || role.contains("Pet Shooter")|| role.contains("Veterinarian")){
 
             if(role.contains("Pet Breeder")){
@@ -857,9 +1174,10 @@ public class fragment_registration_requirements extends Fragment implements bree
                     reg_kennelNameEdit.requestFocus();
                     return;
                 }
-                if(uri.size()==0){
-                    Toast.makeText(getContext(), "Certificate is needed", Toast.LENGTH_SHORT).show();
-
+                if(uri.size()<2){
+                    Toast.makeText(getContext(), "You must upload certificate for your kennel name and PCCI (ID)", Toast.LENGTH_SHORT).show();
+                    dropImageTextVIew.setFocusableInTouchMode(true);
+                    dropImageTextVIew.setFocusable(true);
                     return;
                 }
                 bundle.putString("kennel",kennel);
@@ -881,7 +1199,7 @@ public class fragment_registration_requirements extends Fragment implements bree
                     Toast.makeText(getContext(), "Proof photos of successful stud/made are needed", Toast.LENGTH_SHORT).show();
                     return;
                 }
-               bundle.putParcelableArrayList("uriShooter",uriShooter);
+                bundle.putParcelableArrayList("uriShooter",uriShooter);
 
             }
             if(role.contains("Veterinarian")){
@@ -943,6 +1261,7 @@ public class fragment_registration_requirements extends Fragment implements bree
 
         //sending all the data to next fragment
         bundle.putStringArrayList("roles",saveRole);
+        bundle.putString("age",String.valueOf(userAge));
         bundle.putString("first",first);
         bundle.putString("middle",middle);
         bundle.putString("last",last);
@@ -950,7 +1269,6 @@ public class fragment_registration_requirements extends Fragment implements bree
         bundle.putString("gender",gender);
         bundle.putString("address",address);
         bundle.putString("zip",zip);
-
 
         fragment_registration_email_password requirements = new fragment_registration_email_password();
         requirements.setArguments(bundle);

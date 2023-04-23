@@ -172,6 +172,30 @@ public class product_details extends AppCompatActivity {
         vet_id = p.getVet_id();
         String prod_category= p.getProd_category();
 
+        FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot value = task.getResult();
+                            if(value.exists()){
+                                if(value.getString("status").equals("pending")){
+                                    details_button_buyNow.setEnabled(false);
+                                    details_button_addToCard.setEnabled(false);
+                                    heart_like.setEnabled(false);
+                                }
+                                else if(value.getString("status").equals("verified")){
+                                    details_button_addToCard.setEnabled(true);
+                                    details_button_buyNow.setEnabled(true);
+                                    heart_like.setEnabled(true);
+                                }
+                            }
+
+                        }
+                    }
+                });
+
+
 
         if(p.getVet_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
             details_button_addToCard.setVisibility(View.GONE);
