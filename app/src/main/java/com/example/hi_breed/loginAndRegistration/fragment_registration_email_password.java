@@ -1374,13 +1374,14 @@ public class fragment_registration_email_password extends Fragment {
                                                             Map<String,Object> owner = new HashMap<>();
                                                             int userAge = Integer.parseInt(age);
                                                             if (userAge < 18 && userAge >= 12) {
-                                                                owner.put("parent_id_image",parent_valid_id);
-                                                                owner.put("consent_image",consent_image);
+                                                                parentSaveStorage(parent_valid_id);
+                                                                consentSaveStorage(consent_image);
                                                             }
                                                             owner.put("valid_id",user_valid_id);
-                                                            FirebaseFirestore.getInstance().collection("User")
+                                                            userValidIDSaveStorage(user_valid_id);
+                                                       /*     FirebaseFirestore.getInstance().collection("User")
                                                                     .document(user.getUid())
-                                                                    .set(owner, SetOptions.merge());
+                                                                    .set(owner, SetOptions.merge());*/
 
                                                             save_role(user);
                                                             //for security emails and stuffs
@@ -1473,6 +1474,77 @@ public class fragment_registration_email_password extends Fragment {
                         }
                     }
                 });
+    }
+
+    private void consentSaveStorage(String consent_image) {
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build();
+        StorageReference reference = FirebaseStorage.getInstance().getReference("User/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/ParentConsent");
+
+        reference.child("parent_consent").putFile(Uri.parse(consent_image),metadata).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if(task.isSuccessful()){
+                    reference.child("parent_consent").getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            singlePhotoClass photoClass = new singlePhotoClass(task.getResult().toString());
+                            FirebaseFirestore.getInstance().collection("User")
+                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .set(photoClass,SetOptions.merge());
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void userValidIDSaveStorage(String user_valid_id) {
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build();
+        StorageReference reference = FirebaseStorage.getInstance().getReference("User/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/UserValidID");
+
+        reference.child("user_valid_id").putFile(Uri.parse(user_valid_id),metadata).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if(task.isSuccessful()){
+                    reference.child("user_valid_id").getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            singlePhotoClass photoClass = new singlePhotoClass(task.getResult().toString());
+                            FirebaseFirestore.getInstance().collection("User")
+                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .set(photoClass,SetOptions.merge());
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void parentSaveStorage(String parent_valid_id) {
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build();
+        StorageReference reference = FirebaseStorage.getInstance().getReference("User/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/ParentValidID");
+        reference.child("parent_valid_id").putFile(Uri.parse(parent_valid_id),metadata).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if(task.isSuccessful()){
+                    reference.child("parent_valid_id").getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            singlePhotoClass photoClass = new singlePhotoClass(task.getResult().toString());
+                            FirebaseFirestore.getInstance().collection("User")
+                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .set(photoClass,SetOptions.merge());
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void uploadToStorageVet(FirebaseUser user) {
