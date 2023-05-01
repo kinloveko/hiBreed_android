@@ -3,9 +3,11 @@ package com.example.hi_breed.message;
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -75,7 +77,7 @@ public class message_conversation_activity extends BaseActivity {
     private ImageView sendReplyImageView;
     private TextView userStatus;
     private TextInputEditText replyEdit;
-    ImageView findShooter;
+    ImageView findShooter,dots_menu;
     String notCurrentUser;
     message_conversation_reply_adapter adapter;
     ScrollView scrollView;
@@ -106,7 +108,8 @@ public class message_conversation_activity extends BaseActivity {
         }
 
         findShooter = findViewById(R.id.findShooter);
-
+        dots_menu= findViewById(R.id.dots_menu);
+       
         userStatus = findViewById(R.id.userStatus);
         avail = findViewById(R.id.avail);
         scrollView = findViewById(R.id.scrollView);
@@ -165,40 +168,58 @@ public class message_conversation_activity extends BaseActivity {
 
         getConversation(m.getMatchID());
         match = m.getMatchID();
+        
         getCurrent();
+        
+  
+        
+        FirebaseFirestore.getInstance().collection("Matches")
+                .document(match)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null) return;
 
-        if(m.getStatus()!=null){
-           findShooter.setImageResource(R.drawable.bag);
-            findShooter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FirebaseFirestore.getInstance().collection("Appointments")
-                            .document(m.getAppointment_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.exists()){
-                                        appointment_dating_class appoint = documentSnapshot.toObject(appointment_dating_class.class);
-                                        Intent i = new Intent(message_conversation_activity.this, acquired_service_details.class);
-                                        i.putExtra("mode",(Serializable) appoint);
-                                        i.putExtra("from","petDating");
+                        if(value.exists()){
+                            if(value.getString("status")!=null){
+                                findShooter.setImageResource(R.drawable.bag);
+                                findShooter.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        FirebaseFirestore.getInstance().collection("Appointments")
+                                                .document(m.getAppointment_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                        if(documentSnapshot.exists()){
+                                                            appointment_dating_class appoint = documentSnapshot.toObject(appointment_dating_class.class);
+                                                            Intent i = new Intent(message_conversation_activity.this, acquired_service_details.class);
+                                                            i.putExtra("mode",(Serializable) appoint);
+                                                            i.putExtra("from","petDating");
+                                                            startActivity(i);
+                                                        }
+                                                    }
+                                                });
+
+                                    }
+                                });
+                            }
+                            else{
+                                findShooter.setImageResource(R.drawable.find_shooter);
+                                findShooter.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent i = new Intent(message_conversation_activity.this, findShooters.class);
+                                        i.putExtra("matchID",match);
                                         startActivity(i);
                                     }
-                                }
-                            });
+                                });
+                            }
+                        }
+                    }
+                });
 
-                }
-            });
-        }
-        else{
-            findShooter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(message_conversation_activity.this, findShooters.class);
-                    i.putExtra("matchID",match);
-                    startActivity(i);
-                }
-            });
-        }
+
+
         replyEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -231,6 +252,47 @@ public class message_conversation_activity extends BaseActivity {
             public void onClick(View v) {
 
                 sendMessage(replyEdit.getText().toString(),m.getMatchID(),notCurrentUser);
+            }
+        });
+
+        dots_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialog(match);
+            }
+        });
+
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    private void openDialog(String matchID) {
+
+
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+        View view = View.inflate(this, R.layout.messaging_leave_layout, null);
+
+        RelativeLayout completedButton, cancelButton;
+        completedButton = view.findViewById(R.id.oneButton);
+        cancelButton = view.findViewById(R.id.twoButton);
+
+        builder2.setView(view);
+        AlertDialog alert2 = builder2.create();
+        alert2.show();
+        alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        completedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(message_conversation_activity.this, "One", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                alert2.dismiss();
             }
         });
 

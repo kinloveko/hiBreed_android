@@ -37,6 +37,7 @@ import com.example.hi_breed.ask_a_professional.ask_a_professional;
 import com.example.hi_breed.classesFile.PetSaleClass;
 import com.example.hi_breed.classesFile.RecommendedProduct;
 import com.example.hi_breed.classesFile.likes_class;
+import com.example.hi_breed.loginAndRegistration.Login;
 import com.example.hi_breed.marketplace.m_market_place_container;
 import com.example.hi_breed.not_verified_activity;
 import com.example.hi_breed.search.search_dashboard_home;
@@ -173,7 +174,15 @@ public class user_home_fragment extends Fragment {
                             if (task.isSuccessful()) {
                                 if (task.isSuccessful()) {
                                     List<String> ids = (List<String>) task.getResult().get("role");
+                                    if(task.getResult().getString("status").equals("suspended")){
+                                        Toast.makeText(getContext(), "Your account is suspended", Toast.LENGTH_SHORT).show();
 
+                                        Toast.makeText(getContext(), "If you have any concern, send an email to info.hibreed@gmail.com", Toast.LENGTH_SHORT).show();
+                                        FirebaseAuth.getInstance().signOut();
+                                        startActivity(new Intent(getContext(), Login.class));
+                                        getActivity().finish();
+                                        return;
+                                    }else
                                     if (task.getResult().getString("status").equals("pending")) {
                                         notVerified.setVisibility(View.VISIBLE);
                                         if(!(role.contains("Pet Shooter") && role.contains("Pet Breeder") && role.contains("Veterinarian")  ) ){

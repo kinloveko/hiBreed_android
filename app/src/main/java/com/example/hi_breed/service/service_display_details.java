@@ -56,23 +56,24 @@ public class service_display_details extends BaseActivity {
     ImageView ratingBar;
     review_order_adapter adapter;
     RecyclerView reviewsService;
-    ImageView heart_like,share_to_messenger;
-   LinearLayout backLayout;
-   ImageSlider imageSliderDetails;
-   TextView details_shooter_name;
-    TextView         details_service_type;
+    ImageView heart_like, share_to_messenger;
+    LinearLayout backLayout;
+    ImageSlider imageSliderDetails;
+    TextView details_shooter_name;
+    TextView details_service_type;
     TextView details_shooter_price;
     TextView details_pet_description;
     TextView details_service_address;
-    TextView        details_service_availability;
+    TextView details_service_availability;
     TextView details_service_schedule;
     TextView seeMore;
-     Button details_button_hireNow;
-    String id,shooter_id;
-    String sched="";
+    Button details_button_hireNow;
+    String id, shooter_id;
+    String sched = "";
     PercentageChartView view_id;
     String from;
     String matchID;
+
     @SuppressLint({"ObsoleteSdkInt", "SetTextI18n"})
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,18 +81,17 @@ public class service_display_details extends BaseActivity {
         setContentView(R.layout.service_display_details);
 
         Window window = getWindow();
-        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
-        }
-        else{
-            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        } else {
+            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
         ratingBar = findViewById(R.id.ratingBar);
         reviewsService = findViewById(R.id.reviewsShop);
-        reviewsService.setLayoutManager(new GridLayoutManager(this,1));
+        reviewsService.setLayoutManager(new GridLayoutManager(this, 1));
         adapter = new review_order_adapter(this);
         view_id = findViewById(R.id.view_id);
 
@@ -112,12 +112,11 @@ public class service_display_details extends BaseActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
-                if(seeMore.getText().toString().equals("See more . . .")) {
+                if (seeMore.getText().toString().equals("See more . . .")) {
                     details_pet_description.setMaxLines(Integer.MAX_VALUE);
                     details_pet_description.setEllipsize(null);
                     seeMore.setText("Show less . . .");
-                }
-                else{
+                } else {
                     details_pet_description.setMaxLines(3);
                     details_pet_description.setEllipsize(TextUtils.TruncateAt.END);
                     seeMore.setText("See more . . .");
@@ -136,23 +135,23 @@ public class service_display_details extends BaseActivity {
         service_class service = (service_class) intent.getSerializableExtra("mode");
         from = intent.getStringExtra("from");
         matchID = intent.getStringExtra("matchID");
-        if(service!=null){
-        //shooter image
+        if (service != null) {
+            //shooter image
             id = service.getId();
             shooter_id = service.getShooter_id();
-           if(!service.getServiceType().equals("Veterinarian Service")){
-               view_id.setVisibility(View.VISIBLE);
-           }
+            if (!service.getServiceType().equals("Veterinarian Service")) {
+                view_id.setVisibility(View.VISIBLE);
+            }
             getReviews(service.getShooter_id());
 
             FirebaseFirestore.getInstance().collection("Likes")
                     .whereEqualTo("likedBy", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .whereEqualTo("product_id",service.getId())
+                    .whereEqualTo("product_id", service.getId())
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 if (task.getResult().size() > 0) {
                                     // The current user has already liked the product
                                     heart_like.setImageResource(R.drawable.icon_clicked_like);
@@ -170,7 +169,7 @@ public class service_display_details extends BaseActivity {
                     });
 
             //slide
-            if(service.getPhotos() !=null) {
+            if (service.getPhotos() != null) {
                 ArrayList<SlideModel> slideModels = new ArrayList<>();
                 for (int i = 0; i < service.getPhotos().size(); i++) {
                     slideModels.add(new SlideModel(service.getPhotos().get(i), ScaleTypes.CENTER_INSIDE));
@@ -184,7 +183,7 @@ public class service_display_details extends BaseActivity {
                         @SuppressLint("SetTextI18n")
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 DocumentSnapshot snapshot = task.getResult();
 
                                 details_service_type.setText(snapshot.getString("shopName"));
@@ -195,37 +194,36 @@ public class service_display_details extends BaseActivity {
             details_shooter_name.setText(service.getServiceType());
             details_shooter_price.setText(service.getService_fee());
 
-            details_service_availability.setText("From "+service.getAvailability().get(0)+"-"+service.getAvailability().get(1));
+            details_service_availability.setText("From " + service.getAvailability().get(0) + "-" + service.getAvailability().get(1));
 
             details_pet_description.setText(service.getService_description());
-            if(service.getSchedule().size() !=0){
+            if (service.getSchedule().size() != 0) {
 
-                for(int i = 0; i < service.getSchedule().size();i++){
+                for (int i = 0; i < service.getSchedule().size(); i++) {
 
-                    sched += service.getSchedule().get(i)+" ";
+                    sched += service.getSchedule().get(i) + " ";
                 }
                 details_service_schedule.setText(sched);
             }
 
         }
-        else{
+        else {
             Toast.makeText(this, "no data has been fetch", Toast.LENGTH_SHORT).show();
             this.finish();
         }
 
-
+        //checking the status of the user if it is verified or not
         FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             DocumentSnapshot value = task.getResult();
-                            if(value.exists()){
-                                if(value.getString("status").equals("pending")){
+                            if (value.exists()) {
+                                if (value.getString("status").equals("pending")) {
                                     details_button_hireNow.setEnabled(false);
                                     heart_like.setEnabled(false);
-                                }
-                                else if(value.getString("status").equals("verified")){
+                                } else if (value.getString("status").equals("verified")) {
                                     details_button_hireNow.setEnabled(true);
                                     heart_like.setEnabled(true);
                                 }
@@ -234,6 +232,7 @@ public class service_display_details extends BaseActivity {
                         }
                     }
                 });
+        //adding heart like to the person
         heart_like.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("UseCompatLoadingForDrawables")
             @Override
@@ -260,27 +259,26 @@ public class service_display_details extends BaseActivity {
                         .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     DocumentSnapshot s = task.getResult();
 
-                                    if(s.getString("contactNumber")== null || s.getString("contactNumber").equals("")){
+                                    if (s.getString("contactNumber") == null || s.getString("contactNumber").equals("")) {
                                         Toast.makeText(service_display_details.this, "Please setup your phone number first", Toast.LENGTH_SHORT).show();
 
-                                    }
-                                    else{
-                                        if(from!=null){
+                                    } else {
+                                        if (from != null) {
                                             Intent intent = new Intent(service_display_details.this, service_set_appointment.class);
                                             intent.putExtra("model", (Serializable) service);
-                                            intent.putExtra("from",from);
-                                            intent.putExtra("matchID",matchID);
+                                            intent.putExtra("from", from);
+                                            intent.putExtra("matchID", matchID);
                                             startActivity(intent);
-                                        }else{
+                                        } else {
                                             Intent intent = new Intent(service_display_details.this, service_set_appointment.class);
                                             intent.putExtra("model", (Serializable) service);
                                             startActivity(intent);
                                         }
 
-                                         }
+                                    }
 
                                 }
                             }
@@ -291,19 +289,19 @@ public class service_display_details extends BaseActivity {
 
     private void getReviews(String shooter_id) {
         FirebaseFirestore.getInstance().collection("Reviews")
-                .whereEqualTo("seller_id",shooter_id)
-                .whereEqualTo("rateFor","Service")
+                .whereEqualTo("seller_id", shooter_id)
+                .whereEqualTo("rateFor", "Service")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @SuppressLint({"DefaultLocale", "SetTextI18n"})
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(error!=null){
+                        if (error != null) {
                             return;
                         }
                         if (value != null && !value.isEmpty()) {
                             float totalRating = 0;
                             int numRatings = 0;
-                            String type ="";
+                            String type = "";
                             adapter.clearList();
                             for (DocumentSnapshot s : value) {
                                 if (s.getDouble("rating") != null && !Double.isNaN(s.getDouble("rating"))) {
@@ -323,13 +321,12 @@ public class service_display_details extends BaseActivity {
                                 TextView numberOfReviewsTextView = findViewById(R.id.numberOfReviewsTextView);
                                 TextView ratingValue = findViewById(R.id.ratingValue);
                                 ratingValue.setText(String.format("%.1f /5 ", averageRating));
-                                float percent = Math.min(averageRating / 5 * 100,100);
-                                if(type.equals("Veterinarian Service")){
+                                float percent = Math.min(averageRating / 5 * 100, 100);
+                                if (type.equals("Veterinarian Service")) {
                                     numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
-                                    }
-                                else{
+                                } else {
                                     textsRate.setVisibility(View.VISIBLE);
-                                    view_id.setProgress(percent,true);
+                                    view_id.setProgress(percent, true);
                                     numberOfReviewsTextView.setText("(" + totalReviews + " Review" + ")");
                                 }
                                 reviewsService.setAdapter(adapter);
@@ -350,19 +347,20 @@ public class service_display_details extends BaseActivity {
                     }
                 });
     }
+
     private void removeLike() {
-        FirebaseFirestore.getInstance().collection("Likes").whereEqualTo("likedBy",FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .whereEqualTo("product_id",id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance().collection("Likes").whereEqualTo("likedBy", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("product_id", id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 FirebaseFirestore.getInstance().collection("Likes")
                                         .document(document.getId())
                                         .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
+                                                if (task.isSuccessful()) {
                                                     FirebaseFirestore.getInstance().collection("User")
                                                             .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                             .collection("Likes")
@@ -370,7 +368,7 @@ public class service_display_details extends BaseActivity {
                                                             .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
-                                                                    if(task.isSuccessful()){
+                                                                    if (task.isSuccessful()) {
                                                                         Toast.makeText(service_display_details.this, "Successfully removed from your liked pets", Toast.LENGTH_SHORT).show();
 
                                                                         heart_like.setEnabled(true);
@@ -381,16 +379,16 @@ public class service_display_details extends BaseActivity {
                                             }
                                         });
                             }
-                        }
-                        else{
+                        } else {
                             Log.e("ERROR", "Error getting documents", task.getException());
                         }
                     }
                 });
 
     }
+
     private void saveLike() {
-        likes_class like = new likes_class("",FirebaseAuth.getInstance().getCurrentUser().getUid(),id,shooter_id,"Service", Timestamp.now());
+        likes_class like = new likes_class("", FirebaseAuth.getInstance().getCurrentUser().getUid(), id, shooter_id, "Service", Timestamp.now());
 
         FirebaseFirestore.getInstance().collection("User")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -404,7 +402,7 @@ public class service_display_details extends BaseActivity {
                         FirebaseFirestore.getInstance().collection("User")
                                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .collection("Likes").document(documentReference.getId())
-                                .update("id",documentReference.getId(),"timestamp", FieldValue.serverTimestamp())
+                                .update("id", documentReference.getId(), "timestamp", FieldValue.serverTimestamp())
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
@@ -413,14 +411,14 @@ public class service_display_details extends BaseActivity {
                                                 .set(like).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
-                                                        if(task.isSuccessful()){
+                                                        if (task.isSuccessful()) {
                                                             FirebaseFirestore.getInstance().collection("Likes")
                                                                     .document(documentReference.getId())
-                                                                    .update("id",documentReference.getId(),"timestamp",FieldValue.serverTimestamp())
+                                                                    .update("id", documentReference.getId(), "timestamp", FieldValue.serverTimestamp())
                                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                         @Override
                                                                         public void onComplete(@NonNull Task<Void> task) {
-                                                                            if(task.isSuccessful()){
+                                                                            if (task.isSuccessful()) {
                                                                                 Toast.makeText(service_display_details.this, "Successfully added to your likes", Toast.LENGTH_SHORT).show();
                                                                                 heart_like.setEnabled(true);
                                                                             }

@@ -456,6 +456,16 @@ public class user_profile_account_security_info extends BaseActivity {
                                                 }
                                                 if(role.contains("Pet Breeder") || role.contains("Pet Shooter") || role.contains("Veterinarian")){
                                                     shopDelete();
+
+                                                    FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .collection("certificate").document("certificate_doc").delete();
+
+                                                    FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .collection("proof_photo").document("proof_doc").delete();
+
+                                                    FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .collection("validation").document("validation_doc").delete();
+
                                                 }
                                                 deleteOwnRecord(alert2);
                                             }
@@ -478,6 +488,15 @@ public class user_profile_account_security_info extends BaseActivity {
             }
 
     private void deleteOwnRecord(AlertDialog alertDialog) {
+        FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .collection("security").document("security_doc").delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+
+                        }
+                    }
+                });
         FirebaseFirestore.getInstance().collection("User")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

@@ -196,7 +196,6 @@ public class fragment_registration_email_password extends Fragment {
             consent_image = bundle.getString("consent_image");
             parent_valid_id = bundle.getString("parent_valid_id");
             user_valid_id = bundle.getString("user_valid_id");
-
         }else
         if(role.contains("Pet Breeder") || role.contains("Pet Shooter")|| role.contains("Veterinarian")){
 
@@ -1371,17 +1370,14 @@ public class fragment_registration_email_password extends Fragment {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
 
-                                                            Map<String,Object> owner = new HashMap<>();
+
                                                             int userAge = Integer.parseInt(age);
                                                             if (userAge < 18 && userAge >= 12) {
-                                                                parentSaveStorage(parent_valid_id);
-                                                                consentSaveStorage(consent_image);
+                                                                parentSaveStorage(parent_valid_id,user);
+                                                                consentSaveStorage(consent_image,user);
                                                             }
-                                                            owner.put("valid_id",user_valid_id);
-                                                            userValidIDSaveStorage(user_valid_id);
-                                                       /*     FirebaseFirestore.getInstance().collection("User")
-                                                                    .document(user.getUid())
-                                                                    .set(owner, SetOptions.merge());*/
+                                                            userValidIDSaveStorage(user_valid_id,user);
+
 
                                                             save_role(user);
                                                             //for security emails and stuffs
@@ -1476,7 +1472,7 @@ public class fragment_registration_email_password extends Fragment {
                 });
     }
 
-    private void consentSaveStorage(String consent_image) {
+    private void consentSaveStorage(String consent_image,FirebaseUser user) {
         StorageMetadata metadata = new StorageMetadata.Builder()
                 .setContentType("image/jpeg")
                 .build();
@@ -1486,13 +1482,14 @@ public class fragment_registration_email_password extends Fragment {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful()){
-                    reference.child("parent_consent").getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    reference.child("parent_consent").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            singlePhotoClass photoClass = new singlePhotoClass(task.getResult().toString());
+                        public void onSuccess(Uri uri) {
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("parent_consent",uri.toString());
                             FirebaseFirestore.getInstance().collection("User")
-                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .set(photoClass,SetOptions.merge());
+                                    .document(user.getUid())
+                                    .set(map,SetOptions.merge());
                         }
                     });
                 }
@@ -1500,7 +1497,7 @@ public class fragment_registration_email_password extends Fragment {
         });
     }
 
-    private void userValidIDSaveStorage(String user_valid_id) {
+    private void userValidIDSaveStorage(String user_valid_id, FirebaseUser user) {
         StorageMetadata metadata = new StorageMetadata.Builder()
                 .setContentType("image/jpeg")
                 .build();
@@ -1510,13 +1507,14 @@ public class fragment_registration_email_password extends Fragment {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful()){
-                    reference.child("user_valid_id").getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    reference.child("user_valid_id").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            singlePhotoClass photoClass = new singlePhotoClass(task.getResult().toString());
+                        public void onSuccess(Uri uri) {
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("user_valid_id",uri.toString());
                             FirebaseFirestore.getInstance().collection("User")
-                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .set(photoClass,SetOptions.merge());
+                                    .document(user.getUid())
+                                    .set(map,SetOptions.merge());
                         }
                     });
                 }
@@ -1524,7 +1522,7 @@ public class fragment_registration_email_password extends Fragment {
         });
     }
 
-    private void parentSaveStorage(String parent_valid_id) {
+    private void parentSaveStorage(String parent_valid_id,FirebaseUser user) {
         StorageMetadata metadata = new StorageMetadata.Builder()
                 .setContentType("image/jpeg")
                 .build();
@@ -1533,13 +1531,14 @@ public class fragment_registration_email_password extends Fragment {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful()){
-                    reference.child("parent_valid_id").getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    reference.child("parent_valid_id").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            singlePhotoClass photoClass = new singlePhotoClass(task.getResult().toString());
+                        public void onSuccess(Uri uri) {
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("parent_valid_id",uri.toString());
                             FirebaseFirestore.getInstance().collection("User")
-                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .set(photoClass,SetOptions.merge());
+                                    .document(user.getUid())
+                                    .set(map,SetOptions.merge());
                         }
                     });
                 }
@@ -1548,13 +1547,11 @@ public class fragment_registration_email_password extends Fragment {
     }
 
     private void uploadToStorageVet(FirebaseUser user) {
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setContentType("image/jpeg")
-                .build();
+
 
         StorageReference reference = FirebaseStorage.getInstance().getReference("User/"+user.getUid()+"/Vet Proof");
 
-        reference.child("license_ID").putFile(Uri.parse(vet_image),metadata).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        reference.child("license_ID").putFile(Uri.parse(vet_image)).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful()){

@@ -17,10 +17,20 @@
         tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
 
         <ImageView
-            android:id="@+id/findShooter"
-            android:layout_width="50dp"
+            android:id="@+id/dots_menu"
+            android:layout_width="20dp"
             android:layout_height="50dp"
             android:layout_alignParentEnd="true"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/icon_dots" />
+
+        <ImageView
+            android:id="@+id/findShooter"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:layout_centerInParent="true"
+            android:layout_toStartOf="@id/dots_menu"
             android:layout_marginTop="2dp"
             android:layout_marginEnd="10dp"
             android:src="@drawable/find_shooter" />

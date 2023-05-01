@@ -25,13 +25,16 @@ public class appointment_dating_class implements Serializable, Parcelable {
     String cancelled_by;
     String appointment_for;
     Boolean isRated;
-
+    String pet_dating_match_id;
 
     public appointment_dating_class(){
 
     }
 
-    public appointment_dating_class(String id,  List<String> customer_id , String seller_id, String transaction_id, String appointment_date, String appointment_time, String service_price, String service_id, String appointment_status, String appointment_end_message, String type , String cancelled_by, Timestamp timestamp, Timestamp appointment_end_date, Boolean isRated, String appointment_for) {
+    public appointment_dating_class(String id,  List<String> customer_id , String seller_id, String transaction_id,
+                                    String appointment_date, String appointment_time, String service_price, String service_id,
+                                    String appointment_status, String appointment_end_message, String type , String cancelled_by,
+                                    Timestamp timestamp, Timestamp appointment_end_date, Boolean isRated, String appointment_for,String pet_dating_match_id) {
         this.appointment_end_date = appointment_end_date;
         this.appointment_end_message = appointment_end_message;
         this.cancelled_by = cancelled_by;
@@ -48,8 +51,8 @@ public class appointment_dating_class implements Serializable, Parcelable {
         this.appointment_status = appointment_status;
         this.timestamp = timestamp;
         this.appointment_for = appointment_for;
+        this.pet_dating_match_id = pet_dating_match_id;
     }
-
 
     protected appointment_dating_class(Parcel in) {
         customer_id = in.createStringArrayList();
@@ -69,6 +72,7 @@ public class appointment_dating_class implements Serializable, Parcelable {
         appointment_for = in.readString();
         byte tmpIsRated = in.readByte();
         isRated = tmpIsRated == 0 ? null : tmpIsRated == 1;
+        pet_dating_match_id = in.readString();
     }
 
     public static final Creator<appointment_dating_class> CREATOR = new Creator<appointment_dating_class>() {
@@ -82,6 +86,10 @@ public class appointment_dating_class implements Serializable, Parcelable {
             return new appointment_dating_class[size];
         }
     };
+
+    public String getPet_dating_match_id() {
+        return pet_dating_match_id;
+    }
 
     public List<String> getCustomer_id() {
         return customer_id;
@@ -172,5 +180,6 @@ public class appointment_dating_class implements Serializable, Parcelable {
         dest.writeString(cancelled_by);
         dest.writeString(appointment_for);
         dest.writeByte((byte) (isRated == null ? 0 : isRated ? 1 : 2));
+        dest.writeString(pet_dating_match_id);
     }
 }

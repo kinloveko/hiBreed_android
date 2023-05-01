@@ -24,6 +24,16 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content">
         <ImageView
+            android:visibility="gone"
+            android:id="@+id/date_image"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:translationZ="30dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="end"
+            android:src="@drawable/appointment_date_icon"
+            />
+        <ImageView
             android:id="@+id/imageRecycler"
             android:layout_width="wrap_content"
             android:layout_gravity="center"

@@ -14,7 +14,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
@@ -65,7 +67,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 import com.yalantis.ucrop.UCrop;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
@@ -976,13 +981,11 @@ public class fragment_registration_requirements extends Fragment implements bree
             Uri imageUri = data.getData();
             cropImage(imageUri,guardian_consent_submitted,"consent");
         }
-        else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+        else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP && types.equals("vet")) {
             Uri croppedUri = UCrop.getOutput(data);
             // Use the cropped image URI as needed
             if (croppedUri != null) {
                 if (currentImageView != null && types != null) {
-
-                   if(types.equals("vet")){
                        prc_image.setVisibility(View.VISIBLE);
                        imgVet = croppedUri;
                        Glide.with(getActivity())
@@ -992,46 +995,64 @@ public class fragment_registration_requirements extends Fragment implements bree
                                .into(prc_image);
                        add_photo_vet.setVisibility(View.GONE);
                        dropImageViewVet.setVisibility(View.GONE);
-                   }
-                   else if(types.equals("user")){
-                       user_image_upload.setVisibility(View.VISIBLE);
-                       user_valid_URI = croppedUri;
-                       Glide.with(getActivity())
-                               .load(croppedUri)
-                               .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                               .placeholder(R.drawable.noimage)
-                               .into(user_image_upload);
 
-                       user_dropImageViewVet.setVisibility(View.GONE);
-                       add_photo_user.setVisibility(View.GONE);
-                   }
-                   else if(types.equals("parent")){
-                       guardian_valid_id.setVisibility(View.VISIBLE);
-                       parent_valid_URI = croppedUri;
-                       Glide.with(getActivity())
-                               .load(croppedUri)
-                               .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                               .placeholder(R.drawable.noimage)
-                               .into(guardian_valid_id);
-                       guardian_img.setVisibility(View.GONE);
-                       guardian_add_photo.setVisibility(View.GONE);
-                   }
-                   else if(types.equals("consent")){
-                       guardian_consent_submitted.setVisibility(View.VISIBLE);
-                       consent_URI = croppedUri;
-                       Glide.with(getActivity())
-                               .load(croppedUri)
-                               .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                               .placeholder(R.drawable.noimage)
-                               .into(guardian_consent_submitted);
-                       guardian_img_consent.setVisibility(View.GONE);
-                       guardian_image_view_consent.setVisibility(View.GONE);
-                       guardian_add_photo_consent.setVisibility(View.GONE);
-                   }
+                }
+            }
+        }  else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP && types.equals("user")) {
+            Uri croppedUri = UCrop.getOutput(data);
+            // Use the cropped image URI as needed
+            if (croppedUri != null) {
+                if (currentImageView != null && types != null) {
+                    user_image_upload.setVisibility(View.VISIBLE);
+                    user_valid_URI = croppedUri;
+                    Glide.with(getActivity())
+                            .load(croppedUri)
+                            .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                            .placeholder(R.drawable.noimage)
+                            .into(user_image_upload);
+                    user_dropImageViewVet.setVisibility(View.GONE);
+                    add_photo_user.setVisibility(View.GONE);
+                    return;
                 }
             }
 
-        } else if (resultCode == UCrop.RESULT_ERROR) {
+        }  else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP && types.equals("parent")) {
+            Uri croppedUri = UCrop.getOutput(data);
+            // Use the cropped image URI as needed
+            if (croppedUri != null) {
+                if (currentImageView != null && types != null) {
+                    guardian_valid_id.setVisibility(View.VISIBLE);
+                    parent_valid_URI = croppedUri;
+                    Glide.with(getActivity())
+                            .load(croppedUri)
+                            .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                            .placeholder(R.drawable.noimage)
+                            .into(guardian_valid_id);
+                    guardian_img.setVisibility(View.GONE);
+                    guardian_add_photo.setVisibility(View.GONE);
+                    return;
+                }
+            }
+        }
+        else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP && types.equals("consent")) {
+            Uri croppedUri = UCrop.getOutput(data);
+            // Use the cropped image URI as needed
+            if (croppedUri != null) {
+                if (currentImageView != null && types != null) {
+                    guardian_consent_submitted.setVisibility(View.VISIBLE);
+                    consent_URI = croppedUri;
+                    Glide.with(getActivity())
+                            .load(croppedUri)
+                            .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                            .placeholder(R.drawable.noimage)
+                            .into(guardian_consent_submitted);
+                    guardian_img_consent.setVisibility(View.GONE);
+                    guardian_image_view_consent.setVisibility(View.GONE);
+                    guardian_add_photo_consent.setVisibility(View.GONE);
+                }
+            }
+        }
+        else if (resultCode == UCrop.RESULT_ERROR) {
             Throwable error = UCrop.getError(data);
             // Handle UCrop error as needed
         }
@@ -1046,9 +1067,11 @@ public class fragment_registration_requirements extends Fragment implements bree
     private void cropImage(Uri sourceUri, ImageView imageView,String type) {
         currentImageView = imageView;
         types =type;
-        Uri destinationUri = Uri.fromFile(new File(getContext().getCacheDir(), "cropped"));
-        UCrop uCrop = UCrop.of(sourceUri, destinationUri);
-        uCrop.start(getContext(),this);
+
+            Uri destinationUri = Uri.fromFile(new File(getContext().getCacheDir(), "cropped"));
+            UCrop uCrop = UCrop.of(sourceUri, destinationUri);
+            uCrop.start(getContext(),this);
+
     }
     private void checkInput() {
 
@@ -1149,19 +1172,58 @@ public class fragment_registration_requirements extends Fragment implements bree
                 Toast.makeText(this.getContext(), "Please Upload your valid id", Toast.LENGTH_SHORT).show();
                 return;
             }
-            bundle.putString("user_valid_id",user_valid_URI.toString());
+            else{
+                Bitmap bitmapUser= ((BitmapDrawable) user_image_upload.getDrawable()).getBitmap();
+                ByteArrayOutputStream bytesUser = new ByteArrayOutputStream();
+                bitmapUser.compress(Bitmap.CompressFormat.JPEG, 100, bytesUser);
+                File fileUser = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "user.jpg");
+                try (FileOutputStream fos = new FileOutputStream(fileUser)) {
+                    fos.write(bytesUser.toByteArray());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Uri imageUriUSer = Uri.fromFile(fileUser);
+                bundle.putString("user_valid_id", imageUriUSer.toString());
+            }
+
 
             if (userAge < 18 && userAge >= 12) {
                 if(parent_valid_URI == null){
                     Toast.makeText(this.getContext(), "Parent or Guardian valid id is needed", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                bundle.putString("parent_valid_id",parent_valid_URI.toString());
+                else{
+                    Bitmap bitmapParent= ((BitmapDrawable) guardian_valid_id.getDrawable()).getBitmap();
+                    ByteArrayOutputStream bytesParent = new ByteArrayOutputStream();
+                    bitmapParent.compress(Bitmap.CompressFormat.JPEG, 100, bytesParent);
+                    File fileParent = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "parent.jpg");
+                    try (FileOutputStream fos = new FileOutputStream(fileParent)) {
+                        fos.write(bytesParent.toByteArray());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Uri imageUriParent = Uri.fromFile(fileParent);
+                    bundle.putString("parent_valid_id",imageUriParent.toString());
+                }
+
                 if(consent_URI == null){
                     Toast.makeText(this.getContext(), "Please upload your parent consent form as an image", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                bundle.putString("consent_image",consent_URI.toString());
+                else{
+                    Bitmap bitmapConsent = ((BitmapDrawable) guardian_consent_submitted.getDrawable()).getBitmap();
+                    ByteArrayOutputStream bytesParentConsent = new ByteArrayOutputStream();
+                    bitmapConsent.compress(Bitmap.CompressFormat.JPEG, 100, bytesParentConsent);
+                    File fileConsent = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "consent.jpg");
+                    try (FileOutputStream fos = new FileOutputStream(fileConsent)) {
+                        fos.write(bytesParentConsent.toByteArray());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Uri imageUriConsent = Uri.fromFile(fileConsent);
+                    bundle.putString("consent_image", imageUriConsent.toString());
+                }
+
             }
         } else
         if(role.contains("Pet Breeder") || role.contains("Pet Shooter")|| role.contains("Veterinarian")){

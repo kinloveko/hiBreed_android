@@ -361,10 +361,11 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/matched_layout.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/may_you_like_layout.xml" value="0.1" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/message.xml" value="0.264" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/message_conversation.xml" value="0.176" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/message_conversation.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/message_conversation_vertical.xml" value="0.4" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/message_coversation_layout.xml" value="0.536" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/message_horizontal_layout.xml" value="1.6" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/messaging_leave_layout.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/my_pet_pet_for_sale_fragment.xml" value="0.15789473684210525" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/my_pets_container.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/notification_layout.xml" value="0.264" />
@@ -451,7 +452,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/service_status_layout.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/service_status_layout_accepted.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/service_status_layout_cancelled.xml" value="0.264" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/service_status_layout_pending.xml" value="0.2" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/service_status_layout_pending.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/service_time_dialog.xml" value="0.4" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/services.xml" value="0.4" />
         <entry key="..\:/Users/User/AndroidStudioProjects/HiBreed/app/src/main/res/layout/services_card_layout.xml" value="0.264" />

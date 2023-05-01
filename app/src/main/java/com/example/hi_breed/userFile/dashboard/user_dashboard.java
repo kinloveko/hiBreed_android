@@ -169,30 +169,31 @@ public class user_dashboard extends BaseActivity {
                 if(task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if(document!=null){
-                        List<String> note =(List<String>) document.get("role");
-                        if(note!=null) {
-                            if (!note.contains(null)) {
 
-                                if (note.contains("Pet Shooter") || note.contains("Pet Breeder") ||note.contains("Veterinarian")|| note.contains("Pet Owner")) {
-                                    display("true");
+                        List<String> note =(List<String>) document.get("role");
+                            if(note!=null) {
+                                if (!note.contains(null)) {
+
+                                    if (note.contains("Pet Shooter") || note.contains("Pet Breeder") ||note.contains("Veterinarian")|| note.contains("Pet Owner")) {
+                                        display("true");
+                                        loadingDialog.dismissDialog();
+                                    }
+                                    listener.onSuccess(task);
+                                } else {
                                     loadingDialog.dismissDialog();
+                                    Toast.makeText(user_dashboard.this, "Role is empty", Toast.LENGTH_SHORT).show();
+                                    FirebaseAuth.getInstance().signOut();
+                                    startActivity(new Intent(user_dashboard.this, Login.class));
+                                    finish();
                                 }
-                                listener.onSuccess(task);
-                            } else {
+                            }
+                            else{
                                 loadingDialog.dismissDialog();
-                                Toast.makeText(user_dashboard.this, "Role is empty", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(user_dashboard.this, "Can't retrieve any data", Toast.LENGTH_SHORT).show();
                                 FirebaseAuth.getInstance().signOut();
                                 startActivity(new Intent(user_dashboard.this, Login.class));
                                 finish();
                             }
-                        }
-                        else{
-                            loadingDialog.dismissDialog();
-                            Toast.makeText(user_dashboard.this, "Can't retrieve any data", Toast.LENGTH_SHORT).show();
-                            FirebaseAuth.getInstance().signOut();
-                            startActivity(new Intent(user_dashboard.this, Login.class));
-                            finish();
-                        }
                     }
                 }
 

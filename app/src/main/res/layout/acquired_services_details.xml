@@ -10,9 +10,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <RelativeLayout
                 android:id="@+id/toolbarID"
                 android:layout_width="match_parent"
@@ -71,6 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/toolbarID"
+                android:layout_marginBottom="50dp"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -107,7 +111,6 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:visibility="gone"
                     android:id="@+id/petDatingInfo"
                     android:layout_width="match_parent"
                     android:layout_height="230dp"
@@ -117,7 +120,8 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/dropshadow_button_zero"
                     android:backgroundTint="@color/white"
-                    android:elevation="3dp">
+                    android:elevation="3dp"
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/imageDatings"
@@ -169,7 +173,7 @@
                         android:layout_below="@id/first_checkout_zip"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_toEndOf="@id/first_user"
+                        android:layout_toEndOf="@id/second_user"
                         android:ellipsize="end"
                         android:fontFamily="@font/poppinsregular"
                         android:singleLine="true"
@@ -270,14 +274,15 @@
                         android:background="@drawable/post_line"
                         android:translationZ="3dp" />-->
                 </RelativeLayout>
+
                 <RelativeLayout
-                    android:visibility="gone"
                     android:id="@+id/currentAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:background="@drawable/dropshadow_two"
-                    android:elevation="3dp">
+                    android:elevation="3dp"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/pet_text"
@@ -463,13 +468,13 @@
 
                 <RelativeLayout
 
-                    android:padding="10dp"
                     android:id="@+id/transactionLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:background="@drawable/dropshadow_two"
-                    android:elevation="3dp">
+                    android:elevation="3dp"
+                    android:padding="10dp">
 
                     <TextView
                         android:id="@+id/text"
@@ -667,12 +672,12 @@
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:src="@drawable/icon_cod"
+                        android:layout_below="@id/subTotal"
+                        android:layout_marginTop="20dp"
                         android:layout_marginEnd="10dp"
                         android:layout_toStartOf="@id/total"
-                        android:layout_marginTop="20dp"
-                        android:layout_below="@id/subTotal"
-                        />
+                        android:src="@drawable/icon_cod" />
+
                     <TextView
                         android:id="@+id/total"
                         android:layout_width="wrap_content"
@@ -703,6 +708,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="5dp"
                     android:background="@drawable/dropshadow_button_five"
                     android:fontFamily="@font/poppinsmedium"
                     android:text="MESSAGE"
@@ -722,6 +728,7 @@
                     android:fontFamily="@font/poppinsmedium"
                     android:text="RATE SERVICE"
                     android:textColor="@color/white"
+                    android:layout_marginBottom="5dp"
                     android:textStyle="bold"
                     android:visibility="gone"
                     tools:ignore="HardcodedText" />
@@ -732,6 +739,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/dropshadow_button_two"
                     android:fontFamily="@font/poppinsregular"

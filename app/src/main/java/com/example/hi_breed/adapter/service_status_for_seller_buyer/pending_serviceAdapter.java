@@ -80,6 +80,7 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                 if(productModel.getCustomer_id().equals(userID))
                 {
 
+
                     holder.button_contact.setText("VIEW YOUR REQUEST");
                     FirebaseFirestore.getInstance().collection("Services")
                             .document(productModel.getService_id())
@@ -91,6 +92,7 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                                         List<String> list = (List<String>) documentSnapshot.get("photos");
                                         Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage).into(holder.imageView);
                                         holder.nameRecycler.setText(documentSnapshot.getString("name"));
+
                                         FirebaseFirestore.getInstance().collection("User").document(productModel.getSeller_id()).collection("security")
                                                 .document("security_doc")
                                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -104,6 +106,7 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                             });
                 }
                 else if(productModel.getSeller_id().equals(userID)){
+
                     holder.button_contact.setText("VIEW REQUEST");
                     DocumentReference doc=
                             FirebaseFirestore.getInstance().collection("User").document(productModel.getCustomer_id());
@@ -144,6 +147,7 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
             }
         }
         else if (obj instanceof appointment_dating_class){
+            holder.date_image.setVisibility(View.VISIBLE);
             appointment_dating_class dating_class = (appointment_dating_class) item.get(position);
             if(dating_class!=null){
 
@@ -155,6 +159,7 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                 }
                 if(dating_class.getCustomer_id().contains(userID))
                 {
+
                     holder.button_contact.setText("VIEW YOUR REQUEST");
                     FirebaseFirestore.getInstance().collection("Services")
                             .document(dating_class.getService_id())
@@ -179,6 +184,8 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
                             });
                 }
                 else{
+
+
                     holder.button_contact.setText("VIEW REQUEST");
                     List<Bitmap> bitmaps = new ArrayList<>();
                     String separator = " & ";
@@ -278,10 +285,11 @@ public class pending_serviceAdapter extends RecyclerView.Adapter<pending_service
         TextView label;
         RelativeLayout relativeLayout;
         LinearLayout  buttonContact ;
-        ImageView imageView,callImage;
+        ImageView imageView,callImage,date_image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            date_image = itemView.findViewById(R.id.date_image);
             callImage= itemView.findViewById(R.id.callImage);
             imageView = itemView.findViewById(R.id.imageRecycler);
             relativeLayout = itemView.findViewById(R.id.relativeLayout);

@@ -86,10 +86,10 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
 
             if(add.getType().equals("appointment")){
 
-
                 FirebaseFirestore.getInstance().collection("Appointments").document(add.getId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot!=null && documentSnapshot.getString("service_id")!=null)
                         FirebaseFirestore.getInstance().collection("Services").document(documentSnapshot.getString("service_id"))
                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
