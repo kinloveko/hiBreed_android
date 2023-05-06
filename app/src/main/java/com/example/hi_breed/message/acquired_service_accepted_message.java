@@ -756,7 +756,8 @@ public class acquired_service_accepted_message extends AppCompatActivity {
                             startActivity(i);
                             finish();
                         }
-                    } else if (from.equals("cancelled")) {
+                    }
+                    else if (from.equals("cancelled")) {
                         if (notificationFor.equals("buyer")) {
                             Intent i = new Intent(acquired_service_accepted_message.this, service_status.class);
                             i.putExtra("SELECTED_TAB", from);

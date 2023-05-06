@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".loginAndRegistration.forgot_activity">
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5sp"
+        tools:context=".loginAndRegistration.container_fragment_registration_users"
+        android:gravity="center"
+        tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
+
+
+        <LinearLayout
+            android:id="@+id/backLayoutService"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+            <ImageView
+                android:id="@+id/shop_edit_backArrowImage"
+                android:layout_width="20dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:src="@drawable/icon_arrowback"
+                tools:ignore="ContentDescription,NestedWeights"
+                tools:layout_editor_absoluteX="339dp"
+                tools:layout_editor_absoluteY="122dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/child1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+            //Expand Carefully
+
+
+            <ImageView
+                android:id="@+id/image_logoID"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="0dp"
+                android:src="@drawable/forgot_password"
+                tools:ignore="ContentDescription,MissingConstraints" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/moresugar_regular"
+                android:text="FORGOT PASSWORD"
+                android:textAlignment="center"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="20sp"
+                tools:ignore="HardcodedText,MissingConstraints" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="-10dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="To reset your password, enter the email address you used to sign up."
+                android:textAlignment="center"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText,MissingConstraints" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/email_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                app:endIconMode="clear_text"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_email"
+                tools:ignore="ExtraText,HardcodedText,RtlHardcoded">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/email_Edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="@drawable/stlye_border_relative_three"
+                    android:hint="Email"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    app:startIconDrawable="@drawable/ic_email"
+                    tools:layout_editor_absoluteX="0dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/Button_LoginID"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="50dp"
+                android:background="@drawable/stlye_border_relative_three"
+                android:backgroundTint="@color/brownish"
+                android:fontFamily="@font/moresugar_thin"
+
+                android:text="SEND"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                tools:ignore="HardcodedText,MissingClass,UsingOnClickInXml" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/moresugar_regular"
+                android:paddingTop="4dp"
+                android:text="Go back to login page?"
+                android:textAlignment="center"
+                android:textColor="@color/cardview_dark_background"
+                android:textSize="16sp"
+                tools:ignore="HardcodedText,MissingConstraints" />
+            //Register
+
+            <Button
+                android:id="@+id/gotoLogin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="#00000000"
+                android:capitalize="none"
+                android:fontFamily="@font/moresugar_regular"
+                android:shadowColor="@color/black"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="Click Here"
+                android:textAllCaps="false"
+                android:textColor="#EA8200"
+                android:textSize="15sp"
+                tools:ignore="Deprecated,HardcodedText,MissingConstraints,RtlHardcoded,TextViewEdits,UsingOnClickInXml" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</ScrollView>

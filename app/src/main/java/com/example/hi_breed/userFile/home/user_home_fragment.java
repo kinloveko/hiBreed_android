@@ -37,14 +37,13 @@ import com.example.hi_breed.ask_a_professional.ask_a_professional;
 import com.example.hi_breed.classesFile.PetSaleClass;
 import com.example.hi_breed.classesFile.RecommendedProduct;
 import com.example.hi_breed.classesFile.likes_class;
-import com.example.hi_breed.loginAndRegistration.Login;
+import com.example.hi_breed.loginAndRegistration.not_verified_activity;
 import com.example.hi_breed.marketplace.m_market_place_container;
-import com.example.hi_breed.not_verified_activity;
+import com.example.hi_breed.screenLoading.screen_splashScreen_MainActivity;
 import com.example.hi_breed.search.search_dashboard_home;
 import com.example.hi_breed.shop.user_breeder_shop_panel;
 import com.example.hi_breed.userFile.profile.user_profile_fragment;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -78,6 +77,7 @@ public class user_home_fragment extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
+
     BottomNavigationView BreederBottomNavigation;
 
     @Override
@@ -90,6 +90,7 @@ public class user_home_fragment extends Fragment {
         BreederBottomNavigation.getMenu().getItem(0).setEnabled(false);
         return view;
     }
+
     ImageSlider imageSlider;
     TextView logoName;
     private FirebaseUser firebaseUser;
@@ -104,6 +105,7 @@ public class user_home_fragment extends Fragment {
     ArrayList<String> role;
     LinearLayout maybeLayout;
     RecyclerView youMayLike_recycler;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -164,70 +166,105 @@ public class user_home_fragment extends Fragment {
             userID = firebaseUser.getUid();
             // calling the user info to display the details about the user.
 
-            databaseReference = fireStore.collection("User").document(userID);
-            databaseReference
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @SuppressLint("SetTextI18n")
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                if (task.isSuccessful()) {
-                                    List<String> ids = (List<String>) task.getResult().get("role");
-                                    if(task.getResult().getString("status").equals("suspended")){
-                                        Toast.makeText(getContext(), "Your account is suspended", Toast.LENGTH_SHORT).show();
+                databaseReference = fireStore.collection("User").document(userID);
+                databaseReference
+                        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot task, @Nullable FirebaseFirestoreException error) {
+                                if (error != null) return;
 
-                                        Toast.makeText(getContext(), "If you have any concern, send an email to info.hibreed@gmail.com", Toast.LENGTH_SHORT).show();
-                                        FirebaseAuth.getInstance().signOut();
-                                        startActivity(new Intent(getContext(), Login.class));
-                                        getActivity().finish();
-                                        return;
-                                    }else
-                                    if (task.getResult().getString("status").equals("pending")) {
+                                if (task != null) {
+                                    if (task.getString("status").equals("suspended")) {
+                                        if (isAdded() && getContext() != null) {
+                                            AlertDialog.Builder builder2 = new AlertDialog.Builder(requireContext());
+                                            builder2.setCancelable(false);
+                                            View view = View.inflate(getContext(), R.layout.screen_custom_alert, null);
+                                            //title
+                                            TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                            //loading text
+                                            TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                            loadingText.setVisibility(View.GONE);
+                                            //gif
+                                            GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                            gif.setVisibility(View.GONE);
+                                            //header image
+                                            AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                            imageViewCompat.setVisibility(View.VISIBLE);
+                                            imageViewCompat.setImageDrawable(getContext().getDrawable(R.drawable.screen_alert_image_error_border));
+                                            //message
+                                            TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                            title.setText("Your account is suspended");
+                                            message.setText("If you have any concern, send an email to info.hibreed@gmail.com");
+                                            //button
+                                            LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                            buttonLayout.setVisibility(View.VISIBLE);
+                                            MaterialButton cancel, okay;
+                                            cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                            cancel.setVisibility(View.GONE);
+                                            okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                            okay.setText("OKAY");
+                                            okay.setBackgroundColor(Color.parseColor("#F6B75A"));
+                                            okay.setTextColor(Color.WHITE);
+                                            builder2.setView(view);
+                                            AlertDialog alert2 = builder2.create();
+                                            alert2.show();
+                                            alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                            okay.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    alert2.dismiss();
+                                                    FirebaseAuth.getInstance().signOut();
+                                                    Intent i = new Intent(getContext(), screen_splashScreen_MainActivity.class);
+                                                    // set the new task and clear flags
+                                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    getActivity().startActivity(i);
+                                                    getActivity().finish();
+                                                }
+                                            });
+                                        }
+                                    } else if (task.getString("status").equals("pending")) {
                                         notVerified.setVisibility(View.VISIBLE);
-                                        if(!(role.contains("Pet Shooter") && role.contains("Pet Breeder") && role.contains("Veterinarian")  ) ){
+                                        if (!(role.contains("Pet Shooter") && role.contains("Pet Breeder") && role.contains("Veterinarian"))) {
                                             notVerified.setText("We are still reviewing all of your submitted documentation; you have not yet been verified.");
                                             myServicesCardView9.setEnabled(false);
-                                        }
-                                        else{
+                                        } else {
                                             notVerified.setOnClickListener(new View.OnClickListener() {
                                                 @SuppressLint("SetTextI18n")
                                                 @Override
                                                 public void onClick(View v) {
-                                                        startActivity(new Intent(getContext(), not_verified_activity.class));
+                                                    startActivity(new Intent(getContext(), not_verified_activity.class));
                                                 }
                                             });
                                         }
-
                                     }
-
-                                    ArrayList arrayList = (ArrayList) task.getResult().get("role");
+                                    else if(task.getString("status").equals("verified")){
+                                        notVerified.setVisibility(View.GONE);
+                                    }
+                                    ArrayList arrayList = (ArrayList) task.get("role");
                                     if (arrayList != null) {
                                         role.addAll(arrayList);
                                     }
                                 }
                             }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(user_home_fragment.this.getContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            databaseReference
-                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot documentSnapshot = task.getResult();
-                                String img = documentSnapshot.getString("image");
-                                if (img != null)
-                                    Picasso.get().load(img).into(imageView);
-                                else
-                                    imageView.setImageResource(R.drawable.noimage);
+                        });
+
+                databaseReference
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot documentSnapshot = task.getResult();
+                                    String img = documentSnapshot.getString("image");
+                                    if (img != null)
+                                        Picasso.get().load(img).into(imageView);
+                                    else
+                                        imageView.setImageResource(R.drawable.noimage);
+                                }
                             }
-                        }
-                    });
+                        });
+
+
         }
         findDateCardView9.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -309,9 +346,9 @@ public class user_home_fragment extends Fragment {
                 if (BreederBottomNavigation != null) {
                     BreederBottomNavigation.getMenu().getItem(3).setChecked(false);
                     BreederBottomNavigation.getMenu().getItem(0).setEnabled(true);
-                     user_profile_fragment profile_fragment = new user_profile_fragment();
+                    user_profile_fragment profile_fragment = new user_profile_fragment();
                     FragmentTransaction fr = getFragmentManager().beginTransaction();
-                    fr.replace(R.id.fragment,profile_fragment);
+                    fr.replace(R.id.fragment, profile_fragment);
                     fr.addToBackStack("name");
                     fr.commit();
                 }
@@ -328,7 +365,8 @@ public class user_home_fragment extends Fragment {
     }
 
 
-    int counterMain=0;
+    int counterMain = 0;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void recommendProducts() {
 
@@ -336,104 +374,101 @@ public class user_home_fragment extends Fragment {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         FirebaseFirestore.getInstance().collection("Likes")
-                .whereEqualTo("likedBy",userId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                .whereEqualTo("likedBy", userId).addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(error!=null) return;
-                        if(value!=null){
+                        if (error != null) return;
+                        if (value != null) {
 
                             List<DocumentSnapshot> list = value.getDocuments();
                             List<RecommendedProduct> recommended = new ArrayList<>();
                             Set<String> likedProducts = new HashSet<>(); // create a set to store the liked products
 
-                            for(DocumentSnapshot s: list) {
+                            for (DocumentSnapshot s : list) {
                                 counterMain++;
                                 String type = s.getString("category");
                                 String prod_id = s.getString("product_id");
-                                Log.d("RecommendedLikes",prod_id);
+                                Log.d("RecommendedLikes", prod_id);
                                 likedProducts.add(prod_id); // add the liked products to the set
-                                if(type.equals("forSale")){
+                                if (type.equals("forSale")) {
                                     FirebaseFirestore.getInstance().collection("Pet")
                                             .document(prod_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                    if(documentSnapshot.exists()){
+                                                    if (documentSnapshot.exists()) {
 
                                                         FirebaseFirestore.getInstance().collection("Pet")
-                                                                .whereEqualTo("displayFor",type)
-                                                                .whereEqualTo("pet_breed",documentSnapshot.getString("pet_breed"))
+                                                                .whereEqualTo("displayFor", type)
+                                                                .whereEqualTo("pet_breed", documentSnapshot.getString("pet_breed"))
                                                                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                                                     @Override
                                                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                                        if(queryDocumentSnapshots!=null){
+                                                                        if (queryDocumentSnapshots != null) {
                                                                             List<DocumentSnapshot> listSub = queryDocumentSnapshots.getDocuments();
-                                                                            int counterSub=0;
-                                                                            for(DocumentSnapshot s: listSub){
-                                                                                counterSub++;
-                                                                                if(!likedProducts.contains(s.getString("id")) && !recommended.contains(s.getString("id"))){ // check if the product is already liked or recommended
-                                                                                    recommended.add(new RecommendedProduct(s.getString("id"),s.getString("displayFor")));
-                                                                                    if(counterSub == listSub.size() && counterMain == list.size()){
-                                                                                       displayProductsRecommended(recommended);
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                });
-
-                                                    }
-                                                }
-                                            });
-                                }
-                                else if(type.equals("Dog Accessories")||type.equals("Medicine")){
-                                    FirebaseFirestore.getInstance().collection("Pet")
-                                            .document(prod_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                    if(documentSnapshot.exists()){
-                                                        FirebaseFirestore.getInstance().collection("Pet")
-                                                                .whereEqualTo("prod_category",type)
-                                                                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                                    @Override
-                                                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                                        if(queryDocumentSnapshots!=null){
-                                                                            List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
                                                                             int counterSub = 0;
-                                                                            for(DocumentSnapshot a: list1){
+                                                                            for (DocumentSnapshot s : listSub) {
                                                                                 counterSub++;
-                                                                                if(!likedProducts.contains(a.getString("id")) && !recommended.contains(a.getString("id"))){ // check if the product is already liked or recommended
-                                                                                    recommended.add(new RecommendedProduct(a.getString("id"),a.getString("prod_category")));
-                                                                                    if(counterSub == list1.size() && counterMain == list.size()){
+                                                                                if (!likedProducts.contains(s.getString("id")) && !recommended.contains(s.getString("id"))) { // check if the product is already liked or recommended
+                                                                                    recommended.add(new RecommendedProduct(s.getString("id"), s.getString("displayFor")));
+                                                                                    if (counterSub == listSub.size() && counterMain == list.size()) {
                                                                                         displayProductsRecommended(recommended);
                                                                                     }
                                                                                 }
                                                                             }
                                                                         }
                                                                     }
-                                                             });
+                                                                });
                                                     }
                                                 }
                                             });
-                                }
-                                else if(type.equals("Service")){
+                                } else if (type.equals("Dog Accessories") || type.equals("Medicine")) {
+                                    FirebaseFirestore.getInstance().collection("Pet")
+                                            .document(prod_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                    if (documentSnapshot.exists()) {
+                                                        FirebaseFirestore.getInstance().collection("Pet")
+                                                                .whereEqualTo("prod_category", type)
+                                                                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                                    @Override
+                                                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                                        if (queryDocumentSnapshots != null) {
+                                                                            List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
+                                                                            int counterSub = 0;
+                                                                            for (DocumentSnapshot a : list1) {
+                                                                                counterSub++;
+                                                                                if (!likedProducts.contains(a.getString("id")) && !recommended.contains(a.getString("id"))) { // check if the product is already liked or recommended
+                                                                                    recommended.add(new RecommendedProduct(a.getString("id"), a.getString("prod_category")));
+                                                                                    if (counterSub == list1.size() && counterMain == list.size()) {
+                                                                                        displayProductsRecommended(recommended);
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                });
+                                                    }
+                                                }
+                                            });
+                                } else if (type.equals("Service")) {
                                     FirebaseFirestore.getInstance().collection("Services")
                                             .document(prod_id)
                                             .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                    if(documentSnapshot.exists()){
+                                                    if (documentSnapshot.exists()) {
                                                         FirebaseFirestore.getInstance().collection("Services")
-                                                                .whereEqualTo("serviceType",documentSnapshot.getString("serviceType"))
+                                                                .whereEqualTo("serviceType", documentSnapshot.getString("serviceType"))
                                                                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                                                     @Override
                                                                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                                        if(!queryDocumentSnapshots.isEmpty()){
+                                                                        if (!queryDocumentSnapshots.isEmpty()) {
                                                                             int counterSub = 0;
-                                                                            for(DocumentSnapshot a:queryDocumentSnapshots.getDocuments()){
+                                                                            for (DocumentSnapshot a : queryDocumentSnapshots.getDocuments()) {
                                                                                 counterSub++;
-                                                                                if(!likedProducts.contains(a.getString("id")) && !recommended.contains(a.getString("id"))){ // check if the product is already liked or recommended
-                                                                                    recommended.add(new RecommendedProduct(a.getString("id"),a.getString("serviceType")));
-                                                                                    if(counterSub == queryDocumentSnapshots.size() && counterMain == list.size()){
+                                                                                if (!likedProducts.contains(a.getString("id")) && !recommended.contains(a.getString("id"))) { // check if the product is already liked or recommended
+                                                                                    recommended.add(new RecommendedProduct(a.getString("id"), a.getString("serviceType")));
+                                                                                    if (counterSub == queryDocumentSnapshots.size() && counterMain == list.size()) {
                                                                                         displayProductsRecommended(recommended);
                                                                                     }
                                                                                 }
@@ -452,10 +487,12 @@ public class user_home_fragment extends Fragment {
                 });
 
     }
+
     may_you_like_adapter adapters;
     private final Set<String> addedIds = new HashSet<>();
+
     private void displayProductsRecommended(List<RecommendedProduct> recommended) {
-        if(recommended.size()!=0){
+        if (recommended.size() != 0) {
             maybeLayout.setVisibility(View.VISIBLE);
             for (RecommendedProduct r : recommended) {
 
@@ -476,32 +513,30 @@ public class user_home_fragment extends Fragment {
                                     }
                                 });
 
-                    }
-                    else if (r.getType().equals("Dog Accessories") || r.getType().equals("Medicine")){
+                    } else if (r.getType().equals("Dog Accessories") || r.getType().equals("Medicine")) {
                         FirebaseFirestore.getInstance().collection("Pet")
                                 .document(r.getId())
                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if(documentSnapshot.exists()){
-                                            likes_class  like = new likes_class(r.getId(),"",r.getId(),
+                                        if (documentSnapshot.exists()) {
+                                            likes_class like = new likes_class(r.getId(), "", r.getId(),
                                                     documentSnapshot.getString("vet_id"),
-                                                    r.getType(),null);
+                                                    r.getType(), null);
                                             adapters.add_to_cart(like);
                                         }
                                     }
                                 });
-                    }
-                    else if (r.getType().equals("forSale")){
+                    } else if (r.getType().equals("forSale")) {
                         FirebaseFirestore.getInstance().collection("Pet")
                                 .document(r.getId())
                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if(documentSnapshot.exists()){
-                                            likes_class  like = new likes_class(r.getId(),"",r.getId(),
+                                        if (documentSnapshot.exists()) {
+                                            likes_class like = new likes_class(r.getId(), "", r.getId(),
                                                     documentSnapshot.getString("pet_breeder"),
-                                                    r.getType(),null);
+                                                    r.getType(), null);
                                             adapters.add_to_cart(like);
                                         }
                                     }
@@ -510,40 +545,40 @@ public class user_home_fragment extends Fragment {
                 }
             }
             youMayLike_recycler.setAdapter(adapters);
-        }
-        else{
+        } else {
             maybeLayout.setVisibility(View.GONE);
         }
 
     }
-    private void getPetForYou() {
-      FirebaseFirestore.getInstance().collection("Pet")
-                .whereEqualTo("displayFor","forSale")
-              .whereEqualTo("show",true)
-              .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                  @Override
-                  public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                    if(error!=null){
-                        return;
-                    }
-                    if(value!=null){
-                        adapter.clearList();
-                        List<DocumentSnapshot> dsList = value.getDocuments();
-                        for(DocumentSnapshot ds:dsList){
-                            if(ds!=null){
 
-                                PetSaleClass productModel = ds.toObject(PetSaleClass.class);
-                                adapter.addPetDisplay(productModel);
+    private void getPetForYou() {
+        FirebaseFirestore.getInstance().collection("Pet")
+                .whereEqualTo("displayFor", "forSale")
+                .whereEqualTo("show", true)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            return;
+                        }
+                        if (value != null) {
+                            adapter.clearList();
+                            List<DocumentSnapshot> dsList = value.getDocuments();
+                            for (DocumentSnapshot ds : dsList) {
+                                if (ds != null) {
+
+                                    PetSaleClass productModel = ds.toObject(PetSaleClass.class);
+                                    adapter.addPetDisplay(productModel);
+                                }
+                            }
+                            if (dsList.size() == 0)
+                                for_you_layout.setVisibility(View.GONE);
+                            else {
+                                for_you_layout.setVisibility(View.VISIBLE);
                             }
                         }
-                        if(dsList.size() == 0)
-                            for_you_layout.setVisibility(View.GONE);
-                        else{
-                            for_you_layout.setVisibility(View.VISIBLE);
-                        }
                     }
-                  }
-              });
+                });
     }
 
     @Override

@@ -19,6 +19,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.hi_breed.R;
+import com.example.hi_breed.Report_activity;
+import com.example.hi_breed.loginAndRegistration.about_activity;
 import com.example.hi_breed.order_user_side.order_user_side;
 import com.example.hi_breed.screenLoading.LoadingDialog;
 import com.example.hi_breed.screenLoading.screen_WelcomeToHiBreed;
@@ -90,7 +92,7 @@ public class user_profile_fragment extends Fragment {
         //Variables
 
         if (isAdded() && getActivity() != null) {
-
+            
             trackingConstraint = view.findViewById(R.id.trackingConstraint);
             orderConstraint = view.findViewById(R.id.orderConstraint);
             //images
@@ -145,6 +147,18 @@ public class user_profile_fragment extends Fragment {
                     startActivity(new Intent(getContext(), add_to_cart.class));
                 }
             });
+            cardLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), "Sorry, card feature is under maintenance.", Toast.LENGTH_SHORT).show();
+                }
+            });
+            aboutLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getContext(), about_activity.class));
+                }
+            });
 //to edit
             editLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -160,7 +174,12 @@ public class user_profile_fragment extends Fragment {
                 }
             });
 // to save the image
-
+            faqLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getContext(), Report_activity.class));
+                }
+            });
 
 //account settings
             accountLayout.setOnClickListener(new View.OnClickListener() {

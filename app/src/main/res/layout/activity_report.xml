@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Report_activity">
+
+
+    <RelativeLayout
+
+        android:id="@+id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@android:color/white"
+        android:translationZ="3dp"
+        tools:context=".loginAndRegistration.container_fragment_registration_users"
+        tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_toEndOf="@id/backLayoutService"
+            android:fontFamily="@font/poppinsemibold"
+            android:text="Report"
+            android:textColor="@color/material_blue_grey_80"
+            android:textSize="18sp"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/backLayoutService"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+            <ImageView
+                android:id="@+id/shop_edit_backArrowImage"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/icon_arrowback"
+                tools:ignore="ContentDescription,NestedWeights"
+                tools:layout_editor_absoluteX="339dp"
+                tools:layout_editor_absoluteY="122dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbarID"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/poppinsmedium"
+                android:padding="5dp"
+                android:text="How to report a user?"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="17sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppinsmedium"
+                android:padding="8dp"
+                android:text="We have prepared a user guide that provides clear instructions on how to report a user. To initiate the reporting process, you can send an email to the app's support team using the designated email address mentioned in the guide."
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppinsmedium"
+                android:padding="5dp"
+                android:text="Reporting a user via email guide"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/photo_report"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/report_user"
+                android:translationZ="3dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1. Fill in the User Details section by providing the reported user's name, address (if known), and user role (if applicable)."
+                android:padding="8dp"    tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2. Describe the reason for reporting the user in a clear and concise manner, detailing specific incidents and attaching any relevant photos or screenshots."
+                android:padding="8dp"    tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3. Enter your personal information, including your name and the email address associated with your app account."
+                android:padding="8dp"    tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4. Review the completed report to ensure accuracy and clarity."
+                android:padding="8dp"   tools:ignore="HardcodedText"  />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5. Send the report to the app's support team or designated email address at info.hibreed@gmail.com."
+                android:padding="8dp"   tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="6. Await the support team's response and cooperate with any additional inquiries or actions required."
+                android:padding="8dp"   tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Important Notes:"
+                android:textColor="@color/material_blue_grey_80"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:padding="8dp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\u2022 Please ensure that the information provided in the report is accurate and based on factual evidence."
+                android:padding="8dp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\u2022 Respect the privacy and confidentiality of all parties involved."
+                android:padding="8dp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\u2022 Use a polite and professional tone throughout the report, focusing on objective observations and concerns."
+                android:padding="8dp"
+                tools:ignore="HardcodedText"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="By utilizing this Reporting User Template, users can effectively communicate their concerns and contribute to the maintenance of a safe and respectful environment within the mobile application or platform."
+                  android:padding="8dp"
+                android:layout_marginBottom="10dp"
+                tools:ignore="HardcodedText"/>
+
+            <Button
+                android:id="@+id/reportUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="Report a user"
+                android:background="@drawable/dropshadow_button_cancelled"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+
+    </ScrollView>
+</RelativeLayout>

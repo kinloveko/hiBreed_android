@@ -68,20 +68,22 @@ public class petDisplayForSaleAdapter extends RecyclerView.Adapter<petDisplayFor
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if(task.isSuccessful()){
-                                ArrayList<String> list = (ArrayList<String>) task.getResult().get("photos");
-                                if(list.size() != 0){
-                                    if(list.get(0) ==null){
-                                        holder.imageRecycler.setImageResource(R.drawable.noimage);
+                                if(task.getResult().get("photos")!=null){
+                                    ArrayList<String> list = (ArrayList<String>) task.getResult().get("photos");
+                                    if(list.size() != 0){
+                                        if(list.get(0) ==null){
+                                            holder.imageRecycler.setImageResource(R.drawable.noimage);
+                                        }
+                                        else{
+                                            Glide.with(holder.itemView.getContext())
+                                                    .load(list.get(0))
+                                                    .fitCenter()
+                                                    .into(holder.imageRecycler);
+                                        }
                                     }
                                     else{
-                                        Glide.with(holder.itemView.getContext())
-                                                .load(list.get(0))
-                                                .fitCenter()
-                                                .into(holder.imageRecycler);
+                                        holder.imageRecycler.setImageResource(R.drawable.noimage);
                                     }
-                                }
-                                else{
-                                    holder.imageRecycler.setImageResource(R.drawable.noimage);
                                 }
                         }
                     }

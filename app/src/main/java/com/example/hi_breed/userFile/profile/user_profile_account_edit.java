@@ -79,15 +79,15 @@ public class user_profile_account_edit extends BaseActivity {
     StorageReference fileRefBreeder;
     StorageReference fileRefBreederBackground;
     private FirebaseUser firebaseUser;
-    Uri imgsUri,imgUriCover;
-    ActivityResultLauncher<String> cropImage,cropImageCover;
-    ImageView imageView,imageBackground;
+    Uri imgsUri, imgUriCover;
+    ActivityResultLauncher<String> cropImage, cropImageCover;
+    ImageView imageView, imageBackground;
     String userID;
     String alertCaller;
-    RelativeLayout reg_firstLayout,reg_lastLayout,reg_middleLayout,reg_addressLayout,reg_zipLayout,reg_birthdayLayout,reg_genderLayout;
-    TextView reg_first,reg_last,reg_middle,reg_gender,reg_birthday,reg_address,reg_zip;
-    TextView updateButton,editButton,undoEditButton;
-    String before_first,before_last,before_middle,before_address,before_zip,before_birthday,before_gender;
+    RelativeLayout reg_firstLayout, reg_lastLayout, reg_middleLayout, reg_addressLayout, reg_zipLayout, reg_birthdayLayout, reg_genderLayout;
+    TextView reg_first, reg_last, reg_middle, reg_gender, reg_birthday, reg_address, reg_zip;
+    TextView updateButton, editButton, undoEditButton;
+    String before_first, before_last, before_middle, before_address, before_zip, before_birthday, before_gender;
 
 
     @SuppressLint("SetTextI18n")
@@ -110,9 +110,9 @@ public class user_profile_account_edit extends BaseActivity {
         }
 
         //background cover
-        fileRefBreederBackground = FirebaseStorage.getInstance().getReference("User/"+firebaseUser.getUid()+"/"+"Profile Background/");
+        fileRefBreederBackground = FirebaseStorage.getInstance().getReference("User/" + firebaseUser.getUid() + "/" + "Profile Background/");
         //profile
-        fileRefBreeder = FirebaseStorage.getInstance().getReference("User/"+userID+"/"+"Profile Picture/");
+        fileRefBreeder = FirebaseStorage.getInstance().getReference("User/" + userID + "/" + "Profile Picture/");
 
 
         //Relative layout
@@ -184,7 +184,7 @@ public class user_profile_account_edit extends BaseActivity {
                 undoEditButton.setVisibility(View.GONE);
                 AlertDialog.Builder builder2 = new AlertDialog.Builder(user_profile_account_edit.this);
                 builder2.setCancelable(false);
-                View view = View.inflate(user_profile_account_edit.this,R.layout.screen_custom_alert,null);
+                View view = View.inflate(user_profile_account_edit.this, R.layout.screen_custom_alert, null);
                 //title
                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                 //loading text
@@ -192,7 +192,7 @@ public class user_profile_account_edit extends BaseActivity {
                 loadingText.setVisibility(View.GONE);
                 //gif
                 GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
-                Uri uri = Uri.parse("android.resource://"+ getPackageName()+"/"+R.drawable.kawaii_access);
+                Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.kawaii_access);
                 gif.setImageURI(uri);
                 //header image
                 AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
@@ -215,7 +215,7 @@ public class user_profile_account_edit extends BaseActivity {
                         alert2.dismiss();
 
                     }
-                },2000);
+                }, 2000);
             }
         });
 
@@ -231,25 +231,23 @@ public class user_profile_account_edit extends BaseActivity {
         cropImageCover = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
             Intent intent = new Intent(this.getApplicationContext(), phone_UncropperActivity.class);
 
-            if(result!=null){
+            if (result != null) {
                 intent.putExtra("SendingData", result.toString());
-                startActivityForResult(intent,100);
-            }
-            else{
-                Toast.makeText(this.getApplicationContext(),"No changes",Toast.LENGTH_SHORT).show();
+                startActivityForResult(intent, 100);
+            } else {
+                Toast.makeText(this.getApplicationContext(), "No changes", Toast.LENGTH_SHORT).show();
             }
         });
         //profile image request
         cropImage = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
             Intent intent = new Intent(user_profile_account_edit.this.getApplicationContext(), phone_UncropperActivity.class);
 
-            if(result!=null){
+            if (result != null) {
                 intent.putExtra("SendingData", result.toString());
-               startActivityForResult(intent,99);
+                startActivityForResult(intent, 99);
 
-            }
-            else{
-                Toast.makeText(this.getApplicationContext(),"No changes",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this.getApplicationContext(), "No changes", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -282,20 +280,21 @@ public class user_profile_account_edit extends BaseActivity {
     }
 
     //to get the value of the imageView
-    String imageProf="";
-    String imageCover="";
-    List<String> roles= new ArrayList<>();
+    String imageProf = "";
+    String imageCover = "";
+    List<String> roles = new ArrayList<>();
+
     private void getUserInfo() {
 
         FirebaseFirestore.getInstance().collection("User").document(firebaseUser.getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
-                if(error!=null){
+                if (error != null) {
                     return;
                 }
                 if (documentSnapshot.exists()) {
 
-                    roles =(List<String>) documentSnapshot.get("role");
+                    roles = (List<String>) documentSnapshot.get("role");
                     before_first = documentSnapshot.getString("firstName");
                     before_middle = documentSnapshot.getString("middleName");
                     before_last = documentSnapshot.getString("lastName");
@@ -319,7 +318,7 @@ public class user_profile_account_edit extends BaseActivity {
                         //setting the variable to what imageView picture has.
                         imageProf = documentSnapshot.getString("image");
                     }
-                    if (documentSnapshot.getString("backgroundImage") == "" || documentSnapshot.getString("backgroundImage")== null) {
+                    if (documentSnapshot.getString("backgroundImage") == "" || documentSnapshot.getString("backgroundImage") == null) {
                         imageBackground.setImageResource(R.drawable.nobackground);
                         imageCover = "";
                     } else {
@@ -330,20 +329,20 @@ public class user_profile_account_edit extends BaseActivity {
                 }
             }
         });
- }
-
+    }
 
 
     int count = 0;
     String genderHolder = "";
+
     @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
     private void dialogForAll(String alertCaller) {
 
 
-        if(alertCaller.equals("firstName")){
+        if (alertCaller.equals("firstName")) {
 
             AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-            View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
+            View view2 = View.inflate(this, R.layout.screen_custom_alert, null);
             builder3.setCancelable(false);
             //title
             TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
@@ -365,7 +364,7 @@ public class user_profile_account_edit extends BaseActivity {
             LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
             buttonLayout.setVisibility(View.VISIBLE);
             //button
-            MaterialButton cancel,okay;
+            MaterialButton cancel, okay;
             //cancel button
             cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
             cancel.setText("Cancel");
@@ -396,11 +395,10 @@ public class user_profile_account_edit extends BaseActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if(s.length()!=0){
-                        if(s.length() >= 2){
+                    if (s.length() != 0) {
+                        if (s.length() >= 2) {
                             valid.setVisibility(View.VISIBLE);
-                        }
-                        else {
+                        } else {
                             valid.setVisibility(View.GONE);
                         }
                         clear.setVisibility(View.VISIBLE);
@@ -410,8 +408,7 @@ public class user_profile_account_edit extends BaseActivity {
                                 editText.getText().clear();
                             }
                         });
-                    }
-                    else{
+                    } else {
 
                         valid.setVisibility(View.GONE);
                         clear.setVisibility(View.GONE);
@@ -436,49 +433,44 @@ public class user_profile_account_edit extends BaseActivity {
             okay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(editText.getText().toString().equals("") || editText.getText().toString() == null){
+                    if (editText.getText().toString().equals("") || editText.getText().toString() == null) {
                         count = 0;
                         Toast.makeText(user_profile_account_edit.this, "Oops. You made no entry! a First name was expected", Toast.LENGTH_SHORT).show();
-                    }
-                    else if(editText.getText().toString().equals(before_first)){
+                    } else if (editText.getText().toString().equals(before_first)) {
                         count = 1;
                         reg_first.setText(editText.getText().toString());
 
                         Toast.makeText(user_profile_account_edit.this, "Oops. We expecting a different name, but you entered the same value.", Toast.LENGTH_SHORT).show();
-                    }
-                    else if (editText.length()<2){
+                    } else if (editText.length() < 2) {
                         count = 0;
                         Toast.makeText(user_profile_account_edit.this, "Oops. Input must have 2 characters", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
+                    } else {
                         reg_first.setText(editText.getText().toString());
                         Toast.makeText(user_profile_account_edit.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
                         count = 1;
-                        Map<String,Object> data = new HashMap<>();
-                        data.put("firstName",editText.getText().toString());
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("firstName", editText.getText().toString());
 
                         firebaseFirestore.collection("User")
                                 .document(firebaseUser.getUid())
-                                .set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Toast.makeText(user_profile_account_edit.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
-                    if(count != 0){
+                    if (count != 0) {
                         alert3.dismiss();
-                    }
-                    else{
+                    } else {
 
                     }
                 }
             });
 
-        }
-        else if(alertCaller.equals("middleName")){
+        } else if (alertCaller.equals("middleName")) {
             AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-            View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
+            View view2 = View.inflate(this, R.layout.screen_custom_alert, null);
             builder3.setCancelable(false);
             //title
             TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
@@ -500,7 +492,7 @@ public class user_profile_account_edit extends BaseActivity {
             LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
             buttonLayout.setVisibility(View.VISIBLE);
             //button
-            MaterialButton cancel,okay;
+            MaterialButton cancel, okay;
             //cancel button
             cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
             cancel.setText("Cancel");
@@ -528,7 +520,7 @@ public class user_profile_account_edit extends BaseActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if(s.length()!=0){
+                    if (s.length() != 0) {
                         clear.setVisibility(View.VISIBLE);
                         clear.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -536,8 +528,7 @@ public class user_profile_account_edit extends BaseActivity {
                                 editText.getText().clear();
                             }
                         });
-                    }
-                    else{
+                    } else {
                         clear.setVisibility(View.GONE);
                     }
                 }
@@ -561,24 +552,22 @@ public class user_profile_account_edit extends BaseActivity {
             okay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(editText.getText().toString().equals("") || editText.getText().toString() == null){
+                    if (editText.getText().toString().equals("") || editText.getText().toString() == null) {
                         count = 0;
                         Toast.makeText(user_profile_account_edit.this, "Oops. You made no entry! your Middle name was expected", Toast.LENGTH_SHORT).show();
-                    }
-                    else if(editText.getText().toString().equals(before_middle)){
+                    } else if (editText.getText().toString().equals(before_middle)) {
                         count = 1;
                         reg_middle.setText(editText.getText().toString());
                         Toast.makeText(user_profile_account_edit.this, "Oops. We expecting a different name, but you entered the same value.", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
+                    } else {
                         reg_middle.setText(editText.getText().toString());
                         Toast.makeText(user_profile_account_edit.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
                         count = 1;
-                        Map<String,Object> data = new HashMap<>();
-                        data.put("middleName",editText.getText().toString());
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("middleName", editText.getText().toString());
                         firebaseFirestore.collection("User")
                                 .document(firebaseUser.getUid())
-                                .set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Toast.makeText(user_profile_account_edit.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
@@ -586,18 +575,16 @@ public class user_profile_account_edit extends BaseActivity {
                                 });
 
                     }
-                    if(count != 0){
+                    if (count != 0) {
                         alert3.dismiss();
-                    }
-                    else{
+                    } else {
 
                     }
                 }
             });
-        }
-        else if(alertCaller.equals("lastName")){
+        } else if (alertCaller.equals("lastName")) {
             AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-            View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
+            View view2 = View.inflate(this, R.layout.screen_custom_alert, null);
             builder3.setCancelable(false);
             //title
             TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
@@ -619,7 +606,7 @@ public class user_profile_account_edit extends BaseActivity {
             LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
             buttonLayout.setVisibility(View.VISIBLE);
             //button
-            MaterialButton cancel,okay;
+            MaterialButton cancel, okay;
             //cancel button
             cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
             cancel.setText("Cancel");
@@ -649,11 +636,10 @@ public class user_profile_account_edit extends BaseActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if(s.length()!=0){
-                        if(s.length() >= 2){
+                    if (s.length() != 0) {
+                        if (s.length() >= 2) {
                             valid.setVisibility(View.VISIBLE);
-                        }
-                        else{
+                        } else {
                             valid.setVisibility(View.GONE);
                         }
                         clear.setVisibility(View.VISIBLE);
@@ -663,8 +649,7 @@ public class user_profile_account_edit extends BaseActivity {
                                 editText.getText().clear();
                             }
                         });
-                    }
-                    else{
+                    } else {
                         valid.setVisibility(View.GONE);
                         clear.setVisibility(View.GONE);
                     }
@@ -688,29 +673,26 @@ public class user_profile_account_edit extends BaseActivity {
             okay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(editText.getText().toString().equals("") || editText.getText().toString() == null){
+                    if (editText.getText().toString().equals("") || editText.getText().toString() == null) {
                         count = 0;
                         Toast.makeText(user_profile_account_edit.this, "Oops. You made no entry! your Last name was expected", Toast.LENGTH_SHORT).show();
-                    }
-                    else if(editText.getText().toString().equals(before_last)){
+                    } else if (editText.getText().toString().equals(before_last)) {
                         count = 1;
                         reg_last.setText(editText.getText().toString());
                         Toast.makeText(user_profile_account_edit.this, "Oops. We expecting a different name, but you entered the same value.", Toast.LENGTH_SHORT).show();
-                    }
-                    else if (editText.length()<2){
+                    } else if (editText.length() < 2) {
                         count = 0;
                         Toast.makeText(user_profile_account_edit.this, "Oops. Input must have 2 characters", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
+                    } else {
 
                         reg_last.setText(editText.getText().toString());
                         Toast.makeText(user_profile_account_edit.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
                         count = 1;
-                        Map<String,Object> data = new HashMap<>();
-                        data.put("lastName",editText.getText().toString());
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("lastName", editText.getText().toString());
                         firebaseFirestore.collection("User")
                                 .document(firebaseUser.getUid())
-                                .set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Toast.makeText(user_profile_account_edit.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
@@ -718,23 +700,21 @@ public class user_profile_account_edit extends BaseActivity {
                                 });
 
                     }
-                    if(count != 0){
+                    if (count != 0) {
                         alert3.dismiss();
-                    }
-                    else{
+                    } else {
 
                     }
                 }
             });
-        }
-       else if(alertCaller.equals("gender")){
+        } else if (alertCaller.equals("gender")) {
 
-            String[] gender = {"Male","Female","Other"};
-            android.app.AlertDialog.Builder builder =new android.app.AlertDialog.Builder(this);
-            View view = View.inflate(this,R.layout.pet_add_gender_dialog,null);
-            MaterialButton done,cancel;
+            String[] gender = {"Male", "Female", "Other"};
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+            View view = View.inflate(this, R.layout.pet_add_gender_dialog, null);
+            MaterialButton done, cancel;
 
-            TextView message,title;
+            TextView message, title;
             message = view.findViewById(R.id.pet_gender_dialog_message);
             title = view.findViewById(R.id.pet_gender_dialog_title);
 
@@ -745,7 +725,7 @@ public class user_profile_account_edit extends BaseActivity {
 
             NumberPicker picker = view.findViewById(R.id.gender_numberPicker);
             picker.setMinValue(0);
-            picker.setMaxValue(gender.length -1 );
+            picker.setMaxValue(gender.length - 1);
             picker.setDisplayedValues(gender);
             picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
             picker.setWrapSelectorWheel(false);
@@ -763,15 +743,15 @@ public class user_profile_account_edit extends BaseActivity {
             done.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(genderHolder == ""|| genderHolder == null){
+                    if (genderHolder == "" || genderHolder == null) {
                         genderHolder = "0";
                     }
                     reg_gender.setText(gender[Integer.parseInt(genderHolder)]);
-                    Map<String,Object> data = new HashMap<>();
-                    data.put("gender",gender[Integer.parseInt(genderHolder)]);
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("gender", gender[Integer.parseInt(genderHolder)]);
                     firebaseFirestore.collection("User")
                             .document(firebaseUser.getUid())
-                            .set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     Toast.makeText(user_profile_account_edit.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
@@ -788,17 +768,16 @@ public class user_profile_account_edit extends BaseActivity {
                     dialog.dismiss();
                 }
             });
-            genderHolder="";
-        }
-       else if(alertCaller.equals("birthday")){
+            genderHolder = "";
+        } else if (alertCaller.equals("birthday")) {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-            View view = View.inflate(this,R.layout.pet_add_birthday_dialog,null);
+            View view = View.inflate(this, R.layout.pet_add_birthday_dialog, null);
             DatePicker datePicker = view.findViewById(R.id.datePicker);
             datePicker.setMaxDate(System.currentTimeMillis());
             builder.setView(view);
-            MaterialButton cancel,save;
-            TextView message,title;
-            title =view.findViewById(R.id.pet_add_birthday_set_title);
+            MaterialButton cancel, save;
+            TextView message, title;
+            title = view.findViewById(R.id.pet_add_birthday_set_title);
             title.setText("Set Birthday");
             message = view.findViewById(R.id.pet_add_birthday_set_message);
             message.setText("Please set your exact birthday");
@@ -812,9 +791,9 @@ public class user_profile_account_edit extends BaseActivity {
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onClick(View v) {
-                    int   day  = datePicker.getDayOfMonth();
-                    int   month= datePicker.getMonth();
-                    int   year = datePicker.getYear();
+                    int day = datePicker.getDayOfMonth();
+                    int month = datePicker.getMonth();
+                    int year = datePicker.getYear();
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(year, month, day);
 
@@ -822,16 +801,15 @@ public class user_profile_account_edit extends BaseActivity {
                     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
                     String formatedDate = sdf.format(calendar.getTime());
                     if (formatedDate.equals(before_birthday)) {
-                            count = 1;
+                        count = 1;
                         Toast.makeText(user_profile_account_edit.this, "Expected new birthday value", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                            count = 1;
-                        Map<String,Object> data = new HashMap<>();
-                        data.put("birth",formatedDate);
+                    } else {
+                        count = 1;
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("birth", formatedDate);
                         firebaseFirestore.collection("User")
                                 .document(firebaseUser.getUid())
-                                .set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
                                         reg_birthday.setText(formatedDate);
@@ -841,7 +819,7 @@ public class user_profile_account_edit extends BaseActivity {
                                 });
                     }
 
-                    
+
                     reg_birthday.setTextColor(ColorStateList.valueOf(Color.BLACK));
                     Toast.makeText(user_profile_account_edit.this, formatedDate, Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
@@ -854,10 +832,9 @@ public class user_profile_account_edit extends BaseActivity {
                     dialog.dismiss();
                 }
             });
-        }
-        else if(alertCaller.equals("address")){
+        } else if (alertCaller.equals("address")) {
             AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-            View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
+            View view2 = View.inflate(this, R.layout.screen_custom_alert, null);
             builder3.setCancelable(false);
             //title
             TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
@@ -879,7 +856,7 @@ public class user_profile_account_edit extends BaseActivity {
             LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
             buttonLayout.setVisibility(View.VISIBLE);
             //button
-            MaterialButton cancel,okay;
+            MaterialButton cancel, okay;
             //cancel button
             cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
             cancel.setText("Cancel");
@@ -907,7 +884,7 @@ public class user_profile_account_edit extends BaseActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if(s.length()!=0){
+                    if (s.length() != 0) {
                         clear.setVisibility(View.VISIBLE);
                         clear.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -915,8 +892,7 @@ public class user_profile_account_edit extends BaseActivity {
                                 editText.getText().clear();
                             }
                         });
-                    }
-                    else{
+                    } else {
                         clear.setVisibility(View.GONE);
                     }
                 }
@@ -939,30 +915,28 @@ public class user_profile_account_edit extends BaseActivity {
             okay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(editText.getText().toString().equals("") || editText.getText().toString() == null){
+                    if (editText.getText().toString().equals("") || editText.getText().toString() == null) {
                         count = 0;
                         Toast.makeText(user_profile_account_edit.this, "Oops. You made no entry! your current Address was expected", Toast.LENGTH_SHORT).show();
-                    }
-                    else if(editText.getText().toString().equals(before_address)){
+                    } else if (editText.getText().toString().equals(before_address)) {
                         count = 1;
                         reg_address.setText(editText.getText().toString());
                         Toast.makeText(user_profile_account_edit.this, "Oops. We expecting a different info, but you entered the same value.", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
+                    } else {
                         reg_address.setText(editText.getText().toString());
                         Toast.makeText(user_profile_account_edit.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
                         count = 1;
-                        Map<String,Object> data = new HashMap<>();
-                        data.put("address",editText.getText().toString());
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("address", editText.getText().toString());
                         firebaseFirestore.collection("User")
                                 .document(firebaseUser.getUid())
-                                .set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
 
-                                        if(roles.contains("Pet Shooter") || roles.contains("Veterinarian")){
+                                        if (roles.contains("Pet Shooter") || roles.contains("Veterinarian")) {
                                             FirebaseFirestore.getInstance().collection("Services")
-                                                    .whereEqualTo("shooter_id",FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .whereEqualTo("shooter_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                     .get()
                                                     .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                                         @Override
@@ -970,56 +944,54 @@ public class user_profile_account_edit extends BaseActivity {
 
                                                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
 
-                                                            if(list!=null){
+                                                            if (list != null) {
 
-                                                                for(DocumentSnapshot s:list){
+                                                                for (DocumentSnapshot s : list) {
                                                                     FirebaseFirestore.getInstance().collection("Services")
                                                                             .document(s.getId())
-                                                                            .update("address",editText.getText().toString())
+                                                                            .update("address", editText.getText().toString())
                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
                                                                                 public void onSuccess(Void unused) {
 
-                                                                                     FirebaseFirestore.getInstance().collection("Search")
-                                                                                             .document(s.getId()).update("address",editText.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                 @Override
-                                                                                                 public void onSuccess(Void unused) {
-                                                                                                     count++;
-                                                                                                     if(count==list.size()){
-                                                                                                         if(roles.contains("Veterinarian")){
+                                                                                    FirebaseFirestore.getInstance().collection("Search")
+                                                                                            .document(s.getId()).update("address", editText.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void unused) {
+                                                                                                    count++;
+                                                                                                    if (count == list.size()) {
+                                                                                                        if (roles.contains("Veterinarian")) {
 
-                                                                                                             before_address = editText.getText().toString();
-                                                                                                         }
-                                                                                                     }
-                                                                                                 }
-                                                                                             });
+                                                                                                            before_address = editText.getText().toString();
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            });
                                                                                 }
                                                                             });
                                                                 }
-                                                             }
+                                                            }
                                                         }
                                                     });
                                         }
 
-                                        if(roles.contains("Pet Breeder") || roles.contains("Veterinarian")){
-                                                gotoAnotherUpdateForItems(editText.getText().toString());
+                                        if (roles.contains("Pet Breeder") || roles.contains("Veterinarian")) {
+                                            gotoAnotherUpdateForItems(editText.getText().toString());
                                             before_address = editText.getText().toString();
                                         }
-                                      }
+                                    }
                                 });
                     }
-                    if(count != 0){
+                    if (count != 0) {
                         alert3.dismiss();
-                    }
-                    else{
+                    } else {
 
                     }
                 }
             });
-        }
-        else if(alertCaller.equals("zip")){
+        } else if (alertCaller.equals("zip")) {
             AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-            View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
+            View view2 = View.inflate(this, R.layout.screen_custom_alert, null);
             builder3.setCancelable(false);
             //title
             TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
@@ -1041,7 +1013,7 @@ public class user_profile_account_edit extends BaseActivity {
             LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
             buttonLayout.setVisibility(View.VISIBLE);
             //button
-            MaterialButton cancel,okay;
+            MaterialButton cancel, okay;
             //cancel button
             cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
             cancel.setText("Cancel");
@@ -1058,7 +1030,7 @@ public class user_profile_account_edit extends BaseActivity {
             editText.setVisibility(View.VISIBLE);
             editText.setHint("Zip code/Postal code..");
             int maxLength = 4;
-            editText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             //valid
             ImageView valid = view2.findViewById(R.id.screen_custom_valid_icon);
@@ -1073,11 +1045,10 @@ public class user_profile_account_edit extends BaseActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int c) {
-                    if(s.length()!=0){
-                        if(s.length()!=4){
+                    if (s.length() != 0) {
+                        if (s.length() != 4) {
                             count = 0;
-                        }
-                        else{
+                        } else {
                             count = 1;
                             valid.setVisibility(View.VISIBLE);
                         }
@@ -1088,8 +1059,7 @@ public class user_profile_account_edit extends BaseActivity {
                                 editText.getText().clear();
                             }
                         });
-                    }
-                    else{
+                    } else {
                         valid.setVisibility(View.VISIBLE);
                         clear.setVisibility(View.GONE);
                     }
@@ -1113,117 +1083,111 @@ public class user_profile_account_edit extends BaseActivity {
             okay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(editText.getText().toString().equals("") || editText.getText().toString() == null){
+                    if (editText.getText().toString().equals("") || editText.getText().toString() == null) {
                         count = 0;
                         Toast.makeText(user_profile_account_edit.this, "Oops. You made no entry! a Zip code/Postal Code was expected", Toast.LENGTH_SHORT).show();
-                    }
-                    else if(editText.getText().toString().equals(before_zip)){
+                    } else if (editText.getText().toString().equals(before_zip)) {
                         count = 1;
 
                         reg_zip.setText(editText.getText().toString());
                         Toast.makeText(user_profile_account_edit.this, "Oops. We expecting a different info, but you entered the same value.", Toast.LENGTH_SHORT).show();
-                    }
-                    else if(editText.length() != 4){
+                    } else if (editText.length() != 4) {
                         count = 0;
                         Toast.makeText(user_profile_account_edit.this, "Oops. Input must have 4 numbers.", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
+                    } else {
                         reg_zip.setText(editText.getText().toString());
                         Toast.makeText(user_profile_account_edit.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
                         count = 1;
-                       Map<String,Object> data = new HashMap<>();
-                       data.put("zipCode",editText.getText().toString());
-                       firebaseFirestore.collection("User")
-                               .document(firebaseUser.getUid())
-                               .set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                   @Override
-                                   public void onSuccess(Void unused) {
-                                       Toast.makeText(user_profile_account_edit.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
-                                   }
-                               });
-                               
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("zipCode", editText.getText().toString());
+                        firebaseFirestore.collection("User")
+                                .document(firebaseUser.getUid())
+                                .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(user_profile_account_edit.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
                     }
-                    if(count != 0){
+                    if (count != 0) {
                         alert3.dismiss();
-                    }
-                    else{
+                    } else {
 
                     }
                 }
             });
-        }
-        else{
+        } else {
             Toast.makeText(this, "Cannot open a dialog", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void gotoAnotherUpdateForItems(String toString) {
-            if(roles.contains("Pet breeder")){
-                FirebaseFirestore.getInstance().collection("Pet")
-                        .whereEqualTo("displayFor","forSale")
-                        .whereEqualTo("pet_breeder",FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                                if(list!=null){
-                                    for(DocumentSnapshot s:list){
-                                        FirebaseFirestore.getInstance().collection("Pet")
-                                                .document(s.getId()).update("address",toString).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
-                                                        FirebaseFirestore.getInstance().collection("Search")
-                                                                .document(s.getId()).update("address",toString).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void unused) {
-                                                                        count++;
-                                                                        if(count==list.size()){
-                                                                            Toast.makeText(user_profile_account_edit.this, "Successfully updated", Toast.LENGTH_SHORT).show();
-                                                                        }
+        if (roles.contains("Pet breeder")) {
+            FirebaseFirestore.getInstance().collection("Pet")
+                    .whereEqualTo("displayFor", "forSale")
+                    .whereEqualTo("pet_breeder", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                            if (list != null) {
+                                for (DocumentSnapshot s : list) {
+                                    FirebaseFirestore.getInstance().collection("Pet")
+                                            .document(s.getId()).update("address", toString).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    FirebaseFirestore.getInstance().collection("Search")
+                                                            .document(s.getId()).update("address", toString).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+                                                                    count++;
+                                                                    if (count == list.size()) {
+                                                                        Toast.makeText(user_profile_account_edit.this, "Successfully updated", Toast.LENGTH_SHORT).show();
                                                                     }
-                                                                });
-                                                    }
-                                                });
-                                        
-                                    }
-                                }
-                                
-                            }
-                        });
-            }
-            else if(roles.contains("Veterinarian")){
-                FirebaseFirestore.getInstance().collection("Pet")
-                        .whereEqualTo("displayFor","forProducts")
-                        .whereEqualTo("vet_id",FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                                if(list!=null){
-                                    for(DocumentSnapshot s:list){
-                                     FirebaseFirestore.getInstance().collection("Pet")
-                                             .document(s.getId())
-                                             .update("address",toString).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                 @Override
-                                                 public void onSuccess(Void unused) {
-                                                   FirebaseFirestore.getInstance().collection("Search")
-                                                           .document(s.getId())
-                                                           .update("address",toString).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                               @Override
-                                                               public void onSuccess(Void unused) {
-                                                                   count++;
-                                                                   if(count==list.size()){
-                                                                       Toast.makeText(user_profile_account_edit.this, "Successfully updated", Toast.LENGTH_SHORT).show();
-                                                                   }
-                                                               }
-                                                           });
-                                                 }
-                                             });
-                                    }
+                                                                }
+                                                            });
+                                                }
+                                            });
+
                                 }
                             }
-                        });
-            }
-         
+
+                        }
+                    });
+        } else if (roles.contains("Veterinarian")) {
+            FirebaseFirestore.getInstance().collection("Pet")
+                    .whereEqualTo("displayFor", "forProducts")
+                    .whereEqualTo("vet_id", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                            if (list != null) {
+                                for (DocumentSnapshot s : list) {
+                                    FirebaseFirestore.getInstance().collection("Pet")
+                                            .document(s.getId())
+                                            .update("address", toString).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    FirebaseFirestore.getInstance().collection("Search")
+                                                            .document(s.getId())
+                                                            .update("address", toString).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+                                                                    count++;
+                                                                    if (count == list.size()) {
+                                                                        Toast.makeText(user_profile_account_edit.this, "Successfully updated", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                }
+                                                            });
+                                                }
+                                            });
+                                }
+                            }
+                        }
+                    });
+        }
+
     }
 
 
@@ -1232,38 +1196,36 @@ public class user_profile_account_edit extends BaseActivity {
 
     private void imagePermissionBackground() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_CODE_BACKGROUND_IMAGE );
+        startActivityForResult(intent, REQUEST_CODE_BACKGROUND_IMAGE);
     }
 
 
-    private void imagePermission(){
+    private void imagePermission() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_CODE_PROFILE_IMAGE );
+        startActivityForResult(intent, REQUEST_CODE_PROFILE_IMAGE);
     }
 
-    String resultsForCover="";
-    String results="";
+    String resultsForCover = "";
+    String results = "";
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == 99){
+        if (resultCode == RESULT_OK && requestCode == 99) {
             Uri imageUri = data.getData();
-            cropImage(imageUri,imageView,"profile");
-            }
-        else if(resultCode == RESULT_OK && requestCode ==100 ){
+            cropImage(imageUri, imageView, "profile");
+        } else if (resultCode == RESULT_OK && requestCode == 100) {
             Uri imageUri = data.getData();
-            cropImage(imageUri,imageBackground,"background");
-        }
-        else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            cropImage(imageUri, imageBackground, "background");
+        } else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             Uri croppedUri = UCrop.getOutput(data);
             // Use the cropped image URI as needed
             if (croppedUri != null) {
                 if (currentImageView != null && types != null) {
-                    if(types.equals("profile")){
+                    if (types.equals("profile")) {
                         results = croppedUri.toString();
                         uploadProfileImage();
-                    }
-                    else{
+                    } else {
                         resultsForCover = croppedUri.toString();
                         uploadBackground();
                     }
@@ -1277,23 +1239,24 @@ public class user_profile_account_edit extends BaseActivity {
 
     private ImageView currentImageView;
     private String types;
-    private void cropImage(Uri sourceUri, ImageView imageView,String type) {
+
+    private void cropImage(Uri sourceUri, ImageView imageView, String type) {
         currentImageView = imageView;
-        types =type;
+        types = type;
         Uri destinationUri = Uri.fromFile(new File(getCacheDir(), "cropped"));
         UCrop uCrop = UCrop.of(sourceUri, destinationUri);
         uCrop.start(this);
     }
 
     @SuppressLint("SetTextI18n")
-    private void uploadProfileImage(){
+    private void uploadProfileImage() {
         imgsUri = Uri.parse(results);
-        imgUriCover  = Uri.parse(resultsForCover);
+        imgUriCover = Uri.parse(resultsForCover);
         //for breeder
 
         AlertDialog.Builder builder2 = new AlertDialog.Builder(user_profile_account_edit.this);
         builder2.setCancelable(false);
-        View view = View.inflate(user_profile_account_edit.this,R.layout.screen_custom_alert,null);
+        View view = View.inflate(user_profile_account_edit.this, R.layout.screen_custom_alert, null);
         //title
         TextView title = view.findViewById(R.id.screen_custom_alert_title);
         //loading text
@@ -1317,9 +1280,9 @@ public class user_profile_account_edit extends BaseActivity {
         alert2.show();
         alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            StorageReference imageName = fileRefBreeder.child("profile");
+        StorageReference imageName = fileRefBreeder.child("profile");
 
-               imageName.putFile(imgsUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        imageName.putFile(imgsUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 builder2.setView(view);
@@ -1329,7 +1292,7 @@ public class user_profile_account_edit extends BaseActivity {
                         alert2.dismiss();
                         updateButton.setVisibility(View.GONE);
                     }
-                },2000);
+                }, 2000);
                 imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
@@ -1339,25 +1302,29 @@ public class user_profile_account_edit extends BaseActivity {
                         data.put("image", uri.toString());
                         //for shop profile
 
-                        documentReference.set(data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        documentReference.set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     Map<String, Object> shopImage = new HashMap<>();
                                     shopImage.put("profImage", uri.toString());
-                                    DocumentReference ref= FirebaseFirestore.getInstance()
-                                            .collection("Shop")
-                                            .document(firebaseUser.getUid());
-                                    ref.set(shopImage,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
-                                                Toast.makeText(user_profile_account_edit.this, "Successfully Changed.", Toast.LENGTH_SHORT).show();
+                                    if (roles.contains("Pet Owner") && roles.size() == 1) {
+                                        Toast.makeText(user_profile_account_edit.this, "Successfully Changed.", Toast.LENGTH_SHORT).show();
+
+                                    } else {
+                                        DocumentReference ref = FirebaseFirestore.getInstance()
+                                                .collection("Shop")
+                                                .document(firebaseUser.getUid());
+                                        ref.set(shopImage, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(user_profile_account_edit.this, "Successfully Changed.", Toast.LENGTH_SHORT).show();
+                                                }
                                             }
-                                        }
-                                    });
-                                }
-                                else{
+                                        });
+                                    }
+                                } else {
                                     Toast.makeText(user_profile_account_edit.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -1367,11 +1334,12 @@ public class user_profile_account_edit extends BaseActivity {
             }
         });
     }
-    public void uploadBackground(){
+
+    public void uploadBackground() {
 
         AlertDialog.Builder builder2 = new AlertDialog.Builder(user_profile_account_edit.this);
         builder2.setCancelable(false);
-        View view = View.inflate(user_profile_account_edit.this,R.layout.screen_custom_alert,null);
+        View view = View.inflate(user_profile_account_edit.this, R.layout.screen_custom_alert, null);
         //title
         TextView title = view.findViewById(R.id.screen_custom_alert_title);
         //loading text
@@ -1394,7 +1362,7 @@ public class user_profile_account_edit extends BaseActivity {
         AlertDialog alert2 = builder2.create();
         alert2.show();
         alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        imgUriCover  = Uri.parse(resultsForCover);
+        imgUriCover = Uri.parse(resultsForCover);
         StorageReference imageCoverName = fileRefBreederBackground.child("background");
         imageCoverName.putFile(imgUriCover).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -1407,7 +1375,7 @@ public class user_profile_account_edit extends BaseActivity {
                         updateButton.setVisibility(View.GONE);
                         alert2.dismiss();
                     }
-                },2000);
+                }, 2000);
 
                 imageCoverName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
@@ -1415,19 +1383,26 @@ public class user_profile_account_edit extends BaseActivity {
                         imageCover = uri.toString();
                         Map<String, Object> data = new HashMap<>();
                         data.put("backgroundImage", uri.toString());
-                        documentReference.set(data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        documentReference.set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    DocumentReference ref=   FirebaseFirestore.getInstance()
-                                            .collection("Shop")
-                                            .document(firebaseUser.getUid());
-                                    ref.set(data,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void unused) {
+                                if (task.isSuccessful()) {
+                                    if (roles.contains("Pet Owner") && roles.size() == 1) {
+                                        Toast.makeText(user_profile_account_edit.this, "Successfully Changed.", Toast.LENGTH_SHORT).show();
 
-                                        }
-                                    });
+                                    } else {
+                                        DocumentReference ref = FirebaseFirestore.getInstance()
+                                                .collection("Shop")
+                                                .document(firebaseUser.getUid());
+                                        ref.set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Toast.makeText(user_profile_account_edit.this, "Successfully Changed.", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        });
+                                    }
+
                                 }
                             }
                         });
@@ -1439,46 +1414,46 @@ public class user_profile_account_edit extends BaseActivity {
     }
 
 
-        private class ClickClass implements View.OnClickListener{
+    private class ClickClass implements View.OnClickListener {
 
-            @Override
-            public void onClick(View v) {
-                int id = v.getId();
-                switch (id){
-                    case R.id.first_layout:
-                        alertCaller = "firstName";
-                        dialogForAll(alertCaller);
-                        break;
-                    case R.id.middle_layout:
-                        alertCaller = "middleName";
-                        dialogForAll(alertCaller);
-                        break;
-                    case R.id.last_layout:
-                        alertCaller = "lastName";
-                        dialogForAll(alertCaller);
-                        break;
-                    case R.id.birthday_layout:
-                        alertCaller = "birthday";
-                        dialogForAll(alertCaller);
-                        break;
-                    case R.id.gender_layout:
-                        alertCaller = "gender";
-                        dialogForAll(alertCaller);
-                        break;
-                    case R.id.address_layout:
-                        alertCaller = "address";
-                        dialogForAll(alertCaller);
-                        break;
-                    case R.id.zip_layout:
-                        alertCaller = "zip";
-                        dialogForAll(alertCaller);
-                        break;
-
-                }
+        @Override
+        public void onClick(View v) {
+            int id = v.getId();
+            switch (id) {
+                case R.id.first_layout:
+                    alertCaller = "firstName";
+                    dialogForAll(alertCaller);
+                    break;
+                case R.id.middle_layout:
+                    alertCaller = "middleName";
+                    dialogForAll(alertCaller);
+                    break;
+                case R.id.last_layout:
+                    alertCaller = "lastName";
+                    dialogForAll(alertCaller);
+                    break;
+                case R.id.birthday_layout:
+                    alertCaller = "birthday";
+                    dialogForAll(alertCaller);
+                    break;
+                case R.id.gender_layout:
+                    alertCaller = "gender";
+                    dialogForAll(alertCaller);
+                    break;
+                case R.id.address_layout:
+                    alertCaller = "address";
+                    dialogForAll(alertCaller);
+                    break;
+                case R.id.zip_layout:
+                    alertCaller = "zip";
+                    dialogForAll(alertCaller);
+                    break;
 
             }
+
         }
-   }
+    }
+}
 
 
 

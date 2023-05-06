@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class searchAdapter extends RecyclerView.Adapter<searchAdapter.ViewHolder> {
+
         Context context;
 
     private List<item> searchResults;
@@ -30,7 +31,15 @@ public class searchAdapter extends RecyclerView.Adapter<searchAdapter.ViewHolder
     }
 
     @SuppressLint("NotifyDataSetChanged")
+    public void holdClear(){
+
+        this.hold.clear();
+        notifyDataSetChanged();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     public void clearList(){
+
         this.searchResults.clear();
         notifyDataSetChanged();
     }

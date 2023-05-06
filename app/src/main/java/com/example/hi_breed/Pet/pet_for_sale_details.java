@@ -33,6 +33,7 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.hi_breed.R;
+import com.example.hi_breed.adapter.edit_pet_for_sale_adapter.petDisplayForSaleAdapter;
 import com.example.hi_breed.adapter.review_order_adapter;
 import com.example.hi_breed.checkout.checkout_activity;
 import com.example.hi_breed.classesFile.BaseActivity;
@@ -73,30 +74,20 @@ public class pet_for_sale_details extends BaseActivity {
     review_order_adapter adapter;
     RecyclerView reviewsShop;
     ImageView heart_like;
-    LinearLayout backLayout,cartLayout;
+    LinearLayout backLayout, cartLayout, recommended_layout;
     ImageSlider imageSliderDetails;
-    TextView details_pet_name
-            ,details_pet_breed
-            ,details_pet_price,
-            shop_name_TxtView_details
-                    ,kennel_details
-            ,details_pet_description
-            ,details_pet_gender
-            ,details_pet_size_kilo
-            ,seeMore
-            ,details_pet_color
-            ,details_pet_vaccines
-            ,details_pet_papers
-            ,address_details;
+    TextView details_pet_name, expand, details_pet_breed, details_pet_price,
+            shop_name_TxtView_details, kennel_details, details_pet_description, details_pet_gender, details_pet_size_kilo, seeMore, details_pet_color, details_pet_vaccines, details_pet_papers, address_details;
     ConstraintLayout details_shop_profile_Layout;
     CircleImageView details_shopProfile_details;
 
-    Button details_button_addToCard
-            ,details_button_buyNow;
+    Button details_button_addToCard, details_button_buyNow;
     RelativeLayout details_moredetails_relative;
 
-    String id,breeder;
-    String vac="";
+    String id, breeder;
+    String vac = "";
+    RecyclerView recommended_recycler;
+    private petDisplayForSaleAdapter adapterPet;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -105,13 +96,12 @@ public class pet_for_sale_details extends BaseActivity {
         setContentView(R.layout.pet_for_sale_details);
 
         Window window = getWindow();
-        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
-        }
-        else{
-            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        } else {
+            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
         cartLayout = findViewById(R.id.cartLayout);
@@ -124,8 +114,14 @@ public class pet_for_sale_details extends BaseActivity {
 
         ratingBar = findViewById(R.id.ratingBar);
         reviewsShop = findViewById(R.id.reviewsShop);
-        reviewsShop.setLayoutManager(new GridLayoutManager(this,1));
+        reviewsShop.setLayoutManager(new GridLayoutManager(this, 1));
         adapter = new review_order_adapter(this);
+
+        recommended_layout = findViewById(R.id.recommended_layout);
+        recommended_recycler = findViewById(R.id.recommended_recycler);
+        recommended_recycler.setLayoutManager(new GridLayoutManager(this, 2));
+        adapterPet = new petDisplayForSaleAdapter(this);
+        recommended_recycler.setAdapter(adapterPet);
 
         backLayout = findViewById(R.id.backLayout);
         backLayout.setOnClickListener(new View.OnClickListener() {
@@ -144,12 +140,11 @@ public class pet_for_sale_details extends BaseActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
-                if(seeMore.getText().toString().equals("See more . . .")) {
+                if (seeMore.getText().toString().equals("See more . . .")) {
                     details_pet_description.setMaxLines(Integer.MAX_VALUE);
                     details_pet_description.setEllipsize(null);
                     seeMore.setText("Show less . . .");
-                }
-                else{
+                } else {
                     details_pet_description.setMaxLines(3);
                     details_pet_description.setEllipsize(TextUtils.TruncateAt.END);
                     seeMore.setText("See more . . .");
@@ -158,12 +153,12 @@ public class pet_for_sale_details extends BaseActivity {
         });
         details_moredetails_relative = findViewById(R.id.details_moredetails_relative);
         //TextView
-
+        expand = findViewById(R.id.expand);
         //TextView
-        details_pet_name =findViewById(R.id.details_pet_name);
+        details_pet_name = findViewById(R.id.details_pet_name);
         details_pet_breed = findViewById(R.id.details_pet_breed);
         details_pet_price = findViewById(R.id.details_pet_price);
-        shop_name_TxtView_details = findViewById(R.id. shop_name_TxtView_details);
+        shop_name_TxtView_details = findViewById(R.id.shop_name_TxtView_details);
         kennel_details = findViewById(R.id.kennel_details);
         details_pet_description = findViewById(R.id.details_pet_description);
         details_pet_gender = findViewById(R.id.details_pet_gender);
@@ -188,14 +183,16 @@ public class pet_for_sale_details extends BaseActivity {
         //Getting the passed value to the data adapter when the user click an item to recycler view
         Intent intent = getIntent();
         PetSaleClass pet = (PetSaleClass) intent.getSerializableExtra("mode");
-        if(pet!=null){
+        if (pet != null) {
+            //recommend same breed
+            getPetForYou(pet.getPet_breed(),pet.getId());
 
             id = pet.getId();
             breeder = pet.getPet_breeder();
 
             getReviews(pet.getPet_breeder());
 
-            if(breeder.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+            if (breeder.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
 
                 details_button_buyNow.setText("Edit your pet");
                 details_button_buyNow.setOnClickListener(new View.OnClickListener() {
@@ -207,8 +204,7 @@ public class pet_for_sale_details extends BaseActivity {
                     }
                 });
                 details_button_addToCard.setVisibility(View.GONE);
-            }
-            else{
+            } else {
                 details_button_addToCard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -220,15 +216,14 @@ public class pet_for_sale_details extends BaseActivity {
                         .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     DocumentSnapshot value = task.getResult();
-                                    if(value.exists()){
-                                        if(value.getString("status").equals("pending")){
+                                    if (value.exists()) {
+                                        if (value.getString("status").equals("pending")) {
                                             details_button_buyNow.setEnabled(false);
                                             details_button_addToCard.setEnabled(false);
                                             heart_like.setEnabled(false);
-                                        }
-                                        else if(value.getString("status").equals("verified")){
+                                        } else if (value.getString("status").equals("verified")) {
                                             details_button_addToCard.setEnabled(true);
                                             details_button_buyNow.setEnabled(true);
                                             heart_like.setEnabled(true);
@@ -249,17 +244,16 @@ public class pet_for_sale_details extends BaseActivity {
                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if(documentSnapshot.getString("contactNumber") != null &&
-                                                !documentSnapshot.getString("contactNumber").equals("")){
-                                            add_to_cart_class buy = new add_to_cart_class("1",pet.getId(),pet.getDisplayFor(),pet.getPet_price(),FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                                    pet.getPet_breeder(),"pet",Timestamp.now());
+                                        if (documentSnapshot.getString("contactNumber") != null &&
+                                                !documentSnapshot.getString("contactNumber").equals("")) {
+                                            add_to_cart_class buy = new add_to_cart_class("1", pet.getId(), pet.getDisplayFor(), pet.getPet_price(), FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                                    pet.getPet_breeder(), "pet", Timestamp.now());
                                             Intent i = new Intent(pet_for_sale_details.this, checkout_activity.class);
                                             List<add_to_cart_class> add = new ArrayList<>();
                                             add.add(buy);
-                                            i.putExtra("mode",(Serializable) add);
+                                            i.putExtra("mode", (Serializable) add);
                                             startActivity(i);
-                                        }
-                                        else{
+                                        } else {
                                             Toast.makeText(pet_for_sale_details.this, "Setup your phone number first", Toast.LENGTH_SHORT).show();
                                         }
                                     }
@@ -270,11 +264,11 @@ public class pet_for_sale_details extends BaseActivity {
             }
 
             FirebaseFirestore.getInstance().collection("Likes")
-                    .whereEqualTo("likedBy",FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .whereEqualTo("product_id",id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    .whereEqualTo("likedBy", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .whereEqualTo("product_id", id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 if (task.getResult().size() > 0) {
                                     // The current user has already liked the product
                                     heart_like.setImageResource(R.drawable.icon_clicked_like);
@@ -288,14 +282,14 @@ public class pet_for_sale_details extends BaseActivity {
                                 heart_like.setImageResource(R.drawable.icon_heart_likes);
                                 Log.e("ERROR", "Error getting likes", task.getException());
                             }
-                          }
+                        }
                     });
 
-            if(pet.getPapers()!=null){
+            if (pet.getPapers() != null) {
                 details_pet_papers.setText("Available");
             }
 
-            if(pet.getPhotos()!=null) {
+            if (pet.getPhotos() != null) {
                 ArrayList<SlideModel> slideModels = new ArrayList<>();
                 for (int i = 0; i < pet.getPhotos().size(); i++) {
                     slideModels.add(new SlideModel(pet.getPhotos().get(i), ScaleTypes.CENTER_INSIDE));
@@ -315,7 +309,7 @@ public class pet_for_sale_details extends BaseActivity {
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 String address = task.getResult().getString("address");
                                 address_details.setText(address);
                             }
@@ -325,38 +319,48 @@ public class pet_for_sale_details extends BaseActivity {
 
             //for profile
             FirebaseFirestore.getInstance().collection("Shop").document(pet.getPet_breeder()).get()
-                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if(task.isSuccessful()){
-                                        DocumentSnapshot snapshot = task.getResult();
-                                        if(snapshot!=null){
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot snapshot = task.getResult();
+                                if (snapshot != null) {
 
-                                            //shopName
-                                            shop_name_TxtView_details.setText(snapshot.getString("shopName"));
-                                            //for profile
-                                            if(snapshot.getString("profImage") == ""){
-                                                details_shopProfile_details.setImageResource(R.drawable.noimage);
-                                            }
-                                            else
-                                            Picasso.get().load(snapshot.getString("profImage")).into(details_shopProfile_details);
-                                        }
-                                    }
+                                    //shopName
+                                    shop_name_TxtView_details.setText(snapshot.getString("shopName"));
+                                    //for profile
+                                    if (snapshot.getString("profImage") == "") {
+                                        details_shopProfile_details.setImageResource(R.drawable.noimage);
+                                    } else
+                                        Picasso.get().load(snapshot.getString("profImage")).into(details_shopProfile_details);
                                 }
-                            });
+                            }
+                        }
+                    });
 
             kennel_details.setText(pet.getKennel());
             details_pet_color.setText(pet.getPet_colorMarkings());
             details_pet_gender.setText(pet.getPet_gender());
-            for(String str:pet.getPet_vaccine()){
-                vac += str +"\n";
+            for (String str : pet.getPet_vaccine()) {
+                vac += str + "\n";
             }
             details_pet_vaccines.setText(vac);
-            details_pet_size_kilo.setText(pet.getPetSize()+" "+pet.getPetKilo()+"kg");
+            details_pet_size_kilo.setText(pet.getPetSize() + " " + pet.getPetKilo() + "kg");
 
         }
 
-
+        expand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (expand.getText().toString().equals("View all reviews . . .")) {
+                    expand.setText("Hide reviews . . .");
+                    adapter.setExpanded(true);
+                } else {
+                    expand.setText("View all reviews . . .");
+                    adapter.setExpanded(false);
+                }
+            }
+        });
 
         details_shop_profile_Layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -384,18 +388,52 @@ public class pet_for_sale_details extends BaseActivity {
         });
     }
 
+    private void getPetForYou(String breed,String id) {
+        FirebaseFirestore.getInstance().collection("Pet")
+                .whereEqualTo("displayFor", "forSale")
+                .whereEqualTo("pet_breed", breed)
+                .whereEqualTo("show", true)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            return;
+                        }
+                        if (value != null) {
+                            adapterPet.clearList();
+                            List<DocumentSnapshot> dsList = value.getDocuments();
+                            if (dsList.size() != 0){
+                            for (DocumentSnapshot ds : dsList) {
+                                        if(!ds.getString("id").equals(id)){
+                                            PetSaleClass productModel = ds.toObject(PetSaleClass.class);
+                                            adapterPet.addPetDisplay(productModel);
+                                            recommended_layout.setVisibility(View.VISIBLE);
+                                            recommended_recycler.setVisibility(View.VISIBLE);
+                                        }
+                            }
+                            }
+                        }
+                        else{
+                            recommended_layout.setVisibility(View.GONE);
+                            recommended_recycler.setVisibility(View.GONE);
+                        }
+                    }
+    });
+}
+
     private void getReviews(String pet_breeder) {
         FirebaseFirestore.getInstance().collection("Reviews")
-                .whereEqualTo("seller_id",pet_breeder)
-                .whereEqualTo("rateFor","Shop")
+                .whereEqualTo("seller_id", pet_breeder)
+                .whereEqualTo("rateFor", "Shop")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @SuppressLint({"DefaultLocale", "SetTextI18n"})
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if(error!=null){
+                        if (error != null) {
                             return;
                         }
                         if (value != null && !value.isEmpty()) {
+                            expand.setVisibility(View.VISIBLE);
                             float totalRating = 0;
                             int numRatings = 0;
                             adapter.clearList();
@@ -405,6 +443,7 @@ public class pet_for_sale_details extends BaseActivity {
                                     numRatings++;
                                     rating_class rate = s.toObject(rating_class.class);
                                     adapter.addServiceDisplay(rate);
+
                                 }
                             }
                             if (numRatings > 0) {
@@ -438,38 +477,37 @@ public class pet_for_sale_details extends BaseActivity {
 
     private void removeLike() {
 
-        FirebaseFirestore.getInstance().collection("Likes").whereEqualTo("likedBy",FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .whereEqualTo("product_id",id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance().collection("Likes").whereEqualTo("likedBy", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .whereEqualTo("product_id", id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                    FirebaseFirestore.getInstance().collection("Likes")
-                                            .document(document.getId())
-                                            .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if(task.isSuccessful()){
-                                                        FirebaseFirestore.getInstance().collection("User")
-                                                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                                .collection("Likes")
-                                                                .document(document.getId())
-                                                                .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                                        if(task.isSuccessful()){
-                                                                            Toast.makeText(pet_for_sale_details.this, "Successfully removed from your liked pets", Toast.LENGTH_SHORT).show();
+                                FirebaseFirestore.getInstance().collection("Likes")
+                                        .document(document.getId())
+                                        .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    FirebaseFirestore.getInstance().collection("User")
+                                                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .collection("Likes")
+                                                            .document(document.getId())
+                                                            .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        Toast.makeText(pet_for_sale_details.this, "Successfully removed from your liked pets", Toast.LENGTH_SHORT).show();
 
-                                                                            heart_like.setEnabled(true);
-                                                                        }
+                                                                        heart_like.setEnabled(true);
                                                                     }
-                                                                });
-                                                    }
+                                                                }
+                                                            });
                                                 }
-                                            });
+                                            }
+                                        });
                             }
-                        }
-                        else{
+                        } else {
                             Log.e("ERROR", "Error getting documents", task.getException());
                         }
                     }
@@ -478,7 +516,7 @@ public class pet_for_sale_details extends BaseActivity {
     }
 
     private void saveLike() {
-        likes_class like = new likes_class("",FirebaseAuth.getInstance().getCurrentUser().getUid(),id,breeder,"forSale", Timestamp.now());
+        likes_class like = new likes_class("", FirebaseAuth.getInstance().getCurrentUser().getUid(), id, breeder, "forSale", Timestamp.now());
 
         FirebaseFirestore.getInstance().collection("User")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -492,31 +530,31 @@ public class pet_for_sale_details extends BaseActivity {
                         FirebaseFirestore.getInstance().collection("User")
                                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .collection("Likes").document(documentReference.getId())
-                                .update("id",documentReference.getId(),"timestamp", FieldValue.serverTimestamp())
+                                .update("id", documentReference.getId(), "timestamp", FieldValue.serverTimestamp())
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
-                                          FirebaseFirestore.getInstance().collection("Likes")
-                                                  .document(documentReference.getId())
-                                                  .set(like).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                      @Override
-                                                      public void onComplete(@NonNull Task<Void> task) {
-                                                            if(task.isSuccessful()){
-                                                                FirebaseFirestore.getInstance().collection("Likes")
-                                                                        .document(documentReference.getId())
-                                                                        .update("id",documentReference.getId(),"timestamp",FieldValue.serverTimestamp())
-                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                            @Override
-                                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                                if(task.isSuccessful()){
-                                                                                    Toast.makeText(pet_for_sale_details.this, "Successfully added to your likes", Toast.LENGTH_SHORT).show();
-                                                                                    heart_like.setEnabled(true);
-                                                                                }
+                                        FirebaseFirestore.getInstance().collection("Likes")
+                                                .document(documentReference.getId())
+                                                .set(like).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            FirebaseFirestore.getInstance().collection("Likes")
+                                                                    .document(documentReference.getId())
+                                                                    .update("id", documentReference.getId(), "timestamp", FieldValue.serverTimestamp())
+                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                Toast.makeText(pet_for_sale_details.this, "Successfully added to your likes", Toast.LENGTH_SHORT).show();
+                                                                                heart_like.setEnabled(true);
                                                                             }
-                                                                        });
-                                                            }
-                                                      }
-                                                  });
+                                                                        }
+                                                                    });
+                                                        }
+                                                    }
+                                                });
                                     }
                                 });
                     }
@@ -527,18 +565,18 @@ public class pet_for_sale_details extends BaseActivity {
     private void addToCart(PetSaleClass pet) {
         Map<String, Object> objectMap = new HashMap<>();
 
-        objectMap.put("prod_id",pet.getId());
-        objectMap.put("prod_seller",pet.getPet_breeder());
-        objectMap.put("prod_category","forSale");
-        objectMap.put("prod_price",pet.getPet_price());
-        objectMap.put("id","");
-        objectMap.put("type","pet");
-        objectMap.put("addBy",FirebaseAuth.getInstance().getCurrentUser().getUid());
-        objectMap.put("timestamp",Timestamp.now());
+        objectMap.put("prod_id", pet.getId());
+        objectMap.put("prod_seller", pet.getPet_breeder());
+        objectMap.put("prod_category", "forSale");
+        objectMap.put("prod_price", pet.getPet_price());
+        objectMap.put("id", "");
+        objectMap.put("type", "pet");
+        objectMap.put("addBy", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        objectMap.put("timestamp", Timestamp.now());
 
         AlertDialog.Builder builder2 = new AlertDialog.Builder(pet_for_sale_details.this);
         builder2.setCancelable(false);
-        View view = View.inflate(pet_for_sale_details.this,R.layout.screen_custom_alert,null);
+        View view = View.inflate(pet_for_sale_details.this, R.layout.screen_custom_alert, null);
         //title
         TextView title = view.findViewById(R.id.screen_custom_alert_title);
         //loading text
@@ -558,7 +596,7 @@ public class pet_for_sale_details extends BaseActivity {
         message.setText("Click okay if you want to add to cart this pet");
         LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
         buttonLayout.setVisibility(View.VISIBLE);
-        MaterialButton cancel,okay;
+        MaterialButton cancel, okay;
         cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
         cancel.setVisibility(View.VISIBLE);
 
@@ -583,52 +621,52 @@ public class pet_for_sale_details extends BaseActivity {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
 
-                                  FirebaseFirestore.getInstance().collection("Cart")
-                                          .document(documentReference.getId())
-                                          .update("id",documentReference.getId(),"timestamp",FieldValue.serverTimestamp())
-                                          .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                              @Override
-                                              public void onSuccess(Void unused) {
-                                                  AlertDialog.Builder builder2 = new AlertDialog.Builder(pet_for_sale_details.this);
-                                                  builder2.setCancelable(false);
-                                                  View view = View.inflate(pet_for_sale_details.this,R.layout.screen_custom_alert,null);
-                                                  //title
-                                                  TextView title = view.findViewById(R.id.screen_custom_alert_title);
-                                                  //loading text
-                                                  TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
-                                                  loadingText.setVisibility(View.GONE);
-                                                  //gif
-                                                  GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
-                                                  gif.setVisibility(View.GONE);
-                                                  //header image
-                                                  AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
-                                                  imageViewCompat.setVisibility(View.VISIBLE);
-                                                  imageViewCompat.setImageDrawable(getDrawable(R.drawable.dialog_cart_borders));
-                                                  //message
-                                                  TextView message = view.findViewById(R.id.screen_custom_alert_message);
-                                                  title.setText("Add to cart");
-                                                  message.setVisibility(View.VISIBLE);
-                                                  message.setText("Successfully Added");
-                                                  LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
-                                                  buttonLayout.setVisibility(View.VISIBLE);
-                                                  MaterialButton cancel,okay;
-                                                  cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
-                                                  cancel.setVisibility(View.GONE);
-                                                  okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
-                                                  okay.setText("Okay");
-                                                  builder2.setView(view);
-                                                  AlertDialog alert2 = builder2.create();
-                                                  alert2.show();
-                                                  alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                                  okay.setOnClickListener(new View.OnClickListener() {
-                                                      @Override
-                                                      public void onClick(View v) {
-                                                          alert2.dismiss();
+                                FirebaseFirestore.getInstance().collection("Cart")
+                                        .document(documentReference.getId())
+                                        .update("id", documentReference.getId(), "timestamp", FieldValue.serverTimestamp())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(pet_for_sale_details.this);
+                                                builder2.setCancelable(false);
+                                                View view = View.inflate(pet_for_sale_details.this, R.layout.screen_custom_alert, null);
+                                                //title
+                                                TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                //loading text
+                                                TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                loadingText.setVisibility(View.GONE);
+                                                //gif
+                                                GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                gif.setVisibility(View.GONE);
+                                                //header image
+                                                AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                imageViewCompat.setVisibility(View.VISIBLE);
+                                                imageViewCompat.setImageDrawable(getDrawable(R.drawable.dialog_cart_borders));
+                                                //message
+                                                TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                title.setText("Add to cart");
+                                                message.setVisibility(View.VISIBLE);
+                                                message.setText("Successfully Added");
+                                                LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                buttonLayout.setVisibility(View.VISIBLE);
+                                                MaterialButton cancel, okay;
+                                                cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                cancel.setVisibility(View.GONE);
+                                                okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                okay.setText("Okay");
+                                                builder2.setView(view);
+                                                AlertDialog alert2 = builder2.create();
+                                                alert2.show();
+                                                alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                okay.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        alert2.dismiss();
 
-                                                      }
-                                                  });
-                                              }
-                                          });
+                                                    }
+                                                });
+                                            }
+                                        });
 
                             }
                         });
@@ -636,12 +674,11 @@ public class pet_for_sale_details extends BaseActivity {
         });
 
 
-
     }
 
     private void viewShop() {
         Intent intent = new Intent(this, view_breeder_shop.class);
-        intent.putExtra("breeder",breeder);
+        intent.putExtra("breeder", breeder);
         startActivity(intent);
     }
 }

@@ -28,6 +28,7 @@ import java.util.List;
 public class review_order_adapter extends RecyclerView.Adapter<review_order_adapter.ViewHolder> {
 
         Context context;
+    boolean isExpanded;
     private List<rating_class> list;
 
     public review_order_adapter(Context context){
@@ -40,6 +41,10 @@ public class review_order_adapter extends RecyclerView.Adapter<review_order_adap
     }
     public void addServiceDisplay(rating_class rating_class){
         list.add(rating_class);
+        notifyDataSetChanged();
+    }
+    public void setExpanded(boolean isExpanded){
+        this.isExpanded = isExpanded;
         notifyDataSetChanged();
     }
 
@@ -86,7 +91,18 @@ public class review_order_adapter extends RecyclerView.Adapter<review_order_adap
 
     @Override
     public int getItemCount() {
-        return list.size();
+       if(list.size() !=0){
+           if(!isExpanded){
+               return 1;
+           }
+           else{
+               return list.size();
+           }
+       }
+       else{
+           return 0;
+       }
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

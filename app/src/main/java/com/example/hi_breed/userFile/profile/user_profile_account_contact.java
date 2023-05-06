@@ -937,10 +937,8 @@ user_profile_account_contact extends BaseActivity {
                                     if(count != 0){
                                         alert3.dismiss();
                                     } else {
-                                        Toast.makeText(user_profile_account_contact.this, "Error while saving, try again!", Toast.LENGTH_SHORT).show();
                                         alert3.dismiss();
                                     }
-
                                 }
                             });
                 }

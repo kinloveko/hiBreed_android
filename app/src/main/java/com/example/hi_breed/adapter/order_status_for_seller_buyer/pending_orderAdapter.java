@@ -71,21 +71,31 @@ public class pending_orderAdapter extends RecyclerView.Adapter<pending_orderAdap
                             holder.name.setText(documentSnapshot.getString("shopName"));
                         }
                     });
-            FirebaseFirestore.getInstance().collection("Pet")
-                            .document(productModel.getItem_id())
-                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                            if(documentSnapshot.get("photos")!=null){
-                                List<String> list = (List<String>) documentSnapshot.get("photos");
-                                Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage).into(holder.imageRecycler);
+                FirebaseFirestore.getInstance().collection("Pet")
+                        .document(productModel.getItem_id())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                holder.breed.setText(documentSnapshot.getString("pet_breed"));
-                                holder.gender.setText(documentSnapshot.getString("pet_gender"));
+                                if(documentSnapshot.get("photos")!=null){
+                                    List<String> list = (List<String>) documentSnapshot.get("photos");
+                                    Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage).into(holder.imageRecycler);
+
+                                }
+                                if(productModel.getType().equals("pet")){
+                                    holder.breed.setText(documentSnapshot.getString("pet_breed"));
+                                    holder.gender.setText(documentSnapshot.getString("pet_gender"));
+                                }
+                                else{
+                                    holder.breed.setText(documentSnapshot.getString("prod_name"));
+                                    holder.gender.setText(documentSnapshot.getString("prod_category"));
+                                }
                             }
-                        }
-                    });
+                        });
+
+
+
         }
         else if(productModel.getSeller_id().equals(userID)){
             holder.genderImage.setImageResource(R.drawable.icon_call);

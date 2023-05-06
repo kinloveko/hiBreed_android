@@ -616,14 +616,70 @@
                     android:id="@+id/reviewsShop"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+                <TextView
+                    android:visibility="gone"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/expand"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:textAlignment="center"
+                    android:padding="10dp"
+                    android:layout_width="match_parent"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/brownish"
+                    android:fontFamily="@font/poppinsmedium"
+                    android:text="View all reviews . . ."
+                    tools:ignore="HardcodedText" />
                 <LinearLayout
                     android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
-                    android:layout_marginBottom="100dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/style_border"/>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:layout_marginBottom="50dp"
+                    android:id="@+id/recommended_layout"
+                    android:orientation="vertical"
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_gravity="start"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:gravity="center"
+                        android:inputType="none"
+                        android:paddingTop="5dp"
+                        android:text="Similar Products"
+                        android:textColor="@color/material_blue_grey_80"
+                        android:textSize="12sp"
+                        tools:ignore="HardcodedText" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
+                        android:id="@+id/recommended_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <LinearLayout
+                        android:visibility="invisible"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="50dp"
+                        android:background="@drawable/style_border"/>
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -654,9 +710,11 @@
             tools:ignore="HardcodedText" />
         <Button
             android:id="@+id/details_button_buyNow"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Buy Now"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
             android:background="@drawable/dropshadow_two"
             android:backgroundTint="@color/brownish"
             android:textColor="@color/white"

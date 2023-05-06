@@ -272,7 +272,7 @@ public class fragment_registration_requirements extends Fragment implements bree
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse("https://drive.google.com/uc?export=download&id=1u-j93Id1Z53urZcIX20YZR32NHqq_00Y"));
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse("https://drive.google.com/file/d/16WoD9WZHtGLW1dbQVj25_G9Lp4MeEpbL/view?fbclid=IwAR3qmKUFV4YHRpjd19e61EfFxa4l9YiMFRegYi3qoZi1_AxkXl6nLnTLgPY"));
                 request.setTitle("Parent Consent");
                 request.setDescription("Downloading parent consent form");
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);

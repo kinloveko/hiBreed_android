@@ -156,11 +156,12 @@ public class rate_service extends AppCompatActivity {
                                                                             new Handler().postDelayed(new Runnable() {
                                                                                 @Override
                                                                                 public void run() {
+                                                                                    alert2.dismiss();
                                                                                     Intent i = new Intent(rate_service.this, appointment_user_side.class);
                                                                                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                                                                                     startActivity(i);
                                                                                     finish();
-                                                                                    alert2.dismiss();
+
                                                                                 }
                                                                             },2000);
                                                                         }
@@ -301,6 +302,7 @@ public class rate_service extends AppCompatActivity {
                         finish();
                     }
                 });
+
                 FirebaseFirestore.getInstance().collection("Services").document(appoint.getService_id()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {

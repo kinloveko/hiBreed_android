@@ -91,8 +91,15 @@ public class cancelled_orderAdapter extends RecyclerView.Adapter<cancelled_order
                                 List<String> list = (List<String>) documentSnapshot.get("photos");
                                 Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage).into(holder.imageRecycler);
 
+                            }
+
+                            if(productModel.getType().equals("pet")){
                                 holder.breed.setText(documentSnapshot.getString("pet_breed"));
                                 holder.gender.setText(documentSnapshot.getString("pet_gender"));
+                            }
+                            else{
+                                holder.breed.setText(documentSnapshot.getString("prod_name"));
+                                holder.gender.setText(documentSnapshot.getString("prod_category"));
                             }
                         }
                     });

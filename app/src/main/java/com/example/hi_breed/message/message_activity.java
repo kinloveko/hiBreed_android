@@ -2,6 +2,7 @@ package com.example.hi_breed.message;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +25,7 @@ import com.example.hi_breed.adapter.message_adapter.message_vertical_adapter;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.chat_conversation_class;
 import com.example.hi_breed.classesFile.matches_class;
+import com.example.hi_breed.userFile.profile.user_profile_account_edit;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +36,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class message_activity extends BaseActivity {
@@ -44,7 +51,7 @@ public class message_activity extends BaseActivity {
     private message_horizontal_adapter adapter;
     private ImageView backArrowImage;
     private message_vertical_adapter adapter_vertical;
-
+    private CardView cardView;
 
 
 
@@ -64,10 +71,13 @@ public class message_activity extends BaseActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
-
-
-
-
+        cardView = findViewById(R.id.cardView);
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(message_activity.this, user_profile_account_edit.class));
+            }
+        });
         backArrowImage = findViewById(R.id.backArrowImage);
         backArrowImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +92,6 @@ public class message_activity extends BaseActivity {
         matchConversation_recycler = findViewById(R.id.matchConversation_recycler);
         matchConversation_recycler.setLayoutManager(new GridLayoutManager(this,1));
         adapter_vertical = new message_vertical_adapter(this,user.getUid());
-
 
         matchProfile_recycler = findViewById(R.id.matchProfile_recycler);
         matchProfile_recycler.setLayoutManager(new LinearLayoutManager(message_activity.this,LinearLayoutManager.HORIZONTAL,false));
@@ -105,6 +114,7 @@ public class message_activity extends BaseActivity {
                 });
     }
 
+    //this method display all the conversation in vertical way
     private void getConversation() {
         Query query = FirebaseFirestore.getInstance().collection("Chat").whereArrayContains("participants",user.getUid())
                 .whereEqualTo("chatFor","forDating");
@@ -116,6 +126,7 @@ public class message_activity extends BaseActivity {
                                     return;
                                 }
                                 if(value!=null){
+
                                   query.orderBy("latestMessage.timestamp", Query.Direction.DESCENDING)
                                           .addSnapshotListener(new EventListener<QuerySnapshot>() {
                                               @Override
@@ -126,22 +137,34 @@ public class message_activity extends BaseActivity {
                                                   if(value!=null){
                                                       adapter_vertical.clearList();
                                                       for(DocumentSnapshot s: value){
-                                                          chat_conversation_class a = s.toObject(chat_conversation_class.class);
-                                                          adapter_vertical.addMatchDisplay(a);
-                                                          matchConversation_recycler.setAdapter(adapter_vertical);
+
+                                                          List<String> leaveParticipants = (List<String>) s.get("leave_participants");
+                                                          if(leaveParticipants!=null){
+                                                              //check if the user id is in the leave participants
+                                                              if(!leaveParticipants.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                                                  //if the command made it here it means the user didn't leave the conversation
+                                                                  chat_conversation_class a = s.toObject(chat_conversation_class.class);
+                                                                  adapter_vertical.addMatchDisplay(a);
+                                                                  matchConversation_recycler.setAdapter(adapter_vertical);
+                                                              }
+                                                              //the user id is in the leave conversation array field it will disregard conversation
+                                                          }
+                                                          else{
+                                                              //it means no participants leave the conversation
+                                                              chat_conversation_class a = s.toObject(chat_conversation_class.class);
+                                                              adapter_vertical.addMatchDisplay(a);
+                                                              matchConversation_recycler.setAdapter(adapter_vertical);
+                                                          }
+
                                                       }
                                                   }
                                               }
                                           });
-
                                 }
                             }
                         });
 
     }
-
-
-
 
     @Override
     protected void onResume() {
@@ -150,7 +173,7 @@ public class message_activity extends BaseActivity {
 
         getMatches();
     }
-
+    //this method get all the matches and display in horizontal way
     private void getMatches() {
         FirebaseFirestore.getInstance().collection("Matches").whereArrayContains("participants",user.getUid())
                 .whereEqualTo("matchFor","forDating")
@@ -164,9 +187,26 @@ public class message_activity extends BaseActivity {
                                     adapter.clearList();
                                 for(DocumentSnapshot s: value){
                                     if(s.exists()){
-                                        matches_class m = s.toObject(matches_class.class);
-                                        adapter.addMatchDisplay(m);
-                                        matchProfile_recycler.setAdapter(adapter);
+                                        List<String> leaveParticipants = new ArrayList<>();
+                                        if(s.get("leave_participants")!=null){
+                                            leaveParticipants     = (List<String>) s.get("leave_participants");
+                                        }
+
+                                        if(leaveParticipants!=null){
+
+                                            if(!leaveParticipants.contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                                matches_class m = s.toObject(matches_class.class);
+                                                adapter.addMatchDisplay(m);
+                                                matchProfile_recycler.setAdapter(adapter);
+                                            }
+
+                                        }
+                                        else{
+                                            matches_class m = s.toObject(matches_class.class);
+                                            adapter.addMatchDisplay(m);
+                                            matchProfile_recycler.setAdapter(adapter);
+                                        }
+
                                     }
                                 }
 

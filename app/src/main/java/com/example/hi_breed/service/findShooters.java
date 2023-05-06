@@ -1,4 +1,4 @@
-package com.example.hi_breed;
+package com.example.hi_breed.service;
 
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
@@ -11,12 +11,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.shooterAdapter.recommend_serviceAdapter;
 import com.example.hi_breed.classesFile.ServiceDisplay;
 import com.example.hi_breed.classesFile.rating_class;

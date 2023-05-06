@@ -46,12 +46,14 @@
             <TextView
                 android:id="@+id/profileTextView"
                 android:layout_width="match_parent"
+                android:paddingTop="4dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/white"
-                android:fontFamily="@font/poppinsemibold"
+                android:fontFamily="@font/poppinsmedium"
                 android:gravity="center"
                 android:text="Settings"
+                android:textColor="@color/material_blue_grey_80"
                 android:textSize="20sp"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="HardcodedText"
@@ -103,7 +105,6 @@
                     android:layout_gravity="center"
                     android:backgroundTint="@color/black"
                     android:contentDescription="Profile"
-                    android:src="@drawable/noimage"
                     android:translationZ="3dp"
                     app:civ_border_color="@color/mustard"
                     app:civ_border_width="2dp"
@@ -173,7 +174,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:fontFamily="@font/poppinsemibold"
+                android:fontFamily="@font/poppinsmedium"
                 android:gravity="start"
                 android:paddingStart="15sp"
                 android:text="Activity"
@@ -304,8 +305,8 @@
                     android:gravity="start"
                     android:paddingStart="10sp"
                     android:text="Settings"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppinsmedium"
                     tools:ignore="HardcodedText,RtlSymmetry"
                     tools:layout_editor_absoluteX="0dp" />
 
@@ -316,7 +317,6 @@
                     android:layout_weight="0.2"
                     android:background="@drawable/style_border"
                     android:gravity="start"
-
                     android:orientation="horizontal"
                     tools:ignore="InefficientWeight,RtlSymmetry">
 
@@ -325,26 +325,26 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginStart="8dp"
-
-
                         app:cardCornerRadius="300dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="MissingConstraints">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_persons"
+                            android:background="@color/brownish"
+                            android:padding="2dp"
+                            android:tint="@color/white"
                             app:civ_border_color="@color/float_transparent"
                             app:civ_border_width="2dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-
-                            tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
+                            tools:ignore="ContentDescription,MissingConstraints,NestedWeights,UseAppTint" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -355,7 +355,7 @@
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/poppinsemibold"
                         android:text="Account Settings"
-                        android:textColor="@color/black"
+                        android:textColor="@color/material_blue_grey_80"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -399,17 +399,20 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="MissingConstraints">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:src="@drawable/prof_card"
                             app:civ_border_color="@color/float_transparent"
                             app:civ_border_width="2dp"
+                            android:background="@color/brownish"
+                            android:padding="5dp"
+                            android:tint="@color/white"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
+                            tools:ignore="ContentDescription,MissingConstraints,NestedWeights,UseAppTint" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -420,7 +423,7 @@
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/poppinsemibold"
                         android:text="Card"
-                        android:textColor="@color/black"
+                        android:textColor="@color/material_blue_grey_80"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -456,8 +459,8 @@
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/faqIconCardview"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:layout_gravity="center"
                         android:layout_marginStart="8dp"
 
@@ -467,12 +470,14 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="MissingConstraints">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:id="@+id/faqIconID"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                            android:padding="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_gravity="center"
-                            android:src="@drawable/icon_quiz"
+                            android:background="@color/brownish"
+                            android:src="@drawable/icon_warning"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -485,8 +490,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/poppinsemibold"
-                        android:text="FAQs"
-                        android:textColor="@color/black"
+                        android:text="Report"
+                        android:textColor="@color/material_blue_grey_80"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -525,23 +530,25 @@
                         android:layout_height="30dp"
                         android:layout_gravity="center"
                         android:layout_marginStart="10dp"
-
                         app:cardCornerRadius="300dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="MissingConstraints">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:id="@+id/aboutIconID"
                             android:layout_width="match_parent"
-                            android:layout_height="25dp"
+                            android:layout_height="match_parent"
                             android:layout_gravity="center"
-                            android:src="@drawable/icon_error"
+                            android:padding="5dp"
+                            android:tint="@color/white"
+                            android:background="@color/brownish"
+                            android:src="@drawable/icon_dog_gender"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
+                            tools:ignore="ContentDescription,MissingConstraints,NestedWeights,UseAppTint" />
                     </androidx.cardview.widget.CardView>
 
                     <TextView
@@ -551,7 +558,7 @@
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/poppinsemibold"
                         android:text="About"
-                        android:textColor="@color/black"
+                        android:textColor="@color/material_blue_grey_80"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -605,7 +612,7 @@
                         android:fontFamily="@font/poppinsemibold"
                         android:paddingStart="60dp"
                         android:text="Log out"
-                        android:textColor="@color/black"
+
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"

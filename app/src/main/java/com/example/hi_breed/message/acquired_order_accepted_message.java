@@ -42,7 +42,6 @@ import com.example.hi_breed.classesFile.chat_conversation_class;
 import com.example.hi_breed.classesFile.matches_class;
 import com.example.hi_breed.classesFile.notificationData;
 import com.example.hi_breed.classesFile.pushNotification;
-import com.example.hi_breed.details.order_details_activity;
 import com.example.hi_breed.order_breeder_side.order_breeder_side;
 import com.example.hi_breed.order_user_side.order_user_side;
 import com.example.hi_breed.shop.rate_shop;
@@ -774,7 +773,29 @@ public class acquired_order_accepted_message extends AppCompatActivity {
                     }
                 }
                 else{
-
+                    if(from.equals("completed")){
+                        if(notificationFor.equals("buyer")){
+                            Intent i = new Intent(acquired_order_accepted_message.this, order_breeder_side.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_order_accepted_message.this, "Order successfully moved to completed tab", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                    else if (from.equals("cancelled")){
+                        if(notificationFor.equals("buyer")) {
+                            Intent i = new Intent(acquired_order_accepted_message.this, order_breeder_side.class);
+                            i.putExtra("SELECTED_TAB", from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(acquired_order_accepted_message.this, "Order successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                    else{
+                        //message only
+                    }
                 }
             }
             @Override

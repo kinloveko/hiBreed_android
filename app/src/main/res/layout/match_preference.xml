@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/shape"
+        android:backgroundTint="#3C3E40"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="16dp"
+
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.261">
+
+
+
+
+        <RelativeLayout
+            android:layout_marginTop="30dp"
+            android:id="@+id/reasonsLayout"
+            android:padding="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/match_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:fontFamily="@font/chocolate"
+                android:text="Gender Preference"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/match_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/match_title"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dropshadow"
+                android:backgroundTint="@color/semiBlack"
+                android:fontFamily="@font/poppinsregular"
+                android:gravity="center"
+                android:text="&quot;You can choose which gender to display: male, female, or all genders.&quot;"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/maleMessageButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/match_message"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dropshadow_button"
+                android:shadowColor="@color/safe_grey"
+                android:shadowDx="5"
+                android:shadowDy="2"
+                android:shadowRadius="3"
+                android:text="MALE"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/femaleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/maleMessageButton"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dropshadow_button"
+                android:shadowColor="@color/safe_grey"
+                android:shadowDx="5"
+                android:shadowDy="2"
+                android:shadowRadius="3"
+                android:text="FEMALE"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/allGenderButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/femaleButton"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dropshadow_button_opposite"
+                android:text="ALL GENDER"
+                android:textColor="@color/white"
+                tools:ignore="HardcodedText" />
+        </RelativeLayout>
+
+    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="-28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout"
+        app:srcCompat="@drawable/dialog_finder_borders" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

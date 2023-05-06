@@ -178,18 +178,18 @@ public class rate_shop extends AppCompatActivity {
                                                                     new Handler().postDelayed(new Runnable() {
                                                                         @Override
                                                                         public void run() {
+                                                                            alert2.dismiss();
                                                                             Intent i = new Intent(rate_shop.this, order_user_side.class);
                                                                             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                                                                             startActivity(i);
                                                                             finish();
-                                                                            alert2.dismiss();
+
                                                                         }
                                                                     },2000);
                                                                 }
                                                             });
                                                 }
                                             });
-
                                 }
                             });
                 }
@@ -201,47 +201,10 @@ public class rate_shop extends AppCompatActivity {
         rateLater.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map<String,Object> map = new HashMap<>();
-                map.put("id","");
-                map.put("item_id",appoint.getItem_id());
-                map.put("customer_id",appoint.getCustomer_id());
-                map.put("seller_id",appoint.getSeller_id());
-                map.put("type",appoint.getType());
-                map.put("rating",null);
-                map.put("rateFor","Shop");
-                map.put("comment",null);
-                map.put("timestamp", Timestamp.now());
-                map.put("isRated",false);
 
-                FirebaseFirestore.getInstance().collection("Reviews")
-                        .add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
+                startActivity(new Intent(rate_shop.this, appointment_user_side.class));
+                finish();
 
-                                FirebaseFirestore.getInstance().collection("Reviews")
-                                        .document(documentReference.getId())
-                                        .update("id",documentReference.getId(),"timestamp", FieldValue.serverTimestamp())
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                Map<String,Object> a = new HashMap<>();
-                                                a.put("isRated",false);
-                                                a.put("rated_id",documentReference.getId());
-                                                FirebaseFirestore.getInstance().collection("Appointments")
-                                                        .document(appoint.getId())
-                                                        .set(a, SetOptions.merge())
-                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                            @Override
-                                                            public void onSuccess(Void unused) {
-                                                                startActivity(new Intent(rate_shop.this, appointment_user_side.class));
-                                                                finish();
-                                                            }
-                                                        });
-
-                                            }
-                                        });
-                            }
-                        });
             }
         });
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {

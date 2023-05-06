@@ -112,7 +112,6 @@ public class may_you_like_adapter extends RecyclerView.Adapter<may_you_like_adap
                                     v.price.setText(s.getString("prod_price"));
                                     v.category.setText(s.getString("prod_category"));
 
-
                                 }
                             }
                         });

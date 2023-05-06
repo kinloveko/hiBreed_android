@@ -35,7 +35,6 @@ import com.example.hi_breed.classesFile.POST;
 import com.example.hi_breed.classesFile.TimeStampClass;
 import com.example.hi_breed.classesFile.replyClass;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
@@ -190,31 +189,36 @@ public class ask_question_details extends BaseActivity implements askSinglePhoto
         }
         //FOR POST VIEW COUNT
         FirebaseFirestore.getInstance().collection("Post").document(post.getPostKey())
-                .collection("Views").document("Views_doc").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .collection("Views").document("Views_doc").addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            DocumentSnapshot s = task.getResult();
-                            if(s.get("ids") != null) {
-                                List<String> ids = (List<String>) s.get("ids");
-                                askViewRecycler.setText("Views "+ids.size());
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null) return;
+                        if(value!=null){
+                            if(value.exists()){
+
+                                if(value.get("ids") != null) {
+                                    List<String> ids = (List<String>) value.get("ids");
+                                    askViewRecycler.setText("Views "+ids.size());
+                                }
                             }
                         }
                     }
                 });
         //FOR COMMENTS COUNT
         FirebaseFirestore.getInstance().collection("Comments").whereEqualTo("postKey",post.getPostKey())
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                        int countRep = 0;
-                        for(int i = 0;i<list.size();i++){
-                            countRep ++;
-                        }
-                        askReplyRecycler.setText("Reply "+countRep);
-                    }
-                });
+                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                if(value!=null){
+                                    List<DocumentSnapshot> list = value.getDocuments();
+                                    int countRep = 0;
+                                    for(int i = 0;i<list.size();i++){
+                                        countRep ++;
+                                    }
+                                    askReplyRecycler.setText("Reply "+countRep);
+                                }
+                            }
+                        });
         //FOR IMAGE OF THE VET
         FirebaseFirestore.getInstance().collection("User")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())

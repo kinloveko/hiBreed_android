@@ -82,10 +82,13 @@ public class search_dashboard_home extends BaseActivity {
                 }
                 if (value != null) {
                     searchAdapter.clearList();
+                    searchAdapter.holdClear();
                     for (DocumentSnapshot s : value) {
                         item i = s.toObject(item.class);
-                        hold.add(i);
-                        searchAdapter.hold(hold);
+
+                            hold.add(i);
+                            searchAdapter.hold(hold);
+
                         if (category.contains(s.getString("category"))) {
                             continue;
                         } else {
@@ -160,9 +163,11 @@ public class search_dashboard_home extends BaseActivity {
         List<item> newSearch = new ArrayList<>();
         for(item i:list){
             if(i.getCategory().toLowerCase().contains(text.toLowerCase())||i.getType().toLowerCase().contains(text.toLowerCase())){
-                newSearch.add(i);
-                searchAdapter.addSearch(newSearch);
-                recyclerView.setVisibility(View.VISIBLE);
+               if(!newSearch.contains(i.getId())){
+                   newSearch.add(i);
+                   searchAdapter.addSearch(newSearch);
+               }
+                 recyclerView.setVisibility(View.VISIBLE);
             }
         }
         Intent intent = new Intent(search_dashboard_home.this, search_clicked.class);
@@ -175,8 +180,11 @@ public class search_dashboard_home extends BaseActivity {
         List<item> newSearch = new ArrayList<>();
         for(item i:list){
             if(i.getCategory().toLowerCase().contains(newText.toLowerCase()) || i.getType().toLowerCase().contains(newText.toLowerCase())){
-                newSearch.add(i);
-                searchAdapter.addSearch(newSearch);
+                if(!newSearch.contains(i.getId())){
+                    newSearch.add(i);
+                    searchAdapter.addSearch(newSearch);
+
+                }
                 recyclerView.setVisibility(View.VISIBLE);
             }
         }

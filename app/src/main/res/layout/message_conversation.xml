@@ -136,6 +136,7 @@
         android:layout_height="wrap_content">
 
         <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
            >
@@ -151,6 +152,33 @@
 
 
     <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/leave_conversation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/transparent"
+        android:elevation="3dp"
+        android:padding="5dp"
+        android:translationZ="90dp">
+
+        <TextView
+            android:id="@+id/leaveText"
+            android:background="@drawable/dropshadow_button_cancelled"
+            android:backgroundTint="@color/brownish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:fontFamily="@font/poppinsregular"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:text=""
+            tools:ignore="HardcodedText" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/reply_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

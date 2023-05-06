@@ -32,6 +32,7 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.hi_breed.R;
+import com.example.hi_breed.adapter.product_adapter.productForSaleAdapter;
 import com.example.hi_breed.adapter.review_order_adapter;
 import com.example.hi_breed.checkout.checkout_activity;
 import com.example.hi_breed.classesFile.add_to_cart_class;
@@ -74,10 +75,10 @@ public class product_details extends AppCompatActivity {
 
    ImageView heart_like;
    Button details_button_addToCard,details_button_buyNow;
-   LinearLayout backLayout,
+   LinearLayout backLayout,recommended_layout,
             cartLayout;
    ImageSlider imageSliderDetails;
-    TextView details_product_name,expLabel,treatLabel,viewShopID,seeMore,
+    TextView details_product_name,expLabel,treatLabel,viewShopID,seeMore,expand,
     details_product_category,
             details_product_price,
     details_product_description,
@@ -89,6 +90,9 @@ public class product_details extends AppCompatActivity {
     address_details;
      CircleImageView seller_profile;
     String id,vet_id;
+    private productForSaleAdapter adapterMedicine;
+    private RecyclerView recommended_recycler;
+    private productForSaleAdapter adapterProduct;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +108,14 @@ public class product_details extends AppCompatActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+        recommended_layout  =  findViewById(R.id.recommended_layout);
+        recommended_recycler =  findViewById(R.id.recommended_recycler);
+        adapterProduct = new productForSaleAdapter(this);
+        adapterMedicine = new productForSaleAdapter(this);
+        recommended_recycler.setLayoutManager(new GridLayoutManager(this,2));
+
+
+
         details_button_buyNow = findViewById(R.id.details_button_buyNow);
         backLayout = findViewById(R.id.backLayout);
         backLayout.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +159,22 @@ public class product_details extends AppCompatActivity {
         treatLabel = findViewById(R.id.treatLabel);
         expLabel = findViewById(R.id.expLabel);
         viewShopID = findViewById(R.id.viewShopID);
+        expand = findViewById(R.id.expand);
+        expand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(expand.getText().toString().equals("View all reviews . . .")){
+                    expand.setText("Hide reviews . . .");
+                    adapter.setExpanded(true);
+                }
+                else{
+                    expand.setText("View all reviews . . .");
+                    adapter.setExpanded(false);
+                }
+            }
+        });
         seeMore = findViewById(R.id.seeMore);
+
         seeMore.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -167,6 +194,14 @@ public class product_details extends AppCompatActivity {
 
         Intent intent = getIntent();
         product_class p = (product_class) intent.getSerializableExtra("mode");
+
+        //recommendation
+        if(p.getProd_category().equals("Medicine")){
+            getMedicine(p.getId());
+        }
+        else {
+            getProducts( p.getId());
+        }
 
         id = p.getId();
         vet_id = p.getVet_id();
@@ -194,7 +229,6 @@ public class product_details extends AppCompatActivity {
                         }
                     }
                 });
-
 
 
         if(p.getVet_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
@@ -263,8 +297,6 @@ public class product_details extends AppCompatActivity {
         details_product_name.setText(p.getProd_name());
         details_product_description.setText(p.getProd_description());
         details_product_category.setText(p.getProd_category());
-
-
 
         FirebaseFirestore.getInstance().collection("Likes")
                 .whereEqualTo("likedBy", FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -345,6 +377,75 @@ public class product_details extends AppCompatActivity {
 
     }
 
+    private void getProducts(String id) {
+
+        FirebaseFirestore.getInstance().collection("Pet")
+                .whereEqualTo("displayFor","forProducts")
+                .whereEqualTo("prod_category","Dog Accessories")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null)
+                        {
+                            return;
+                        }
+                        if(value!=null){
+                            adapterProduct.clearList();
+                            List<DocumentSnapshot> list = value.getDocuments();
+                            if(list.size()!=0) {
+                                for (DocumentSnapshot s : list) {
+                                     if(!s.getString("id").equals(id)) {
+                                         product_class p = s.toObject(product_class.class);
+                                         adapterProduct.addPetDisplay(p);
+                                         recommended_layout.setVisibility(View.VISIBLE);
+                                         recommended_recycler.setVisibility(View.VISIBLE);
+                                     }
+                                }
+                                recommended_recycler.setAdapter(adapterProduct);
+                            }
+                        }
+                        else{
+                            recommended_layout.setVisibility(View.GONE);
+                            recommended_recycler.setVisibility(View.GONE);
+                        }
+                    }
+                });
+    }
+
+    private void getMedicine(String id) {
+        FirebaseFirestore.getInstance().collection("Pet")
+                .whereEqualTo("displayFor","forProducts")
+                .whereEqualTo("prod_category","Medicine")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null)
+                        {
+                            return;
+                        }
+                        if(value!=null){
+                            adapterMedicine.clearList();
+                            List<DocumentSnapshot> list = value.getDocuments();
+                            if(list.size()!=0) {
+                                for (DocumentSnapshot s : list) {
+                                    if (!s.getString("id").equals(id)) {
+                                        product_class p = s.toObject(product_class.class);
+                                        adapterMedicine.addPetDisplay(p);
+                                        recommended_layout.setVisibility(View.VISIBLE);
+                                        recommended_recycler.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            }
+                            recommended_recycler.setAdapter(adapterMedicine);
+                        }
+                        else{
+                            recommended_layout.setVisibility(View.GONE);
+                            recommended_recycler.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
+    }
 
 
     private void getReviews(String pet_breeder) {
@@ -359,6 +460,7 @@ public class product_details extends AppCompatActivity {
                             return;
                         }
                         if (value != null && !value.isEmpty()) {
+                            expand.setVisibility(View.VISIBLE);
                             float totalRating = 0;
                             int numRatings = 0;
                             adapter.clearList();

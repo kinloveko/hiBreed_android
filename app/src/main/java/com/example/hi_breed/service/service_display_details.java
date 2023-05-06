@@ -28,6 +28,7 @@ import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.review_order_adapter;
+import com.example.hi_breed.adapter.shooterAdapter.m_serviceAdapter;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.classesFile.likes_class;
 import com.example.hi_breed.classesFile.rating_class;
@@ -49,6 +50,7 @@ import com.ramijemli.percentagechartview.PercentageChartView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class service_display_details extends BaseActivity {
 
@@ -57,12 +59,13 @@ public class service_display_details extends BaseActivity {
     review_order_adapter adapter;
     RecyclerView reviewsService;
     ImageView heart_like, share_to_messenger;
-    LinearLayout backLayout;
+    LinearLayout backLayout, recommended_layout;
     ImageSlider imageSliderDetails;
     TextView details_shooter_name;
     TextView details_service_type;
     TextView details_shooter_price;
     TextView details_pet_description;
+    TextView expand;
     TextView details_service_address;
     TextView details_service_availability;
     TextView details_service_schedule;
@@ -73,6 +76,8 @@ public class service_display_details extends BaseActivity {
     PercentageChartView view_id;
     String from;
     String matchID;
+    RecyclerView recommended_recycler;
+    private m_serviceAdapter adapterShoot;
 
     @SuppressLint({"ObsoleteSdkInt", "SetTextI18n"})
     @Override
@@ -94,7 +99,7 @@ public class service_display_details extends BaseActivity {
         reviewsService.setLayoutManager(new GridLayoutManager(this, 1));
         adapter = new review_order_adapter(this);
         view_id = findViewById(R.id.view_id);
-
+        expand = findViewById(R.id.expand);
         heart_like = findViewById(R.id.heart_like);
         backLayout = findViewById(R.id.backLayout);
         imageSliderDetails = findViewById(R.id.imageSliderDetails);
@@ -107,6 +112,18 @@ public class service_display_details extends BaseActivity {
         details_service_schedule = findViewById(R.id.details_service_schedule);
         details_button_hireNow = findViewById(R.id.details_button_hireNow);
 
+        expand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (expand.getText().toString().equals("View all reviews . . .")) {
+                    expand.setText("Hide reviews . . .");
+                    adapter.setExpanded(true);
+                } else {
+                    expand.setText("View all reviews . . .");
+                    adapter.setExpanded(false);
+                }
+            }
+        });
         seeMore = findViewById(R.id.seeMore);
         seeMore.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
@@ -131,6 +148,14 @@ public class service_display_details extends BaseActivity {
             }
         });
 
+
+        recommended_layout = findViewById(R.id.recommended_layout);
+        recommended_recycler = findViewById(R.id.recommended_recycler);
+        recommended_recycler.setLayoutManager(new GridLayoutManager(this, 1));
+        adapterShoot = new m_serviceAdapter(this);
+        recommended_recycler.setAdapter(adapterShoot);
+
+
         Intent intent = getIntent();
         service_class service = (service_class) intent.getSerializableExtra("mode");
         from = intent.getStringExtra("from");
@@ -138,6 +163,7 @@ public class service_display_details extends BaseActivity {
         if (service != null) {
             //shooter image
             id = service.getId();
+            getShooterRecommendation(id,service.getServiceType());
             shooter_id = service.getShooter_id();
             if (!service.getServiceType().equals("Veterinarian Service")) {
                 view_id.setVisibility(View.VISIBLE);
@@ -206,8 +232,7 @@ public class service_display_details extends BaseActivity {
                 details_service_schedule.setText(sched);
             }
 
-        }
-        else {
+        } else {
             Toast.makeText(this, "no data has been fetch", Toast.LENGTH_SHORT).show();
             this.finish();
         }
@@ -287,6 +312,36 @@ public class service_display_details extends BaseActivity {
         });
     }
 
+    private void getShooterRecommendation(String id,String category) {
+
+        FirebaseFirestore.getInstance().collection("Services")
+                .whereEqualTo("displayFor", "Service")
+                .whereEqualTo("serviceType", category)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        adapterShoot.clearList();
+                        List<DocumentSnapshot> dlist = value.getDocuments();
+                        if(value!=null){
+                            if(dlist.size()!=0){
+                                for (DocumentSnapshot ds : dlist) {
+                                    if (!ds.getString("id").equals(id)) {
+                                        service_class pet = ds.toObject(service_class.class);
+                                        adapterShoot.addServiceDisplay(pet);
+                                        recommended_layout.setVisibility(View.VISIBLE);
+                                        recommended_recycler.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            }
+                        }
+                        else{
+                            recommended_layout.setVisibility(View.GONE);
+                            recommended_recycler.setVisibility(View.GONE);
+                        }
+                    }
+                });
+    }
+
     private void getReviews(String shooter_id) {
         FirebaseFirestore.getInstance().collection("Reviews")
                 .whereEqualTo("seller_id", shooter_id)
@@ -299,6 +354,7 @@ public class service_display_details extends BaseActivity {
                             return;
                         }
                         if (value != null && !value.isEmpty()) {
+                            expand.setVisibility(View.VISIBLE);
                             float totalRating = 0;
                             int numRatings = 0;
                             String type = "";

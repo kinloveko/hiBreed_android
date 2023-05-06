@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,11 +23,12 @@ import com.example.hi_breed.ask_a_professional.edit_post_ask_prof;
 import com.example.hi_breed.classesFile.POST;
 import com.example.hi_breed.classesFile.TimeStampClass;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
@@ -82,16 +84,19 @@ public class askProf_adapter extends RecyclerView.Adapter<askProf_adapter.ViewHo
         Instant instant = Instant.ofEpochMilli(productModel.getTimeStamp().toDate().getTime());
         TimeStampClass timeStamp = new TimeStampClass();
 
+        //FOR COMMENTS COUNT
         FirebaseFirestore.getInstance().collection("Comments").whereEqualTo("postKey",productModel.getPostKey())
-                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                        int countRep = 0;
-                        for(int i = 0;i<list.size();i++){
-                            countRep ++;
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(value!=null){
+                            List<DocumentSnapshot> list = value.getDocuments();
+                            int countRep = 0;
+                            for(int i = 0;i<list.size();i++){
+                                countRep ++;
+                            }
+                            holder.askReplyRecycler.setText("Reply "+countRep);
                         }
-                        holder.askReplyRecycler.setText("Reply "+countRep);
                     }
                 });
 
@@ -115,20 +120,23 @@ public class askProf_adapter extends RecyclerView.Adapter<askProf_adapter.ViewHo
                              }
                         });
 
+        //FOR POST VIEW COUNT
         FirebaseFirestore.getInstance().collection("Post").document(productModel.getPostKey())
-                .collection("Views").document("Views_doc").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .collection("Views").document("Views_doc").addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            DocumentSnapshot s = task.getResult();
-                            if(s.get("ids") != null) {
-                                List<String> ids = (List<String>) s.get("ids");
-                                holder.askViewRecycler.setText("Views "+ids.size());
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error!=null) return;
+                        if(value!=null){
+                            if(value.exists()){
+
+                                if(value.get("ids") != null) {
+                                    List<String> ids = (List<String>) value.get("ids");
+                                    holder.askViewRecycler.setText("Views "+ids.size());
+                                }
                             }
                         }
                     }
                 });
-
 
         List<String> myArray = Arrays.asList(user);
         if(productModel.getUserID().equals(user))

@@ -38,18 +38,27 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".findShooters"
+            android:name=".Report_activity"
+            android:exported="false" />
+        <activity
+            android:name=".loginAndRegistration.about_activity"
+            android:exported="false" />
+        <activity
+            android:name=".loginAndRegistration.forgot_activity"
+            android:exported="false" />
+        <activity
+            android:name=".service.findShooters"
             android:exported="false" />
         <activity
             android:name=".image_activity"
             android:exported="false" />
         <activity
-            android:name=".change_role"
+            android:name=".loginAndRegistration.change_role"
             android:exported="false"
             android:label="@string/title_activity_change_role"
             android:theme="@style/Theme.HiBreed.NoActionBar" />
         <activity
-            android:name=".not_verified_activity"
+            android:name=".loginAndRegistration.not_verified_activity"
             android:exported="false" />
         <activity
             android:name=".shop.rate_shop"

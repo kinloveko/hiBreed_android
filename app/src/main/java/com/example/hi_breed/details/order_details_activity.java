@@ -67,7 +67,7 @@ public class order_details_activity extends AppCompatActivity {
     TextView check_out_name,text1,pet_text,
             checkout_number,transactionLabel,transactionMessage,
             checkout_address,
-            checkout_zip;
+            checkout_zip,appointment_id;
 
     TextView statusLabel,status, transactionEndLabel ,transactionEnd ,transactionPaymentLabel,
             transactionPayment,subTotalLabel,subTotal,totalLabel,total,
@@ -98,6 +98,7 @@ public class order_details_activity extends AppCompatActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+        appointment_id =findViewById(R.id.appointment_id);
         imageView = findViewById(R.id.imageView);
         messageButton = findViewById(R.id.messageButton);
         transactionLayout = findViewById(R.id.transactionLayout);
@@ -155,7 +156,7 @@ public class order_details_activity extends AppCompatActivity {
             } else if (!appointment.getSeller_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                 notCurrentUser = appointment.getSeller_id();
             }
-
+            appointment_id.setText(appointment.getId());
             if(appointment.getOrder_status().equals("pending")){
                 transactionLayout.setVisibility(View.VISIBLE);
                 transactionLabel.setVisibility(View.GONE);
@@ -259,6 +260,8 @@ public class order_details_activity extends AppCompatActivity {
                                                                                                                                                     if(appointment.getType().equals("pet")){
 
                                                                                                                                                         FirebaseFirestore.getInstance().collection("Pet").document(appointment.getItem_id())
+                                                                                                                                                                .update("show",false);
+                                                                                                                                                        FirebaseFirestore.getInstance().collection("Search").document(appointment.getItem_id())
                                                                                                                                                                 .update("show",false);
                                                                                                                                                     }
                                                                                                                                                     else{
@@ -947,7 +950,52 @@ public class order_details_activity extends AppCompatActivity {
 
                     }
                 }else{
+                    if(from.equals("accepted")){
 
+                        if(notificationFor.equals("buyer")){
+
+                            Intent i = new Intent(order_details_activity.this, order_breeder_side.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(order_details_activity.this, "Your order successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        }
+                        else{
+
+                            Intent i = new Intent(order_details_activity.this, order_user_side.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(order_details_activity.this, "Your order successfully moved to accepted tab", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        }
+                    }
+                    else  if(from.equals("cancelled")){
+
+                        if(notificationFor.equals("buyer")){
+                            Intent i = new Intent(order_details_activity.this, order_breeder_side.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(order_details_activity.this, "Your order successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        }
+                        else{
+                            Intent i = new Intent(order_details_activity.this, order_user_side.class);
+                            i.putExtra("SELECTED_TAB",from);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            Toast.makeText(order_details_activity.this, "Your order successfully moved to cancelled tab", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                    else{
+
+                    }
                 }
             }
 

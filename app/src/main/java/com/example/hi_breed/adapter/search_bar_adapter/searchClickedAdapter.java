@@ -124,10 +124,12 @@ public class searchClickedAdapter extends RecyclerView.Adapter<searchClickedAdap
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot s = task.getResult();
                                     List<String> photos = (List<String>) s.get("photos");
-                                    Glide.with(viewHolder.itemView.getContext())
-                                            .load(photos.get(0))
-                                            .placeholder(R.drawable.noimage)
-                                            .into(viewHolder.image);
+                                    if(photos!=null) {
+                                        Glide.with(viewHolder.itemView.getContext())
+                                                .load(photos.get(0))
+                                                .placeholder(R.drawable.noimage)
+                                                .into(viewHolder.image);
+                                    }
                                 }
                             }
                         });

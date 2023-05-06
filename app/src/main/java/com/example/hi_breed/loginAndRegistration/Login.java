@@ -35,7 +35,11 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import pl.droidsonroids.gif.GifImageView;
@@ -44,9 +48,9 @@ public class Login extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private int i = -1;
     private FirebaseUser userAuth;
-    TextInputLayout emailView , passView ;
+    TextInputLayout emailView, passView;
     TextInputEditText emailEdit, passEdit;
-        Button signIn;
+    Button signIn, forgot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,7 @@ public class Login extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         userAuth = mAuth.getCurrentUser();
         signIn = findViewById(R.id.submitButton);
-
+        forgot = findViewById(R.id.forgot);
 
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -74,7 +78,12 @@ public class Login extends AppCompatActivity {
             this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
         }
 
-
+        forgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Login.this, forgot_activity.class));
+            }
+        });
         emailEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -83,8 +92,7 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s!=null)
-                {
+                if (s != null) {
                     emailView.setError("");
                 }
             }
@@ -103,8 +111,7 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s!=null)
-                {
+                if (s != null) {
                     passView.setError("");
                 }
             }
@@ -132,7 +139,7 @@ public class Login extends AppCompatActivity {
             emailEdit.requestFocus();
             return;
 
-        }  else {
+        } else {
             emailView.setError("");
         }
 
@@ -146,7 +153,7 @@ public class Login extends AppCompatActivity {
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
-        View view = View.inflate(Login.this,R.layout.screen_custom_alert,null);
+        View view = View.inflate(Login.this, R.layout.screen_custom_alert, null);
         TextView title = view.findViewById(R.id.screen_custom_alert_title);
         builder.setCancelable(false);
         AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
@@ -168,12 +175,12 @@ public class Login extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if(user.isEmailVerified()){
+                    if (user.isEmailVerified()) {
                         alert.dismiss();
 
                         AlertDialog.Builder builder2 = new AlertDialog.Builder(Login.this);
                         builder2.setCancelable(false);
-                        View view = View.inflate(Login.this,R.layout.screen_custom_alert,null);
+                        View view = View.inflate(Login.this, R.layout.screen_custom_alert, null);
                         //title
                         TextView title = view.findViewById(R.id.screen_custom_alert_title);
                         //loading text
@@ -181,7 +188,7 @@ public class Login extends AppCompatActivity {
                         loadingText.setVisibility(View.GONE);
                         //gif
                         GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
-                        Uri uri = Uri.parse("android.resource://"+ getPackageName()+"/"+R.drawable.kawaii_gif);
+                        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.kawaii_gif);
                         gif.setImageURI(uri);
                         //header image
                         AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
@@ -198,27 +205,42 @@ public class Login extends AppCompatActivity {
                         AlertDialog alert2 = builder2.create();
                         alert2.show();
                         alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        emailView.setError("");
-                        passView.setError("");
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent i = new Intent(Login.this,user_dashboard.class);
-                                // set the new task and clear flags
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(i);
-                                finish();
-                                alert2.dismiss();
-                            }
-                        },2000);
 
-                    }
-                    else{
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("pass",pass);
+                        FirebaseFirestore.getInstance().collection("User")
+                                .document(user.getUid())
+                                .collection("security")
+                                .document("security_doc")
+                                .set(map, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+
+                                            emailView.setError("");
+                                            passView.setError("");
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Intent i = new Intent(Login.this, user_dashboard.class);
+                                                    // set the new task and clear flags
+                                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    startActivity(i);
+                                                    finish();
+                                                    alert2.dismiss();
+                                                }
+                                            }, 2000);
+                                        }
+                                    }
+                                });
+
+
+                    } else {
                         //if user is registered but not verified
                         user.sendEmailVerification();
                         alert.dismiss();
                         AlertDialog.Builder builder3 = new AlertDialog.Builder(Login.this);
-                        View view = View.inflate(Login.this,R.layout.screen_custom_alert,null);
+                        View view = View.inflate(Login.this, R.layout.screen_custom_alert, null);
                         builder3.setCancelable(false);
                         TextView title = view.findViewById(R.id.screen_custom_alert_title);
                         TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
@@ -233,7 +255,7 @@ public class Login extends AppCompatActivity {
                         message.setText("We sent you an email verification. Click the link and login again.");
                         LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
                         buttonLayout.setVisibility(View.VISIBLE);
-                        MaterialButton cancel,okay;
+                        MaterialButton cancel, okay;
                         cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
                         cancel.setVisibility(View.GONE);
                         okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
@@ -255,14 +277,13 @@ public class Login extends AppCompatActivity {
                             }
                         });
                     }
-                }
-                else {
+                } else {
                     alert.dismiss();
                     //Account doesn't Exist
                     emailView.setError("");
                     passView.setError("");
                     AlertDialog.Builder builder3 = new AlertDialog.Builder(Login.this);
-                    View view = View.inflate(Login.this,R.layout.screen_custom_alert,null);
+                    View view = View.inflate(Login.this, R.layout.screen_custom_alert, null);
                     builder3.setCancelable(false);
                     TextView title = view.findViewById(R.id.screen_custom_alert_title);
                     TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
@@ -277,7 +298,7 @@ public class Login extends AppCompatActivity {
                     message.setText("Don't have an account? Click Register button.");
                     LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
                     buttonLayout.setVisibility(View.VISIBLE);
-                    MaterialButton cancel,okay;
+                    MaterialButton cancel, okay;
                     cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
                     okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
                     okay.setText("Register");

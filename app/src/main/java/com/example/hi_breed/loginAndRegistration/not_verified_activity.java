@@ -1,4 +1,4 @@
-package com.example.hi_breed;
+package com.example.hi_breed.loginAndRegistration;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -50,6 +50,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.signature.ObjectKey;
+import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.breeder_kennel_cert_RecyclerAdapter;
 import com.example.hi_breed.adapter.shooterAdapter.shooter_proof_RecyclerAdapter;
 import com.example.hi_breed.userFile.dashboard.user_dashboard;

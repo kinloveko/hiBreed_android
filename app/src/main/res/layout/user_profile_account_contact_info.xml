@@ -45,8 +45,8 @@
             android:fontFamily="@font/poppinsemibold"
             android:gravity="center"
             android:text="Contact Information"
-            android:textSize="17sp"
             android:textColor="@color/material_blue_grey_80"
+            android:textSize="17sp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.333"
             tools:ignore="HardcodedText"
@@ -70,10 +70,10 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="20dp"
             android:fontFamily="@font/poppinsregular"
-            android:text="About : You can manage your number and emails here. Always maintain the most recent information available so that you can easily open and restore your account if it is lost or hacked."
-            android:textAlignment="textStart"
+            android:text="You can manage your number and emails here. Always maintain the most recent information available so that you can easily open and restore your account if it is lost or hacked."
+            android:textAlignment="center"
             android:textColor="@color/material_blue_grey_80"
-            android:textSize="12sp"
+            android:textSize="13sp"
             tools:ignore="HardcodedText" />
 
 

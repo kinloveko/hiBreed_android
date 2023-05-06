@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <RelativeLayout
+
+        android:id="@+id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@android:color/white"
+        android:translationZ="3dp"
+        tools:context=".loginAndRegistration.container_fragment_registration_users"
+        tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_toEndOf="@id/backLayoutService"
+            android:fontFamily="@font/poppinsemibold"
+            android:text="About"
+            android:textColor="@color/material_blue_grey_80"
+            android:textSize="18sp"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/backLayoutService"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+            <ImageView
+                android:id="@+id/shop_edit_backArrowImage"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/icon_arrowback"
+                tools:ignore="ContentDescription,NestedWeights"
+                tools:layout_editor_absoluteX="339dp"
+                tools:layout_editor_absoluteY="122dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ScrollView
+        android:scrollbars="none"
+        android:layout_marginEnd="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbarID">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/about_vector" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-20dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="What is Hi - Breed?"
+                android:textStyle="bold"
+                android:textAlignment="viewStart"
+                android:paddingStart="15sp"
+                android:textColor="@color/material_blue_grey_90"
+                android:textSize="17sp"
+                tools:ignore="HardcodedText,RtlSymmetry" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:textAlignment="viewStart"
+                android:text="Hi-Breed is a unique mobile application that aims to help pet owners find suitable mates for their furry companions. With its user-friendly interface, Hi-Breed provides a platform for pet owners to connect with other pet owners and arrange playdates for their pets. The app is designed to address the challenges faced by pet owners in finding compatible partners for their pets, including breeding and shooting issues."
+                android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/secure_vector" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Verification and validation of pet owners, an algorithm for pet-dating and recommendation services, and a notification scheme"
+                android:textStyle="bold"
+                android:textAlignment="viewStart"
+                android:paddingStart="15sp"
+                android:textColor="@color/material_blue_grey_90"
+                android:textSize="13sp"
+                tools:ignore="HardcodedText,RtlSymmetry" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/poppinsregular"
+                android:textAlignment="viewStart"
+                android:text="To ensure the safety and legitimacy of the app's users, Hi-Breed has implemented a comprehensive mechanism for verifying and validating pet owners. The app's algorithm for pet-dating and recommendation services takes into consideration various factors, including pet species, breed. This helps to ensure that pet owners are matched with suitable partners for their pets. Additionally, Hi-Breed's notification scheme is designed to keep users informed of new matches and updates, making it easy for pet owners to stay connected with the app's community."
+                  android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="-180dp"
+                android:src="@drawable/overall_vector" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-100dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Why Hi-Breed?"
+                 android:textStyle="bold"
+                android:textAlignment="viewStart"
+                android:paddingStart="15sp"
+                android:textColor="@color/material_blue_grey_90"
+                android:textSize="17sp"
+                tools:ignore="HardcodedText,RtlSymmetry" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/poppinsregular"
+                android:textAlignment="viewStart"
+                android:text="Hi-Breed offers a fun and convenient way for pet owners to connect and arrange playdates for their pets. With its innovative features and robust safety measures, Hi-Breed is a must-have app for pet owners who want to ensure the happiness and well-being of their furry friends."
+                android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

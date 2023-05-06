@@ -69,6 +69,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
@@ -84,7 +85,7 @@ import java.util.Map;
 
 import pl.droidsonroids.gif.GifImageView;
 
-public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_current.itemCurrentClickListenerPet, pet_image_check_current.CountOfImagesCurrent, pet_papers_check_current.CountOfPapersCurrent,pet_papers_check_current.itemPaperClickListenerPet{
+public class edit_pet_for_sale extends BaseActivity implements pet_image_check_current.itemCurrentClickListenerPet, pet_image_check_current.CountOfImagesCurrent, pet_papers_check_current.CountOfPapersCurrent, pet_papers_check_current.itemPaperClickListenerPet {
 
     Button cancel_vaccine;
     ListView listView;
@@ -92,14 +93,14 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
     RelativeLayout addCustom;
     ArrayAdapter<String> arrayAdapter;
     RelativeLayout vaccine_container;
-   private LinearLayout added_vaccine;
+    private LinearLayout added_vaccine;
     FirebaseUser firebaseUser;
     FirebaseFirestore fireStore;
     FirebaseStorage storage1;
     LinearLayout deletePet_Layout;
     //ImageView
-    ImageView petNameClear, petDescClear, petColorClear,saveColorButton,saveDescButton,savePetNameButton;
-    RecyclerView pet_current_images_view,pet_papers_current;
+    ImageView petNameClear, petDescClear, petColorClear, saveColorButton, saveDescButton, savePetNameButton;
+    RecyclerView pet_current_images_view, pet_papers_current;
     //adapter
     pet_papers_check_current pet_paper_current_adapter;
     pet_image_check_current pet_current_adapter;
@@ -131,15 +132,14 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
     Button buttonAdd;
     TextView save_textOut;
     TextView save_count;
-/*    ArrayList<PetSaleClass> petSaleClasses;*/
-    String name_before,color_before,description_before;
+    /*    ArrayList<PetSaleClass> petSaleClasses;*/
+    String name_before, color_before, description_before;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_pet_for_sale);
-
 
 
         Window window = getWindow();
@@ -214,10 +214,9 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         petPaperCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if( checkPermission()){
+                if (checkPermission()) {
                     imagePermissionPapers();
-                }
-                else{
+                } else {
                     if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                             != PackageManager.PERMISSION_GRANTED) {
                         // Permission is not granted, request it
@@ -253,7 +252,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         backLayoutPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(uriCurrentImage == null){
+                if (uriCurrentImage == null) {
                     Toast.makeText(edit_pet_for_sale.this, "Choose t", Toast.LENGTH_SHORT).show();
                 }
                 edit_pet_for_sale.this.onBackPressed();
@@ -320,10 +319,9 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         petPhotoCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if( checkPermission()){
+                if (checkPermission()) {
                     imagePermission();
-                }
-                else{
+                } else {
                     if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                             != PackageManager.PERMISSION_GRANTED) {
                         // Permission is not granted, request it
@@ -349,25 +347,24 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         Intent intent = getIntent();
 
         PetSaleClass petSale = (PetSaleClass) intent.getSerializableExtra("mode");
-     /*       petSaleClasses = new ArrayList<>();*/
+        /*       petSaleClasses = new ArrayList<>();*/
         if (petSale != null) {
             id = petSale.getId();
             breederID = petSale.getPet_breeder();
-            if(petSale.getPet_vaccine()!=null)
-            oldVaccine.addAll(petSale.getPet_vaccine());
+            if (petSale.getPet_vaccine() != null)
+                oldVaccine.addAll(petSale.getPet_vaccine());
             getPetSale(petSale);
         }
 
         //current pic
-        pet_current_adapter = new pet_image_check_current(uriCurrentImage, getApplicationContext(), this, this,id,breederID);
+        pet_current_adapter = new pet_image_check_current(uriCurrentImage, getApplicationContext(), this, this, id, breederID);
         pet_current_images_view.setLayoutManager(new GridLayoutManager(this, 4));
         pet_current_images_view.setAdapter(pet_current_adapter);
 
 
         //current papers
-        pet_paper_current_adapter = new pet_papers_check_current(uriCurrentPapers,this,this,this,id,breederID);
-        pet_papers_current.setLayoutManager(new GridLayoutManager(this,4));
-
+        pet_paper_current_adapter = new pet_papers_check_current(uriCurrentPapers, this, this, this, id, breederID);
+        pet_papers_current.setLayoutManager(new GridLayoutManager(this, 4));
 
 
         deletePet_Layout.setOnClickListener(new View.OnClickListener() {
@@ -438,84 +435,113 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                         alert2.show();
                         alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-
                         FirebaseFirestore.getInstance().collection("Pet")
                                 .document(petSale.getId()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            FirebaseFirestore.getInstance().collection("Shop")
-                                                    .document(petSale.getPet_breeder()).collection("Pet")
-                                                    .document(petSale.getId()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            if (task.isSuccessful()) {
-                                                                FirebaseFirestore.getInstance().collection("User")
-                                                                        .document(petSale.getPet_breeder())
-                                                                        .collection("Pet")
-                                                                        .document(petSale.getId()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                            @Override
-                                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                                if (task.isSuccessful()) {
-                                                                                    alert2.dismiss();
+                                            FirebaseFirestore.getInstance().collection("Likes").whereEqualTo("product_id", petSale.getId()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                    List<DocumentSnapshot> s = queryDocumentSnapshots.getDocuments();
+                                                    int count = 0;
+                                                    for (DocumentSnapshot item : s) {
+                                                        FirebaseFirestore.getInstance().collection("Likes").document(item.getString("id")).delete();
+                                                        FirebaseFirestore.getInstance().collection("Search").document(item.getString("id")).delete();
+                                                        count++;
+                                                        if(count == s.size()){
+                                                            //deleting all cart that has this pet ID added
+                                                          FirebaseFirestore.getInstance().collection("Cart").whereEqualTo("prod_id",petSale.getId())
+                                                                  .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                                      @Override
+                                                                      public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                                          List<DocumentSnapshot> s = queryDocumentSnapshots.getDocuments();
+                                                                          int count = 0;
+                                                                          for (DocumentSnapshot item : s) {
+                                                                              FirebaseFirestore.getInstance().collection("Cart").document(item.getString("id")).delete();
+                                                                              count++;
+                                                                              if (count == s.size()) {
 
-                                                                                    final  StorageReference storageReference = FirebaseStorage.getInstance().getReference("User/"+breederID+"/"+"Pet Images/"+id);
-                                                                                    storageReference.listAll()
-                                                                                            .addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                                                                                                @Override
-                                                                                                public void onSuccess(ListResult listResult) {
-                                                                                                    for (StorageReference item : listResult.getItems()) {
-                                                                                                        item.delete();
-                                                                                                    }
-                                                                                                    storageReference.delete();
-                                                                                                    alert2.show();
-                                                                                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(edit_pet_for_sale.this);
-                                                                                                    builder2.setCancelable(false);
-                                                                                                    View view = View.inflate(edit_pet_for_sale.this, R.layout.screen_custom_alert, null);
-                                                                                                    //title
-                                                                                                    TextView title = view.findViewById(R.id.screen_custom_alert_title);
-                                                                                                    //loading text
-                                                                                                    TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
-                                                                                                    loadingText.setVisibility(View.GONE);
-                                                                                                    //gif
-                                                                                                    GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
-                                                                                                    gif.setVisibility(View.GONE);
-                                                                                                    //header image
-                                                                                                    AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
-                                                                                                    imageViewCompat.setVisibility(View.VISIBLE);
-                                                                                                    imageViewCompat.setImageDrawable(getDrawable(R.drawable.screen_alert_image_valid_borders));
-                                                                                                    //message
-                                                                                                    TextView message = view.findViewById(R.id.screen_custom_alert_message);
-                                                                                                    title.setText("Successfully Deleted");
-                                                                                                    message.setVisibility(View.VISIBLE);
-                                                                                                    message.setText("Click okay to continue..");
-                                                                                                    LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
-                                                                                                    buttonLayout.setVisibility(View.VISIBLE);
-                                                                                                    MaterialButton cancel, okay;
-                                                                                                    cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
-                                                                                                    cancel.setVisibility(View.GONE);
-                                                                                                    okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
-                                                                                                    okay.setText("Okay");
-                                                                                                    builder2.setView(view);
-                                                                                                    AlertDialog alert2 = builder2.create();
-                                                                                                    alert2.show();
-                                                                                                    alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                                                                                    okay.setOnClickListener(new View.OnClickListener() {
-                                                                                                        @Override
-                                                                                                        public void onClick(View v) {
-                                                                                                            startActivity(new Intent(edit_pet_for_sale.this, pet_my_pets_panel.class));
-                                                                                                            finish();
-                                                                                                        }
-                                                                                                    });
-                                                                                                }
-                                                                                            });
+                                                                                  FirebaseFirestore.getInstance().collection("Shop")
+                                                                                          .document(petSale.getPet_breeder()).collection("Pet")
+                                                                                          .document(petSale.getId()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                              @Override
+                                                                                              public void onComplete(@NonNull Task<Void> task) {
+                                                                                                  if (task.isSuccessful()) {
+                                                                                                      FirebaseFirestore.getInstance().collection("User")
+                                                                                                              .document(petSale.getPet_breeder())
+                                                                                                              .collection("Pet")
+                                                                                                              .document(petSale.getId()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                  @Override
+                                                                                                                  public void onComplete(@NonNull Task<Void> task) {
+                                                                                                                      if (task.isSuccessful()) {
+                                                                                                                          alert2.dismiss();
 
-                                                                                }
-                                                                            }
-                                                                        });
-                                                            }
+                                                                                                                          final StorageReference storageReference = FirebaseStorage.getInstance().getReference("User/" + breederID + "/" + "Pet Images/" + id);
+                                                                                                                          storageReference.listAll()
+                                                                                                                                  .addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                                                                                                                                      @Override
+                                                                                                                                      public void onSuccess(ListResult listResult) {
+                                                                                                                                          for (StorageReference item : listResult.getItems()) {
+                                                                                                                                              item.delete();
+                                                                                                                                          }
+                                                                                                                                          storageReference.delete();
+                                                                                                                                          alert2.show();
+                                                                                                                                          AlertDialog.Builder builder2 = new AlertDialog.Builder(edit_pet_for_sale.this);
+                                                                                                                                          builder2.setCancelable(false);
+                                                                                                                                          View view = View.inflate(edit_pet_for_sale.this, R.layout.screen_custom_alert, null);
+                                                                                                                                          //title
+                                                                                                                                          TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                                                                                                                                          //loading text
+                                                                                                                                          TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                                                                                                                                          loadingText.setVisibility(View.GONE);
+                                                                                                                                          //gif
+                                                                                                                                          GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                                                                                                                                          gif.setVisibility(View.GONE);
+                                                                                                                                          //header image
+                                                                                                                                          AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                                                                                                                                          imageViewCompat.setVisibility(View.VISIBLE);
+                                                                                                                                          imageViewCompat.setImageDrawable(getDrawable(R.drawable.screen_alert_image_valid_borders));
+                                                                                                                                          //message
+                                                                                                                                          TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                                                                                                                                          title.setText("Successfully Deleted");
+                                                                                                                                          message.setVisibility(View.VISIBLE);
+                                                                                                                                          message.setText("Click okay to continue..");
+                                                                                                                                          LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                                                                                                                                          buttonLayout.setVisibility(View.VISIBLE);
+                                                                                                                                          MaterialButton cancel, okay;
+                                                                                                                                          cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                                                                                                                                          cancel.setVisibility(View.GONE);
+                                                                                                                                          okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                                                                                                                                          okay.setText("Okay");
+                                                                                                                                          builder2.setView(view);
+                                                                                                                                          AlertDialog alert2 = builder2.create();
+                                                                                                                                          alert2.show();
+                                                                                                                                          alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                                                                                                                          okay.setOnClickListener(new View.OnClickListener() {
+                                                                                                                                              @Override
+                                                                                                                                              public void onClick(View v) {
+                                                                                                                                                  startActivity(new Intent(edit_pet_for_sale.this, pet_my_pets_panel.class));
+                                                                                                                                                  finish();
+                                                                                                                                              }
+                                                                                                                                          });
+                                                                                                                                      }
+                                                                                                                                  });
+
+                                                                                                                      }
+                                                                                                                  }
+                                                                                                              });
+                                                                                                  }
+                                                                                              }
+                                                                                          });
+                                                                              }
+                                                                          }
+                                                                      }
+                                                                  });
                                                         }
-                                                    });
+                                                    }
+                                                }
+                                            });
                                         }
                                     }
                                 });
@@ -533,6 +559,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
             }
         });
     }
+
     private boolean checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             return Environment.isExternalStorageManager();
@@ -547,9 +574,8 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         if (added_vaccine == null || added_vaccine.getChildCount() == 0) {
             Toast.makeText(edit_pet_for_sale.this, "Add vaccine or medicine at least 1", Toast.LENGTH_SHORT).show();
             return;
-        }
-        else {
-            for(int i = 0; i<saveVaccine.size();i++){
+        } else {
+            for (int i = 0; i < saveVaccine.size(); i++) {
                 //PET
                 int finalI = i;
                 int finalI1 = i;
@@ -557,28 +583,28 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                         .update("pet_vaccine", FieldValue.arrayUnion(saveVaccine.get(i))).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     FirebaseFirestore.getInstance().collection("Shop").document(breederID)
                                             .collection("Pet").document(id)
-                                            .update("pet_vaccine",FieldValue.arrayUnion(saveVaccine.get(finalI)))
+                                            .update("pet_vaccine", FieldValue.arrayUnion(saveVaccine.get(finalI)))
                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
-                                                        if(task.isSuccessful()){
-                                                            FirebaseFirestore.getInstance().collection("User")
-                                                                    .document(breederID)
-                                                                    .collection("Pet")
-                                                                    .document(id).update("pet_vaccine",FieldValue.arrayUnion(saveVaccine.get(finalI1)))
-                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                            if(task.isSuccessful()){
-                                                                                save_all_vaccine.setVisibility(View.GONE);
-                                                                                Toast.makeText(edit_pet_for_sale.this, "Successfully Added", Toast.LENGTH_SHORT).show();
-                                                                            }
+                                                    if (task.isSuccessful()) {
+                                                        FirebaseFirestore.getInstance().collection("User")
+                                                                .document(breederID)
+                                                                .collection("Pet")
+                                                                .document(id).update("pet_vaccine", FieldValue.arrayUnion(saveVaccine.get(finalI1)))
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if (task.isSuccessful()) {
+                                                                            save_all_vaccine.setVisibility(View.GONE);
+                                                                            Toast.makeText(edit_pet_for_sale.this, "Successfully Added", Toast.LENGTH_SHORT).show();
                                                                         }
-                                                                    });
-                                                        }
+                                                                    }
+                                                                });
+                                                    }
                                                 }
                                             });
                                 }
@@ -590,60 +616,61 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         }
 
     }
+
     private void removeSaveView(View saveView) {
-            added_vaccine.removeView(saveView);
-            View row;
-            int countView = added_vaccine.getChildCount();
-            for (int i = 0; i < countView; i++) {
+        added_vaccine.removeView(saveView);
+        View row;
+        int countView = added_vaccine.getChildCount();
+        for (int i = 0; i < countView; i++) {
 
-                row = added_vaccine.getChildAt(i);
-                TextView edit = row.findViewById(R.id.vaccine_save_textout);
-                TextView count = row.findViewById(R.id.vaccine_save_count);
-                String text = edit.getText().toString();
-                String countNo = count.getText().toString();
-                saveVaccine.add(text + ":" + countNo);
-                if(saveVaccine.size() == added_vaccine.getChildCount()){
-                    HashMap<String, ArrayList<String>> map = new HashMap<>();
-                    map.put("pet_vaccine", saveVaccine);
-                    FirebaseFirestore.getInstance().collection("Pet").document(id)
-                            .set(map, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        FirebaseFirestore.getInstance().collection("Shop")
-                                                .document(breederID)
-                                                .collection("Pet")
-                                                .document(id)
-                                                .set(map, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if(task.isSuccessful()){
-                                                            FirebaseFirestore.getInstance()
-                                                                    .collection("User")
-                                                                    .document(breederID)
-                                                                    .collection("Pet")
-                                                                    .document(id)
-                                                                    .set(map,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                            if(task.isSuccessful()){
+            row = added_vaccine.getChildAt(i);
+            TextView edit = row.findViewById(R.id.vaccine_save_textout);
+            TextView count = row.findViewById(R.id.vaccine_save_count);
+            String text = edit.getText().toString();
+            String countNo = count.getText().toString();
+            saveVaccine.add(text + ":" + countNo);
+            if (saveVaccine.size() == added_vaccine.getChildCount()) {
+                HashMap<String, ArrayList<String>> map = new HashMap<>();
+                map.put("pet_vaccine", saveVaccine);
+                FirebaseFirestore.getInstance().collection("Pet").document(id)
+                        .set(map, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    FirebaseFirestore.getInstance().collection("Shop")
+                                            .document(breederID)
+                                            .collection("Pet")
+                                            .document(id)
+                                            .set(map, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        FirebaseFirestore.getInstance()
+                                                                .collection("User")
+                                                                .document(breederID)
+                                                                .collection("Pet")
+                                                                .document(id)
+                                                                .set(map, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if (task.isSuccessful()) {
 
-                                                                                Toast.makeText(edit_pet_for_sale.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                                                                            Toast.makeText(edit_pet_for_sale.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
 
-                                                                            }
                                                                         }
-                                                                    });
-                                                        }
+                                                                    }
+                                                                });
                                                     }
-                                                });
-                                  }
+                                                }
+                                            });
                                 }
-                            });
-                }
+                            }
+                        });
             }
+        }
 
 
-   }
+    }
 
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     private void getPetSale(PetSaleClass petSale) {
@@ -653,7 +680,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
             color_before = petSale.getPet_colorMarkings();
             description_before = petSale.getPet_description();
 
-           /* petSaleClasses.add(petSale);*/
+            /* petSaleClasses.add(petSale);*/
             petNameEdit.setText(petSale.getPet_name());
             petDescEdit.setText(petSale.getPet_description());
             petColorEdit.setText(petSale.getPet_colorMarkings());
@@ -668,7 +695,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
             if (petSale.getPhotos() != null) {
 
-               int  countOfImages = petSale.getPhotos().size();
+                int countOfImages = petSale.getPhotos().size();
                 for (int i = 0; i < countOfImages; i++) {
                     Uri imageUri = Uri.parse(petSale.getPhotos().get(i));
                     pet_current_images_view.setVisibility(View.VISIBLE);
@@ -679,20 +706,19 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                         pet_current_images_view.setVisibility(View.GONE);
                     }
 
-                    pet_current_adapter = new pet_image_check_current(uriCurrentImage, getApplicationContext(), this, this,id,breederID);
+                    pet_current_adapter = new pet_image_check_current(uriCurrentImage, getApplicationContext(), this, this, id, breederID);
                     pet_current_adapter.notifyDataSetChanged();
                 }
             }
 
 
-
             if (petSale.getPapers() != null) {
-                int  countOfImages = petSale.getPapers().size();
+                int countOfImages = petSale.getPapers().size();
                 for (int i = 0; i < countOfImages; i++) {
                     String paperUri = petSale.getPapers().get(i);
                     if (paperUri != null && !paperUri.isEmpty()) {
                         imageUriPapers = Uri.parse(paperUri);
-                            uriCurrentPapers.add(imageUriPapers);
+                        uriCurrentPapers.add(imageUriPapers);
 
                         pet_paper_current_adapter = new pet_papers_check_current(uriCurrentPapers, getApplicationContext(), this, this, id, breederID);
                         pet_papers_current.setAdapter(pet_paper_current_adapter);
@@ -723,72 +749,71 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
             }*/
 
-            if(petSale.getPet_vaccine().size()!=0) {
-            FirebaseFirestore.getInstance().collection("Pet")
-                    .document(petSale.getId())
-                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            List<String> list = (List<String>) documentSnapshot.get("pet_vaccine");
+            if (petSale.getPet_vaccine().size() != 0) {
+                FirebaseFirestore.getInstance().collection("Pet")
+                        .document(petSale.getId())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                List<String> list = (List<String>) documentSnapshot.get("pet_vaccine");
 
 
-                            for(String j:list){
-                                String vaccine = j;
+                                for (String j : list) {
+                                    String vaccine = j;
 
-                                LayoutInflater layoutInflater =
-                                        (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                View saveView = layoutInflater.inflate(R.layout.pet_add_vaccine_save_row, null);
-                                save_textOut = saveView.findViewById(R.id.vaccine_save_textout);
-                                save_count = saveView.findViewById(R.id.vaccine_save_count);
-                                Button removeButton = saveView.findViewById(R.id.vaccine_save_remove);
+                                    LayoutInflater layoutInflater =
+                                            (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                    View saveView = layoutInflater.inflate(R.layout.pet_add_vaccine_save_row, null);
+                                    save_textOut = saveView.findViewById(R.id.vaccine_save_textout);
+                                    save_count = saveView.findViewById(R.id.vaccine_save_count);
+                                    Button removeButton = saveView.findViewById(R.id.vaccine_save_remove);
 
-                                List<String> al = new ArrayList<String>();
-                                al.add(vaccine);
+                                    List<String> al = new ArrayList<String>();
+                                    al.add(vaccine);
 
-                                for (String c : al) {
-                                    StringBuffer alpha = new StringBuffer(), num = new StringBuffer();
-                                    String[] word = c.split(":");
-                                    String str = Arrays.toString(word);
+                                    for (String c : al) {
+                                        StringBuffer alpha = new StringBuffer(), num = new StringBuffer();
+                                        String[] word = c.split(":");
+                                        String str = Arrays.toString(word);
 
-                                    for (int i = 0; i < str.length(); i++) {
-                                        if (Character.isAlphabetic(str.charAt(i)))
-                                            alpha.append(str.charAt(i));
-                                        else if (Character.isWhitespace(str.charAt(i)))
-                                            alpha.append(str.charAt(i));
-                                        else if (Character.isDigit(str.charAt(i)))
-                                            num.append(str.charAt(i));
+                                        for (int i = 0; i < str.length(); i++) {
+                                            if (Character.isAlphabetic(str.charAt(i)))
+                                                alpha.append(str.charAt(i));
+                                            else if (Character.isWhitespace(str.charAt(i)))
+                                                alpha.append(str.charAt(i));
+                                            else if (Character.isDigit(str.charAt(i)))
+                                                num.append(str.charAt(i));
+
+                                        }
+                                        save_textOut.setText(alpha);
+                                        save_count.setText(num);
 
                                     }
-                                    save_textOut.setText(alpha);
-                                    save_count.setText(num);
 
+                                    removeButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            int count = added_vaccine.getChildCount();
+                                            if (count == 1) {
+                                                Toast.makeText(edit_pet_for_sale.this, "This cannot be deleted vaccine must not be empty", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            } else {
+                                                removeSaveView(saveView);
+                                            }
+                                            count -= 1;
+                                            if (count == 0) {
+                                                text3.setVisibility(View.GONE);
+                                                text4.setVisibility(View.GONE);
+                                            }
+                                        }
+                                    });
+
+                                    added_vaccine.addView(saveView);
                                 }
-
-                                removeButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        int count = added_vaccine.getChildCount();
-                                        if(count == 1){
-                                            Toast.makeText(edit_pet_for_sale.this, "This cannot be deleted vaccine must not be empty", Toast.LENGTH_SHORT).show();
-                                            return;
-                                        }
-                                        else{
-                                            removeSaveView(saveView);
-                                        }
-                                        count-=1;
-                                        if(count==0){
-                                            text3.setVisibility(View.GONE);
-                                            text4.setVisibility(View.GONE);
-                                        }
-                                    }
-                                });
-
-                                added_vaccine.addView(saveView);
                             }
-                        }
-                    });
+                        });
+            }
         }
-      }
     }
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
@@ -797,13 +822,14 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
     EditText editTexts;
     ArrayAdapter<String> arrayAdapters;
     int counters = 0;
+
     @SuppressLint("UseCompatLoadingForDrawables")
     private void selectSize() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
         //ListView
         size_class size = new size_class();
 
-        View pop = View.inflate(edit_pet_for_sale.this,R.layout.pet_add_search_dialog,null);
+        View pop = View.inflate(edit_pet_for_sale.this, R.layout.pet_add_search_dialog, null);
         addCustoms = pop.findViewById(R.id.search_customBreedID);
         addCustoms.setVisibility(View.GONE);
         TextInputLayout input = pop.findViewById(R.id.input);
@@ -813,24 +839,23 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         listViews = pop.findViewById(R.id.search_breedListView);
         MaterialButton cancel;
         cancel = pop.findViewById(R.id.search_dialog_btn_cancel);
-        arrayAdapters = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,size.size);
+        arrayAdapters = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, size.size);
         listViews.setAdapter(arrayAdapters);
         builder.setView(pop);
         androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.show();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        if(editTexts.getText()!=null || editTexts.getText().equals("")) {
+        if (editTexts.getText() != null || editTexts.getText().equals("")) {
             editTexts.addTextChangedListener(filterTextWatchers);
         }
 
-        if(listViews.getCount() == 0 || listViews == null){
+        if (listViews.getCount() == 0 || listViews == null) {
             listViews.setVisibility(View.GONE);
             listViews.setCacheColorHint(Color.TRANSPARENT);
             listViews.setBackground(new ColorDrawable(Color.TRANSPARENT));
             listViews.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
-        }
-        else{
+        } else {
             listViews.setBackground(getDrawable(R.drawable.shape));
             listViews.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
             listViews.setVisibility(View.VISIBLE);
@@ -845,7 +870,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String holder = listViews.getItemAtPosition(position).toString();
                 petSizeTextView.setText(holder);
-                UpdateInfo("petSize",holder);
+                UpdateInfo("petSize", holder);
                 Toast.makeText(edit_pet_for_sale.this, holder, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
@@ -877,11 +902,12 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
         }
     };
+
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void showKiloDialog() {
 
         AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-        View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
+        View view2 = View.inflate(this, R.layout.screen_custom_alert, null);
         builder3.setCancelable(false);
         //title
         TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
@@ -903,7 +929,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
         buttonLayout.setVisibility(View.VISIBLE);
         //button
-        MaterialButton cancel,okay;
+        MaterialButton cancel, okay;
         //cancel button
         cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
         cancel.setText("Cancel");
@@ -934,11 +960,10 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()!=0){
-                    if(s.length() >= 2){
+                if (s.length() != 0) {
+                    if (s.length() >= 2) {
                         valid.setVisibility(View.VISIBLE);
-                    }
-                    else {
+                    } else {
                         valid.setVisibility(View.GONE);
                     }
                     clear.setVisibility(View.VISIBLE);
@@ -948,8 +973,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                             editText.getText().clear();
                         }
                     });
-                }
-                else{
+                } else {
 
                     valid.setVisibility(View.GONE);
                     clear.setVisibility(View.GONE);
@@ -974,20 +998,18 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         okay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(editText.getText().toString().equals("") || editText.getText().toString().equals(0) || editText.getText().toString() == null){
+                if (editText.getText().toString().equals("") || editText.getText().toString().equals(0) || editText.getText().toString() == null) {
                     count = 0;
                     Toast.makeText(edit_pet_for_sale.this, "Oops. You made no entry! a Pet weight was expected", Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     petKiloTextView.setText(editText.getText().toString());
-                    UpdateInfo("petKilo",editText.getText().toString());
+                    UpdateInfo("petKilo", editText.getText().toString());
                     Toast.makeText(edit_pet_for_sale.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
                     count = 1;
                 }
-                if(count != 0){
+                if (count != 0) {
                     alert3.dismiss();
-                }
-                else{
+                } else {
 
                 }
             }
@@ -998,11 +1020,11 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
     private void openBirthdayDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(edit_pet_for_sale.this);
-        View view = View.inflate(edit_pet_for_sale.this,R.layout.pet_add_birthday_dialog,null);
+        View view = View.inflate(edit_pet_for_sale.this, R.layout.pet_add_birthday_dialog, null);
         DatePicker datePicker = view.findViewById(R.id.datePicker);
         datePicker.setMaxDate(System.currentTimeMillis());
         builder.setView(view);
-        MaterialButton cancel,save;
+        MaterialButton cancel, save;
 
         cancel = view.findViewById(R.id.birthday_dialog_btn_cancel);
         save = view.findViewById(R.id.birthday_dialog_btn_done);
@@ -1014,9 +1036,9 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-                int   day  = datePicker.getDayOfMonth();
-                int   month= datePicker.getMonth();
-                int   year = datePicker.getYear();
+                int day = datePicker.getDayOfMonth();
+                int month = datePicker.getMonth();
+                int year = datePicker.getYear();
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(year, month, day);
 
@@ -1024,7 +1046,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                 SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
                 String formatedDate = sdf.format(calendar.getTime());
                 petBirthdayTextView.setText(formatedDate);
-                UpdateInfo("pet_birthday",formatedDate);
+                UpdateInfo("pet_birthday", formatedDate);
                 Toast.makeText(edit_pet_for_sale.this, formatedDate, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
@@ -1038,8 +1060,10 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         });
     }
 
-    private int count = 0;    String numberHolders;
+    private int count = 0;
+    String numberHolders;
     private static int counter = 0;
+
     private void openVaccineDropdown() {
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
@@ -1048,13 +1072,12 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
             public void onClick(View arg0) {
                 if (textIn.getText().toString().equals("") || textIn.getText().toString() == null) {
                     Toast.makeText(edit_pet_for_sale.this, "Input is empty", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
 
                     AlertDialog.Builder numberBuilder = new AlertDialog.Builder(edit_pet_for_sale.this);
                     View view = View.inflate(edit_pet_for_sale.this, R.layout.pet_add_vaccine_taken_dialog, null);
                     numberBuilder.setCancelable(false);
-                    MaterialButton done,cancel;
+                    MaterialButton done, cancel;
                     done = view.findViewById(R.id.btn_done);
                     cancel = view.findViewById(R.id.btn_cancel);
                     NumberPicker numberPicker = view.findViewById(R.id.numberPicker);
@@ -1078,18 +1101,18 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                         @RequiresApi(api = Build.VERSION_CODES.N)
                         @Override
                         public void onClick(View v) {
-                            count +=1;
+                            count += 1;
                             save_all_vaccine.setVisibility(View.VISIBLE);
                             cancel_vaccine.setVisibility(View.VISIBLE);
                             LayoutInflater layoutInflater =
                                     (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                         final View saveView = layoutInflater.inflate(R.layout.pet_add_vaccine_save_row, null);
+                            final View saveView = layoutInflater.inflate(R.layout.pet_add_vaccine_save_row, null);
                             TextView save_textOut = saveView.findViewById(R.id.vaccine_save_textout);
                             TextView save_count = saveView.findViewById(R.id.vaccine_save_count);
                             Button removeButton = saveView.findViewById(R.id.vaccine_save_remove);
 
 
-                            if(numberHolder == ""|| numberHolder == null || numberHolder == "0"){
+                            if (numberHolder == "" || numberHolder == null || numberHolder == "0") {
                                 numberHolder = "1";
                             }
                             removeButton.setOnClickListener(new View.OnClickListener() {
@@ -1097,15 +1120,14 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                                 public void onClick(View v) {
 
                                     int count = added_vaccine.getChildCount();
-                                    if(count == 1){
+                                    if (count == 1) {
                                         Toast.makeText(edit_pet_for_sale.this, "This cannot be deleted vaccine must not be empty", Toast.LENGTH_SHORT).show();
                                         return;
-                                    }
-                                    else{
+                                    } else {
                                         removeSaveView(saveView);
                                     }
-                                    count-=1;
-                                    if(count==0){
+                                    count -= 1;
+                                    if (count == 0) {
                                         text3.setVisibility(View.GONE);
                                         text4.setVisibility(View.GONE);
                                     }
@@ -1115,8 +1137,8 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                             save_textOut.setText(textIn.getText().toString());
                             save_count.setText(numberHolder);
                             added_vaccine.addView(saveView);
-                            saveVaccine.add(textIn.getText().toString()+ ":" +numberHolder);
-                            if(count!=0){
+                            saveVaccine.add(textIn.getText().toString() + ":" + numberHolder);
+                            if (count != 0) {
 
                                 text3.setVisibility(View.VISIBLE);
                                 text4.setVisibility(View.VISIBLE);
@@ -1124,7 +1146,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
                             textIn.getText().clear();
                             finalAlert.dismiss();
-                            numberHolder="";
+                            numberHolder = "";
                         }
                     });
 
@@ -1138,36 +1160,36 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
             }
         });
     }
+
     @SuppressLint("UseCompatLoadingForDrawables")
     private void showCategoryDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         //ListView
         BreedClass breed = new BreedClass();
-        View pop = View.inflate(edit_pet_for_sale.this,R.layout.pet_add_search_dialog,null);
+        View pop = View.inflate(edit_pet_for_sale.this, R.layout.pet_add_search_dialog, null);
         addCustom = pop.findViewById(R.id.search_customBreedID);
         editText = pop.findViewById(R.id.search_searchEditID);
         listView = pop.findViewById(R.id.search_breedListView);
         MaterialButton cancel;
         cancel = pop.findViewById(R.id.search_dialog_btn_cancel);
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,breed.breed);
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, breed.breed);
         listView.setAdapter(arrayAdapter);
         builder.setView(pop);
         AlertDialog dialog = builder.create();
         dialog.show();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        if(editText.getText()!=null || editText.getText().equals("")) {
+        if (editText.getText() != null || editText.getText().equals("")) {
             editText.addTextChangedListener(filterTextWatcher);
         }
 
-        if(listView.getCount() == 0 || listView == null){
+        if (listView.getCount() == 0 || listView == null) {
             listView.setVisibility(View.GONE);
             listView.setCacheColorHint(Color.TRANSPARENT);
             listView.setBackground(new ColorDrawable(Color.TRANSPARENT));
             listView.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
-        }
-        else{
+        } else {
             listView.setBackground(getDrawable(R.drawable.shape));
             listView.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
             listView.setVisibility(View.VISIBLE);
@@ -1182,7 +1204,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String holder = listView.getItemAtPosition(position).toString();
                 petBreedTextView.setText(holder);
-                UpdateInfo("pet_breed",holder);
+                UpdateInfo("pet_breed", holder);
                 Toast.makeText(edit_pet_for_sale.this, holder, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
@@ -1200,9 +1222,9 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
             public void onClick(View v) {
                 dialog.dismiss();
                 AlertDialog.Builder builder = new AlertDialog.Builder(edit_pet_for_sale.this);
-                View custom = View.inflate(edit_pet_for_sale.this,R.layout.pet_add_custom_breed_dialog,null);
+                View custom = View.inflate(edit_pet_for_sale.this, R.layout.pet_add_custom_breed_dialog, null);
                 EditText customEdit;
-                MaterialButton cancel,done;
+                MaterialButton cancel, done;
                 customEdit = custom.findViewById(R.id.custom_breed_dialog_textin);
                 cancel = custom.findViewById(R.id.custom_breed_dialog_btn_cancel);
                 done = custom.findViewById(R.id.custom_breed_dialog_btn_done);
@@ -1215,19 +1237,17 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                 done.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(customEdit.getText().toString() == null || customEdit.getText().toString().equals("")){
+                        if (customEdit.getText().toString() == null || customEdit.getText().toString().equals("")) {
                             counter = 0;
-                        }
-                        else{
+                        } else {
                             petBreedTextView.setText(customEdit.getText().toString());
-                            UpdateInfo("pet_breed",customEdit.getText().toString());
-                            counter=1;
+                            UpdateInfo("pet_breed", customEdit.getText().toString());
+                            counter = 1;
                         }
-                        if (counter!=0){
+                        if (counter != 0) {
                             Toast.makeText(edit_pet_for_sale.this, customEdit.getText().toString(), Toast.LENGTH_SHORT).show();
                             dialogAddCustom.dismiss();
-                        }
-                        else{
+                        } else {
                             Toast.makeText(edit_pet_for_sale.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -1242,17 +1262,17 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
             }
         });
     }
+
     @SuppressLint({"UseCompatLoadingForDrawables", "ResourceType"})
     private void showDialogPrice() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(edit_pet_for_sale.this);
-        View view = View.inflate(edit_pet_for_sale.this,R.layout.pet_add_vaccine_price_dialog,null);
+        View view = View.inflate(edit_pet_for_sale.this, R.layout.pet_add_vaccine_price_dialog, null);
         MaterialButton done, cancel;
         EditText text;
         text = view.findViewById(R.id.price_dialog_textin);
         done = view.findViewById(R.id.price_dialog_btn_done);
         cancel = view.findViewById(R.id.price_dialog_btn_cancel);
-
 
 
         builder.setView(view);
@@ -1269,13 +1289,12 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                 } else {
                     petPriceTextView.setText(text.getText().toString());
                     Toast.makeText(edit_pet_for_sale.this, text.getText().toString(), Toast.LENGTH_SHORT).show();
-                    UpdateInfo("pet_price",text.getText().toString());
+                    UpdateInfo("pet_price", text.getText().toString());
                     counter = 1;
                 }
-                if(counter !=0){
+                if (counter != 0) {
                     alert.dismiss();
-                }
-                else{
+                } else {
                     Toast.makeText(edit_pet_for_sale.this, "Cannot make any changes", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -1289,18 +1308,20 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
 
     }
-    String genderHolder="";
+
+    String genderHolder = "";
+
     private void showGenderDialog() {
-        String[] gender = {"Male","Female"};
-        AlertDialog.Builder builder =new AlertDialog.Builder(edit_pet_for_sale.this);
-        View view = View.inflate(edit_pet_for_sale.this,R.layout.pet_add_gender_dialog,null);
-        MaterialButton done,cancel;
+        String[] gender = {"Male", "Female"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(edit_pet_for_sale.this);
+        View view = View.inflate(edit_pet_for_sale.this, R.layout.pet_add_gender_dialog, null);
+        MaterialButton done, cancel;
         done = view.findViewById(R.id.gender_dialog_btn_done);
         cancel = view.findViewById(R.id.gender_dialog_btn_cancel);
 
         NumberPicker picker = view.findViewById(R.id.gender_numberPicker);
         picker.setMinValue(0);
-        picker.setMaxValue(gender.length -1 );
+        picker.setMaxValue(gender.length - 1);
         picker.setDisplayedValues(gender);
         picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         picker.setWrapSelectorWheel(false);
@@ -1318,13 +1339,13 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(genderHolder == ""|| genderHolder == null){
+                if (genderHolder == "" || genderHolder == null) {
                     genderHolder = "0";
                 }
                 genderTextView.setText(gender[Integer.parseInt(genderHolder)]);
                 Toast.makeText(edit_pet_for_sale.this, gender[Integer.parseInt(genderHolder)], Toast.LENGTH_SHORT).show();
                 //CALLING THE METHOD TO SAVE
-                UpdateInfo("pet_gender",gender[Integer.parseInt(genderHolder)]);
+                UpdateInfo("pet_gender", gender[Integer.parseInt(genderHolder)]);
 
                 dialog.dismiss();
             }
@@ -1335,48 +1356,47 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                 dialog.dismiss();
             }
         });
-        genderHolder="";
+        genderHolder = "";
     }
 
 
-  private void UpdateInfo(String field, String value){
+    private void UpdateInfo(String field, String value) {
 
-      Map<String,Object> data = new HashMap<>();
-      data.put(field,value);
+        Map<String, Object> data = new HashMap<>();
+        data.put(field, value);
         //PET
         FirebaseFirestore.getInstance().collection("Pet").document(id)
                 .set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             //SHOP
                             FirebaseFirestore.getInstance().collection("Shop").document(breederID)
                                     .collection("Pet")
                                     .document(id)
-                                    .set(data,SetOptions.merge())
+                                    .set(data, SetOptions.merge())
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
+                                            if (task.isSuccessful()) {
 
                                                 //USER
                                                 FirebaseFirestore.getInstance().collection("User").document(breederID)
                                                         .collection("Pet")
                                                         .document(id)
-                                                        .set(data,SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        .set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                if(task.isSuccessful()){
-                                                                    if(field.equals("pet_breed")){
+                                                                if (task.isSuccessful()) {
+                                                                    if (field.equals("pet_breed")) {
                                                                         FirebaseFirestore.getInstance().collection("Search")
                                                                                 .document(id)
-                                                                                .update("category",value,"type",value);
+                                                                                .update("category", value, "type", value);
 
-                                                                            }else
-                                                                    if(field.equals("pet_price")){
+                                                                    } else if (field.equals("pet_price")) {
                                                                         FirebaseFirestore.getInstance().collection("Search")
                                                                                 .document(id)
-                                                                                .update("price",value);
+                                                                                .update("price", value);
                                                                     }
                                                                     Toast.makeText(edit_pet_for_sale.this, "Successfully Updated", Toast.LENGTH_SHORT).show();
                                                                 }
@@ -1385,11 +1405,9 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                                             }
                                         }
                                     });
-                                }
+                        }
                     }
                 });
-
-
 
 
     }
@@ -1398,37 +1416,37 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
     private void imagePermission() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("image/*");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
 
-        startActivityForResult(Intent.createChooser(intent,"Select Picture"),1);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
     }
 
     @SuppressLint("ObsoleteSdkInt")
     private void imagePermissionPapers() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("image/*");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
-        startActivityForResult(Intent.createChooser(intent,"Select Picture"),2);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 2);
     }
 
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n", "UseCompatLoadingForDrawables"})
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1 && resultCode == RESULT_OK && null != data){
+        if (requestCode == 1 && resultCode == RESULT_OK && null != data) {
             Uri imageUri = data.getData();
             //this part is for to get multiple images
-            if(data.getClipData() != null){
+            if (data.getClipData() != null) {
                 Toast.makeText(this, "Please upload one at a time", Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 //this is for single images
                 AlertDialog.Builder builder2 = new AlertDialog.Builder(edit_pet_for_sale.this);
                 builder2.setCancelable(false);
-                View view = View.inflate(edit_pet_for_sale.this,R.layout.screen_custom_alert,null);
+                View view = View.inflate(edit_pet_for_sale.this, R.layout.screen_custom_alert, null);
                 //title
                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                 //loading text
@@ -1450,22 +1468,21 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                 AlertDialog alert2 = builder2.create();
                 alert2.show();
                 alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                uploadToFirebaseStorage(id,alert2,imageUri);
+                uploadToFirebaseStorage(id, alert2, imageUri);
             }
 
 
-        }
-        else if(requestCode == 2 && resultCode == RESULT_OK && null != data){
+        } else if (requestCode == 2 && resultCode == RESULT_OK && null != data) {
             Uri imageUriPapers = data.getData();
             //this part is for to get multiple images
-            if(data.getClipData() != null){
+            if (data.getClipData() != null) {
 
                 Toast.makeText(this, "Please upload one at a time", Toast.LENGTH_SHORT).show();
 
-            }else{
+            } else {
                 AlertDialog.Builder builder2 = new AlertDialog.Builder(edit_pet_for_sale.this);
                 builder2.setCancelable(false);
-                View view = View.inflate(edit_pet_for_sale.this,R.layout.screen_custom_alert,null);
+                View view = View.inflate(edit_pet_for_sale.this, R.layout.screen_custom_alert, null);
                 //title
                 TextView title = view.findViewById(R.id.screen_custom_alert_title);
                 //loading text
@@ -1487,24 +1504,23 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                 AlertDialog alert2 = builder2.create();
                 alert2.show();
                 alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                uploadToFirebaseStoragePaper(id,alert2,imageUriPapers);
+                uploadToFirebaseStoragePaper(id, alert2, imageUriPapers);
             }
 
-        }
-        else{
-            Toast.makeText(this,"You Haven't Pick any image",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "You Haven't Pick any image", Toast.LENGTH_SHORT).show();
         }
     }
 
 
-    private void uploadToFirebaseStoragePaper(String countIDD, AlertDialog alertDialog,Uri imageUri) {
-        String userID="";
+    private void uploadToFirebaseStoragePaper(String countIDD, AlertDialog alertDialog, Uri imageUri) {
+        String userID = "";
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             userID = firebaseUser.getUid();
         }
         String imageName = "Question_Photo_" + countIDD + "_" + System.currentTimeMillis();
-        StorageReference ImageFolder = FirebaseStorage.getInstance().getReference("User/"+userID+"/"+"Pet Images/"+countIDD+"/Papers/"+imageName);
+        StorageReference ImageFolder = FirebaseStorage.getInstance().getReference("User/" + userID + "/" + "Pet Images/" + countIDD + "/Papers/" + imageName);
         final UploadTask uploadTask = ImageFolder.putFile(imageUri);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -1513,7 +1529,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                     @Override
                     public void onSuccess(Uri uri) {
                         String url = uri.toString();
-                        StringLinkPaper(countIDD,alertDialog,url);
+                        StringLinkPaper(countIDD, alertDialog, url);
                     }
                 });
             }
@@ -1528,25 +1544,25 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         FirebaseFirestore.getInstance()
                 .collection("Pet")
                 .document(id)
-                .update("papers",FieldValue.arrayUnion(url)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                .update("papers", FieldValue.arrayUnion(url)).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             FirebaseFirestore.getInstance().collection("Shop")
                                     .document(breederID).collection("Pet").document(id)
-                                    .update("papers",FieldValue.arrayUnion(url))
+                                    .update("papers", FieldValue.arrayUnion(url))
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
+                                            if (task.isSuccessful()) {
                                                 FirebaseFirestore.getInstance().collection("User")
                                                         .document(breederID).collection("Pet").document(id)
-                                                        .update("papers",FieldValue.arrayUnion(url))
+                                                        .update("papers", FieldValue.arrayUnion(url))
                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables", "NotifyDataSetChanged"})
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                if(task.isSuccessful()){
+                                                                if (task.isSuccessful()) {
                                                                     uriCurrentPapers.add(Uri.parse(url));
                                                                     pet_paper_current_adapter.notifyDataSetChanged();
                                                                     alertDialog.dismiss();
@@ -1564,7 +1580,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         alertDialog.dismiss();
         AlertDialog.Builder builder2 = new AlertDialog.Builder(edit_pet_for_sale.this);
         builder2.setCancelable(false);
-        View view = View.inflate(edit_pet_for_sale.this,R.layout.screen_custom_alert,null);
+        View view = View.inflate(edit_pet_for_sale.this, R.layout.screen_custom_alert, null);
         //title
         TextView title = view.findViewById(R.id.screen_custom_alert_title);
         //loading text
@@ -1584,7 +1600,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         message.setText("Click okay to continue..");
         LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
         buttonLayout.setVisibility(View.VISIBLE);
-        MaterialButton cancel,okay;
+        MaterialButton cancel, okay;
         cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
         cancel.setVisibility(View.GONE);
         okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
@@ -1604,15 +1620,14 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
     }
 
 
-
-    private void uploadToFirebaseStorage(String countIDD, AlertDialog alertDialog,Uri imageUri) {
-        String userID="";
+    private void uploadToFirebaseStorage(String countIDD, AlertDialog alertDialog, Uri imageUri) {
+        String userID = "";
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             userID = firebaseUser.getUid();
         }
         String imageName = "Question_Photo_" + countIDD + "_" + System.currentTimeMillis();
-        StorageReference ImageFolder = FirebaseStorage.getInstance().getReference("User/"+userID+"/"+"Pet Images/"+countIDD+"/Pet Picture/"+imageName);
+        StorageReference ImageFolder = FirebaseStorage.getInstance().getReference("User/" + userID + "/" + "Pet Images/" + countIDD + "/Pet Picture/" + imageName);
         final UploadTask uploadTask = ImageFolder.putFile(imageUri);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -1621,10 +1636,12 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                     @Override
                     public void onSuccess(Uri uri) {
                         String url = uri.toString();
-                        StringLink(countIDD,alertDialog,url);
+                        StringLink(countIDD, alertDialog, url);
                     }
                 });
-            };
+            }
+
+            ;
         });
 
 
@@ -1632,29 +1649,29 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
-    private void StringLink(String id, AlertDialog alertDialog,String url) {
+    private void StringLink(String id, AlertDialog alertDialog, String url) {
         FirebaseFirestore.getInstance()
                 .collection("Pet")
                 .document(id)
-                .update("photos",FieldValue.arrayUnion(url)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                .update("photos", FieldValue.arrayUnion(url)).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             FirebaseFirestore.getInstance().collection("Shop")
                                     .document(breederID).collection("Pet").document(id)
-                                    .update("photos",FieldValue.arrayUnion(url))
+                                    .update("photos", FieldValue.arrayUnion(url))
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
+                                            if (task.isSuccessful()) {
                                                 FirebaseFirestore.getInstance().collection("User")
                                                         .document(breederID).collection("Pet").document(id)
-                                                        .update("photos",FieldValue.arrayUnion(url))
+                                                        .update("photos", FieldValue.arrayUnion(url))
                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables", "NotifyDataSetChanged"})
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                if(task.isSuccessful()){
+                                                                if (task.isSuccessful()) {
                                                                     uriCurrentImage.add(Uri.parse(url));
                                                                     pet_current_adapter.notifyDataSetChanged();
                                                                     alertDialog.dismiss();
@@ -1672,7 +1689,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         alertDialog.dismiss();
         AlertDialog.Builder builder2 = new AlertDialog.Builder(edit_pet_for_sale.this);
         builder2.setCancelable(false);
-        View view = View.inflate(edit_pet_for_sale.this,R.layout.screen_custom_alert,null);
+        View view = View.inflate(edit_pet_for_sale.this, R.layout.screen_custom_alert, null);
         //title
         TextView title = view.findViewById(R.id.screen_custom_alert_title);
         //loading text
@@ -1692,7 +1709,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         message.setText("Click okay to continue..");
         LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
         buttonLayout.setVisibility(View.VISIBLE);
-        MaterialButton cancel,okay;
+        MaterialButton cancel, okay;
         cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
         cancel.setVisibility(View.GONE);
         okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
@@ -1733,9 +1750,9 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         @SuppressLint("SetTextI18n")
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             //This sets a textview to the current length
-            petNameCount.setText(s.length() +"/100");
+            petNameCount.setText(s.length() + "/100");
 
-            if(s.length()!=0){
+            if (s.length() != 0) {
                 petNameClear.setVisibility(View.VISIBLE);
                 petNameClear.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1743,29 +1760,26 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                         petNameEdit.getText().clear();
                     }
                 });
-                if(s.length() > 1){
-                    if(s.toString().equals(name_before)){
+                if (s.length() > 1) {
+                    if (s.toString().equals(name_before)) {
                         savePetNameButton.setVisibility(View.GONE);
-                    }
-                    else{
+                    } else {
                         savePetNameButton.setVisibility(View.VISIBLE);
                         savePetNameButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                    UpdateInfo("pet_name",s.toString());
-                                    name_before = s.toString();
-                                    savePetNameButton.setVisibility(View.GONE);
+                                UpdateInfo("pet_name", s.toString());
+                                name_before = s.toString();
+                                savePetNameButton.setVisibility(View.GONE);
                             }
                         });
                     }
 
-                }
-                else{
+                } else {
                     savePetNameButton.setVisibility(View.GONE);
                 }
 
-            }
-            else{
+            } else {
                 savePetNameButton.setVisibility(View.GONE);
                 petNameClear.setVisibility(View.GONE);
             }
@@ -1781,8 +1795,8 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         @SuppressLint("SetTextI18n")
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             //This sets a textview to the current length
-            petDescCount.setText(s.length() +"/2000");
-            if(s.length()!=0){
+            petDescCount.setText(s.length() + "/2000");
+            if (s.length() != 0) {
                 petDescClear.setVisibility(View.VISIBLE);
                 petColorClear.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1791,29 +1805,26 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                     }
                 });
 
-                if(s.length() > 19){
-                    if(s.toString().equals(description_before)){
+                if (s.length() > 19) {
+                    if (s.toString().equals(description_before)) {
                         saveDescButton.setVisibility(View.GONE);
-                    }
-                    else{
+                    } else {
                         saveDescButton.setVisibility(View.VISIBLE);
-                         saveDescButton.setOnClickListener(new View.OnClickListener() {
+                        saveDescButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                UpdateInfo("pet_description",s.toString());
+                                UpdateInfo("pet_description", s.toString());
                                 description_before = s.toString();
                                 saveDescButton.setVisibility(View.GONE);
                             }
                         });
                     }
 
-                }
-                else{
+                } else {
                     saveDescButton.setVisibility(View.GONE);
                 }
 
-            }
-            else{
+            } else {
                 saveDescButton.setVisibility(View.GONE);
                 petDescClear.setVisibility(View.GONE);
             }
@@ -1831,9 +1842,9 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         @SuppressLint("SetTextI18n")
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             //This sets a textview to the current length
-            petColorCount.setText(s.length() +"/200");
+            petColorCount.setText(s.length() + "/200");
 
-            if(s.length()!=0){
+            if (s.length() != 0) {
                 petColorClear.setVisibility(View.VISIBLE);
                 petColorClear.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1841,27 +1852,25 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                         petColorEdit.getText().clear();
                     }
                 });
-                if(s.length() > 2){
-                    if(s.toString().equals(color_before)){
+                if (s.length() > 2) {
+                    if (s.toString().equals(color_before)) {
                         saveColorButton.setVisibility(View.GONE);
-                    }
-                    else{
+                    } else {
                         saveColorButton.setVisibility(View.VISIBLE);
-                       saveColorButton.setOnClickListener(new View.OnClickListener() {
-                           @Override
-                           public void onClick(View v) {
-                               UpdateInfo("pet_colorMarkings",s.toString());
-                               color_before = s.toString();
-                               saveColorButton.setVisibility(View.GONE);
-                           }
-                       });
+                        saveColorButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                UpdateInfo("pet_colorMarkings", s.toString());
+                                color_before = s.toString();
+                                saveColorButton.setVisibility(View.GONE);
+                            }
+                        });
                     }
 
-                }else{
+                } else {
                     saveColorButton.setVisibility(View.GONE);
                 }
-            }
-            else{
+            } else {
                 saveColorButton.setVisibility(View.GONE);
                 petColorClear.setVisibility(View.GONE);
             }
@@ -1880,7 +1889,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         public void onTextChanged(CharSequence s, int start, int before, int count) {
 
 
-            if(s.length()!=0){
+            if (s.length() != 0) {
 
                 imageClear.setVisibility(View.VISIBLE);
                 imageClear.setOnClickListener(new View.OnClickListener() {
@@ -1889,8 +1898,7 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
                         textIn.getText().clear();
                     }
                 });
-            }
-            else{
+            } else {
                 imageClear.setVisibility(View.GONE);
             }
 
@@ -1903,16 +1911,14 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
     };
 
 
-
-
     @Override
     public void clickCurrent(int size) {
-        Toast.makeText(this, uriCurrentImage.size()+":selected", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, uriCurrentImage.size() + ":selected", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void itemCurrentClick(int position) {
-        Dialog dialog = new Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
 
         dialog.setContentView(R.layout.custom_dialog_zoom);
 
@@ -1921,8 +1927,8 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         Button buttonClose = dialog.findViewById(R.id.button_close_dialog);
 
 
-        textView.setText("Image"+position);
-        Glide.with( this)
+        textView.setText("Image" + position);
+        Glide.with(this)
                 .load(uriCurrentImage.get(position))
                 .placeholder(R.drawable.noimage)
                 .error(R.drawable.screen_alert_image_error_border)
@@ -1939,12 +1945,12 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
 
     @Override
     public void clickPaperCurrent(int size) {
-        Toast.makeText(this, uriCurrentPapers.size()+":selected", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, uriCurrentPapers.size() + ":selected", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void itemPaperClick(int position) {
-        Dialog dialog = new Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
 
         dialog.setContentView(R.layout.custom_dialog_zoom);
 
@@ -1953,8 +1959,8 @@ public class edit_pet_for_sale extends BaseActivity implements  pet_image_check_
         Button buttonClose = dialog.findViewById(R.id.button_close_dialog);
 
 
-        textView.setText("Image"+position);
-        Glide.with( this)
+        textView.setText("Image" + position);
+        Glide.with(this)
                 .load(uriCurrentPapers.get(position))
                 .placeholder(R.drawable.noimage)
                 .error(R.drawable.screen_alert_image_error_border)

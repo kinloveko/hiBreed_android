@@ -30,7 +30,8 @@
             <ImageView
                 android:id="@+id/backArrowImage"
                 android:layout_width="20dp"
-                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_height="30dp"
                 android:layout_weight="3"
                 android:src="@drawable/icon_arrowback"
                 tools:ignore="ContentDescription,NestedWeights"
@@ -47,7 +48,7 @@
             android:gravity="center"
             android:text="Security Settings"
             android:textColor="@color/material_blue_grey_80"
-            android:textSize="20sp"
+            android:textSize="17sp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.333"
             tools:ignore="HardcodedText"
@@ -66,7 +67,7 @@
             android:text="It's good idea to use a strong password and don't share it to anyone else to avoid stolen account."
             android:textAlignment="center"
             android:textColor="@color/material_blue_grey_80"
-            android:textSize="16sp"
+            android:textSize="13sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 

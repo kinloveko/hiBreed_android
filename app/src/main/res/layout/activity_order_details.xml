@@ -67,6 +67,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp">
+
+                <TextView
+                    android:id="@+id/appointText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="Appointment ID"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/appointment_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@id/appointText"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/poppinsregular"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textAlignment="textEnd"
+                    android:textSize="11sp"
+                    tools:ignore="HardcodedText" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:elevation="5dp"
                 android:id="@+id/currentAddress"
                 android:layout_width="match_parent"

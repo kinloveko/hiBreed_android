@@ -30,7 +30,7 @@ public class screen_splashScreen_MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.screen_activity_main);
+
       //animation
         TopAnim = AnimationUtils.loadAnimation(this,R.anim.top_anim);
         BottomAnim = AnimationUtils.loadAnimation(this,R.anim.bottom_anim);

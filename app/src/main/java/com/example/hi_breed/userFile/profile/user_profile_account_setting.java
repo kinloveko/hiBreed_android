@@ -1,8 +1,14 @@
 package com.example.hi_breed.userFile.profile;
 
+import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
+
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -21,6 +27,17 @@ public class user_profile_account_setting extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile_account_setting);
 
+
+        Window window = getWindow();
+        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setStatusBarColor(Color.parseColor("#ffffff"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
+        }
+        else{
+            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            window.setStatusBarColor(Color.parseColor("#e28743"));
+        }
 
         backLayout = findViewById(R.id.backLayout);
         accountInfo = findViewById(R.id.first_layout);

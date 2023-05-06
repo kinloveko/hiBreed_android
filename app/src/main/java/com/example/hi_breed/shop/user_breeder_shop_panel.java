@@ -26,12 +26,14 @@ import com.example.hi_breed.Pet.pet_add_for_selling;
 import com.example.hi_breed.Pet.pet_my_pets_panel;
 import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
-import com.example.hi_breed.not_verified_activity;
+import com.example.hi_breed.loginAndRegistration.not_verified_activity;
+import com.example.hi_breed.message.message_activity;
 import com.example.hi_breed.order_breeder_side.order_breeder_side;
 import com.example.hi_breed.product.product_add_activity;
 import com.example.hi_breed.product.product_my_product;
 import com.example.hi_breed.service.service_panel;
 import com.example.hi_breed.userFile.dashboard.user_dashboard;
+import com.example.hi_breed.userFile.profile.user_profile_account_setting;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -60,7 +62,7 @@ public class user_breeder_shop_panel extends BaseActivity {
     ArrayList<String> role = new ArrayList<>();
     TextView breederName, breederLabel,IDReview;
     CircleImageView imageView;
-    CardView createPetProfile,myPets,pending,ongoing,reviews,sellPetCardView8,serviceCardView8,myProducts,sellProductView8;
+    CardView createPetProfile,myPets,cardView4,cardView5,pending,ongoing,reviews,sellPetCardView8,serviceCardView8,myProducts,sellProductView8;
     CircleImageView cardView2;
     TextView textView15,IDNumberPending,textViewSellPetName,IDNumberOngoing,textViewLabel,notVerified;
             Boolean userNotVerified = false;
@@ -81,6 +83,21 @@ public class user_breeder_shop_panel extends BaseActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+        cardView4= findViewById(R.id.cardView4);
+        cardView4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(user_breeder_shop_panel.this, user_profile_account_setting.class));
+            }
+        });
+
+        cardView5= findViewById(R.id.cardView5);
+        cardView5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(user_breeder_shop_panel.this, message_activity.class));
+            }
+        });
         notVerified = findViewById(R.id.notVerified);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         fireStore = FirebaseFirestore.getInstance();

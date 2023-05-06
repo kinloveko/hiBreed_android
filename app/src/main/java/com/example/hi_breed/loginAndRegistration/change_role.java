@@ -1,4 +1,4 @@
-package com.example.hi_breed;
+package com.example.hi_breed.loginAndRegistration;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
+import com.example.hi_breed.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseAuth;
