@@ -88,7 +88,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-<<<<<<< HEAD
             <RelativeLayout
                 android:id="@+id/validationLayout"
                 android:layout_width="match_parent"
@@ -124,22 +123,14 @@
                     tools:ignore="HardcodedText" />
 
             </RelativeLayout>
-=======
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
             <LinearLayout
                 android:id="@+id/breeder_validation_linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-<<<<<<< HEAD
                 android:visibility="gone"
                 >
-=======
-                android:visibility="gone">
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -152,45 +143,6 @@
                     android:textSize="17sp"
                     tools:ignore="HardcodedText" />
 
-<<<<<<< HEAD
-=======
-                <RelativeLayout
-                    android:id="@+id/validationLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
-
-                    <TextView
-                        android:id="@+id/texts"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="10dp"
-                        android:fontFamily="@font/poppinsmedium"
-                        android:text="If you are not yet a member of the Philippine Canine Club Inc. Click the register button below."
-                        android:textAlignment="textStart"
-                        android:textSize="13sp"
-                        tools:ignore="HardcodedText" />
-
-                    <Button
-                        android:id="@+id/clickHere"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/texts"
-                        android:layout_marginTop="-10dp"
-                        android:background="@drawable/transparent"
-                        android:gravity="center"
-                        android:text="Register here"
-                        android:textAllCaps="false"
-                        android:textColor="@color/primaryButton"
-                        android:textSize="13sp"
-                        android:translationZ="3dp"
-                        tools:ignore="HardcodedText" />
-
-                </RelativeLayout>
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -232,10 +184,7 @@
                         android:textSize="16sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 <TextView
                     android:id="@+id/dropImageTextView"
                     android:layout_width="match_parent"
@@ -244,17 +193,12 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="5dp"
                     android:fontFamily="@font/poppinsmedium"
-<<<<<<< HEAD
                     android:text="Certificate for Kennel Name"
-=======
-                    android:text="Certificate of Legitimacy Kennel (PCCI)"
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     android:textAlignment="center"
                     android:textColor="@color/material_blue_grey_90"
                     android:textSize="16sp"
                     tools:ignore="HardcodedText" />
 
-<<<<<<< HEAD
                 <TextView
                     android:visibility="gone"
                     android:id="@+id/breederPCCI"
@@ -312,8 +256,6 @@
                     android:layout_marginBottom="10dp"
                     android:src="@drawable/pcci_certificate"
                     android:translationZ="3dp" />
-=======
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 <androidx.cardview.widget.CardView
                     android:id="@+id/dropImageCardView"
                     android:layout_width="80dp"
@@ -367,12 +309,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-<<<<<<< HEAD
                 android:visibility="gone"
                >
-=======
-                android:visibility="gone">
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
                 <TextView
                     android:layout_width="match_parent"
@@ -441,18 +379,12 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="5dp"
                     android:fontFamily="@font/poppinsmedium"
-<<<<<<< HEAD
                     android:text="Required to upload image for:"
                     android:textAlignment="viewStart"
-=======
-                    android:text="Photos of successful stud/mate of dogs and clients"
-                    android:textAlignment="center"
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     android:textColor="@color/material_blue_grey_90"
                     android:textSize="16sp"
                     tools:ignore="HardcodedText" />
 
-<<<<<<< HEAD
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -510,8 +442,6 @@
                     android:translationZ="3dp" />
 
 
-=======
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 <androidx.cardview.widget.CardView
                     android:id="@+id/dropImageCardViewShooter"
                     android:layout_width="80dp"
@@ -756,10 +686,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="5dp"
-<<<<<<< HEAD
-=======
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     app:counterEnabled="true"
                     app:counterMaxLength="2"
                     app:endIconMode="clear_text"
@@ -791,18 +717,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/poppinsmedium"
-<<<<<<< HEAD
                     android:text="Membership no."
                     android:textColor="@color/material_blue_grey_80"
                     android:textSize="15sp"
                     tools:ignore="Experience,HardcodedText" />
 
-=======
-                    android:text="Organization/Club ID"
-                    android:textColor="@color/material_blue_grey_80"
-                    android:textSize="15sp"
-                    tools:ignore="Experience,HardcodedText" />
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 //Member ID
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -811,11 +730,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="5dp"
-<<<<<<< HEAD
-=======
-                    app:counterEnabled="true"
-                    app:counterMaxLength="5"
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     app:endIconMode="clear_text"
                     app:helperText="*Required"
                     app:helperTextTextColor="@color/brownish"
@@ -831,14 +745,8 @@
                         android:layout_marginTop="10dp"
                         android:background="@drawable/dropshadow_eight"
                         android:fontFamily="@font/poppinsmedium"
-<<<<<<< HEAD
                         android:hint="Membership no . . ."
                         android:inputType="number"
-=======
-                        android:hint="Member ID . . ."
-                        android:inputType="number"
-                        android:maxLength="5"
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         android:maxLines="1"
                         android:singleLine="true"
                         android:textSize="16sp" />
