@@ -398,7 +398,10 @@
                         android:textColor="@color/material_blue_grey_90"
                         android:textSize="17sp"
                         tools:ignore="HardcodedText" />
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -490,6 +493,7 @@
 
                 <LinearLayout
                     android:id="@+id/parent_consent_layout"
+<<<<<<< HEAD
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="30dp"
@@ -497,6 +501,14 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
+=======
+                    android:layout_marginBottom="30dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -658,15 +670,24 @@
                             android:layout_width="130dp"
                             android:layout_height="150dp"
                             android:layout_marginTop="20dp"
+<<<<<<< HEAD
                             android:layout_marginBottom="20dp"
                             android:background="@color/semiGrey"
                             android:paddingTop="10dp"
+=======
+                            android:background="@color/semiGrey"
+                            android:paddingTop="10dp"
+                            android:layout_marginBottom="20dp"
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                             android:paddingBottom="10dp"
                             android:src="@drawable/example_consent"
                             android:translationZ="3dp" />
 
                     </LinearLayout>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -679,6 +700,7 @@
                         tools:ignore="HardcodedText" />
 
                     <Button
+<<<<<<< HEAD
                         android:id="@+id/download_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -689,10 +711,23 @@
                         android:paddingEnd="10dp"
                         android:text="Download Parent Consent Form HERE"
                         android:textColor="@color/primaryButton"
+=======
+                        android:paddingStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:paddingEnd="10dp"
+                        android:layout_marginTop="-10dp"
+                        android:textColor="@color/primaryButton"
+                        android:background="@color/float_transparent"
+                        android:id="@+id/download_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Download Parent Consent Form HERE"
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         tools:ignore="HardcodedText" />
 
                 </LinearLayout>
 
+<<<<<<< HEAD
                 <RelativeLayout
                     android:id="@+id/validationLayout"
                     android:layout_width="match_parent"
@@ -731,12 +766,20 @@
 
 
                 <LinearLayout
+=======
+                <LinearLayout
+                    android:visibility="gone"
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     android:id="@+id/breeder_validation_linearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+<<<<<<< HEAD
                     android:visibility="gone"
                   >
+=======
+                     >
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
                     <TextView
                         android:layout_width="match_parent"
@@ -749,9 +792,47 @@
                         android:textColor="@color/material_blue_grey_90"
                         android:textSize="17sp"
                         tools:ignore="HardcodedText" />
+<<<<<<< HEAD
 
 
 
+=======
+                    <RelativeLayout
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/validationLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/texts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginEnd="10dp"
+                            android:fontFamily="@font/poppinsmedium"
+                            android:text="If you are not yet a member of the Philippine Canine Club Inc. Click the register button below."
+                            android:textAlignment="textStart"
+                            android:textSize="13sp"
+                            tools:ignore="HardcodedText" />
+
+                        <Button
+                            android:id="@+id/clickHere"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/texts"
+                            android:layout_marginTop="-10dp"
+                            android:background="@drawable/transparent"
+                            android:gravity="center"
+                            android:text="Click here"
+                            android:textAllCaps="false"
+                            android:textColor="@color/primaryButton"
+                            android:textSize="13sp"
+                            android:translationZ="3dp"
+                            tools:ignore="HardcodedText" />
+
+                    </RelativeLayout>
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -801,12 +882,17 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/poppinsmedium"
+<<<<<<< HEAD
                         android:text="Certificate for Kennel Name"
+=======
+                        android:text="Certificate for Kennel Name and ID (PCCI)"
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         android:textAlignment="center"
                         android:textColor="@color/material_blue_grey_90"
                         android:textSize="16sp"
                         tools:ignore="HardcodedText" />
 
+<<<<<<< HEAD
                     <TextView
                         android:visibility="gone"
                         android:id="@+id/breederPCCI"
@@ -865,12 +951,18 @@
                         android:src="@drawable/pcci_certificate"
                         android:translationZ="3dp" />
 
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     <androidx.cardview.widget.CardView
                         android:id="@+id/dropImageCardView"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:layout_below="@id/pet_images_view"
                         android:layout_gravity="center"
+<<<<<<< HEAD
+=======
+                        android:layout_marginStart="11dp"
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         android:layout_marginTop="7dp"
                         android:layout_marginBottom="10dp">
 
@@ -913,11 +1005,19 @@
                 </LinearLayout>
 
                 <LinearLayout
+<<<<<<< HEAD
                     android:visibility="gone"
                     android:id="@+id/shooter_validation_linearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+=======
+                    android:id="@+id/shooter_validation_linearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
                     <TextView
                         android:layout_width="match_parent"
@@ -986,12 +1086,18 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/poppinsmedium"
+<<<<<<< HEAD
                         android:text="Required to upload image for:"
                         android:textAlignment="viewStart"
+=======
+                        android:text="Photos of successful stud/mate of dogs and clients"
+                        android:textAlignment="center"
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         android:textColor="@color/material_blue_grey_90"
                         android:textSize="16sp"
                         tools:ignore="HardcodedText" />
 
+<<<<<<< HEAD
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -1050,13 +1156,20 @@
 
                     <androidx.cardview.widget.CardView
 
+=======
+                    <androidx.cardview.widget.CardView
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         android:id="@+id/dropImageCardViewShooter"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:layout_below="@id/pet_images_view"
                         android:layout_gravity="center"
                         android:layout_marginStart="11dp"
+<<<<<<< HEAD
                         android:layout_marginTop="10dp"
+=======
+                        android:layout_marginTop="7dp"
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         android:layout_marginBottom="10dp">
 
                         <ImageView
@@ -1270,11 +1383,19 @@
 
 
                 <LinearLayout
+<<<<<<< HEAD
                     android:id="@+id/memberLayouts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:visibility="gone">
+=======
+                    android:visibility="gone"
+                    android:id="@+id/memberLayouts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
                     <TextView
                         android:id="@+id/textViewExp"

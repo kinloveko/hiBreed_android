@@ -303,7 +303,11 @@ public class acquired_service_accepted_message extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+<<<<<<< HEAD
                 if (s.toString().equals("") || s.toString().isEmpty()) {
+=======
+                if (s.toString().isEmpty()) {
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     sendReplyImageView.setEnabled(false);
                 } else {
                     sendReplyImageView.setEnabled(true);

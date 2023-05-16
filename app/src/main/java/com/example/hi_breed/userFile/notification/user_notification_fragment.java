@@ -64,10 +64,13 @@ public class user_notification_fragment extends Fragment implements notification
 
 
     private void getNotification() {
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         FirebaseFirestore.getInstance().collection("Notifications")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {

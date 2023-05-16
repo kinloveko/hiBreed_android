@@ -1,5 +1,6 @@
 package com.example.hi_breed.loginAndRegistration;
 
+<<<<<<< HEAD
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
 
 import android.content.Intent;
@@ -10,6 +11,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+=======
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.view.View;
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -38,6 +45,7 @@ public class change_role extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_role);
+<<<<<<< HEAD
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
@@ -47,6 +55,9 @@ public class change_role extends AppCompatActivity {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
+=======
+
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         //List
         roleHolder = new ArrayList<>();
         //button
@@ -154,6 +165,11 @@ public class change_role extends AppCompatActivity {
                         roleHolder.add(breeder.getText().toString());
                         breeder.setChipStartPadding(20);
                     }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 }
                 else{
                     count--;
@@ -186,7 +202,11 @@ public class change_role extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(vet.isChecked()){
+<<<<<<< HEAD
                     count ++;
+=======
+                    count +=2;
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     roleHolder.add(vet.getText().toString());
                     vet.setChipStartPadding(15);
                 }
@@ -219,6 +239,7 @@ public class change_role extends AppCompatActivity {
                                                     .update("status","verified").addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void unused) {
+<<<<<<< HEAD
                                                              startActivity(new Intent(change_role.this,not_verified_activity.class));
                                                             finish();
                                                         }
@@ -279,6 +300,9 @@ public class change_role extends AppCompatActivity {
                                                     .update("status","pending").addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void unused) {
+=======
+                                                            Toast.makeText(change_role.this, "1", Toast.LENGTH_SHORT).show();
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                                             startActivity(new Intent(change_role.this,not_verified_activity.class));
                                                             finish();
                                                         }

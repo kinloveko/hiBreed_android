@@ -21,7 +21,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+<<<<<<< HEAD
 import com.squareup.picasso.Picasso;
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -65,6 +68,10 @@ public class productForSaleAdapter extends RecyclerView.Adapter<productForSaleAd
         holder.priceRecycler.setText(format.priceFormatString(productModel.getProd_price())+".0");
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         FirebaseFirestore.getInstance().collection("User")
                         .document(productModel.getVet_id())
                                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -92,7 +99,15 @@ public class productForSaleAdapter extends RecyclerView.Adapter<productForSaleAd
                                     }
                                     else{
 
+<<<<<<< HEAD
                                         Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage).into(holder.imageRecycler);
+=======
+                                        Glide.with(holder.itemView.getContext())
+                                                .load(list.get(0))
+                                                .placeholder(R.drawable.noimage)
+                                                .error(R.drawable.screen_alert_image_error_border)
+                                                .into(holder.imageRecycler);
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
                                     }
                                 }

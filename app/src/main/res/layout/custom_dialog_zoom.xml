@@ -24,6 +24,7 @@
 
     <Button
         android:id="@+id/button_close_dialog"
+<<<<<<< HEAD
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginStart="10dp"
@@ -35,6 +36,22 @@
         android:drawableStart="@drawable/icon_back_arrow_mustard"
         android:gravity="center"
         tools:ignore="HardcodedText,RtlSymmetry" />
+=======
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="20dp"
+
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="77dp"
+        android:background="@drawable/shape"
+        android:backgroundTint="@color/brown"
+        android:fontFamily="@font/poppinsemibold"
+        android:text="CLOSE"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        tools:ignore="HardcodedText" />
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
     <TextView
         android:layout_width="match_parent"

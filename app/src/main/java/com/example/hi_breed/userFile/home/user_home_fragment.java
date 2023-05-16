@@ -1,7 +1,10 @@
 package com.example.hi_breed.userFile.home;
 
 import android.annotation.SuppressLint;
+<<<<<<< HEAD
 import android.app.Activity;
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -38,7 +41,10 @@ import com.example.hi_breed.ask_a_professional.ask_a_professional;
 import com.example.hi_breed.classesFile.PetSaleClass;
 import com.example.hi_breed.classesFile.RecommendedProduct;
 import com.example.hi_breed.classesFile.likes_class;
+<<<<<<< HEAD
 import com.example.hi_breed.loginAndRegistration.Login;
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 import com.example.hi_breed.loginAndRegistration.not_verified_activity;
 import com.example.hi_breed.marketplace.m_market_place_container;
 import com.example.hi_breed.screenLoading.screen_splashScreen_MainActivity;
@@ -63,7 +69,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+<<<<<<< HEAD
 import java.util.Objects;
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 import java.util.Set;
 
 import pl.droidsonroids.gif.GifImageView;
@@ -169,6 +178,7 @@ public class user_home_fragment extends Fragment {
             userID = firebaseUser.getUid();
             // calling the user info to display the details about the user.
 
+<<<<<<< HEAD
             databaseReference = fireStore.collection("User").document(userID);
             databaseReference
                     .addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -184,6 +194,17 @@ public class user_home_fragment extends Fragment {
                                 }
 
                                 if (task.getString("status") != null) {
+=======
+                databaseReference = fireStore.collection("User").document(userID);
+                databaseReference
+                        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot task, @Nullable FirebaseFirestoreException error) {
+                                if (error != null) return;
+
+                                if (task != null) {
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                     if (task.getString("status").equals("suspended")) {
                                         if (isAdded() && getContext() != null) {
                                             AlertDialog.Builder builder2 = new AlertDialog.Builder(requireContext());
@@ -233,6 +254,7 @@ public class user_home_fragment extends Fragment {
                                             });
                                         }
                                     } else if (task.getString("status").equals("pending")) {
+<<<<<<< HEAD
                                         findDateCardView9.setEnabled(false);
                                         notVerified.setVisibility(View.VISIBLE);
                                         if (arrayList.contains("Pet Owner") && arrayList.size() == 1) {
@@ -241,6 +263,13 @@ public class user_home_fragment extends Fragment {
                                         } else {
                                             notVerified.setText("Your account is not verified. If you want to revalidate your account, click here!");
 
+=======
+                                        notVerified.setVisibility(View.VISIBLE);
+                                        if (!(role.contains("Pet Shooter") && role.contains("Pet Breeder") && role.contains("Veterinarian"))) {
+                                            notVerified.setText("We are still reviewing all of your submitted documentation; you have not yet been verified.");
+                                            myServicesCardView9.setEnabled(false);
+                                        } else {
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                             notVerified.setOnClickListener(new View.OnClickListener() {
                                                 @SuppressLint("SetTextI18n")
                                                 @Override
@@ -249,6 +278,7 @@ public class user_home_fragment extends Fragment {
                                                 }
                                             });
                                         }
+<<<<<<< HEAD
                                     } else if (task.getString("status").equals("verified")) {
                                         notVerified.setVisibility(View.GONE);
                                         findDateCardView9.setEnabled(true);
@@ -371,11 +401,44 @@ public class user_home_fragment extends Fragment {
                             }
                         }
                     });
+=======
+                                    }
+                                    else if(task.getString("status").equals("verified")){
+                                        notVerified.setVisibility(View.GONE);
+                                    }
+                                    ArrayList arrayList = (ArrayList) task.get("role");
+                                    if (arrayList != null) {
+                                        role.addAll(arrayList);
+                                    }
+                                }
+                            }
+                        });
+
+                databaseReference
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot documentSnapshot = task.getResult();
+                                    String img = documentSnapshot.getString("image");
+                                    if (img != null)
+                                        Picasso.get().load(img).into(imageView);
+                                    else
+                                        imageView.setImageResource(R.drawable.noimage);
+                                }
+                            }
+                        });
+
+
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         }
         findDateCardView9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 if (role.contains("Pet Owner") || role.contains("Veterinarian")) {
                     FirebaseFirestore.getInstance().collection("Pet")
                             .whereEqualTo("pet_breeder", firebaseUser.getUid()).whereEqualTo("displayFor", "forDating")

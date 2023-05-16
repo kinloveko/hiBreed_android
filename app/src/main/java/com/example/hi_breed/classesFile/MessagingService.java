@@ -305,6 +305,10 @@ public class MessagingService extends FirebaseMessagingService {
                             }
                         }
                     });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         }
         else if(type.equals("messageOrder")){
 

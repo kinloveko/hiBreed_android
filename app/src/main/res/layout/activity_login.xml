@@ -110,7 +110,10 @@
                     android:layout_gravity="center"
                     android:background="@drawable/stlye_border_relative_three"
                     android:hint="Email"
+<<<<<<< HEAD
                     android:inputType="textEmailAddress"
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     android:singleLine="true"
                     android:maxLines="1"
                     app:startIconDrawable="@drawable/ic_email"

@@ -1,5 +1,6 @@
 package com.example.hi_breed.userFile.dashboard;
 
+<<<<<<< HEAD
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
@@ -15,6 +16,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+=======
+import static android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -22,16 +32,22 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+<<<<<<< HEAD
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 import androidx.fragment.app.Fragment;
 
 import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.loginAndRegistration.Login;
+<<<<<<< HEAD
 import com.example.hi_breed.loginAndRegistration.fragment_registration_requirements;
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 import com.example.hi_breed.screenLoading.LoadingDialog;
 import com.example.hi_breed.userFile.home.user_home_fragment;
 import com.example.hi_breed.userFile.likes.user_likes_fragment;
@@ -63,14 +79,18 @@ public class user_dashboard extends BaseActivity {
     Deque<Integer> IntegerDeque = new ArrayDeque<>(4);
 
     boolean flag = true;
+<<<<<<< HEAD
 
     @RequiresApi(api = Build.VERSION_CODES.O)
+=======
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.owner_dashboard);
 
         Window window = getWindow();
+<<<<<<< HEAD
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -90,6 +110,16 @@ public class user_dashboard extends BaseActivity {
         } else {
             // Request notification access from the user
             showDialogForNotificationPermission();
+=======
+        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.setStatusBarColor(Color.parseColor("#ffffff"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
+        }
+        else{
+            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            window.setStatusBarColor(Color.parseColor("#e28743"));
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         }
 
 //Firebase
@@ -98,18 +128,31 @@ public class user_dashboard extends BaseActivity {
         //load home Fragment
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore.getInstance().collection("User").document(firebaseUser.getUid())
+<<<<<<< HEAD
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot s = task.getResult();
                             if (s.getString("fcmToken") == null) {
+=======
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot s = task.getResult();
+                            if(s.getString("fcmToken") == null){
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                 FirebaseMessaging.getInstance().getToken().addOnSuccessListener(new OnSuccessListener<String>() {
                                     @Override
                                     public void onSuccess(String s) {
                                         FirebaseFirestore.getInstance().collection("User")
                                                 .document(firebaseUser.getUid())
+<<<<<<< HEAD
                                                 .update("fcmToken", s);
+=======
+                                                .update("fcmToken",s);
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                     }
                                 });
                             }
@@ -117,6 +160,7 @@ public class user_dashboard extends BaseActivity {
                     }
                 });
 
+<<<<<<< HEAD
         if (firebaseUser != null) {
             loadFragment(new user_home_fragment());
             //Set home as a default fragment
@@ -164,6 +208,36 @@ public class user_dashboard extends BaseActivity {
     @SuppressLint("NonConstantResourceId")
     private Fragment BreederGetFragment(int itemId) {
         switch (itemId) {
+=======
+        if(firebaseUser!=null){
+            loadFragment(new user_home_fragment());
+            //Set home as a default fragment
+                readData(fireStore, new OnGetDataListener() {
+
+
+                    @Override
+                    public void onSuccess(Task task) {
+
+                    }
+
+                    @Override
+                    public void onStart() {
+                        //when starting
+
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
+        }
+     }//end of onCreate
+
+    @SuppressLint("NonConstantResourceId")
+    private Fragment BreederGetFragment(int itemId) {
+        switch (itemId){
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
             case R.id.breeder_homeItem:
                 //set checked dashboard fragment
                 BreederBottomNavigation.getMenu().getItem(0).setChecked(true);
@@ -192,6 +266,7 @@ public class user_dashboard extends BaseActivity {
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
+<<<<<<< HEAD
                 .replace(R.id.fragment, fragment)
                 .commit();
     }
@@ -208,11 +283,28 @@ public class user_dashboard extends BaseActivity {
     public void readData(FirebaseFirestore ref, final OnGetDataListener listener) {
         listener.onStart();
         final LoadingDialog loadingDialog = new LoadingDialog(user_dashboard.this);
+=======
+                .replace(R.id.fragment,fragment)
+                .commit();
+    }
+
+        public interface OnGetDataListener {
+            //this is for callbacks
+            void onSuccess(Task task);
+            void onStart();
+            void onFailure();
+        }
+
+    public void readData(FirebaseFirestore ref, final OnGetDataListener listener) {
+        listener.onStart();
+       final LoadingDialog loadingDialog = new LoadingDialog(user_dashboard.this);
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         loadingDialog.startDialog();
         DocumentReference doc = ref.collection("User").document(firebaseUser.getUid());
         doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+<<<<<<< HEAD
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document != null) {
@@ -227,10 +319,37 @@ public class user_dashboard extends BaseActivity {
                             } else {
                                 loadingDialog.dismissDialog();
                                 Toast.makeText(user_dashboard.this, "Role is empty", Toast.LENGTH_SHORT).show();
+=======
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document!=null){
+
+                        List<String> note =(List<String>) document.get("role");
+                            if(note!=null) {
+                                if (!note.contains(null)) {
+
+                                    if (note.contains("Pet Shooter") || note.contains("Pet Breeder") ||note.contains("Veterinarian")|| note.contains("Pet Owner")) {
+                                        display("true");
+                                        loadingDialog.dismissDialog();
+                                    }
+                                    listener.onSuccess(task);
+                                } else {
+                                    loadingDialog.dismissDialog();
+                                    Toast.makeText(user_dashboard.this, "Role is empty", Toast.LENGTH_SHORT).show();
+                                    FirebaseAuth.getInstance().signOut();
+                                    startActivity(new Intent(user_dashboard.this, Login.class));
+                                    finish();
+                                }
+                            }
+                            else{
+                                loadingDialog.dismissDialog();
+                                Toast.makeText(user_dashboard.this, "Can't retrieve any data", Toast.LENGTH_SHORT).show();
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                 FirebaseAuth.getInstance().signOut();
                                 startActivity(new Intent(user_dashboard.this, Login.class));
                                 finish();
                             }
+<<<<<<< HEAD
                         } else {
                             loadingDialog.dismissDialog();
                             Toast.makeText(user_dashboard.this, "Can't retrieve any data", Toast.LENGTH_SHORT).show();
@@ -240,18 +359,31 @@ public class user_dashboard extends BaseActivity {
                         }
                     }
                 }
+=======
+                    }
+                }
+
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+<<<<<<< HEAD
                 Toast.makeText(user_dashboard.this, e.toString(), Toast.LENGTH_SHORT).show();
                 FirebaseAuth.getInstance().signOut();
                 loadingDialog.dismissDialog();
                 startActivity(new Intent(user_dashboard.this, Login.class));
+=======
+                    Toast.makeText(user_dashboard.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    FirebaseAuth.getInstance().signOut();
+                    loadingDialog.dismissDialog();
+                    startActivity(new Intent(user_dashboard.this,Login.class));
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
             }
         });
     }
 
+<<<<<<< HEAD
     private void display(String user) {
 
 
@@ -300,18 +432,79 @@ public class user_dashboard extends BaseActivity {
             finish();
         }
     }
+=======
+    private void display(String user){
+
+
+      if(Objects.equals(user, "true")){
+
+          IntegerDeque.push(R.id.breeder_homeItem);
+          BreederBottomNavigation.setVisibility(View.VISIBLE);
+          BreederBottomNavigation.setSelectedItemId(R.id.breeder_homeItem);
+          BreederBottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+              @Override
+              public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                  //get selected item id
+                  int id = item.getItemId();
+
+                  //check condition
+                  if(IntegerDeque.contains(id)){
+                      //when deque list contains selected id
+                      //check condition
+                      if(id == R.id.breeder_homeItem){
+                          //if id is equal to home fragment or tab 1
+                          //check condition
+                          if(IntegerDeque.size() !=1){
+                              //if deque list size is not equal to 1
+                              //check condition
+                              if(flag){
+                                  IntegerDeque.addFirst(R.id.breeder_homeItem);
+                                  //set flag to true
+                                  flag = false;
+                              }
+                          }
+                      }
+                      //Remove selected id from deque list
+                      IntegerDeque.remove(id);
+                  }
+                  //push selected id in deque list
+                  IntegerDeque.push(id);
+                  //load fragment
+                  loadFragment(BreederGetFragment(item.getItemId()));
+                  return true;
+              }
+          });
+        }
+        else {
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(user_dashboard.this,Login.class));
+            finish();
+        }
+     }
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
     @Override
     public void onBackPressed() {
         IntegerDeque.pop();
         //check condition
 
+<<<<<<< HEAD
         if (!IntegerDeque.isEmpty()) {
+=======
+        if(!IntegerDeque.isEmpty()) {
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
             //Pop to previous fragment
             //When deque list is not empty
             //load Fragment
             loadFragment(BreederGetFragment(IntegerDeque.peek()));
+<<<<<<< HEAD
         } else {
+=======
+        }
+        else
+        {
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
             //when deque list is empty
             //finish activity
             finish();

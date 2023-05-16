@@ -15,7 +15,11 @@
       },
       "oauth_client": [
         {
+<<<<<<< HEAD
           "client_id": "689097818559-dtgdn9518s13i9kut7kjmriobgci24bj.apps.googleusercontent.com",
+=======
+          "client_id": "689097818559-a02564dsi6tcurnijkme1etdhh6lelvo.apps.googleusercontent.com",
+>>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.hi_breed",
