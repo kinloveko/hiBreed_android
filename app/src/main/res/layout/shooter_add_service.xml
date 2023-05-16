@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".service.service_add_service">
+
+    <RelativeLayout
+        android:id="@+id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/white"
+        android:elevation="3dp"
+        android:layout_alignParentTop="true"
+
+        tools:context=".loginAndRegistration.container_fragment_registration_users"
+        tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_toEndOf="@id/backLayoutService"
+            android:fontFamily="@font/poppinsemibold"
+            android:text="Add service"
+            android:textColor="@color/material_blue_grey_80"
+            android:textSize="17sp"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:layout_marginTop="2dp"
+            android:id="@+id/backLayoutService"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+            <ImageView
+                android:id="@+id/shop_edit_backArrowImage"
+                android:layout_width="20dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:src="@drawable/icon_arrowback"
+                tools:ignore="ContentDescription,NestedWeights"
+                tools:layout_editor_absoluteX="339dp"
+                tools:layout_editor_absoluteY="122dp" />
+
+        </LinearLayout>
+        <Button
+            android:layout_marginEnd="5dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/Service_add_create_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/transparent"
+            android:text="Create"
+            android:textColor="@color/brown"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_below="@id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/fbWhite"
+        android:orientation="vertical"
+        android:scrollbars="none"
+        tools:context=".shop.shop_view_profile"
+        tools:ignore="ExtraText,UselessParent">
+
+        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:id="@+id/mainLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/photoLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp">
+
+                <TextView
+                    android:id="@+id/pet_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="10dp"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Photos of successful service"
+                    android:textColor="@color/material_blue_grey_95"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/pet_text"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="*"
+                    android:textColor="@color/brown"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/service_images_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pet_text"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="7dp"
+                    android:scrollbarStyle="outsideInset"
+                    android:scrollbars="vertical"
+                    android:visibility="gone" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/servicePhotoCardView"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_below="@id/service_images_view"
+                    android:layout_marginStart="11dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="10dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/shape_dotted" />
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="12dp"
+                        android:src="@drawable/icon_photo" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="center"
+                        android:text="+Add Photo"
+                        android:textColor="@color/brown"
+                        android:textSize="11dp"
+                        tools:ignore="HardcodedText" />
+
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/serviceNameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/photoLayout"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp">
+
+                <TextView
+                    android:id="@+id/pet_text3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Service name"
+                    android:textColor="@color/material_blue_grey_95"
+                    android:textSize="13sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/pet_text3"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="*"
+                    android:textColor="@color/brown"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/petNamecountID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="0/100"
+                    android:textSize="11sp"
+                    tools:ignore="HardcodedText" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/petNameEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pet_text3"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="45dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/float_transparent"
+                    android:hint="Service name"
+                    android:maxLength="100"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/petNameclearButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="-39dp"
+                    android:layout_marginTop="22dp"
+                    android:layout_toEndOf="@id/petNameEdit"
+                    android:src="@drawable/cancel"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/descLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/serviceNameLayout"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp">
+
+                <TextView
+                    android:id="@+id/serviceDescCountID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="5dp"
+
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="0/2000"
+                    android:textSize="11sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/pet_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Service Description"
+                    android:textColor="@color/material_blue_grey_95"
+                    android:textSize="13sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/pet_text2"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="*"
+                    android:textColor="@color/brown"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/serviceDescEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pet_text2"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="45dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/float_transparent"
+                    android:hint="Service Description . . ."
+                    android:maxLength="2000"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/serviceDescClearButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="-39dp"
+                    android:layout_marginTop="22dp"
+                    android:layout_toEndOf="@id/serviceDescEdit"
+                    android:src="@drawable/cancel"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/scheduleLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/descLayout"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp">
+
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="Service schedule"
+                    android:textColor="@color/material_blue_grey_80"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/text"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="*"
+                    android:textColor="@color/brown"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+                <com.dpro.widgets.WeekdaysPicker
+                    android:id="@+id/weekdays"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/text"
+                    app:border_highlight_color="@color/brown"
+                    app:full_size="true"
+                    app:highlight_color="@color/brownish"
+                    app:sunday_first_day="false"
+                    app:text_unselected_color="@color/white" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/availabilityLayout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/scheduleLayout"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp"
+
+                tools:ignore="OnClick,UsingOnClickInXml">
+
+                <ImageView
+                    android:id="@+id/image5"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/icon_time" />
+
+                <TextView
+                    android:id="@+id/text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_toEndOf="@id/image5"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Availability"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/text2"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="*"
+                    android:textColor="@color/brown"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/availabilityTextView"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toStartOf="@id/image1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="Availability"
+                    android:textAlignment="textEnd"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText,SmallSp" />
+
+                <ImageView
+                    android:id="@+id/image1"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+
+                    android:src="@drawable/profile_arrowright"
+                    tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/priceLayout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/availabilityLayout"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp"
+
+                tools:ignore="OnClick,UsingOnClickInXml">
+
+                <ImageView
+                    android:id="@+id/image6"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/icon_price" />
+
+                <TextView
+                    android:id="@+id/service_fee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_toEndOf="@id/image6"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Service Fee"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/service_fee"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="*"
+                    android:textColor="@color/brown"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/servicePriceTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_toStartOf="@id/image7"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Price"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/image7"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:translationZ="90dp"
+                    android:src="@drawable/profile_arrowright"
+                    tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/typeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/priceLayout"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/dropshadow_two"
+                android:elevation="3dp"
+                tools:ignore="OnClick,UsingOnClickInXml">
+
+                <ImageView
+                    android:id="@+id/image0"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/icon_category_product" />
+
+                <TextView
+                    android:id="@+id/typeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_toEndOf="@id/image0"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Service type"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/typeLabel"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="*"
+                    android:textColor="@color/brown"
+                    android:textSize="16sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/typeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_toStartOf="@id/image12"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:text="Type"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/image12"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+
+                    android:src="@drawable/profile_arrowright"
+                    tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

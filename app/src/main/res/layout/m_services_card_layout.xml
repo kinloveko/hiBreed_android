@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="3dp"
+    android:layout_height="230dp"
+    android:layout_marginTop="3dp"
+    android:layout_marginStart="5dp"
+    android:background="@drawable/dropshadow_two"
+    android:backgroundTint="@color/white"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical"
+    android:layout_marginEnd="10dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
+        app:cardCornerRadius="20dp"
+        android:layout_gravity="start"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageRecycler"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/noimage"
+            />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/card"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppinsmedium"
+        android:maxLines="3"
+        android:text="Request"
+        android:textColor="@color/material_blue_grey_90"
+        android:textSize="17sp"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/nameRecycler"
+
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_below="@id/label"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/card"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppinsmedium"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text=""
+        android:textSize="15sp"
+        tools:ignore="HardcodedText" />
+
+
+    <TextView
+        android:id="@+id/descriptionRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nameRecycler"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@id/card"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppinsregular"
+        android:maxLines="2"
+        android:text="DisplayFor"
+        android:textColor="@color/material_blue_grey_80"
+        android:textSize="12sp"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/pesoSign"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginBottom="12dp"
+        android:layout_toEndOf="@id/buttonContact"
+        android:src="@drawable/icon_peso"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/servicePriceRecycler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="3dp"
+        android:layout_toEndOf="@id/pesoSign"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppinsmedium"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="1500"
+        android:textColor="@color/material_blue_grey_80"
+        android:textSize="26sp"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:id="@+id/buttonContact"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+
+        android:background="@drawable/dropshadow_button"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/button_contact"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:shadowColor="@color/material_blue_grey_80"
+            android:shadowRadius="10"
+            android:text="CONTACT"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="170dp"
+    android:elevation="3dp"
+    android:layout_height="300dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginStart="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/dropshadow_two"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+>
+
+<androidx.cardview.widget.CardView
+    app:cardCornerRadius="20dp"
+    android:layout_gravity="center"
+    android:layout_marginEnd="2dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/imageRecycler"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/noimage"
+        />
+</androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/roleRecycler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-30dp"
+        android:translationZ="3dp"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="end"
+        android:background="@drawable/shape"
+        android:backgroundTint="@color/brownish"
+        android:fontFamily="@font/poppinsbold"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:paddingTop="2dp"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        android:text="Pure Breed"
+        android:textSize="12sp"
+        tools:ignore="HardcodedText" />
+    <TextView
+        android:id="@+id/nameRecycler"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:ellipsize="end"
+        android:layout_height="27dp"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="Product name"
+        android:layout_marginStart="10dp"
+        android:fontFamily="@font/poppinsemibold"
+        android:textSize="17sp"
+        android:textColor="@color/material_blue_grey_90"
+        tools:ignore="HardcodedText" />
+    <TextView
+        android:id="@+id/categoryRecycler"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:layout_height="23dp"
+        android:text="Breed"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppinsmedium"
+        tools:ignore="HardcodedText" />
+
+
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="center"
+            android:background="@drawable/dropshadow_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="EDIT"
+                android:shadowRadius="10"
+                android:shadowColor="@color/material_blue_grey_80"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+
+
+
+
+</LinearLayout>

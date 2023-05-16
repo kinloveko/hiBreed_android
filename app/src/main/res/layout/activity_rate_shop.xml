@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".shop.rate_shop">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:translationZ="30dp">
+
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    app:cardCornerRadius="1000dp">
+
+                    <ImageView
+                        android:id="@+id/imageService"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/noimage" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_marginBottom="-20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/poppinsemibold"
+                    android:gravity="center"
+                    android:text="Let's rate the shop"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:textSize="20sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/message"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="20dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:gravity="center"
+                    android:text="How was the seller of your pet from Ibingay Masbate City?"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="-15dp"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:padding="5dp" />
+
+                <androidx.appcompat.widget.AppCompatRatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:rating="0"
+                    android:theme="@style/MyRatingBar" />
+
+
+                <TextView
+                    android:layout_marginBottom="-10dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add a feedback"
+                    tools:ignore="HardcodedText" />
+                <RelativeLayout
+                    android:padding="10dp"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/stlye_border_relative_two"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/transparent"
+                        android:hint="Add a feedback here . . ."
+                        android:inputType="textMultiLine"
+                        android:textSize="16sp"
+                        tools:ignore="HardcodedText" />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="-10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(Optional)"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_below="@id/linear"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="center"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:id="@+id/rateLater"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/dropshadow_button_cancelled"
+                    android:padding="15dp"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="50dp"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:text="Maybe Later"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+
+                <Button
+                    android:id="@+id/rateNow"
+                    android:background="@drawable/dropshadow_button"
+                    android:padding="15dp"
+                    android:textSize="12sp"
+                    android:layout_margin="10dp"
+                    android:textColor="@color/white"
+                    android:text="Submit"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

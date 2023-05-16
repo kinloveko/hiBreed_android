@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 7.2.2" type="baseline" client="gradle" dependencies="false" name="AGP (7.2.2)" variant="fatal" version="7.2.2">
+
+    <issue
+        id="NotSibling"
+        message="`@+id/details_shop_profile_cardView` is not a sibling in the same `RelativeLayout`"
+        errorLine1="                        android:layout_toEndOf=&quot;@+id/details_shop_profile_cardView&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/shooter_display_details.xml"
+            line="143"
+            column="25"/>
+    </issue>
+
+</issues>

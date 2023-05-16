@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightWhite"
+    tools:context=".service.service_set_appointment">
+
+    <RelativeLayout
+        android:id="@+id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/white"
+        android:elevation="3dp"
+        tools:context=".loginAndRegistration.container_fragment_registration_users"
+        tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_toEndOf="@id/backLayoutService"
+            android:fontFamily="@font/poppinsmedium"
+            android:gravity="center"
+            android:text="Set appointment"
+            android:textColor="@color/material_blue_grey_95"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/backLayoutService"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+            <ImageView
+                android:id="@+id/shop_edit_backArrowImage"
+                android:layout_width="20dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:src="@drawable/icon_arrowback"
+                tools:ignore="ContentDescription,NestedWeights"
+                tools:layout_editor_absoluteX="339dp"
+                tools:layout_editor_absoluteY="122dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbarID"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/petDatingInfo"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/dropshadow_button_zero"
+            android:backgroundTint="@color/white"
+            android:elevation="3dp">
+
+            <ImageView
+                android:id="@+id/imageDatings"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:src="@drawable/profile_arrowright" />
+
+            <TextView
+                android:id="@+id/petDateInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="13dp"
+                android:layout_toEndOf="@id/imageDating"
+                android:fontFamily="@font/poppinsmedium"
+                android:text="Pet dating details"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/imageDating"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/icon_location" />
+
+            <TextView
+                android:id="@+id/second_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/first_checkout_zip"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Kenneth Dela Cruz"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/second_user_checkout_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/first_checkout_zip"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/second_user"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:singleLine="true"
+                android:text="09318924806"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/second_address"
+                android:layout_width="365dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/second_user"
+                android:layout_marginStart="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:singleLine="true"
+                android:text="Ibingay Navarro, Masbate City"
+                android:textAlignment="textStart"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/second_checkout_zip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/second_address"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="5400"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/first_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/petDateInfo"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Kenneth Dela Cruz"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/first_user_checkout_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/petDateInfo"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/first_user"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:singleLine="true"
+                android:text="09318924806"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/first_address"
+                android:layout_width="365dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/first_user"
+                android:layout_marginStart="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:singleLine="true"
+                android:text="Ibingay Navarro, Masbate City"
+                android:textAlignment="textStart"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/first_checkout_zip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/first_address"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="5400"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+            <!--            <LinearLayout
+                android:layout_width="399dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/post_line"
+                android:translationZ="3dp" />-->
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/currentAddress"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/dropshadow_button_zero"
+            android:backgroundTint="@color/white"
+            android:elevation="3dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/pet_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="13dp"
+                android:layout_toEndOf="@id/image"
+                android:fontFamily="@font/poppinsmedium"
+                android:text="User details"
+                android:textColor="@color/material_blue_grey_95"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/icon_location" />
+
+            <TextView
+                android:id="@+id/check_out_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pet_text"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="13sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/checkout_number"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pet_text"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/check_out_name"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text=""
+                android:textSize="13sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/images"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:src="@drawable/profile_arrowright" />
+
+            <TextView
+                android:id="@+id/checkout_address"
+                android:layout_width="365dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/check_out_name"
+                android:layout_marginStart="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppinsregular"
+                android:singleLine="true"
+                android:text=""
+                android:textAlignment="textStart"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+
+            <TextView
+                android:id="@+id/checkout_zip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/checkout_address"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text=""
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <LinearLayout
+
+                android:layout_width="399dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/post_line"
+                android:translationZ="3dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/dateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/dropshadow_two"
+            android:elevation="3dp"
+            tools:ignore="OnClick,UsingOnClickInXml">
+
+            <ImageView
+                android:id="@+id/image4"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+
+                android:src="@drawable/calendar_icons" />
+
+            <TextView
+                android:id="@+id/pet_text7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@id/image4"
+                android:fontFamily="@font/poppinsemibold"
+                android:text="Set Date"
+                android:textColor="@color/material_blue_grey_90"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/pet_text7"
+                android:fontFamily="@font/poppinsemibold"
+                android:text="*"
+                android:textColor="@color/brown"
+                android:textSize="16sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="3dp"
+                android:layout_toStartOf="@id/image5"
+                android:fontFamily="@font/poppinsemibold"
+                android:text="Date"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/image5"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/profile_arrowright"
+                tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+
+            android:id="@+id/timeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/dropshadow_two"
+            android:elevation="3dp"
+            tools:ignore="OnClick,UsingOnClickInXml">
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/icon_clock" />
+
+            <TextView
+                android:id="@+id/pet_text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@id/image1"
+                android:fontFamily="@font/poppinsemibold"
+                android:text="Set Time"
+                android:textColor="@color/material_blue_grey_90"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/pet_text1"
+                android:fontFamily="@font/poppinsemibold"
+                android:text="*"
+                android:textColor="@color/brown"
+                android:textSize="16sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/itemSlot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="3dp"
+                android:layout_toStartOf="@id/image2"
+                android:fontFamily="@font/poppinsemibold"
+                android:text="Time"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/image2"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/profile_arrowright"
+                tools:ignore="ContentDescription,MissingConstraints,NestedWeights" />
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/dropshadow_button"
+            android:text="Request Appointment"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+</RelativeLayout>

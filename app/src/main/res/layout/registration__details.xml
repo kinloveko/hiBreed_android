@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".loginAndRegistration.fragment_registration_details">
+
+    <LinearLayout
+        android:translationZ="3dp"
+        android:id="@+id/backLayoutService"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+        <ImageView
+            android:id="@+id/shop_edit_backArrowImage"
+            android:layout_width="20dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:tint="@color/black"
+            android:layout_weight="1"
+            android:src="@drawable/icon_arrowback"
+            tools:ignore="ContentDescription,NestedWeights,UseAppTint"
+            tools:layout_editor_absoluteX="339dp"
+            tools:layout_editor_absoluteY="122dp" />
+
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            tools:context=".loginAndRegistration.fragment_registration_details"
+            android:layout_height="wrap_content"
+            tools:ignore="ExtraText">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:layout_marginStart="-400dp"
+                android:layout_marginTop="-80dp"
+                android:src="@drawable/icon_styles" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="-50dp"
+                android:layout_marginEnd="-400dp"
+                android:src="@drawable/icon_styles" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:layout_marginStart="-420dp"
+                android:layout_marginTop="350dp"
+                android:src="@drawable/icon_styles"
+                android:translationZ="-3dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="300dp"
+                android:layout_marginEnd="-400dp"
+                android:src="@drawable/icon_styles"
+                android:translationZ="-3dp" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:fontFamily="@font/poppinsbold"
+                android:text="Register as"
+                android:textAlignment="center"
+                android:textColor="@color/material_blue_grey_90"
+                android:textSize="30sp"
+                tools:ignore="HardcodedText,MissingConstraints,SpUsage" />
+
+
+            <TextView
+                android:id="@+id/what_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/image1"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="70dp"
+                android:layout_marginBottom="-10dp"
+                android:layout_marginTop="10dp"
+                android:textAlignment="center"
+                android:layout_marginEnd="70dp"
+                android:background="@drawable/style_border"
+                android:fontFamily="@font/poppinsmedium"
+                android:textAllCaps="false"
+                android:textColor="#706C6C"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText,RtlSymmetry" />
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textView8"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/poppinsmedium"
+                android:text="Note: You can choose all of the roles if you are specialized in all of them."
+                android:textAlignment="center"
+                android:textColor="@color/material_blue_grey_90"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_below="@id/text1"
+                android:src="@drawable/icon_kawaii_three" />
+
+            <LinearLayout
+                android:id="@+id/linear1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/what_button"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/ownerID_checkBox"
+                    style="@style/CustomChipChoice"
+                    android:layout_width="190dp"
+                    android:layout_height="60dp"
+                    android:checkable="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Pet Owner"
+                    android:textAlignment="center"
+                    app:chipStrokeColor="@color/material_blue_grey_90"
+                    app:chipStrokeWidth="2dp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/petOwnerDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginEnd="50dp"
+                    android:text="&quot;You can buy pets, hire pet shooters, consult with veterinarians, and find the perfect partner for your pet.&quot;"
+                    android:textAlignment="center"
+                    tools:ignore="HardcodedText" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/breederID_checkBox"
+                    style="@style/CustomChipChoice"
+                    android:layout_width="190dp"
+                    android:layout_height="60dp"
+                    android:checkable="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Pet Breeder"
+                    android:textAlignment="center"
+                    app:chipStrokeColor="@color/material_blue_grey_90"
+                    app:chipStrokeWidth="2dp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/breederDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginEnd="50dp"
+                    android:text="&quot;You can sell your pets on the market and connect with potential buyers. You can also hire pet shooters, consult with veterinarians, and find the perfect partner for your pet.&quot;"
+                    android:textAlignment="center"
+                    tools:ignore="HardcodedText" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/shooterID_checkBox"
+                    style="@style/CustomChipChoice"
+                    android:layout_width="190dp"
+                    android:layout_height="60dp"
+                    android:checkable="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Pet Shooter"
+                    android:textAlignment="center"
+                    app:chipStrokeColor="@color/material_blue_grey_90"
+                    app:chipStrokeWidth="2dp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/shooterDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginEnd="50dp"
+                    android:text="&quot;You can offer your service and find potential clients who need it. You can also ask veterinarians for advice.&quot;"
+                    android:textAlignment="center"
+                    tools:ignore="HardcodedText" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/vetID_checkBox"
+                    style="@style/CustomChipChoice"
+                    android:layout_width="190dp"
+                    android:layout_height="60dp"
+                    android:checkable="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Veterinarian"
+                    android:textAlignment="center"
+                    app:chipStrokeColor="@color/material_blue_grey_90"
+                    app:chipStrokeWidth="2dp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/veterinarianDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginEnd="50dp"
+                    android:text="&quot;You can offer pet services, sell pet products and medicine, and provide advice to pet owners, breeders, and shooters.&quot;"
+                    android:textAlignment="center"
+                    tools:ignore="HardcodedText" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/what_button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear1"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="70dp"
+                android:layout_marginBottom="-10dp"
+                android:layout_marginTop="10dp"
+                android:textAlignment="center"
+                android:layout_marginEnd="70dp"
+                android:background="@drawable/style_border"
+                android:fontFamily="@font/poppinsmedium"
+                android:textAllCaps="false"
+                android:textColor="#706C6C"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText,RtlSymmetry" />
+
+            <Button
+                android:id="@+id/nextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linear1"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="100dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dropshadow_two"
+                android:backgroundTint="@color/brown"
+                android:fontFamily="@font/poppinsemibold"
+                android:text="Next"
+                android:textColor="@color/white"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/LoginActivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/nextButton"
+
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/poppinsbold"
+                android:onClick="gotoLogin"
+                android:text="Already have an account? Click here"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="#706C6C"
+                tools:ignore="HardcodedText,UsingOnClickInXml" />
+        </RelativeLayout>
+    </ScrollView>
+
+</FrameLayout>

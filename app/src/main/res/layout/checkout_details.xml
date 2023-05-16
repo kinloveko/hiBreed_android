@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightWhite"
+    tools:context=".checkout.checkout_activity">
+
+    <RelativeLayout
+        android:id="@+id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/white"
+        android:elevation="3dp"
+        tools:context=".loginAndRegistration.container_fragment_registration_users"
+        tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_toEndOf="@id/backLayoutService"
+            android:fontFamily="@font/poppinsmedium"
+            android:gravity="center"
+            android:text="Checkout details"
+            android:textColor="@color/material_blue_grey_95"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/backLayoutService"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+            <ImageView
+                android:id="@+id/shop_edit_backArrowImage"
+                android:layout_width="20dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:src="@drawable/icon_arrowback"
+                tools:ignore="ContentDescription,NestedWeights"
+                tools:layout_editor_absoluteX="339dp"
+                tools:layout_editor_absoluteY="122dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_below="@id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:elevation="3dp"
+                android:id="@+id/currentAddress"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:background="@android:color/white"
+              >
+
+                <TextView
+                    android:layout_toEndOf="@id/image"
+                    android:id="@+id/pet_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="13dp"
+                    android:fontFamily="@font/poppinsmedium"
+                    android:text="User details"
+                    android:textColor="@color/material_blue_grey_95"
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText" />
+                <ImageView
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/image"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/icon_location"/>
+                <TextView
+                    android:id="@+id/check_out_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pet_text"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="Kenneth Dela Cruz"
+                    android:textColor="@color/material_blue_grey_80"
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/checkout_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pet_text"
+                    android:layout_marginStart="10dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/check_out_name"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="09318924806"
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/profile_arrowright"
+                    />
+
+                <TextView
+                    android:id="@+id/checkout_address"
+                    android:layout_width="365dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/check_out_name"
+                    android:layout_marginStart="15dp"
+                    android:textAlignment="textStart"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/poppinsregular"
+                    android:singleLine="true"
+                    android:text="Ibingay Navarro, Masbate City"
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText" />
+
+
+                <TextView
+                    android:id="@+id/checkout_zip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/checkout_address"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="5400"
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/post_line"
+                    android:translationZ="3dp" />
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/checkout_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/currentAddress"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp" />
+
+            <RelativeLayout
+
+                android:id="@+id/paymentOptionLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/checkout_view"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:elevation="2dp">
+
+                <ImageView
+                    android:id="@+id/image3"
+                    android:layout_width="35dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
+                    android:src="@drawable/icon_payment" />
+
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_toEndOf="@id/image3"
+                    android:fontFamily="@font/poppinsmedium"
+                    android:text="Payment options"
+                    android:textColor="@color/material_blue_grey_90"
+                    android:textSize="13sp"
+                    tools:ignore="HardcodedText" />
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/gcashLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/text"
+                    android:layout_marginTop="20dp"
+                    android:alpha="0.5"
+                    android:background="@color/semiGrey"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/circleGcash"
+                        android:layout_width="20dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="15dp"
+                        android:src="@drawable/icon_not_check" />
+
+                    <ImageView
+                        android:id="@+id/gcashImage"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="15dp"
+                        android:src="@drawable/icon_gcash" />
+
+                    <TextView
+                        android:id="@+id/gcashTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/poppinsregular"
+                        android:text="Gcash (not available)"
+                        android:textColor="@color/material_blue_grey_80"
+                        android:textSize="11sp"
+                        tools:ignore="HardcodedText,SmallSp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/codLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/gcashLayout"
+
+                    android:layout_marginBottom="5dp"
+                    android:alpha="0.5"
+                    android:background="@color/semiGrey"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/circleCod"
+                        android:layout_width="20dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="15dp"
+                        android:src="@drawable/icon_not_check" />
+
+                    <ImageView
+                        android:id="@+id/codImage"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/icon_cod" />
+
+                    <TextView
+                        android:id="@+id/codTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="15dp"
+                        android:fontFamily="@font/poppinsregular"
+                        android:text="Cash on delivery (not available)"
+                        android:textColor="@color/material_blue_grey_80"
+                        android:textSize="11sp"
+                        tools:ignore="HardcodedText,SmallSp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/onSiteLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/codLayout"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/circleOnSite"
+                        android:layout_width="20dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="15dp"
+                        android:src="@drawable/icon_circle_check" />
+
+                    <ImageView
+                        android:id="@+id/onSiteImage"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/icon_onsite" />
+
+                    <TextView
+                        android:id="@+id/onSiteTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="15dp"
+                        android:fontFamily="@font/poppinsregular"
+                        android:text="On-site"
+                        android:textColor="@color/material_blue_grey_80"
+                        android:textSize="11sp"
+                        tools:ignore="HardcodedText,SmallSp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="@font/poppinsregular"
+                        android:text="(Auto selected)"
+                        android:textSize="10sp"
+                        tools:ignore="HardcodedText,SmallSp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/texts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/onSiteLayout"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="Please note that we only offer onsite payment method for purchasing medicine, pet accessories and for pets for sale, payment will be made directly to the seller on-site.The seller will contact you as soon as the order is received."
+                    android:textSize="11sp"
+                    android:visibility="gone"
+                    tools:ignore="HardcodedText,SmallSp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/totalLayout"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_below="@id/paymentOptionLayout"
+                android:layout_marginBottom="80dp"
+                android:background="@android:color/white"
+                android:elevation="2dp">
+
+                <TextView
+                    android:id="@+id/subtotalLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image2"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="Merchandise Subtotal :"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/subTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image2"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@id/subtotalLabel"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="400"
+                    android:textAlignment="textEnd"
+
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/totalPaymentLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/subtotalLabel"
+                    android:layout_marginStart="10dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="Total Payment :"
+                    android:textColor="@color/material_blue_grey_95"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/totalPayment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/subtotalLabel"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@id/totalPaymentLabel"
+                    android:fontFamily="@font/poppinsregular"
+                    android:text="400"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/material_blue_grey_95"
+                    android:textSize="17sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:id="@+id/image2"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/icon_summary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="13dp"
+                    android:layout_toEndOf="@id/image2"
+                    android:fontFamily="@font/poppinsmedium"
+                    android:text="Payment details"
+                    android:textColor="@color/material_blue_grey_90"
+                    tools:ignore="HardcodedText" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/place_order"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/dropshadow_button"
+            android:fontFamily="@font/poppinsmedium"
+            android:text="place order"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

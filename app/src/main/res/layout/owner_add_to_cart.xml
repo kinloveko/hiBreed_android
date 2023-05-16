@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fbWhite"
+    tools:context=".userFile.cart.add_to_cart">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/toolbarID"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            android:elevation="3dp"
+            tools:context=".loginAndRegistration.container_fragment_registration_users"
+            tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginStart="5dp"
+
+                android:layout_toEndOf="@id/backLayoutPet"
+                android:fontFamily="@font/poppinsemibold"
+                android:paddingTop="13dp"
+                android:text="Shopping Cart"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+
+            <LinearLayout
+                android:id="@+id/backLayoutPet"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+                <ImageView
+                    android:id="@+id/shop_edit_backArrowImage"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:src="@drawable/icon_arrowback"
+                    tools:ignore="ContentDescription,NestedWeights"
+                    tools:layout_editor_absoluteX="339dp"
+                    tools:layout_editor_absoluteY="122dp" />
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbarID"
+           >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/cart_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:scrollbars="none" />
+
+
+            </RelativeLayout>
+        </ScrollView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/dropshadow_seven"
+            android:elevation="3dp">
+
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/poppinsmedium"
+                android:text="Total :"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="20sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/pesoSign"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="17dp"
+                android:layout_toEndOf="@id/text2"
+                android:src="@drawable/icon_peso" />
+
+            <TextView
+                android:id="@+id/add_to_cart_total_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toEndOf="@id/pesoSign"
+                android:fontFamily="@font/poppinsmedium"
+                android:text="0.0"
+                android:textColor="@color/material_blue_grey_80"
+                android:textSize="25sp"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/add_to_cart_check_out_button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/dropshadow_button_two"
+                android:backgroundTint="@color/brownish"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="Check Out(0)"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

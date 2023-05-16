@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fbWhite"
+    tools:context=".userFile.profile.current_address">
+    <RelativeLayout
+        android:id="@+id/toolbarID"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/white"
+        android:elevation="3dp"
+        tools:context=".loginAndRegistration.container_fragment_registration_users"
+        tools:ignore="ExtraText,ScrollViewSize,UselessLeaf">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_toEndOf="@id/backLayoutService"
+            android:fontFamily="@font/poppinsmedium"
+            android:gravity="center"
+            android:text="Edit details"
+            android:textColor="@color/material_blue_grey_95"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/backLayoutService"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="InefficientWeight,MissingConstraints,RtlSymmetry">
+
+            <ImageView
+                android:id="@+id/shop_edit_backArrowImage"
+                android:layout_width="20dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:src="@drawable/icon_arrowback"
+                tools:ignore="ContentDescription,NestedWeights"
+                tools:layout_editor_absoluteX="339dp"
+                tools:layout_editor_absoluteY="122dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/addressLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/phoneLayout"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/dropshadow_two"
+        android:elevation="3dp">
+
+        <TextView
+            android:id="@+id/pet_text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/poppinsmedium"
+            android:text="Address (Street, Province, State)"
+            android:textColor="@color/material_blue_grey_95"
+            android:textSize="12sp"
+
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@id/pet_text3"
+            android:fontFamily="@font/poppinsemibold"
+            android:text="*"
+            android:textColor="@color/brown"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/addressEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pet_text3"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="79dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/float_transparent"
+            android:hint="Address (Street, Province, State) . . ."
+            android:maxLength="1000"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+        <ImageView
+            android:id="@+id/addressSaveButton"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginStart="-70dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="42dp"
+            android:layout_toEndOf="@id/addressEdit"
+            android:src="@drawable/icon_check_grey"
+            android:visibility="gone" />
+        <ImageView
+            android:id="@+id/addressNameclearButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="-39dp"
+            android:layout_marginTop="24dp"
+            android:layout_toEndOf="@id/addressSaveButton"
+            android:src="@drawable/cancel"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/zipLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addressLayout"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/dropshadow_two"
+        android:elevation="3dp">
+
+        <TextView
+            android:id="@+id/pet_text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/poppinsmedium"
+            android:text="Zip code"
+            android:textColor="@color/material_blue_grey_95"
+            android:textSize="12sp"
+
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@id/pet_text1"
+            android:fontFamily="@font/poppinsemibold"
+            android:text="*"
+            android:textColor="@color/brown"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/zipEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pet_text1"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="79dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/float_transparent"
+            android:hint="Zip code . . ."
+            android:maxLength="1000"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+        <ImageView
+            android:id="@+id/zipSaveButton"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginStart="-70dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="42dp"
+            android:layout_toEndOf="@id/zipEdit"
+            android:src="@drawable/icon_check_grey"
+            android:visibility="gone" />
+        <ImageView
+            android:id="@+id/zipclearButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="-39dp"
+            android:layout_marginTop="22dp"
+            android:layout_toEndOf="@id/zipSaveButton"
+            android:src="@drawable/cancel"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/phoneLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbarID"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/dropshadow_two"
+        android:elevation="3dp">
+
+        <TextView
+            android:id="@+id/pet_text12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/poppinsmedium"
+            android:text="Phone number"
+            android:textColor="@color/material_blue_grey_95"
+            android:textSize="12sp"
+
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@id/pet_text12"
+            android:fontFamily="@font/poppinsemibold"
+            android:text="*"
+            android:textColor="@color/brown"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/phoneEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pet_text12"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:enabled="false"
+            android:background="@color/float_transparent"
+            android:hint="Phone number . . ."
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Hi-Breed</string>
+
+    <string name="companyNameDescription">&#xA9; HI - BREED COMPANY  2022</string>
+    <string name="friendlyTip1">Friendly tip: Don\'t Share your OTP to anyone.</string>
+    <string name="friendlyTip2">Friendly Tip: Choose according to your preference.</string>
+    <string name="friendlyTip3">Hi - Breed Company, EST 2022</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="inputTextHere">Input text here</string>
+    <string name="title_activity_current_address">current_address</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_acquired_service_details">acquired_service_details</string>
+    <string name="title_activity_order_details">order_details_activity</string>
+    <string name="title_activity_change_role">changeRole</string>
+    <string name="title_activity_image">Image</string>
+</resources>
