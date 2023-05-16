@@ -339,12 +339,6 @@ public class acquired_service_details extends BaseActivity {
                         buttonContact.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-<<<<<<< HEAD
-=======
-                               /* I update the match status*/
-                                FirebaseFirestore.getInstance().collection("Matches")
-                                        .document(appointment.getPet_dating_match_id()).update("status", "accepted");
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
                                 List<String> allParticipants = new ArrayList<>();
                                 allParticipants.addAll(participants);
@@ -358,14 +352,11 @@ public class acquired_service_details extends BaseActivity {
                                                 public void onSuccess(DocumentSnapshot value) {
                                                     if (value.exists()) {
 
-<<<<<<< HEAD
                                                         /* I update the match status*/
                                                         FirebaseFirestore.getInstance().collection("Matches")
                                                                 .document(appointment.getPet_dating_match_id()).update("status", "accepted","appointment_id",appointment.getId());
 
 
-=======
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                                         String token = value.getString("fcmToken");
                                                         Map<String, Object> map = new HashMap<>();
                                                         map.put("send_to_id", participants.get(finalI1));
@@ -604,12 +595,8 @@ public class acquired_service_details extends BaseActivity {
                 }
 
             }
-<<<<<<< HEAD
         }
         else {
-=======
-        } else {
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
             //one client
             currentAddress.setVisibility(View.VISIBLE);
             appointment_class appointment = (appointment_class) intent.getSerializableExtra("mode");

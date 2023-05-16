@@ -12,20 +12,13 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-<<<<<<< HEAD
 import androidx.appcompat.app.AppCompatActivity;
 
-=======
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
 
 
-<<<<<<< HEAD
 public class user_profile_account_setting extends AppCompatActivity {
-=======
-public class user_profile_account_setting extends BaseActivity {
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
     RelativeLayout accountInfo,contactInfo,security;
     LinearLayout backLayout;

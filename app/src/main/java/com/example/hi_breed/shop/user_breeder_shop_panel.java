@@ -170,14 +170,8 @@ public class user_breeder_shop_panel extends BaseActivity {
                                     if (arrayList != null) {
                                         role.addAll(arrayList);
                                         if(task.getResult().getString("status").equals("pending")){
-<<<<<<< HEAD
                                             notVerified.setVisibility(View.VISIBLE);
                                             if(role.contains("Pet Owner") && role.size() == 1) {
-=======
-
-                                            notVerified.setVisibility(View.VISIBLE);
-                                            if(!(role.contains("Pet Shooter") && role.contains("Pet Breeder") && role.contains("Veterinarian")  ) ){
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                                 notVerified.setText("We are still reviewing all of your submitted documentation; you have not yet been verified.");
                                                 createPetProfile.setEnabled(false);
                                                 sellPetCardView8.setEnabled(false);
@@ -187,7 +181,6 @@ public class user_breeder_shop_panel extends BaseActivity {
                                                 serviceCardView8.setEnabled(false);
                                             }
                                             else {
-<<<<<<< HEAD
                                                 createPetProfile.setEnabled(false);
                                                 sellPetCardView8.setEnabled(false);
                                                 sellProductView8.setEnabled(false);
@@ -195,9 +188,6 @@ public class user_breeder_shop_panel extends BaseActivity {
                                                 myProducts.setEnabled(false);
                                                 serviceCardView8.setEnabled(false);
                                                 notVerified.setText("Your account is not verified. If you want to revalidate your account, click here!");
-=======
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                                 userNotVerified = true;
                                                 notVerified.setOnClickListener(new View.OnClickListener() {
                                                     @Override
@@ -214,10 +204,6 @@ public class user_breeder_shop_panel extends BaseActivity {
                                                 owner.setVisibility(View.VISIBLE);
 
                                             if(role.contains("Pet Breeder") || role.contains("Veterinarian")){
-<<<<<<< HEAD
-=======
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                                 activityStatus.setVisibility(View.VISIBLE);
                                                 FirebaseFirestore.getInstance().collection("Appointments")
                                                         .whereEqualTo("seller_id",FirebaseAuth.getInstance().getCurrentUser().getUid())

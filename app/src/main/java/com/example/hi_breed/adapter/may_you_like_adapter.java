@@ -124,12 +124,7 @@ public class may_you_like_adapter extends RecyclerView.Adapter<may_you_like_adap
                             public void onSuccess(DocumentSnapshot s) {
                                 List<String> list = (List<String>) s.get("photos");
                                 if(list!=null)
-<<<<<<< HEAD
                                     Picasso.get().load(list.get(0)).placeholder(R.drawable.noimage)
-=======
-                                    Glide.with(v.itemView.getContext()).load(list.get(0))
-                                            .placeholder(R.drawable.noimage)
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                             .into(v.image);
                                 v.name.setText(s.getString("serviceType"));
                                 v.price.setText(s.getString("service_fee"));

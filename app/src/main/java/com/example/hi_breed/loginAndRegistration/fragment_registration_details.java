@@ -24,10 +24,6 @@ import java.util.ArrayList;
 public class fragment_registration_details extends Fragment {
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +39,6 @@ public class fragment_registration_details extends Fragment {
     }
 
     ArrayList<String> roleHolder;
-<<<<<<< HEAD
     Chip owner, breeder, shooter, vet;
     Button nextButton;
     int count = 0;
@@ -52,16 +47,6 @@ public class fragment_registration_details extends Fragment {
             shooterDescription,
             breederDescription,
             petOwnerDescription;
-=======
-    Chip owner,breeder,shooter, vet;
-    Button nextButton;
-    int count = 0;
-
-    TextView  veterinarianDescription,
-              shooterDescription,
-              breederDescription,
-              petOwnerDescription;
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
     LinearLayout backLayoutService;
 
     @Override
@@ -77,17 +62,10 @@ public class fragment_registration_details extends Fragment {
         breeder = view.findViewById(R.id.breederID_checkBox);
         shooter = view.findViewById(R.id.shooterID_checkBox);
         vet = view.findViewById(R.id.vetID_checkBox);
-<<<<<<< HEAD
         veterinarianDescription = view.findViewById(R.id.veterinarianDescription);
         shooterDescription = view.findViewById(R.id.shooterDescription);
         breederDescription = view.findViewById(R.id.breederDescription);
         petOwnerDescription = view.findViewById(R.id.petOwnerDescription);
-=======
-        veterinarianDescription= view.findViewById(R.id.veterinarianDescription);
-        shooterDescription= view.findViewById(R.id.shooterDescription);
-        breederDescription= view.findViewById(R.id.breederDescription);
-        petOwnerDescription= view.findViewById(R.id.petOwnerDescription);
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         backLayoutService = view.findViewById(R.id.backLayoutService);
         backLayoutService.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,37 +96,21 @@ public class fragment_registration_details extends Fragment {
         owner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-<<<<<<< HEAD
                 //if not checked
                 if (owner.isChecked()) {
-=======
-
-                if(owner.isChecked()){
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     count++;
 
                     roleHolder.add(owner.getText().toString());
                     owner.setChipStartPadding(20);
                     petOwnerDescription.setVisibility(View.VISIBLE);
-<<<<<<< HEAD
                 } else {
                     //is checked
                     if (breeder.isChecked()) {
-=======
-                }
-                else{
-
-                    if(breeder.isChecked()){
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         count--;
                         breeder.setChecked(false);
                         roleHolder.remove(breeder.getText().toString());
                         breederDescription.setVisibility(View.GONE);
                     }
-<<<<<<< HEAD
-=======
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     count--;
                     roleHolder.remove(owner.getText().toString());
                     owner.setChipStartPadding(0);
@@ -160,30 +122,17 @@ public class fragment_registration_details extends Fragment {
         breeder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-<<<<<<< HEAD
                 if (breeder.isChecked()) {
 
                     // checked if the owner already checked
                     if (owner.isChecked()) {
-=======
-                if(breeder.isChecked()){
-
-                    // checked if the owner already checked
-                    if(owner.isChecked()){
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         count++;
                         roleHolder.add(breeder.getText().toString());
                         breeder.setChipStartPadding(20);
                         breederDescription.setVisibility(View.VISIBLE);
                         petOwnerDescription.setVisibility(View.VISIBLE);
-<<<<<<< HEAD
                     } else {
                         count += 2;
-=======
-                    }
-                    else{
-                        count+=2;
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                         owner.setChecked(true);
                         owner.setChipStartPadding(20);
                         roleHolder.add(owner.getText().toString());
@@ -193,14 +142,7 @@ public class fragment_registration_details extends Fragment {
                         petOwnerDescription.setVisibility(View.VISIBLE);
                         breederDescription.setVisibility(View.VISIBLE);
                     }
-<<<<<<< HEAD
                 } else {
-=======
-
-
-                }
-                else{
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     count--;
                     roleHolder.remove(breeder.getText().toString());
                     breeder.setChipStartPadding(0);
@@ -212,7 +154,6 @@ public class fragment_registration_details extends Fragment {
         shooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-<<<<<<< HEAD
                 if (shooter.isChecked()) {
                     // checked if the owner already checked
 
@@ -221,17 +162,6 @@ public class fragment_registration_details extends Fragment {
                     shooter.setChipStartPadding(20);
                     shooterDescription.setVisibility(View.VISIBLE);
                 } else {
-=======
-                if(shooter.isChecked()){
-                    // checked if the owner already checked
-
-                       count++;
-                       roleHolder.add(shooter.getText().toString());
-                       shooter.setChipStartPadding(20);
-                       shooterDescription.setVisibility(View.VISIBLE);
-                }
-                else{
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     count--;
                     roleHolder.remove(shooter.getText().toString());
                     shooter.setChipStartPadding(0);
@@ -243,22 +173,12 @@ public class fragment_registration_details extends Fragment {
         vet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-<<<<<<< HEAD
                 if (vet.isChecked()) {
                     count++;
                     roleHolder.add(vet.getText().toString());
                     vet.setChipStartPadding(15);
                     veterinarianDescription.setVisibility(View.VISIBLE);
                 } else {
-=======
-                if(vet.isChecked()){
-                    count +=2;
-                    roleHolder.add(vet.getText().toString());
-                    vet.setChipStartPadding(15);
-                    veterinarianDescription.setVisibility(View.VISIBLE);
-                }
-                else{
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     count--;
                     roleHolder.remove(vet.getText().toString());
                     vet.setChipStartPadding(0);
@@ -267,7 +187,6 @@ public class fragment_registration_details extends Fragment {
             }
         });
 
-<<<<<<< HEAD
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -279,40 +198,20 @@ public class fragment_registration_details extends Fragment {
 
                     Bundle bundle = new Bundle();
                     bundle.putStringArrayList("key", roleHolder);
-=======
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(count==0){
-                    Toast.makeText(fragment_registration_details.this.getContext(), "Select one or more to continue . .", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Bundle bundle = new Bundle();
-                    bundle.putStringArrayList("key",roleHolder);
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
                     fragment_registration_requirements requirements = new fragment_registration_requirements();
                     requirements.setArguments(bundle);
 
                     FragmentTransaction fr = getFragmentManager().beginTransaction();
-<<<<<<< HEAD
                     fr.replace(R.id.fragmentContainerView2, requirements);
                     fr.addToBackStack("name");
                     fr.commit();
 
 
-=======
-                    fr.replace(R.id.fragmentContainerView2,requirements);
-                    fr.addToBackStack("name");
-                    fr.commit();
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 }
             }
         });
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
     }
 }

@@ -503,28 +503,18 @@ public class pet_date_swipe extends BaseActivity {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         if (documentSnapshot.exists()) {
-<<<<<<< HEAD
                                             Log.d("MyApp","Success");
-=======
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                             FirebaseFirestore.getInstance().collection("Notifications")
                                                     .document(item.getPet_breeder())
                                                     .update("latestNotification", map, "notification", FieldValue.arrayUnion(map))
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void unused) {
-<<<<<<< HEAD
                                                             Log.d("MyApp","Initiating");
                                                             pushNotification notification = new pushNotification(new notificationData("You have a matched! You can now talk to each other",
                                                                     "Match notification", id, item.getPet_breeder(), "matchNotification", "", ""), token);
                                                             sendNotif(notification);
 
-=======
-                                                            pushNotification notification = new pushNotification(new notificationData("You have a matched! You can now talk to each other",
-                                                                    "Match notification", id, item.getPet_breeder(), "matchNotification", "", ""), token);
-                                                            sendNotif(notification);
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                                         }
                                                     });
                                         } else {

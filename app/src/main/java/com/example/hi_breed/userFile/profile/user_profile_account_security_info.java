@@ -31,11 +31,8 @@ import androidx.appcompat.widget.AppCompatImageView;
 import com.example.hi_breed.R;
 import com.example.hi_breed.classesFile.BaseActivity;
 import com.example.hi_breed.loginAndRegistration.Login;
-<<<<<<< HEAD
 import com.example.hi_breed.screenLoading.screen_splashScreen_MainActivity;
 import com.example.hi_breed.userFile.dashboard.user_dashboard;
-=======
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,33 +55,19 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class user_profile_account_security_info extends BaseActivity {
     LinearLayout backLayout;
-<<<<<<< HEAD
     RelativeLayout second_layout, first_layout;
-=======
-    RelativeLayout second_layout,first_layout;
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile_account_security_info);
         Window window = getWindow();
-<<<<<<< HEAD
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
         } else {
             window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-=======
-        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        window.setStatusBarColor(Color.parseColor("#ffffff"));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            this.getWindow().getDecorView().getWindowInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
-        }
-        else{
-            window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
             window.setStatusBarColor(Color.parseColor("#e28743"));
         }
         backLayout = findViewById(R.id.backLayout);
@@ -102,7 +85,6 @@ public class user_profile_account_security_info extends BaseActivity {
             @Override
             public void onClick(View v) {
                 FirebaseFirestore.getInstance().collection("User")
-<<<<<<< HEAD
                         .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .collection("security").document("security_doc")
                         .addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -114,19 +96,6 @@ public class user_profile_account_security_info extends BaseActivity {
                                         String email = documentSnapshot.getString("email");
                                         String password = documentSnapshot.getString("pass");
                                         changePassword(email, password);
-=======
-                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .collection("security").document("security_doc")
-                        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                            @Override
-                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
-                                if(error!=null) return;
-                                if(documentSnapshot.exists()){
-                                    if(documentSnapshot.exists()){
-                                        String email = documentSnapshot.getString("email");
-                                        String password = documentSnapshot.getString("pass");
-                                        changePassword(email,password);
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                     }
                                 }
                             }
@@ -144,7 +113,6 @@ public class user_profile_account_security_info extends BaseActivity {
 
 
     }
-<<<<<<< HEAD
 
     int count = 0;
 
@@ -152,13 +120,6 @@ public class user_profile_account_security_info extends BaseActivity {
     private void changePassword(String email, String password) {
         AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
         View view2 = View.inflate(this, R.layout.screen_custom_alert, null);
-=======
-    int count = 0;
-    @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
-    private void changePassword(String email,String password) {
-        AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-        View view2 = View.inflate(this,R.layout.screen_custom_alert,null);
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         builder3.setCancelable(false);
         //title
         TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
@@ -180,11 +141,7 @@ public class user_profile_account_security_info extends BaseActivity {
         LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
         buttonLayout.setVisibility(View.VISIBLE);
         //button
-<<<<<<< HEAD
         MaterialButton cancel, okay;
-=======
-        MaterialButton cancel,okay;
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         //cancel button
         cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
         cancel.setText("Cancel");
@@ -212,11 +169,7 @@ public class user_profile_account_security_info extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-<<<<<<< HEAD
                 if (s.length() != 0) {
-=======
-                if(s.length()!=0){
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
                     clear.setVisibility(View.VISIBLE);
                     clear.setOnClickListener(new View.OnClickListener() {
@@ -225,12 +178,7 @@ public class user_profile_account_security_info extends BaseActivity {
                             editText.getText().clear();
                         }
                     });
-<<<<<<< HEAD
                 } else {
-=======
-                }
-                else{
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     clear.setVisibility(View.GONE);
                 }
             }
@@ -240,17 +188,10 @@ public class user_profile_account_security_info extends BaseActivity {
 
             }
         });
-<<<<<<< HEAD
         AlertDialog alert3 = null;
         if (!isFinishing()) {
             builder3.setView(view2);
             alert3 = builder3.create();
-=======
-        AlertDialog alert3 =null;
-        if (!isFinishing()) {
-            builder3.setView(view2);
-            alert3  = builder3.create();
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
             alert3.show();
             alert3.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
@@ -267,7 +208,6 @@ public class user_profile_account_security_info extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-<<<<<<< HEAD
                 if (editText.getText().toString().equals("") || editText.getText().toString() == null) {
                     finalAlert1.dismiss();
                     Toast.makeText(user_profile_account_security_info.this, "Oops. You made no entry! your password was expected", Toast.LENGTH_SHORT).show();
@@ -278,20 +218,6 @@ public class user_profile_account_security_info extends BaseActivity {
                     finalAlert1.dismiss();
                     AlertDialog.Builder builder3 = new AlertDialog.Builder(user_profile_account_security_info.this);
                     View view2 = View.inflate(user_profile_account_security_info.this, R.layout.screen_custom_alert, null);
-=======
-                if(editText.getText().toString().equals("") || editText.getText().toString() == null){
-                    finalAlert1.dismiss();
-                    Toast.makeText(user_profile_account_security_info.this, "Oops. You made no entry! your password was expected", Toast.LENGTH_SHORT).show();
-                }
-                else if(!(editText.getText().toString().equals(password))){
-                    finalAlert1.dismiss();
-                    Toast.makeText(user_profile_account_security_info.this, "Oops. You entered password doesn't matched to this user", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    finalAlert1.dismiss();
-                    AlertDialog.Builder builder3 = new AlertDialog.Builder(user_profile_account_security_info.this);
-                    View view2 = View.inflate(user_profile_account_security_info.this,R.layout.screen_custom_alert,null);
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     builder3.setCancelable(false);
                     //title
                     TextView title2 = view2.findViewById(R.id.screen_custom_alert_title);
@@ -313,11 +239,7 @@ public class user_profile_account_security_info extends BaseActivity {
                     LinearLayout buttonLayout = view2.findViewById(R.id.screen_custom_alert_buttonLayout);
                     buttonLayout.setVisibility(View.VISIBLE);
                     //button
-<<<<<<< HEAD
                     MaterialButton cancel, okay;
-=======
-                    MaterialButton cancel,okay;
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     //cancel button
                     cancel = view2.findViewById(R.id.screen_custom_dialog_btn_cancel);
                     cancel.setText("Cancel");
@@ -345,11 +267,7 @@ public class user_profile_account_security_info extends BaseActivity {
 
                         @Override
                         public void onTextChanged(CharSequence s, int start, int before, int count) {
-<<<<<<< HEAD
                             if (s.length() != 0) {
-=======
-                            if(s.length()!=0){
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
                                 clear.setVisibility(View.VISIBLE);
                                 clear.setOnClickListener(new View.OnClickListener() {
@@ -358,12 +276,7 @@ public class user_profile_account_security_info extends BaseActivity {
                                         editText.getText().clear();
                                     }
                                 });
-<<<<<<< HEAD
                             } else {
-=======
-                            }
-                            else{
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                 clear.setVisibility(View.GONE);
                             }
                         }
@@ -389,7 +302,6 @@ public class user_profile_account_security_info extends BaseActivity {
                     okay.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-<<<<<<< HEAD
                             if (editText.getText().toString().equals("") || editText.getText().toString() == null) {
                                 count = 0;
                                 Toast.makeText(user_profile_account_security_info.this, "Oops. You made no entry! your password was expected", Toast.LENGTH_SHORT).show();
@@ -397,17 +309,6 @@ public class user_profile_account_security_info extends BaseActivity {
 
                                 Toast.makeText(user_profile_account_security_info.this, "Oops. You entered an old password", Toast.LENGTH_SHORT).show();
                             } else {
-=======
-                            if(editText.getText().toString().equals("") || editText.getText().toString() == null){
-                                count = 0;
-                                Toast.makeText(user_profile_account_security_info.this, "Oops. You made no entry! your password was expected", Toast.LENGTH_SHORT).show();
-                            }
-                            else if(editText.getText().toString().equals(password)){
-
-                                Toast.makeText(user_profile_account_security_info.this, "Oops. You entered an old password", Toast.LENGTH_SHORT).show();
-                            }
-                            else{
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 AuthCredential credential = EmailAuthProvider.getCredential(email, password);
 
@@ -421,7 +322,6 @@ public class user_profile_account_security_info extends BaseActivity {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             if (task.isSuccessful()) {
-<<<<<<< HEAD
                                                                 FirebaseFirestore.getInstance().collection("User")
                                                                         .document(user.getUid())
                                                                         .collection("security")
@@ -438,24 +338,6 @@ public class user_profile_account_security_info extends BaseActivity {
                                                                                 }
                                                                             }
                                                                         });
-=======
-                                                              FirebaseFirestore.getInstance().collection("User")
-                                                                      .document(user.getUid())
-                                                                      .collection("security")
-                                                                      .document("security_doc")
-                                                                      .update("pass",editText.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                          @Override
-                                                                          public void onComplete(@NonNull Task<Void> task) {
-                                                                                    if(task.isSuccessful()){
-                                                                                        finalAlert1.dismiss();
-                                                                                        alert.dismiss();
-                                                                                        Toast.makeText(user_profile_account_security_info.this, "Password Successfully Changed", Toast.LENGTH_SHORT).show();
-                                                                                      startActivity(new Intent(user_profile_account_security_info.this,user_profile_account_security_info.class));
-                                                                                      finish();
-                                                                                    }
-                                                                          }
-                                                                      });
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                                             }
                                                         }
                                                     }).addOnFailureListener(new OnFailureListener() {
@@ -482,7 +364,6 @@ public class user_profile_account_security_info extends BaseActivity {
 
     @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
     private void deleteUserAccount() {
-<<<<<<< HEAD
         AlertDialog.Builder builder2 = new AlertDialog.Builder(user_profile_account_security_info.this);
         builder2.setCancelable(false);
         View view = View.inflate(user_profile_account_security_info.this, R.layout.screen_custom_alert, null);
@@ -524,10 +405,6 @@ public class user_profile_account_security_info extends BaseActivity {
             @Override
             public void onClick(View v) {
                 alert2.dismiss();
-=======
-
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 AlertDialog.Builder builder2 = new AlertDialog.Builder(user_profile_account_security_info.this);
                 builder2.setCancelable(false);
                 View view = View.inflate(user_profile_account_security_info.this, R.layout.screen_custom_alert, null);
@@ -538,7 +415,6 @@ public class user_profile_account_security_info extends BaseActivity {
                 loadingText.setVisibility(View.GONE);
                 //gif
                 GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
-<<<<<<< HEAD
                 gif.setVisibility(View.GONE);
                 //header image
                 AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
@@ -549,35 +425,11 @@ public class user_profile_account_security_info extends BaseActivity {
                 title.setText("Deleting your account");
                 message.setVisibility(View.VISIBLE);
                 message.setText("Please wait a bit. We are deleting your account info");
-=======
-                Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.kawaii_cry);
-                gif.setImageURI(uri);
-                //header image
-                AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
-                imageViewCompat.setVisibility(View.VISIBLE);
-                imageViewCompat.setImageDrawable(getDrawable(R.drawable.screen_alert_image_error_border));
-                //message
-                TextView message = view.findViewById(R.id.screen_custom_alert_message);
-                title.setText("Are you sure?");
-                message.setVisibility(View.VISIBLE);
-                message.setText("If you want to delete your account click delete button");
-                //button
-                LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
-                buttonLayout.setVisibility(View.VISIBLE);
-                MaterialButton cancel, okay;
-                cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
-                okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
-                okay.setText("Delete");
-                okay.setBackgroundColor(Color.parseColor("#F6B75A"));
-                okay.setTextColor(Color.WHITE);
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                 builder2.setView(view);
                 AlertDialog alert2 = builder2.create();
                 alert2.show();
                 alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-<<<<<<< HEAD
                 FirebaseFirestore.getInstance().collection("User")
                         .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -649,120 +501,6 @@ public class user_profile_account_security_info extends BaseActivity {
 
     private void shopDelete() {
         //shop
-=======
-                okay.setOnClickListener(new View.OnClickListener() {
-                    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
-                    @Override
-                    public void onClick(View v) {
-                        alert2.dismiss();
-                        AlertDialog.Builder builder2 = new AlertDialog.Builder(user_profile_account_security_info.this);
-                        builder2.setCancelable(false);
-                        View view = View.inflate(user_profile_account_security_info.this, R.layout.screen_custom_alert, null);
-                        //title
-                        TextView title = view.findViewById(R.id.screen_custom_alert_title);
-                        //loading text
-                        TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
-                        loadingText.setVisibility(View.GONE);
-                        //gif
-                        GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
-                        gif.setVisibility(View.GONE);
-                        //header image
-                        AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
-                        imageViewCompat.setVisibility(View.VISIBLE);
-                        imageViewCompat.setImageDrawable(getDrawable(R.drawable.screen_alert_image_valid_borders));
-                        //message
-                        TextView message = view.findViewById(R.id.screen_custom_alert_message);
-                        title.setText("Deleting your product");
-                        message.setVisibility(View.VISIBLE);
-                        message.setText("Please wait a bit. We are deleting your product info");
-                        builder2.setView(view);
-                        AlertDialog alert2 = builder2.create();
-                        alert2.show();
-                        alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                        FirebaseFirestore.getInstance().collection("User")
-                                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if(documentSnapshot.exists()){
-                                            List<String> role = (List<String>) documentSnapshot.get("role");
-                                            if(role!=null){
-                                                deletePetDating();
-                                                if(role.contains("Veterinarian")){
-                                                    deleteServices();
-                                                    deleteProducts();
-                                                }
-                                                if(role.contains("Pet Shooter")){
-                                                    deleteServices();
-                                                }
-                                                if(role.contains("Pet Breeder")){
-                                                    deletePetForSale();
-                                                }
-                                                if(role.contains("Pet Breeder") || role.contains("Pet Shooter") || role.contains("Veterinarian")){
-                                                    shopDelete();
-
-                                                    FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .collection("certificate").document("certificate_doc").delete();
-
-                                                    FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .collection("proof_photo").document("proof_doc").delete();
-
-                                                    FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .collection("validation").document("validation_doc").delete();
-
-                                                }
-                                                deleteOwnRecord(alert2);
-                                            }
-
-                                        }
-                                    }
-                                });
-
-
-                    }
-                });
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alert2.dismiss();
-
-                    }
-                });
-
-            }
-
-    private void deleteOwnRecord(AlertDialog alertDialog) {
-        FirebaseFirestore.getInstance().collection("User").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .collection("security").document("security_doc").delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-
-                        }
-                    }
-                });
-        FirebaseFirestore.getInstance().collection("User")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                    alertDialog.dismiss();
-                                    FirebaseAuth.getInstance().signOut();
-                                    startActivity(new Intent(user_profile_account_security_info.this, Login.class));
-                                    finish();
-                            }
-                        });
-                    }
-                });
-    }
-
-    private void shopDelete() {
-        //shop
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         FirebaseFirestore.getInstance().collection("Shop")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -776,7 +514,6 @@ public class user_profile_account_security_info extends BaseActivity {
     private void deletePetForSale() {
         FirebaseFirestore.getInstance()
                 .collection("Pet")
-<<<<<<< HEAD
                 .whereEqualTo("pet_breeder", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .whereEqualTo("displayFor", "forSale")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -785,16 +522,6 @@ public class user_profile_account_security_info extends BaseActivity {
                         if (queryDocumentSnapshots.size() != 0) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
                             for (DocumentSnapshot s : list) {
-=======
-                .whereEqualTo("pet_breeder",FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .whereEqualTo("displayFor","forSale")
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(queryDocumentSnapshots.size()!=0){
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                            for(DocumentSnapshot s : list){
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                 String id = s.getString("id");
                                 //product or medicine
                                 FirebaseFirestore.getInstance().collection("Pet")
@@ -831,7 +558,6 @@ public class user_profile_account_security_info extends BaseActivity {
 
     private void deletePetDating() {
         FirebaseFirestore.getInstance().collection("Pet")
-<<<<<<< HEAD
                 .whereEqualTo("pet_breeder", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .whereEqualTo("displayFor", "forDating")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -852,28 +578,6 @@ public class user_profile_account_security_info extends BaseActivity {
                                                         .document(pet_id).delete();
                                             }
                                         });
-=======
-                .whereEqualTo("pet_breeder",FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .whereEqualTo("displayFor","forDating")
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(queryDocumentSnapshots.size()!=0) {
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                            for (DocumentSnapshot s : list) {
-                                    String pet_id = s.getString("id");
-                                    FirebaseFirestore.getInstance().collection("Pet")
-                                            .document(pet_id)
-                                            .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    FirebaseFirestore.getInstance().collection("User")
-                                                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .collection("Pet")
-                                                            .document(pet_id).delete();
-                                                }
-                                            });
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                             }
                         }
                     }
@@ -883,7 +587,6 @@ public class user_profile_account_security_info extends BaseActivity {
     private void deleteProducts() {
         FirebaseFirestore.getInstance()
                 .collection("Pet")
-<<<<<<< HEAD
                 .whereEqualTo("vet_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -891,15 +594,6 @@ public class user_profile_account_security_info extends BaseActivity {
                         if (queryDocumentSnapshots.size() != 0) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
                             for (DocumentSnapshot s : list) {
-=======
-                .whereEqualTo("vet_id",FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(queryDocumentSnapshots.size()!=0){
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                            for(DocumentSnapshot s : list){
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                 String id = s.getString("id");
                                 //product or medicine
                                 FirebaseFirestore.getInstance().collection("Pet")
@@ -942,7 +636,6 @@ public class user_profile_account_security_info extends BaseActivity {
 
     private void deleteServices() {
         FirebaseFirestore.getInstance().collection("Services")
-<<<<<<< HEAD
                 .whereEqualTo("shooter_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -950,15 +643,6 @@ public class user_profile_account_security_info extends BaseActivity {
                         if (queryDocumentSnapshots.size() != 0) {
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
                             for (DocumentSnapshot s : list) {
-=======
-                .whereEqualTo("shooter_id",FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(queryDocumentSnapshots.size()!=0){
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                            for(DocumentSnapshot s : list) {
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                 String service_id = s.getString("id");
                                 FirebaseFirestore.getInstance().collection("Services")
                                         .document(service_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {

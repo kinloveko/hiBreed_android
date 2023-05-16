@@ -56,10 +56,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-<<<<<<< HEAD
 import com.squareup.picasso.Picasso;
-=======
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -231,10 +228,6 @@ public class message_conversation_activity extends BaseActivity {
                                                         }
                                                     }
                                                 });
-<<<<<<< HEAD
-=======
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                     }
                                 });
                             } else {
@@ -261,11 +254,7 @@ public class message_conversation_activity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-<<<<<<< HEAD
                 if (s.toString().equals("") || s.toString().isEmpty()) {
-=======
-                if (s.toString().isEmpty()) {
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                     sendReplyImageView.setEnabled(false);
                 } else {
                     sendReplyImageView.setEnabled(true);
@@ -295,10 +284,6 @@ public class message_conversation_activity extends BaseActivity {
     @SuppressLint("SetTextI18n")
     private void openDialog(String matchID) {
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
         AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
         View view = View.inflate(this, R.layout.messaging_leave_layout, null);
 
@@ -560,11 +545,7 @@ public class message_conversation_activity extends BaseActivity {
                                 userToken = s.getString("fcmToken");
                             }
 
-<<<<<<< HEAD
                                 Picasso.get()
-=======
-                            Glide.with(message_conversation_activity.this)
->>>>>>> 2ec62453e0f82df8f9e52e1f4bc29e4eae8d3c02
                                     .load(s.getString("image"))
                                     .placeholder(R.drawable.noimage)
                                     .error(R.drawable.screen_alert_image_error_border)
