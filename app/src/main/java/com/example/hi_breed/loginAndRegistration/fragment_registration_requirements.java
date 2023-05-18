@@ -13,11 +13,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.media.Image;
 import android.net.Uri;
@@ -28,6 +31,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +51,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -60,24 +65,40 @@ import com.bumptech.glide.signature.ObjectKey;
 import com.example.hi_breed.R;
 import com.example.hi_breed.adapter.breeder_kennel_cert_RecyclerAdapter;
 import com.example.hi_breed.adapter.shooterAdapter.shooter_proof_RecyclerAdapter;
+import com.example.hi_breed.classesFile.ImageClassifierHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.mlkit.common.model.LocalModel;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.label.ImageLabel;
+import com.google.mlkit.vision.label.ImageLabeler;
+import com.google.mlkit.vision.label.ImageLabeling;
+import com.google.mlkit.vision.label.custom.CustomImageLabelerOptions;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.yalantis.ucrop.UCrop;
+
+
+import org.tensorflow.lite.support.label.Category;
+import org.tensorflow.lite.task.vision.classifier.Classifications;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
+import pl.droidsonroids.gif.GifImageView;
 
-public class fragment_registration_requirements extends Fragment implements breeder_kennel_cert_RecyclerAdapter.CountOfImagesWhenRemoved, breeder_kennel_cert_RecyclerAdapter.itemClickListener, shooter_proof_RecyclerAdapter.itemClickListeners, shooter_proof_RecyclerAdapter.CountOfImagesWhenRemoves {
+
+public class fragment_registration_requirements extends Fragment implements ImageClassifierHelper.ClassifierListener, breeder_kennel_cert_RecyclerAdapter.CountOfImagesWhenRemoved, breeder_kennel_cert_RecyclerAdapter.itemClickListener, shooter_proof_RecyclerAdapter.itemClickListeners, shooter_proof_RecyclerAdapter.CountOfImagesWhenRemoves {
 
 
     @Override
@@ -436,8 +457,7 @@ public class fragment_registration_requirements extends Fragment implements bree
                     breederPCCI.setVisibility(View.VISIBLE);
                     breederPCCIImage.setVisibility(View.VISIBLE);
                     dropImageTextView.setText("Certificate for Kennel Name and ID (PCCI)");
-                }
-                else if(role.contains("Pet Shooter")){
+                } else if (role.contains("Pet Shooter")) {
                     //hide pcci on breeder
                     breederPCCI.setVisibility(View.GONE);
                     breederPCCIImage.setVisibility(View.GONE);
@@ -1042,13 +1062,10 @@ public class fragment_registration_requirements extends Fragment implements bree
             adapter.notifyDataSetChanged();
             Toast.makeText(getContext(), uri.size() + ": selected", Toast.LENGTH_SHORT).show();
         } else if (requestCode == PICK_IMAGE_Shooter && resultCode == RESULT_OK && null != data) {
-
             //this part is for to get multiple images
             if (data.getClipData() != null) {
-
                 getCountOfImagesShoot = data.getClipData().getItemCount();
                 for (int j = 0; j < getCountOfImagesShoot; j++) {
-
                     if (uri.size() < 5) {
                         imageUriShooter = data.getClipData().getItemAt(j).getUri();
                         uriShooter.add(imageUriShooter);
@@ -1076,6 +1093,7 @@ public class fragment_registration_requirements extends Fragment implements bree
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_PICK_USER_VALID_ID) {
             Uri imageUri = data.getData();
             cropImage(imageUri, user_image_upload, "user");
+
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_PICK_PARENT_VALID_ID) {
             Uri imageUri = data.getData();
             cropImage(imageUri, guardian_valid_id, "parent");
@@ -1096,7 +1114,6 @@ public class fragment_registration_requirements extends Fragment implements bree
                             .into(prc_image);
                     add_photo_vet.setVisibility(View.GONE);
                     dropImageViewVet.setVisibility(View.GONE);
-
                 }
             }
         } else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP && types.equals("user")) {
@@ -1104,19 +1121,19 @@ public class fragment_registration_requirements extends Fragment implements bree
             // Use the cropped image URI as needed
             if (croppedUri != null) {
                 if (currentImageView != null && types != null) {
-                    user_image_upload.setVisibility(View.VISIBLE);
+
                     user_valid_URI = croppedUri;
-                    Glide.with(getActivity())
-                            .load(croppedUri)
-                            .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                            .placeholder(R.drawable.noimage)
-                            .into(user_image_upload);
-                    user_dropImageViewVet.setVisibility(View.GONE);
-                    add_photo_user.setVisibility(View.GONE);
+
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), croppedUri);
+                        classification(bitmap, types);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     return;
                 }
             }
-
         } else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP && types.equals("parent")) {
             Uri croppedUri = UCrop.getOutput(data);
             // Use the cropped image URI as needed
@@ -1124,13 +1141,13 @@ public class fragment_registration_requirements extends Fragment implements bree
                 if (currentImageView != null && types != null) {
                     guardian_valid_id.setVisibility(View.VISIBLE);
                     parent_valid_URI = croppedUri;
-                    Glide.with(getActivity())
-                            .load(croppedUri)
-                            .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                            .placeholder(R.drawable.noimage)
-                            .into(guardian_valid_id);
-                    guardian_img.setVisibility(View.GONE);
-                    guardian_add_photo.setVisibility(View.GONE);
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), croppedUri);
+                        classification(bitmap, types);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     return;
                 }
             }
@@ -1157,6 +1174,123 @@ public class fragment_registration_requirements extends Fragment implements bree
         } else {
             //this code is for if user not picked any image
             Toast.makeText(getContext(), "You Haven't Picked any image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private ImageClassifierHelper imageClassifierHelper;
+
+    private void classification(Bitmap image, String types) {
+
+        Log.d("Classify", "send:" + image.toString());
+        if (types.equals("user")) {
+            user_image_upload.setImageBitmap(image);
+        } else if (types.equals("parent")) {
+            guardian_valid_id.setImageBitmap(image);
+        }
+
+        imageClassifierHelper = ImageClassifierHelper.create(requireContext(), this);
+
+        synchronized (this) {
+            imageClassifierHelper.classify(image, 0);
+        }
+    }
+
+    @Override
+    public void onError(String error) {
+        Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+    }
+
+    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
+    @Override
+    public void onResults(List<Classifications> results, long inferenceTime) {
+        List<Category> categories = results.get(0).getCategories();
+        Log.d("Classify", "result1");
+        if (!categories.isEmpty()) {
+            Log.d("Classify", "result2");
+            Category category = categories.get(0);
+            float score = category.getScore();
+            if (category.getLabel().equals("not_valid")) {
+                if(types.equals("user")){
+                    user_dropImageViewVet.setVisibility(View.VISIBLE);
+                    add_photo_user.setVisibility(View.VISIBLE);
+                    user_image_upload.setVisibility(View.GONE);
+                    user_valid_URI = null;
+                }
+                else{
+                    guardian_valid_id.setVisibility(View.GONE);
+                     parent_valid_URI = null;
+                    guardian_img.setVisibility(View.VISIBLE);
+                    guardian_add_photo.setVisibility(View.VISIBLE);
+                }
+
+
+                if (isAdded() && getContext() != null) {
+                    AlertDialog.Builder builder2 = new AlertDialog.Builder(requireContext());
+                    builder2.setCancelable(false);
+                    View view = View.inflate(getContext(), R.layout.screen_custom_alert, null);
+                    //title
+                    TextView title = view.findViewById(R.id.screen_custom_alert_title);
+                    //loading text
+                    TextView loadingText = view.findViewById(R.id.screen_custom_alert_loadingText);
+                    loadingText.setVisibility(View.GONE);
+                    //gif
+                    GifImageView gif = view.findViewById(R.id.screen_custom_alert_gif);
+                    gif.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.scan));
+
+                    //header image
+                    AppCompatImageView imageViewCompat = view.findViewById(R.id.appCompatImageView);
+                    imageViewCompat.setVisibility(View.VISIBLE);
+                    imageViewCompat.setImageDrawable(getContext().getDrawable(R.drawable.screen_alert_image_error_border));
+                    //message
+                    TextView message = view.findViewById(R.id.screen_custom_alert_message);
+                    title.setText("Invalid ID");
+                    message.setText("The submitted photo is not clear or does not appear to be a valid ID. Please try again with a clear and valid ID.");
+                    //button
+                    LinearLayout buttonLayout = view.findViewById(R.id.screen_custom_alert_buttonLayout);
+                    buttonLayout.setVisibility(View.VISIBLE);
+                    MaterialButton cancel, okay;
+                    cancel = view.findViewById(R.id.screen_custom_dialog_btn_cancel);
+                    cancel.setVisibility(View.GONE);
+                    okay = view.findViewById(R.id.screen_custom_alert_dialog_btn_done);
+                    okay.setText("OKAY");
+                    okay.setBackgroundColor(Color.parseColor("#F6B75A"));
+                    okay.setTextColor(Color.WHITE);
+                    builder2.setView(view);
+                    AlertDialog alert2 = builder2.create();
+                    alert2.show();
+                    alert2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    okay.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alert2.dismiss();
+
+                        }
+                    });
+                }
+            } else {
+                if(types.equals("user")){
+                    user_dropImageViewVet.setVisibility(View.GONE);
+                    add_photo_user.setVisibility(View.GONE);
+                    user_image_upload.setVisibility(View.VISIBLE);
+                }
+                else{
+                    guardian_valid_id.setVisibility(View.VISIBLE);
+                    guardian_img.setVisibility(View.GONE);
+                    guardian_add_photo.setVisibility(View.GONE);
+                }
+
+                Toast.makeText(getContext(), "Submitted ID passed ", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        synchronized (this) {
+            if (imageClassifierHelper != null)
+                imageClassifierHelper.clearImageClassifier();
         }
     }
 

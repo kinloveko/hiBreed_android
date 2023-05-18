@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/float_transparent"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".loginAndRegistration.fragment_registration_requirements">
     <LinearLayout
@@ -385,7 +385,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    >
 
                     <TextView
                         android:layout_width="match_parent"
@@ -694,6 +694,7 @@
                 </LinearLayout>
 
                 <RelativeLayout
+                    android:visibility="gone"
                     android:id="@+id/validationLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

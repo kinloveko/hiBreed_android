@@ -66,6 +66,8 @@ public class Login extends AppCompatActivity {
         signIn = findViewById(R.id.submitButton);
         forgot = findViewById(R.id.forgot);
 
+
+
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.parseColor("#ffffff"));
