@@ -25,13 +25,12 @@
 🚀 **Bringing pet lovers closer with technology!**  
 
 ## 🚀 AI in Action! Watch HI-BREED's smart image classification instantly recognize users Valid ID with TensorFlow Lite! 🐶🐱✨
-<p align="center">
-  <video width="45%" controls>
-    <source src="https://github.com/user-attachments/assets/732f120f-4533-4dcf-bccc-6f40efdcbe6a" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-  <img src="https://github.com/user-attachments/assets/9c2aec21-aaf2-4b03-8e2c-9394bd1947c0" width="45%" />
-</p>
+
+| Video Demo | Screenshot |
+|------------|-----------|
+| [![Watch Video](https://img.youtube.com/vi/VIDEO_ID_HERE/0.jpg)](https://github.com/user-attachments/assets/732f120f-4533-4dcf-bccc-6f40efdcbe6a) | ![Screenshot](https://github.com/user-attachments/assets/9c2aec21-aaf2-4b03-8e2c-9394bd1947c0) |
+
+
 
 ## Screens for Login, Registrations & Forgot Password
 
