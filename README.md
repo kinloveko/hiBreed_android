@@ -20,7 +20,7 @@
 | **Java & XML**           | Core programming and UI design      |
 | **Google Firebase Firestore** | Secure and scalable database     |
 | **TensorFlow Lite**      | AI-powered image classification     |
-
+| **Firebase Cloud Messaging** | Send messages and notifications to users |
 
 🚀 **Bringing pet lovers closer with technology!**  
 
