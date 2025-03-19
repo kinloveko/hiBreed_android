@@ -20,7 +20,7 @@
 | **Java & XML**           | Core programming and UI design      |
 | **Google Firebase Firestore** | Secure and scalable database     |
 | **TensorFlow Lite**      | AI-powered image classification     |
-| **Recommendation System**| Count-based System    |
+
 
 🚀 **Bringing pet lovers closer with technology!**  
 
